@@ -13,6 +13,12 @@ wget http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-5.0.tar.
 unxz pulseaudio-5.0.tar.xz 
 tar xvf pulseaudio-5.0.tar
 cd pulseaudio-5.0
+
+echo "Comp√iling and installing Pulseaudio"
 ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-bluez4 --disable-rpath --with-module-dir=/usr/lib/pulse/modules
 make -j 4
 sudo make install -j 4
+
+echo "Creating user"
+useradd pulse
+usermod -G audio pulse
