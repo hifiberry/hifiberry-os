@@ -1,0 +1,18 @@
+#!/bin/sh
+cd /tmp
+mkdir pa5
+cd pa5
+
+echo "Installing prerequisites using apt-get"
+#sudo apt-get update
+#sudo apt-get upgrade -y
+sudo apt-get install -y libltdl-dev libsamplerate0-dev libsndfile1-dev libglib2.0-dev libasound2-dev libavahi-client-dev libspeexdsp-dev liborc-0.4-dev libbluetooth-dev intltool libtdb-dev libssl-dev libudev-dev libjson0-dev bluez-firmware bluez-utils  libbluetooth-dev bluez-alsa libsbc-dev libcap-dev
+
+echo "Retrieving Pulseaudio source"
+wget http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-5.0.tar.xz
+unxz pulseaudio-5.0.tar.xz 
+tar xvf pulseaudio-5.0.tar
+cd pulseaudio-5.0
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-bluez4 --disable-rpath --with-module-dir=/usr/lib/pulse/modules
+make -j 4
+sudo make install -j 4
