@@ -1,0 +1,32 @@
+#!/bin/sh
+cd /tmp
+mkdir shairport
+cd shairport
+
+echo "Installing prerequisites using apt-get"
+#sudo apt-get update
+#sudo apt-get upgrade -y
+sudo apt-get install -y git libao-dev libssl-dev libcrypt-openssl-rsa-perl libio-socket-inet6-perl libwww-perl avahi-utils libmodule-build-perl libasound2-dev libpulse-dev
+
+echo "Installing Net::SDP"
+git clone https://github.com/njh/perl-net-sdp.git perl-net-sdp  
+cd perl-net-sdp  
+perl Build.PL 
+sudo ./Build  
+sudo ./Build test
+sudo ./Build install
+cd ..
+
+echo "Retrieving shairport source"
+git clone https://github.com/abrasive/shairport.git  
+cd shairport
+./configure
+make -j 4
+sudo make install -j 4
+sudo cp scripts/debian/init.d/shairport /etc/init.d/shairport
+sudo chmod a+x /etc/init.d/shairport
+sudo update-rc.d shairport defaults
+
+echo "Adding user"
+sudo useradd -g audio shairport
+
