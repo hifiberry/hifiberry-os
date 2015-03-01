@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo apt-get install -y make gcc m4 intltool libtool libcap-dev
