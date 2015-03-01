@@ -3,14 +3,23 @@
 FOUND=`aplay -l|grep hifiberry`
 VERSION=2
 CONFIG=/boot/config.txt
+I2CBUS=1
 
-if [ "$VERSION" == "2" ]; then
- I2CBUS=1
-fi
+function check_i2c {
+	modprobe i2c-dev
+        if [ ! -e /dev/i2c-$I2CBUS ]; then
+                echo "I2C device file not found, need to modify config.txt"
+                echo "dtparam=i2c1=on" >> $CONFIG
+                echo "Rebooting in 5 seconds, abort reboot?"
+                read -t 5 abort
+                if [ "$abort" == "" ]; then
+                        sync
+                        reboot
+                fi
+        fi
+}
 
 function detect_card {
-	modprobe i2c-dev
-
 	# Digi/Digi+
 	res=`i2cget -y $I2CBUS 0x3b 1 2>/dev/null`
 	if [ "$res" == "0x88" ]; then
@@ -29,14 +38,13 @@ function detect_card {
                 echo "amp"
         fi
 
-
-	
 }
 
 if [ "$FOUND" == "" ]; then
  echo "No HiFiBerry card configured, try to probe using I2C"
 
  echo "Detecting using I2C" 
+ check_i2c
  card=$(detect_card)
 
  if [ "$card" != "" ]; then
