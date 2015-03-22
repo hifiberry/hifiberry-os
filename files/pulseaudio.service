@@ -4,6 +4,7 @@ After=sound.target
 
 [Service]
 EnvironmentFile=/etc/conf.d/pulseaudio
+ExecStartPre=/usr/local/bin/waitforsoundcard.sh
 ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disallow-module-loading=1 --high-priority $PULSEAUDIO_ARGS
 Restart=always
 

@@ -62,6 +62,7 @@ if [ -d /etc/systemd ]; then
  echo "Using systemd"
  cd $MYDIR
  sudo cp ../files/pulseaudio.service /etc/systemd/system
+ sudo cp ../files/waitforsoundcard.sh /usr/local/bin
  mkdir -p /etc/conf.d
  touch /etc/conf.d/pulseaudio
  systemctl enable pulseaudio
