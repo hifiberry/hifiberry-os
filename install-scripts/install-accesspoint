@@ -1,0 +1,12 @@
+#!/bin/bash
+cd `dirname $0`
+. functions.bash
+
+sudo apt-get install hostapd dnsmasq
+
+replace_block /etc/network/interfaces WLAN "iface wlan0 inet static\n address 192.168.2.1\n netmask 255.255.255.0"
+
+cp ../files/hostapd.conf /etc/hostapd
+cp ../files/dnsmasq.conf /etc/
+
+echo Finished WLAN access point setup
