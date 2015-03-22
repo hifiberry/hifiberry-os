@@ -3,7 +3,10 @@ Description=Shairport AirTunes receiver
 After=sound.target
 Requires=avahi-daemon.service
 After=avahi-daemon.service
+Requires=pulseaudio.service
 After=pulseaudio.service
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 EnvironmentFile=/etc/conf.d/shairport
