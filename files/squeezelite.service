@@ -1,0 +1,12 @@
+[Unit]
+Description=Squeezelite squeezebox receiver
+After=sound.target
+After=pulseaudio.service
+
+[Service]
+EnvironmentFile=/etc/conf.d/squeezelite
+ExecStart=/usr/local/bin/squeezelite $SQUEEZELITE_ARGS
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
