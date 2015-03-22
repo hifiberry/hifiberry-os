@@ -1,11 +1,15 @@
 [Unit]
 Description=Squeezelite squeezebox receiver
 After=sound.target
+Requires=pulseaudio.service
 After=pulseaudio.service
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 EnvironmentFile=/etc/conf.d/squeezelite
-ExecStart=/usr/local/bin/squeezelite $SQUEEZELITE_ARGS
+Type=single
+ExecStart=/usr/local/bin/squeezelite -a 4096:4096:32:0 $SQUEEZELITE_ARGS
 Restart=always
 
 [Install]

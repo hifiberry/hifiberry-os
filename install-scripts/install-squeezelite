@@ -30,7 +30,7 @@ if [ -d /etc/systemd ]; then
  echo "Using systemd"
  cd $MYDIR
  cp ../files/squeezelite.service /etc/systemd/system
- echo '-M HiFiBerry' > /etc/conf.d/squeezelite
+ echo 'SQUEEZELITE_ARGS="-M HiFiBerry -o pulse"' > /etc/conf.d/squeezelite
  systemctl enable squeezelite
 fi
 
