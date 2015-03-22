@@ -1,24 +1,70 @@
 #!/bin/sh
+cd `dirname $0`
+MYDIR=`pwd`
 cd /tmp
 mkdir pa5
 cd pa5
 
-echo "Installing prerequisites using apt-get"
-#sudo apt-get update
-#sudo apt-get upgrade -y
-sudo apt-get install -y libltdl-dev libsamplerate0-dev libsndfile1-dev libglib2.0-dev libasound2-dev libavahi-client-dev libspeexdsp-dev liborc-0.4-dev libbluetooth-dev intltool libtdb-dev libssl-dev libudev-dev libjson0-dev libsbc-dev libcap-dev
+if [ -f /etc/pacman.conf ]; then
+  echo "Installing PulseAudio via Pacman"
+  pacman -S pulseaudio
+else
+  echo "Installing prerequisites using apt-get"
+  sudo apt-get install -y libltdl-dev libsamplerate0-dev libsndfile1-dev libglib2.0-dev libasound2-dev libavahi-client-dev libspeexdsp-dev liborc-0.4-dev libbluetooth-dev intltool libtdb-dev libssl-dev libudev-dev libjson0-dev libsbc-dev libcap-dev
 
-echo "Retrieving Pulseaudio source"
-wget http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-5.0.tar.xz
-unxz pulseaudio-5.0.tar.xz 
-tar xvf pulseaudio-5.0.tar
-cd pulseaudio-5.0
+  echo "Retrieving Pulseaudio source"
+  wget http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-5.0.tar.xz
+  unxz pulseaudio-5.0.tar.xz 
+  tar xvf pulseaudio-5.0.tar
+  cd pulseaudio-5.0
 
-echo "Comp√iling and installing Pulseaudio"
-./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-bluez4 --disable-rpath --with-module-dir=/usr/lib/pulse/modules
-make -j 4
-sudo make install -j 4
+  echo "Compiling and installing Pulseaudio"
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-bluez4 --disable-rpath --with-module-dir=/usr/lib/pulse/modules
+  make -j 4
+  sudo make install -j 4
+fi
 
 echo "Creating user"
 useradd pulse
 usermod -G audio pulse
+
+echo "Creating configuration files"
+if [ ! -f /etc/pulse/system.pa.default ]; then
+ mv /etc/pulse/system.pa /etc/pulse/system.pa.default
+fi
+cat <<EOT >/etc/pulse/system.pa
+#!/usr/bin/pulseaudio -nF
+# Minimalistic Pulseaudio configuration for Raspberry Pi
+load-module module-alsa-card
+load-module module-native-protocol-unix auth-anonymous=1
+load-module module-always-sink
+EOT
+
+if [ ! -f /etc/pulse/daemon.conf.default ]; then
+ mv /etc/pulse/daemon.conf /etc/pulse/daemon.conf.default
+fi 
+echo <<EOT > /etc/pulse/daemon.conf
+resample-method =  ffmpeg
+enable-remixing = no
+enable-lfe-remixing = no
+default-sample-format = s32le
+default-sample-rate = 44100
+alternate-sample-rate = 48000
+default-sample-channels = 2
+EOT
+
+echo "Installing start scripts"
+if [ -d /etc/init.d ]; then
+ echo "Using old init script"
+ echo "TODO"
+fi
+if [ -d /etc/systemd ]; then
+ echo "Using systemd"
+ cd $MYDIR
+ sudo cp ../files/pulseaudio.service /etc/systemd/system
+ mkdir -p /etc/conf.d
+ touch /etc/conf.d/pulseaudio
+ systemctl enable pulseaudio
+fi
+
+
