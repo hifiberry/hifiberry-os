@@ -11,7 +11,7 @@ After=network-online.target
 [Service]
 EnvironmentFile=/etc/conf.d/shairport
 Type=simple
-ExecStart=/usr/local/bin/shairport -o pulse $SHAIRPORT_ARGS
+ExecStart=/usr/local/bin/shairport $SHAIRPORT_ARGS
 Restart=always
 
 [Install]

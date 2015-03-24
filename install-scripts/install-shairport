@@ -42,9 +42,9 @@ if [ -d /etc/systemd ]; then
  cd $MYDIR
  cp ../files/shairport.service /etc/systemd/system
  mkdir -p /etc/system.conf
- echo "Creating /etc/system.conf/shairport"
- cat <<EOT >/etc/system.conf/shairport
-SHAIRPORT_ARGS="-o pulse"
+ echo "Creating /etc/conf.d/shairport"
+ cat <<EOT >/etc/conf.d/shairport
+SHAIRPORT_ARGS="-o pulse -b 100"
 EOT
  systemctl enable shairport
 fi
