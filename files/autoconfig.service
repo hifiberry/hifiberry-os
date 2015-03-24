@@ -1,0 +1,10 @@
+[Unit]
+Description=Autodetect sound card
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/sleep 20
+ExecStart=/usr/local/bin/detect-hifiberry.sh
+
+[Install]
+WantedBy=multi-user.target

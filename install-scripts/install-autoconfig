@@ -1,0 +1,13 @@
+#!/bin/sh
+cd `dirname $0`
+
+cp ../files/detect-hifiberry.sh /usr/local/bin
+
+if [ -d /etc/systemd ]; then
+ echo "Adding Autodetect script to Systemd"
+ cp ../files/autoconfig.service /etc/systemd/system
+ systemctl enable autoconfig
+
+else
+ echo "Creating autostart script"
+fi
