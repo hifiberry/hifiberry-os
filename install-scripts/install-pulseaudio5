@@ -9,7 +9,7 @@ cd pa5
 
 if [ -f /etc/pacman.conf ]; then
   echo "Installing PulseAudio via Pacman"
-  pacman -S --needed pulseaudio pulseaudio-alsa speex
+  pacman -S --needed --noconfirm pulseaudio pulseaudio-alsa speex
 else
   echo "Installing prerequisites using apt-get"
   sudo apt-get install -y libltdl-dev libsamplerate0-dev libsndfile1-dev libglib2.0-dev libasound2-dev libavahi-client-dev libspeexdsp-dev liborc-0.4-dev libbluetooth-dev intltool libtdb-dev libssl-dev libudev-dev libjson0-dev libsbc-dev libcap-dev

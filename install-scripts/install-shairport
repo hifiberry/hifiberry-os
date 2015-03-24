@@ -8,7 +8,7 @@ cd shairport
 
 if [ -f /etc/pacman.conf ]; then
  echo "Installing prerequisites using pacman"
- pacman -S --needed gcc openssl pkg-config avahi
+ pacman -S --needed --noconfirm gcc openssl pkg-config avahi
 else
  echo "Installing prerequisites using apt-get"
  sudo apt-get install -y git libao-dev libssl-dev libcrypt-openssl-rsa-perl libio-socket-inet6-perl libwww-perl avahi-utils libmodule-build-perl libasound2-dev libpulse-dev
