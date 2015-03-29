@@ -1,9 +1,10 @@
 MAKEFLAGS=-j4
 
 install:
+	./cleanup-modules
 	./install-basictools
-	./install-pulseaudio5
-	./install-shairport
+	./install-pulseaudio
+	./install-shairportsync
 	./install-squeezelite
 	./install-i2ctools
 	./install-autoconfig
