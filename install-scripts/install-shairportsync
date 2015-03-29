@@ -1,0 +1,59 @@
+#!/bin/sh
+cd `dirname $0`
+MYDIR=`pwd`
+
+cd /tmp
+mkdir shairport-sync
+
+if [ -f /etc/pacman.conf ]; then
+ echo "Installing prerequisites using pacman"
+ pacman -S --needed --noconfirm gcc openssl pkg-config avahi autoconf automake
+else
+ echo "Installing prerequisites using apt-get"
+ sudo apt-get install -y git libao-dev libssl-dev libcrypt-openssl-rsa-perl libio-socket-inet6-perl libwww-perl avahi-utils libmodule-build-perl libasound2-dev libpulse-dev
+fi
+
+echo "Installing Net::SDP"
+#git clone https://github.com/njh/perl-net-sdp.git perl-net-sdp  
+#cd perl-net-sdp  
+#perl Build.PL 
+#sudo ./Build  
+#sudo ./Build test
+#sudo ./Build install
+#cd ..
+
+echo "Retrieving shairport-sync source"
+git clone https://github.com/mikebrady/shairport-sync
+cd shairport-sync
+autoreconf -i -f
+./configure --with-alsa --with-avahi --with-ssl=openssl 
+echo "Patching Makefile"
+cat Makefile | sed s/-lssl/-lssl\ -lcrypto/g > Makefile.new
+mv Makefile.new Makefile
+make -j 4
+
+if [ -f /etc/init.d ]; then
+ echo "Installing init scripts"
+ sudo make install -j 4
+fi 
+
+if [ -d /etc/systemd ]; then
+ echo "Using systemd"
+ mkdir -p /usr/local/bin
+ cp shairport-sync /usr/local/bin
+ chmod ugo+rx /usr/local/bin/shairport-sync
+ cd $MYDIR
+ cp ../files/shairportsync.service /etc/systemd/system
+ mkdir -p /etc/system.conf
+ echo "Creating /etc/conf.d/shairport"
+ cat <<EOT >/etc/conf.d/shairport
+SHAIRPORT_ARGS=""
+EOT
+ systemctl enable shairport
+fi
+
+echo "Adding user"
+sudo useradd -g audio shairport
+
+echo "Cleaning up"
+#rm -rf /tmp/shairport
