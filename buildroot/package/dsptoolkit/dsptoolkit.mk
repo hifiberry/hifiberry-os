@@ -12,18 +12,16 @@ DSPTOOLKIT_LICENSE = MIT
 DSPTOOLKIT_LICENSE_FILES = LICENSE.md
 
 define DSPTOOLKIT_INSTALL_INIT_SYSV
-	clear
-	sleep 10
-	$(INSTALL) -D -m 0755 package/dsptoolkit/S90sigmatcp \
+	pwd
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/S90sigmatcp \
 		$(TARGET_DIR)/etc/init.d/S90sigmatcp
 endef
 
 define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
-	clear
-	sleep 10
-        $(INSTALL) -D -m 0755 package/dsptoolkit/sigmatcp.service \
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.service \
                 $(TARGET_DIR)/lib/systemd/system/sigmatcp.service
 endef
 
-$(eval $(python-package))
+DSPTOOLKIT_POST_INSTALL_STAGING_HOOKS += DSPTOOLKIT_INSTALL_INIT_SYSV
 
+$(eval $(python-package))
