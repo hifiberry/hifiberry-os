@@ -11,7 +11,11 @@ SPOTIFYD_LICENSE_FILES = LICENSE
 
 SPOTIFYD_DEPENDENCIES = host-cargo
 
-SPOTIFYD_CARGO_ENV = CARGO_HOME=$(HOST_DIR)/share/cargo
+SPOTIFYD_CARGO_ENV = CARGO_HOME=$(HOST_DIR)/share/cargo \
+ CC=/home/vagrant/buildroot/output/host/bin/arm-buildroot-linux-gnueabihf-gcc \
+ PKG_CONFIG_ALLOW_CROSS=1 \
+ OPENSSL_LIB_DIR=/home/vagrant/buildroot/output/host/lib \
+ OPENSSL_INCLUDE_DIR=/home/vagrant/buildroot/output/host/include 
 SPOTIFYD_CARGO_MODE = $(if $(BR2_ENABLE_DEBUG),debug,release)
 
 SPOTIFYD_BIN_DIR = target/release
