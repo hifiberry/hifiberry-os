@@ -1,0 +1,26 @@
+#! /bin/sh
+
+# Additional options that are passed to SigmaTCP server
+OPTIONS="--alsa"
+
+case "$1" in
+    start)
+	printf "Starting sigmatcp: "
+	start-stop-daemon -S -q -b --exec /usr/bin/sigmatcpserver -- $OPTIONS
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	;;
+    stop)
+	printf "Stopping sigmatcp: "
+	start-stop-daemon -K -q /usr/bin/sigmatcpserver
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+

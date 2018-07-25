@@ -1,0 +1,5 @@
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/base/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/spotifyd/Config.in"
+
+

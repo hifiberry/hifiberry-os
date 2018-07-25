@@ -1,9 +1,0 @@
-#!/bin/sh
-if [ -f /etc/pacman.conf ]; then
-  echo "Installing basic tools using pacman"
-  pacman -S --needed --noconfirm alsa-lib alsa-utils mplayer sudo
-else
-  echo "Installing basic tools using apt-get"
-  apt-get install -y alsa-lib alsa-utils mplayer
-fi
-

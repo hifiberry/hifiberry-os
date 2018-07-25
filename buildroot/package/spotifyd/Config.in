@@ -1,0 +1,4 @@
+config BR2_PACKAGE_SPOTIFYD
+	bool "spotifyd"
+        help
+	  An open source Spotify client running as a UNIX daemon. 

@@ -1,8 +1,0 @@
-#!/bin/bash
-for f in /etc/modules-load.d/raspberrypi.conf /etc/modules; do
- if [ -f $f ]; then
-  cat $f | sed s/snd-bcm2835/#snd-bcm2835/g > $f.new
-  mv $f $f.bak
-  mv $f.new $f
- fi
-done
