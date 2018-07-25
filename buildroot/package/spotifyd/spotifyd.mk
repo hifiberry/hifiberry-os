@@ -12,13 +12,13 @@ SPOTIFYD_LICENSE_FILES = LICENSE
 SPOTIFYD_DEPENDENCIES = host-cargo
 
 SPOTIFYD_CARGO_ENV = CARGO_HOME=$(HOST_DIR)/share/cargo \
- CC=/home/vagrant/buildroot/output/host/bin/arm-buildroot-linux-gnueabihf-gcc \
+ CC=$(HOST_DIR)/bin/arm-buildroot-linux-gnueabihf-gcc \
  PKG_CONFIG_ALLOW_CROSS=1 \
- OPENSSL_LIB_DIR=/home/vagrant/buildroot/output/host/lib \
- OPENSSL_INCLUDE_DIR=/home/vagrant/buildroot/output/host/include 
+ OPENSSL_LIB_DIR=$(HOST_DIR)/lib \
+ OPENSSL_INCLUDE_DIR=$(HOST_DIR)/include 
 SPOTIFYD_CARGO_MODE = $(if $(BR2_ENABLE_DEBUG),debug,release)
 
-SPOTIFYD_BIN_DIR = target/release
+SPOTIFYD_BIN_DIR = target/$(RUSTC_TARGET_NAME)/release
 
 SPOTIFYD_CARGO_OPTS = \
   --$(SPOTIFYD_CARGO_MODE) \
@@ -36,12 +36,12 @@ define SPOTIFYD_INSTALL_TARGET_CMDS
 endef
 
 define SPOTIFYD_INSTALL_INIT_SYSV
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotify/S99spotify \
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify \
                 $(TARGET_DIR)/etc/init.d/S99spotify
 endef
 
 define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotify/spotify.service \
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify.service \
                 $(TARGET_DIR)/lib/systemd/system/spotify.service
 endef
 
