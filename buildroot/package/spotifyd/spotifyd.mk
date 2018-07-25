@@ -5,7 +5,7 @@
 ################################################################################
 
 SPOTIFYD_VERSION = v0.2.2
-SPOTIFYD_SITE = $(call github,Spotify,spotify,$(SPOTIFYD_VERSION))
+SPOTIFYD_SITE = $(call github,Spotifyd,spotifyd,$(SPOTIFYD_VERSION))
 SPOTIFYD_LICENSE = GPL-3.0
 SPOTIFYD_LICENSE_FILES = LICENSE
 
@@ -14,7 +14,7 @@ SPOTIFYD_DEPENDENCIES = host-cargo
 SPOTIFYD_CARGO_ENV = CARGO_HOME=$(HOST_DIR)/share/cargo
 SPOTIFYD_CARGO_MODE = $(if $(BR2_ENABLE_DEBUG),debug,release)
 
-SPOTIFYD_BIN_DIR = target/$(RUSTC_TARGET_NAME)/$(SPOTIFYD_CARGO_MODE)
+SPOTIFYD_BIN_DIR = target/release
 
 SPOTIFYD_CARGO_OPTS = \
   --$(SPOTIFYD_CARGO_MODE) \
@@ -27,8 +27,18 @@ define SPOTIFYD_BUILD_CMDS
 endef
 
 define SPOTIFYD_INSTALL_TARGET_CMDS
-    $(INSTALL) -D -m 0755 $(@D)/$(SPOTIFYD_BIN_DIR)/foo \
-           $(TARGET_DIR)/usr/bin/foo
+    $(INSTALL) -D -m 0755 $(@D)/$(SPOTIFYD_BIN_DIR)/spotifyd \
+           $(TARGET_DIR)/usr/bin/spotifyd
+endef
+
+define SPOTIFYD_INSTALL_INIT_SYSV
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotify/S99spotify \
+                $(TARGET_DIR)/etc/init.d/S99spotify
+endef
+
+define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotify/spotify.service \
+                $(TARGET_DIR)/lib/systemd/system/spotify.service
 endef
 
 $(eval $(generic-package))
