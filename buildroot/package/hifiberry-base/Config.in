@@ -1,5 +1,5 @@
 config BR2_PACKAGE_HIFIBERRY_BASE
-	bool "hifiberry_base"
+	bool "hifiberry-base"
         help
-          install base ALSA dependencies
+          install base ALSA prerequisites
         select BR2_PACKAGE_ALSA_UTILS
