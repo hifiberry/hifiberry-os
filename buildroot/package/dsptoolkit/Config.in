@@ -5,3 +5,4 @@ config BR2_PACKAGE_DSPTOOLKIT
           DSP boards
         depends on BR2_PACKAGE_PYTHON3
         select BR2_PACKAGE_PYTHON_SPIDEV
+        select BR2_PACKAGE_PYTHON_ZEROCONF
