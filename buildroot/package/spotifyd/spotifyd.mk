@@ -33,6 +33,10 @@ endef
 define SPOTIFYD_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(@D)/$(SPOTIFYD_BIN_DIR)/spotifyd \
            $(TARGET_DIR)/usr/bin/spotifyd
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-notification \
+           $(TARGET_DIR)/opt/hifiberry/bin/spotifyd-notification
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd.conf \
+           $(TARGET_DIR)/etc/spotifyd.conf
 endef
 
 define SPOTIFYD_INSTALL_INIT_SYSV
