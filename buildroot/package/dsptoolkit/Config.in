@@ -4,5 +4,7 @@ config BR2_PACKAGE_DSPTOOLKIT
 	  DSPToolkit is a set of tools to work with HiFiBerry
           DSP boards
         depends on BR2_PACKAGE_PYTHON3
+        select BR2_PACKAGE_PYTHON_XMLTODICT
         select BR2_PACKAGE_PYTHON_SPIDEV
         select BR2_PACKAGE_PYTHON_ZEROCONF
+        select BR2_PACKAGE_PYTHON_ALSAAUDIO

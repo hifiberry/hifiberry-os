@@ -3,3 +3,6 @@ config BR2_PACKAGE_HIFIBERRY_BASE
         help
           install base ALSA prerequisites
         select BR2_PACKAGE_ALSA_UTILS
+	select BR2_PACKAGE_RPI_WIFI_FIRMWARE
+        select BR2_PACKAGE_RPI_BT_FIRMWARE
+	depends on BR2_PACKAGE_RPI_FIRMWARE
