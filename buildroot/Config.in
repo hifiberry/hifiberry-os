@@ -2,6 +2,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-base/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-tools/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/spotifyd/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/roonbridge/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/configtxt/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-zeroconf/Config.in"
 
