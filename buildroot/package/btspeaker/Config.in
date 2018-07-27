@@ -1,0 +1,5 @@
+config BR2_PACKAGE_BTSPEAKER
+	bool "btspeaker"
+        help
+	  A Bluetooth speaker client
+	select BR2_PACKAGE_PYTHON_GOBJECT
