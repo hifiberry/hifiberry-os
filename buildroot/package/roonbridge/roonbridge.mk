@@ -17,7 +17,9 @@ endef
 
 define ROONBRIDGE_INSTALL_TARGET_CMDS
     mkdir -p $(TARGET_DIR)/opt/roon
-    cp -rv $(@D)/* $(TARGET_DIR)/opt/roon
+    mkdir -p $(TARGET_DIR)/usr/share
+    cp -rv $(@D)/Bridge $(TARGET_DIR)/opt/roon
+    cp -rv $(@D)/RoonMono $(TARGET_DIR)/usr/share
 endef
 
 define ROONBRIDGE_INSTALL_INIT_SYSV
