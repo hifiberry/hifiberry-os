@@ -1,0 +1,14 @@
+[Unit]
+Description=HiFiBerry detect
+Wants=network-online.target
+After=network.target network-online.target
+Wants=hifiberry-detect.service
+After=hifiberry-detect.serice
+[Service]
+Type=Oneshot
+ExecStart=/opt/hifiberry/bin/reconfigure-players
+StandardOutput=journal
+[Install]
+WantedBy=multi-user.target
+EOT
+

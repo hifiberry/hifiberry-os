@@ -1,0 +1,29 @@
+#! /bin/sh
+
+case "$1" in
+    start)
+        printf "Detecting HiFiBerry sound card and settings..."
+        /opt/hifiberry/bin/detect-hifiberry
+        printf "Reconfiguring players..."
+        /opt/hifiberry/bin/reconfigure-players
+	;;
+    stop)
+	printf "Doing nothing"
+	start-stop-daemon -K -q /usr/bin/spotifyd
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
+printf "Detecting HiFiBerry sound card and settings..."
+/opt/hifiberry/bin/detect-hifiberry
+printf "Reconfiguring players..."
+/opt/hifiberry/bin/reconfigure-players
+
