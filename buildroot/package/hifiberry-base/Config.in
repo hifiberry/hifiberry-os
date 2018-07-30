@@ -1,8 +1,15 @@
 config BR2_PACKAGE_HIFIBERRY_BASE
 	bool "hifiberry-base"
         help
-          install base ALSA prerequisites
+          install base HiFiBerryOS prerequisites
+           - ALSA
+           - NTP
+           - Raspberry Pi firmware          
         select BR2_PACKAGE_ALSA_UTILS
 	select BR2_PACKAGE_RPI_WIFI_FIRMWARE
         select BR2_PACKAGE_RPI_BT_FIRMWARE
 	depends on BR2_PACKAGE_RPI_FIRMWARE
+        select BR2_PACKAGE_NTP
+	select BR2_PACKAGE_NTP_NTPD
+	select BR2_PACKAGE_NTP_NTPDATE
+	select BR2_PACKAGE_NTP_NTPTIME
