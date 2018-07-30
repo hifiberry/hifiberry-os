@@ -1,0 +1,5 @@
+config BR2_PACKAGE_RASPI_WIFI
+	bool "raspi-wifi"
+        help
+	  RaspiWiFi is a program to headlessly configure a Raspberry Pi's WiFi
+          connection using using any other WiFi-enabled device
