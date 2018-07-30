@@ -5,6 +5,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/spotifyd/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/roonbridge/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/btspeaker/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/configtxt/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/raspi-wifi/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-zeroconf/Config.in"
 
 

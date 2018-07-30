@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_TOOLS_VERSION = 0.1
+HIFIBERRY_TOOLS_VERSION = master
 HIFIBERRY_TOOLS_LICENSE = MIT
 HIFIBERRY_TOOLS_SITE = $(call github,hifiberry,hifiberry-tools,master)
 
