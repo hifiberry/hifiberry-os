@@ -1,0 +1,16 @@
+config BR2_PACKAGE_HIFIBERRY_TEST
+	bool "hifiberry-test"
+        help
+	  Tools to test the hardware of HiFiBerry boards
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_DSPTOOLKIT
+        select BR2_PACKAGE_WIRINGPI
+
+choice
+    prompt "Card to test"
+    config HIFIBERRY_TEST_DSPDAC
+          bool "DAC+ DSP"
+    config HIFIBERRY_TEST_BEOCREATE
+           bool "Beocreate 4 channel amplifier"
+ endchoice
+

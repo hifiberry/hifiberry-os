@@ -1,0 +1,29 @@
+#! /bin/sh
+
+# Write profile to DSP DAC and play a test tone
+
+case "$1" in
+    start)
+	echo "Programming DSP profile"
+	gpio mode 0 out
+	gpio write 0 0
+	gpio write 0 1
+	echo "Programming DSP profile"
+	dsptoolkit write-mm
+	echo "Testing EEPROM programming"
+	dsptoolkit check-eeprom
+	echo "Playing test tone"
+	play 30 -n synth sine 1000
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
