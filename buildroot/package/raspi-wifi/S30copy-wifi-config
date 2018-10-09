@@ -1,0 +1,24 @@
+#! /bin/sh
+
+# Additional options that are passed to Spotify server
+OPTIONS=""
+
+case "$1" in
+    start)
+	printf "Looking for WiFi configuration on /boot: "
+	if [ -f "/boot/wpa_supplicant.conf" ]; then
+		cp /boot/wpa_supplicant.conf /etc/wpa_supplicant.conf
+	fi
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
