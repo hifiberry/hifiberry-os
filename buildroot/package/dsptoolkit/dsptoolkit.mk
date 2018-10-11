@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = 0.12.1
+DSPTOOLKIT_VERSION = 0.13
 DSPTOOLKIT_SOURCE = hifiberrydsp-$(DSPTOOLKIT_VERSION).tar.gz
-DSPTOOLKIT_SITE = https://files.pythonhosted.org/packages/e9/fc/5844905eabfe5640bdb33716f376f70beb131853fcbb2866a2ec2c177527
+DSPTOOLKIT_SITE = https://github.com/hifiberry/hifiberry-dsp/raw/master/dist
 DSPTOOLKIT_SETUP_TYPE = setuptools
 DSPTOOLKIT_LICENSE = MIT
 DSPTOOLKIT_LICENSE_FILES = LICENSE.md
