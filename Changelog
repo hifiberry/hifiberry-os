@@ -1,2 +1,11 @@
-20181009: added nano to allow editing local files
-20180920: first version
+20181011
+- Bugfix: DSPToolkit upgraded to 0.13
+- Bugfix: Shairport now working (some libraries were missing in previous
+version)
+
+20181009 
+- added nano to allow editing local files
+- added WiFi support
+
+20180920
+-first version
