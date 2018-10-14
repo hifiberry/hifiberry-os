@@ -1,0 +1,14 @@
+config BR2_PACKAGE_AUDIOCONTROL
+	bool "audiocontrol"
+        help
+	  Audiocontrol is a small server that controls volume and playback of 
+          multiple audio player backends
+        depends on BR2_PACKAGE_PYTHON3
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_PYTHON_XMLTODICT
+        select BR2_PACKAGE_PYTHON_BOTTLE
+        select BR2_PACKAGE_PYTHON_ZEROCONF
+        select BR2_PACKAGE_PYTHON_ALSAAUDIO
+	select BR2_PACKAGE_PYTHON_KEYBOARD
+	select BR2_PACKAGE_PYTHON_NUIMO
+	select BR2_PACKAGE_PYTHON_LMNOTIFY

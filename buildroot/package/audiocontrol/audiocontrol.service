@@ -1,0 +1,12 @@
+[Unit]
+Description=Audio controller
+Wants=network-online.target
+After=network.target network-online.target
+[Service]
+Type=simple
+ExecStart=$LOC
+StandardOutput=journal
+[Install]
+WantedBy=multi-user.target
+EOT
+
