@@ -5,12 +5,12 @@ OPTIONS=""
 
 case "$1" in
     start)
-	printf "Starting sigmatcp: "
+	printf "Starting audiocontrol: "
 	start-stop-daemon -S -q -b --exec /usr/bin/audiocontrol -- $OPTIONS
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 	;;
     stop)
-	printf "Stopping sigmatcp: "
+	printf "Stopping audiocontrol: "
 	start-stop-daemon -K -q /usr/bin/audiocontrol
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 	;;
