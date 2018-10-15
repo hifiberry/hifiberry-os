@@ -1,0 +1,5 @@
+config BR2_PACKAGE_PYTHON_KEYBOARD
+	bool "python-keyboard"
+        help
+	    Python keyboard module
+        depends on BR2_PACKAGE_PYTHON3
