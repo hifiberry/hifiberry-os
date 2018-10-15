@@ -1,3 +1,7 @@
+20181015
+- Added audiocontrol demon to support volume control via rotary controller
+- DSPTookit upgraded to 0.14 which supports log scale for shairport-sync
+
 20181011
 - Bugfix: DSPToolkit upgraded to 0.13
 - Bugfix: Shairport now working (some libraries were missing in previous
