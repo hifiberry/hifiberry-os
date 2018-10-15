@@ -7,6 +7,7 @@ case "$1" in
     start)
 	printf "Starting sigmatcp: "
 	start-stop-daemon -S -q -b --exec /usr/bin/sigmatcpserver -- $OPTIONS
+	sleep 5
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 	;;
     stop)
