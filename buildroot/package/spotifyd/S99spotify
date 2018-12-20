@@ -10,10 +10,10 @@ case "$1" in
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 	;;
     stop)
-	printf "Stopping sigmatcp: "
-	start-stop-daemon -K -q /usr/bin/spotifyd
+	printf "Stopping spotifyd: "
+	start-stop-daemon -K -x /usr/bin/spotifyd
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
-	;;
+;;
     restart)
 	$0 stop
 	$0 start
