@@ -12,5 +12,8 @@ choice
           bool "DAC+ DSP"
     config HIFIBERRY_TEST_BEOCREATE
            bool "Beocreate 4 channel amplifier"
+    config HIFIBERRY_TEST_DACADC
+           bool "DAC+ ADC"
+
  endchoice
 
