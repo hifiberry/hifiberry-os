@@ -1,0 +1,2 @@
+#!/bin/bash
+tail -fn0 /var/log/messages | awk '/daemon.err Spotify/ { print | "/etc/init.d/S99spotify restart" }'
