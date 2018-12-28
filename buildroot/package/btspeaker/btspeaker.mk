@@ -30,7 +30,7 @@ endef
 define BTSPEAKER_INSTALL_INIT_SYSV
 endef
 
-define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
+define BTSPEAKER_INSTALL_INIT_SYSTEMD
 endef
 
 $(eval $(generic-package))
