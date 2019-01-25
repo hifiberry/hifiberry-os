@@ -6,3 +6,15 @@ it is based on Buildroot and it's not possible to use package managers to add mo
 software.
 
 Also, there is no update mechanism included at the moment.
+
+At the moment, the following services are supported:
+
+- Spotify (using Spotifyd)
+- Airplay (using shairport)
+- Squeezebox (using squeezelite)
+
+Additional tools that are available:
+
+- sox
+- HiFiBerry dsptoolkit
+
