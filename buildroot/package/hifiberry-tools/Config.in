@@ -2,7 +2,7 @@ config BR2_PACKAGE_HIFIBERRY_TOOLS
 	bool "hifiberry-tools"
         help
 	  Several helper HiFiBerry helper tools
-        depends on BR2_PACKAGE_PYTHON3
         depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_PYTHON3
         select BR2_PACKAGE_PYTHON_SPIDEV
         select BR2_SYSTEM_BIN_SH_BASH
