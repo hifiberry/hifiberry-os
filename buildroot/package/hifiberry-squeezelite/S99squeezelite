@@ -1,6 +1,6 @@
 #! /bin/sh
 
-OPTIONS=-o softvol -M HiFiBerry -N /var/squeezelite/squeezelite.name -z
+OPTIONS="-o softvol -M HiFiBerry -N /var/squeezelite/squeezelite.name -z"
 
 case "$1" in
     start)
