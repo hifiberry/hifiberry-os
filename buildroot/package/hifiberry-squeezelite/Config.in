@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HIFIBERRY_SQUEEZELITE
+	bool "hifiberry-squeezelite"
+        help
+	  Start script and configuration files for Squeezelite
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_SQUEEZELITE
