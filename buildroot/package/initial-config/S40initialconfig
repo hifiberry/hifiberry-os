@@ -1,0 +1,23 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+	if [ -f "/boot/initial.sh" ]; then
+		mv /boot/initial.sh /tmp
+		chmod u+rx /tmp/initial.sh
+		/tmp/initial.sh
+		rm $0
+	;;
+    stop)
+	printf "Doing nothing"
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
