@@ -2,6 +2,4 @@ config BR2_PACKAGE_CONFIGTXT
 	bool "configtxt"
         help
           add I2C and SPI to config.txt
-#	select BR2_PACKAGE_RPI_WIFI_FIRMWARE
-#        select BR2_PACKAGE_RPI_BT_FIRMWARE
 	depends on BR2_PACKAGE_RPI_FIRMWARE
