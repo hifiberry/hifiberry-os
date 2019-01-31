@@ -13,6 +13,9 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/detect-hifiberry
     $(INSTALL) -D -m 0755 $(@D)/reconfigure-players \
            $(TARGET_DIR)/opt/hifiberry/bin/reconfigure-players
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-daemons \
+           $(TARGET_DIR)/opt/hifiberry/bin/check-daemons
+
     for a in $(@D)/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
             $(TARGET_DIR)/etc ; \
