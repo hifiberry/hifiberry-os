@@ -28,6 +28,8 @@ endef
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S98hifiberry-detect \
                 $(TARGET_DIR)/etc/init.d/S98hifiberry-detect
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S99x-myip \
+                $(TARGET_DIR)/etc/init.d/S99x-myip
 endef
 
 define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
