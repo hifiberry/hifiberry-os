@@ -1,0 +1,23 @@
+#! /bin/sh
+
+case "$1" in
+    start)
+	MYIPS=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+	for ip in $MYIPS; do
+		printf "Local IP: %s \n" $ip
+		espeak -w /tmp/ip.wav $ip
+		play /tmp/ip.wav 
+		rm /tmp/ip.wav 2>/dev/null
+	done
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
