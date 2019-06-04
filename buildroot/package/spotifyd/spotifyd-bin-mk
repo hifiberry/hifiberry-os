@@ -1,0 +1,34 @@
+################################################################################
+#
+# spotifyd
+#
+################################################################################
+
+SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-2019-02-25
+
+define SPOTIFYD_INSTALL_TARGET_CMDS
+    $(INSTALL) -D -m 0755 $(SPOTIFYD_BIN) \
+           $(TARGET_DIR)/usr/bin/spotifyd
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-notification \
+           $(TARGET_DIR)/opt/hifiberry/bin/spotifyd-notification
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd.conf \
+           $(TARGET_DIR)/etc/spotifyd.conf
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify-watchdog \
+           $(TARGET_DIR)/opt/hifiberry/bin/spotify-watchdog
+
+endef
+
+define SPOTIFYD_INSTALL_INIT_SYSV
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify \
+                $(TARGET_DIR)/etc/init.d/S99spotify
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify-watchdog \
+                $(TARGET_DIR)/etc/init.d/S99spotify-watchdog
+
+endef
+
+define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify.service \
+                $(TARGET_DIR)/lib/systemd/system/spotify.service
+endef
+
+$(eval $(generic-package))
