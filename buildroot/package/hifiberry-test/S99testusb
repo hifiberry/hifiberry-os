@@ -1,0 +1,26 @@
+#! /bin/sh
+
+# Write profile to DSP DAC and play a test tone
+
+OUT=/dev/tty1
+
+case "$1" in
+    start)
+	echo "Programming USB2I2S board"  > $OUT
+	/opt/hifiberry/bin/spi_flash -Fw /opt/hifiberry/bin/hbfw_usb2i2s_100.bin >$OUT
+	if [ $? != 0 ]; then
+	   echo "Failed to program board"
+	fi
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
