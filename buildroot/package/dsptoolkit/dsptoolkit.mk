@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = 0.14
+DSPTOOLKIT_VERSION = 0.17
 DSPTOOLKIT_SOURCE = hifiberrydsp-$(DSPTOOLKIT_VERSION).tar.gz
 DSPTOOLKIT_SITE = https://github.com/hifiberry/hifiberry-dsp/raw/master/dist
 DSPTOOLKIT_SETUP_TYPE = setuptools
