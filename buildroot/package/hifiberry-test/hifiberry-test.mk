@@ -25,6 +25,19 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDAC
 	echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACRTC
+        echo "Installing DAC+ RTC test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdacrtc \
+                $(TARGET_DIR)/etc/init.d/S99testdacrtc
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=hifiberry-dac" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=i2c-rtc,ds1307" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_arm=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+
+
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDACADC
         echo "Installing DAC+ DSP DAC/ADC test script"
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdacdspadc \
@@ -62,6 +75,9 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADC
         echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+ifdef HIFIBERRY_TEST_DACRTC
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACRTC
+endif
 
 ifdef HIFIBERRY_TEST_DSPDAC
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDAC
@@ -78,7 +94,6 @@ endif
 ifdef HIFIBERRY_TEST_USB
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_USB
 endif
-
 
 
 

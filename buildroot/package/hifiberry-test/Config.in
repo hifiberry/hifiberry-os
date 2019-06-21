@@ -1,13 +1,16 @@
 config BR2_PACKAGE_HIFIBERRY_TEST
 	bool "hifiberry-test"
-        help
+	help
 	  Tools to test the hardware of HiFiBerry boards
         depends on BR2_PACKAGE_HIFIBERRY_BASE
         select BR2_PACKAGE_DSPTOOLKIT
         select BR2_PACKAGE_WIRINGPI
+        select BR2_PACKAGE_SOX
 
 choice
     prompt "Card to test"
+    config HIFIBERRY_TEST_DACRTC
+          bool "DAC+ RTC"
     config HIFIBERRY_TEST_DSPDAC
           bool "DAC+ DSP"
     config HIFIBERRY_TEST_BEOCREATE
@@ -17,9 +20,6 @@ choice
     config HIFIBERRY_TEST_DSPDACADC
           bool "DAC+ DSP DAC/ADC addon"
     config HIFIBERRY_TEST_USB
-          bool "USB 2 I2S board"
-
-
-
- endchoice
+          bool "USB I2S board"
+endchoice
 
