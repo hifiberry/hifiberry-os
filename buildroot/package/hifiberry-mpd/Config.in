@@ -1,0 +1,17 @@
+config BR2_PACKAGE_HIFIBERRY_MPD
+	bool "hifiberry-mpd"
+        help
+	  Start script and configuration files for MPD
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_MPD
+	select BR2_PACKAGE_MPD_DSD
+	select BR2_PACKAGE_MPD_FLAC
+	select BR2_PACKAGE_MPD_MAD
+	select BR2_PACKAGE_MPD_VORBIS
+	select BR2_PACKAGE_MPD_WAVPACK
+	select BR2_PACKAGE_MPD_ALSA
+	select BR2_PACKAGE_MPD_AVAHI_SUPPORT
+	select BR2_PACKAGE_MPD_TCP
+	select BR2_PACKAGE_MPD_UPNP
+	select BR2_PACKAGE_MPD_MPC
+
