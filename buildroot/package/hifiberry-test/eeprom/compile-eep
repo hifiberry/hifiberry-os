@@ -1,0 +1,5 @@
+#!/bin/sh
+eepmake digipro.txt digipro.eep /boot/overlays/hifiberry-digi-pro.dtbo
+eepmake dacplus.txt dacplus.eep /boot/overlays/hifiberry-dacplus.dtbo
+eepmake digiplus.txt digiplus.eep /boot/overlays/hifiberry-digi.dtbo
+

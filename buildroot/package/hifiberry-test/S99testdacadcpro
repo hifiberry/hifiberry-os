@@ -9,13 +9,21 @@ case "$1" in
 	if [ -f /etc/init.d/S90sigmatcp ]; then
            mv /etc/init.d/S90sigmatcp /etc/init.d/noS90sigmatcp
 	fi
-	if [ ! -f /boot/overlays/hifiberry-dacplusadc.dtbo ]; then
-	   cp /opt/hifiberry/contrib/hifiberry-dacplusadc.dtbo  /boot/overlays/
+	if [ ! -f /boot/overlays/hifiberry-dacplusadcpro.dtbo ]; then
+	   cp /opt/hifiberry/contrib/hifiberry-dacplusadcpro.dtbo  /boot/overlays/
 	   reboot
 	fi 
 
+	i2c=`cat /boot/config.txt | grep i2c-gpio`
+        if [ "$i2c" == "" ]; then
+           echo "dtoverlay=i2c-gpio" >> /boot/config.txt
+	   echo "dtparam=i2c_gpio_sda=0" >> /boot/config.txt
+	   echo "dtparam=i2c_gpio_scl=1" >> /boot/config.txt
+        fi
+
 	fail=0
         # Test noise
+        arecord -r 48000 -d 1 -c 2 -f S32_LE /tmp/start.wav 2>/dev/null
         arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
         RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`
         NOISE=`echo $RMS \* 1000000 / 1 | bc`
@@ -47,6 +55,11 @@ case "$1" in
         else
             echo Signal ok: $SIGNAL > $OUT
         fi
+
+	# Program EEPROM
+        PATH=$PATH:/opt/hifiberry/contrib
+        export PATH
+        /opt/hifiberry/contrib/hbflash.sh -w -f=/opt/hifiberry/contrib/dacplusadcpro.eep -t=24c32
 
         if [ "$fail" == "0" ]; then
                 echo '  ___ | | __' > $OUT
