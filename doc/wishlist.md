@@ -11,6 +11,8 @@
 
 # Done
 
+* Shairport
+* Spotifyd
 * Bluetooth
 * MPD
 * Spotify watchdog
