@@ -2,11 +2,11 @@
 Description=SigmaTCP Server for HiFiBerry DSP
 Wants=network-online.target
 After=network.target network-online.target
+
 [Service]
 Type=simple
-ExecStart=$LOC --alsa
+ExecStart=/usr/bin/sigmatcpserver --alsa
 StandardOutput=journal
+
 [Install]
 WantedBy=multi-user.target
-EOT
-
