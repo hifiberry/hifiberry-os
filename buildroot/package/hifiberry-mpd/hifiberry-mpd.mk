@@ -17,4 +17,13 @@ define HIFIBERRY_MPD_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/etc/mpd.conf
 endef
 
+define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
+        ln -fs ../../../../usr/lib/systemd/system/shairport-sync.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/mpd.service
+endef
+
+
+
 $(eval $(generic-package))
