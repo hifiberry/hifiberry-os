@@ -6,7 +6,7 @@ case "$1" in
 	/usr/bin/hciattach /dev/ttyAMA0 bcm43xx 921600 noflow -
 
 	echo "Starting Bluetooth demon"
-	/usr/libexec/bluetooth/bluetoothd &
+	/usr/libexec/bluetooth/bluetoothd -f /etc/bluetooth/main.cf &
 
 	echo "Enabling Bluetooth"
 	/usr/bin/bluetoothctl <<EOF
@@ -18,7 +18,6 @@ EOF
 	echo "Configuring HCI"
 	/usr/bin/hciconfig hci0 piscan
 	/usr/bin/hciconfig hci0 sspmode 1
-	/usr/bin/hciconfig hci0 name 'HiFiBerry'
 
 	echo "Bluetooth devices"
 	/usr/bin/hcitool dev
