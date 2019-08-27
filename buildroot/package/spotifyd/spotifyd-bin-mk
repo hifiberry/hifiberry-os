@@ -26,9 +26,11 @@ define SPOTIFYD_INSTALL_INIT_SYSV
 
 endef
 
-define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
+define SPOTIFYD_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify.service \
-                $(TARGET_DIR)/lib/systemd/system/spotify.service
+                $(TARGET_DIR)/usr/lib/systemd/system/spotify.service
+        ln -fs ../../../../usr/lib/systemd/system/spotify.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/spotify.service
 endef
 
 $(eval $(generic-package))

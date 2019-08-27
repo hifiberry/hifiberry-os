@@ -1,14 +1,14 @@
 [Unit]
 Description=Spotify connect
 Wants=network-online.target
-After=network.target network-online.target
+After=network.target network-online.target sound.target
 Wants=dsptoolkit.service
 After=dsptoolkit.service
+
 [Service]
 Type=simple
 ExecStart=/usr/bin/spotifyd --no-daemon 
 StandardOutput=journal
+
 [Install]
 WantedBy=multi-user.target
-EOT
-
