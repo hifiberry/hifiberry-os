@@ -1,0 +1,11 @@
+[Unit]
+Description=mpd
+Wants=network-online.target
+After=network.target network-online.target sound.target
+
+[Service]
+Type=simple
+ExecStart=/bin/mpd --no-daemon
+
+[Install]
+WantedBy=multi-user.target
