@@ -1,0 +1,8 @@
+[Unit]
+Description=WPA supplicant for %i
+
+[Service]
+ExecStart=/sbin/wpa_supplicant -i%i -c/etc/wpa_supplicant.conf
+
+[Install]
+WantedBy=multi-user.target

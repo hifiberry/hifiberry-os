@@ -1,0 +1,11 @@
+[Unit]
+Description=copy-config - copy config files from FAT partition
+Before=network.target
+
+[Service]
+Type=oneshort
+ExecStart=/opt/hifiberry/bin/copy-config
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
