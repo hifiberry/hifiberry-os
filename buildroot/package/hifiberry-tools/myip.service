@@ -1,0 +1,14 @@
+[Unit]
+Description=MyIP - say local IP
+Wants=network-online.target
+After=network.target network-online.target sound.target
+Wants=hifiberry-detect.service
+After=hifiberry-detect.service
+
+[Service]
+Type=Oneshot
+ExecStart=/opt/hifiberry/bin/myip
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
