@@ -4,11 +4,12 @@ Wants=network-online.target
 After=network.target network-online.target
 Wants=dsptoolkit.service
 After=dsptoolkit.service
+
+
 [Service]
 Type=Oneshot
 ExecStart=/opt/hifiberry/bin/detect-hifiberry
 StandardOutput=journal
+
 [Install]
 WantedBy=multi-user.target
-EOT
-

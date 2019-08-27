@@ -15,6 +15,14 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/reconfigure-players
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-daemons \
            $(TARGET_DIR)/opt/hifiberry/bin/check-daemons
+    $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/config-files \
+           $(TARGET_DIR)/opt/hifiberry/etc/config-files
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/save-config \
+           $(TARGET_DIR)/opt/hifiberry/bin/save-config
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/restore-config \
+           $(TARGET_DIR)/opt/hifiberry/bin/restore-config
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip \
+           $(TARGET_DIR)/opt/hifiberry/bin/myip
 
     for a in $(@D)/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
@@ -32,12 +40,19 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
                 $(TARGET_DIR)/etc/init.d/S99x-myip
 endef
 
-define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
+define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-detect.service \
                 $(TARGET_DIR)/lib/systemd/system/hifiberry-detect.service
+        ln -fs ../../../../usr/lib/systemd/system/hifiberry-detect.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/hifiberry-detect.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-players.service \
-                $(TARGET_DIR)/lib/systemd/system/cofigure-players.service
-
+                $(TARGET_DIR)/lib/systemd/system/configure-players.service
+        ln -fs ../../../../usr/lib/systemd/system/configure-players.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/configure-players.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip.service \
+                $(TARGET_DIR)/lib/systemd/system/myip.service
+        ln -fs ../../../../usr/lib/systemd/system/myip.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/myip.service
 endef
 
 
