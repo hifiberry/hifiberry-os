@@ -2,8 +2,6 @@
 Description=MyIP - say local IP
 Wants=network-online.target
 After=network.target network-online.target sound.target
-Wants=hifiberry-detect.service
-After=hifiberry-detect.service
 
 [Service]
 Type=Oneshot
