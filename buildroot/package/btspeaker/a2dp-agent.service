@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth A2DP agent
+Requires=bluetoothd.service
+After=bluetoothd.service
+
+[Service]
+ExecStart=/opt/btspeaker/a2dp-agent.py
+RestartSec=5
+Restart=Always
+
+[Install]
+WantedBy=multi-user.target
