@@ -26,7 +26,7 @@ endef
 
 define RASPI_WIFI_INSTALL_INIT_SYSTEMD
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/copy-config.service \
-           $(TARGET_DIR)/rsr/lib/systemd/system/copy-config.service
+           $(TARGET_DIR)/usr/lib/systemd/system/copy-config.service
     ln -fs ../../../usr/lib/systemd/system/copy-config.service \
            $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/copy-config.service
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/wireless.network \
@@ -39,7 +39,6 @@ define RASPI_WIFI_INSTALL_INIT_SYSTEMD
 #           $(TARGET_DIR)/etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service
 #    ln -fs ../../../../usr/lib/systemd/system/wpa_supplicant.service \
 #           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/wpa_supplicant.service
-
 endef
 
 $(eval $(generic-package))
