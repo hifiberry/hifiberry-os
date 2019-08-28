@@ -31,8 +31,8 @@ define DSPTOOLKIT_INSTALL_INIT
 		$(TARGET_DIR)/etc/init.d/S90sigmatcp
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/sigmatcp.service
-        ln -fs ../../../../../usr/lib/systemd/system/sigmatcp.service \
-                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/sigmatcp.service
+        ln -fs ../../../../usr/lib/systemd/system/sigmatcp.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sigmatcp.service
 endef
 
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_INSTALL_INIT
