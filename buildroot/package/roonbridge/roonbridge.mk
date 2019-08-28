@@ -27,7 +27,7 @@ define ROONBRIDGE_INSTALL_INIT_SYSV
                 $(TARGET_DIR)/etc/init.d/S99roonbridge
 endef
 
-define DSPTOOLKIT_INSTALL_INIT_SYSTEMD
+define ROONBRIDGE_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/roonbridge/roonbridge.service \
                 $(TARGET_DIR)/lib/systemd/system/roonbridge.service
 endef
