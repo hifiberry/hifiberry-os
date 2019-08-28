@@ -43,16 +43,16 @@ endef
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-detect.service \
                 $(TARGET_DIR)/lib/systemd/system/hifiberry-detect.service
-        ln -fs ../../../../usr/lib/systemd/system/hifiberry-detect.service \
-                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/hifiberry-detect.service
+        ln -fs ../../../usr/lib/systemd/system/hifiberry-detect.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry-detect.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-players.service \
                 $(TARGET_DIR)/lib/systemd/system/configure-players.service
-        ln -fs ../../../../usr/lib/systemd/system/configure-players.service \
-                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/configure-players.service
+        ln -fs ../../../usr/lib/systemd/system/configure-players.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-players.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip.service \
                 $(TARGET_DIR)/lib/systemd/system/myip.service
-        ln -fs ../../../../usr/lib/systemd/system/myip.service \
-                $(TARGET_DIR)/usr/lib/systemd/system/multi-user.target.wants/myip.service
+        ln -fs ../../../usr/lib/systemd/system/myip.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
 endef
 
 

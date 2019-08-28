@@ -1,10 +1,7 @@
 [Unit]
 Description=HiFiBerry detect
-Wants=network-online.target
-After=network.target network-online.target
 Wants=dsptoolkit.service
 After=dsptoolkit.service
-
 
 [Service]
 Type=Oneshot
