@@ -1,6 +1,6 @@
 # Wishlist
 
-* Use systemd to speed up start process
+* alsaloop support for DAC+ ADC
 * Support for Pi Zero
 * Support for Pi 4
 * Upgrade tool
@@ -8,9 +8,11 @@
 * AlsaEQ
 * Consistent use of ALSA volume control in all applications
 * Setup WiFi using a temporary AP
+* IPv6 support
 
 # Done
 
+* Use systemd to speed up start process
 * Shairport
 * Spotifyd
 * Bluetooth
