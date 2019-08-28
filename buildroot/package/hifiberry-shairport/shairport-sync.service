@@ -1,14 +1,16 @@
 [Unit]
 Description=Shairport-sync
-Wants=network-online.target
+Wants=network.target
 Requires=avahi-daemon.service
-After=network.target network-online.target sound.target avahi-daemon.service
+After=network.target sound.target avahi-daemon.service
 
 [Service]
 Type=simple
 # Avahi daemon needs some time until fully ready
 ExecStartPre=/bin/sleep 5 
 ExecStart=/bin/shairport-sync
+Restart=Always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
