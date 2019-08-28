@@ -1,10 +1,14 @@
 [Unit]
 Description=Squeezelite
-Wants=network-online.target
-After=network.target network-online.target
+Wants=network.target
+After=network.target
+
 [Service]
 Type=simple
 ExecStart=/usr/bin/squeezelite -o softvol -M HiFiBerry -N /var/squeezelite/squeezelite.name
 StandardOutput=journal
+Restart=Always
+RestartSec=5
+
 [Install]
 WantedBy=multi-user.target
