@@ -1,9 +1,8 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2019.08-rc1 Configuration
+# Buildroot 2019.08-rc3 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
-BR2_EXTERNAL_HIFIBERRY_PATH="/home/matuschd/hifiberry-os/buildroot"
 BR2_HOST_GCC_AT_LEAST_4_5=y
 BR2_HOST_GCC_AT_LEAST_4_6=y
 BR2_HOST_GCC_AT_LEAST_4_7=y
@@ -174,7 +173,7 @@ BR2_BZCAT="bzcat"
 BR2_XZCAT="xzcat"
 BR2_LZCAT="lzip -d -c"
 BR2_TAR_OPTIONS=""
-BR2_DEFCONFIG="/data/hifiberryos/buildroot-2019.08-rc1/configs/raspberrypi3_defconfig"
+BR2_DEFCONFIG="/home/matuschd/buildroot-2019.08-rc3/configs/raspberrypi3_defconfig"
 BR2_DL_DIR="$(TOPDIR)/dl"
 BR2_HOST_DIR="$(BASE_DIR)/host"
 
@@ -1070,7 +1069,7 @@ BR2_PACKAGE_QT5_JSCORE_AVAILABLE=y
 #
 
 #
-# vte needs a toolchain w/ wchar, threads, C++, gcc >= 4.8
+# vte needs a toolchain w/ wchar, threads, C++, gcc >= 4.8, host gcc >= 4.8
 #
 
 #
@@ -1219,11 +1218,6 @@ BR2_PACKAGE_FLASHROM_ARCH_SUPPORTS=y
 # neard needs a toolchain w/ wchar, threads, dynamic library
 #
 # BR2_PACKAGE_NVME is not set
-
-#
-# odroid-mali needs a glibc toolchain
-#
-# BR2_PACKAGE_ODROID_SCRIPTS is not set
 
 #
 # ofono needs a toolchain w/ dynamic library, wchar, threads
@@ -1652,7 +1646,7 @@ BR2_PACKAGE_MONGODB_ARCH_SUPPORTS=y
 # BR2_PACKAGE_GRAPHITE2 is not set
 
 #
-# gtkmm3 needs libgtk3 and a toolchain w/ C++, wchar, threads, gcc >= 4.9
+# gtkmm3 needs libgtk3 and a toolchain w/ C++, wchar, threads, gcc >= 4.9, host gcc >= 4.8
 #
 # BR2_PACKAGE_HARFBUZZ is not set
 # BR2_PACKAGE_IJS is not set
@@ -1681,7 +1675,7 @@ BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
 # BR2_PACKAGE_LIBEXIF is not set
 
 #
-# libfm needs X.org and a toolchain w/ wchar, threads, C++
+# libfm needs X.org and a toolchain w/ wchar, threads, C++, gcc >= 4.8
 #
 
 #
@@ -1711,7 +1705,7 @@ BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
 # BR2_PACKAGE_LIBGTA is not set
 
 #
-# libgtk3 needs a toolchain w/ wchar, threads, C++
+# libgtk3 needs a toolchain w/ wchar, threads, C++, gcc >= 4.8, host gcc >= 4.8
 #
 
 #
@@ -1727,7 +1721,7 @@ BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
 # BR2_PACKAGE_LIBRAW is not set
 
 #
-# librsvg needs a toolchain w/ wchar, threads, C++
+# librsvg needs a toolchain w/ wchar, threads, C++, gcc >= 4.8
 #
 
 #
@@ -1760,7 +1754,7 @@ BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
 # BR2_PACKAGE_OPENJPEG is not set
 
 #
-# pango needs a toolchain w/ wchar, threads, C++
+# pango needs a toolchain w/ wchar, threads, C++, gcc >= 4.8
 #
 
 #
@@ -1971,7 +1965,6 @@ BR2_PACKAGE_GNU_EFI_ARCH_SUPPORTS=y
 # BR2_PACKAGE_BITSTREAM is not set
 # BR2_PACKAGE_KVAZAAR is not set
 # BR2_PACKAGE_LIBAACS is not set
-# BR2_PACKAGE_LIBAMCODEC is not set
 # BR2_PACKAGE_LIBASS is not set
 # BR2_PACKAGE_LIBBDPLUS is not set
 # BR2_PACKAGE_LIBBLURAY is not set
@@ -3273,6 +3266,10 @@ BR2_PACKAGE_HOST_UTIL_LINUX=y
 #
 # Legacy options removed in 2019.08
 #
+# BR2_PACKAGE_LIBAMCODEC is not set
+# BR2_PACKAGE_ODROID_SCRIPTS is not set
+# BR2_PACKAGE_ODROID_MALI is not set
+# BR2_PACKAGE_KODI_PLATFORM_AML is not set
 # BR2_GCC_VERSION_6_X is not set
 # BR2_GCC_VERSION_4_9_X is not set
 # BR2_GDB_VERSION_7_12 is not set
@@ -3872,24 +3869,3 @@ BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION=""
 # BR2_VFP_FLOAT is not set
 # BR2_PACKAGE_GCC_TARGET is not set
 # BR2_HAVE_DEVFILES is not set
-
-#
-# External options
-#
-
-#
-# Additional HiFiBerry modules (in /home/matuschd/hifiberry-os/buildroot)
-#
-# BR2_PACKAGE_HIFIBERRY_BASE is not set
-# BR2_PACKAGE_RAAT is not set
-# BR2_PACKAGE_ROONBRIDGE is not set
-# BR2_PACKAGE_CONFIGTXT is not set
-# BR2_PACKAGE_RASPI_WIFI is not set
-HIFIBERRY_TEST_DACRTC=y
-# HIFIBERRY_TEST_DSPDAC is not set
-# HIFIBERRY_TEST_BEOCREATE is not set
-# HIFIBERRY_TEST_DACADC is not set
-# HIFIBERRY_TEST_DACADCPRO is not set
-# HIFIBERRY_TEST_DSPDACADC is not set
-# HIFIBERRY_TEST_USB is not set
-# BR2_PACKAGE_INITIAL_CONFIG is not set
