@@ -23,6 +23,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/restore-config
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip \
            $(TARGET_DIR)/opt/hifiberry/bin/myip
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
+           $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
 
     for a in $(@D)/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
@@ -34,6 +36,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
 endef
 
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S60initial-volume \
+                $(TARGET_DIR)/etc/init.d/S60initial-volume
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S98hifiberry-detect \
                 $(TARGET_DIR)/etc/init.d/S98hifiberry-detect
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S99x-myip \
@@ -53,6 +57,11 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/myip.service
         ln -fs ../../../usr/lib/systemd/system/myip.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
+                $(TARGET_DIR)/lib/systemd/system/initial-volume.service
+        ln -fs ../../../usr/lib/systemd/system/initial-volume.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
+
 endef
 
 
