@@ -23,7 +23,11 @@ case "$1" in
 
 	fail=0
         # Test noise
-        arecord -r 48000 -d 1 -c 2 -f S32_LE /tmp/start.wav 2>/dev/null
+        arecord -r 48000 -d 4 -c 2 -f S32_LE /tmp/start.wav 2>/dev/null
+	if [ "$?" != "0" ]; then
+            echo "Could not record anything"
+            fail=1
+        fi 
         arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
         RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`
         NOISE=`echo $RMS \* 1000000 / 1 | bc`
