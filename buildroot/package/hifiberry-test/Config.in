@@ -9,6 +9,8 @@ config BR2_PACKAGE_HIFIBERRY_TEST
 
 choice
     prompt "Card to test"
+    config HIFIBERRY_TEST_AMP2
+          bool "Amp2"
     config HIFIBERRY_TEST_DACRTC
           bool "DAC+ RTC"
     config HIFIBERRY_TEST_DSPDAC
