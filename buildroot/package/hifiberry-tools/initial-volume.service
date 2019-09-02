@@ -1,0 +1,13 @@
+[Unit]
+Description=Set initial volume
+Wants=sound.target
+
+[Service]
+Type=Oneshot
+# Sound card might not be fully initialized even if sound.target has been reached :(
+ExecStartPre=sleep 3
+ExecStart=/opt/hifiberry/bin/set-initial-volume
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
