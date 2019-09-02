@@ -1,0 +1,12 @@
+[Unit]
+Description=alsaloop
+After=sound.target
+ConditionPathExists=/etc/hifiberry/can_record
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/alsaloop -P default -t 100000
+Restart=Always
+
+[Install]
+WantedBy=multi-user.target

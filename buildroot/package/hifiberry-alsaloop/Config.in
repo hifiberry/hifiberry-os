@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HIFIBERRY_ALSALOOP
+	bool "hifiberry-alsaloop"
+        help
+	  Run alsaloop as a background daemon
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+	select BR2_PACKAGE_ALSA_UTILS_ALSALOOP
+
