@@ -1,0 +1,75 @@
+#!/bin/bash
+if [ ! -f "/etc/uuid" ]; then
+  /usr/bin/uuidgen > /etc/uuid
+fi
+
+UUID=`cat /etc/uuid`
+CARD=`aplay -l | grep Hi[fF]iBerry`
+DIGI=`echo $CARD | grep -i digi`
+if [ "$DIGI" != "" ]; then
+ CARD="Digi+"
+else
+ CARD="DAC+"
+fi
+DRIVER=`aplay -l | grep "\[snd_rpi" | awk -F\[ '{print $2}' | awk -F\] '{print $1}'`
+CONFIGFILE=/boot/settings.txt
+VERSION=`cat /etc/hifiberry.version`
+
+DIGIFIXED=0
+DIGIDOP=0
+LINEARVOLUME=0
+
+echo Configuring RAAT server for UUID $UUID on $CARD \($DRIVER\)
+
+# Generate correct mixer controls:
+VOLCTL='"volume": { "type": "software" }'
+MAXFS=192000
+DSD=""
+SIGNALTYPE="analog"
+
+MIXER=`cat /etc/hifiberry.state | grep CURRENT_MIXER_CONTROL | awk -F= '{print $2}'`
+
+if [ "$CARD" == "DAC+" ]; then
+ if [ "$LINEARVOLUME" == "1" ]; then 
+  VOLCTL='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":$MIXER, "mode":"number" },'
+ else
+  VOLCTL='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":$MIXER, "mode":"db","db_step":0.5 ,"db_max":10, "db_min":-100},'
+ fi
+ MAXFS=192000
+elif [ "$CARD" == "Digi+" ]; then
+ if [ "$DIGIFIXED" == "1" ]; then
+   VOLCTL=""
+ else
+   VOLCTL='"volume": { "type": "software" },'
+ fi
+ # DOP not supported on HiFiBerryOS
+ DSD=""
+
+ MAXFS=192000
+ SIGNALTYPE="digital"
+fi
+
+if [ "$CARD" == "" ]; then
+ echo "No HiFiBerry sound card found, aborting"
+ sleep 600
+ exit 1
+fi
+
+PLAYBACKDEVICE="default"
+
+cat <<END >/etc/hifiberry_raat.conf
+{
+    "vendor":      "HiFiBerry",
+    "model":       "$CARD",
+    "unique_id":   "$UUID",
+    "output":      { "type": "alsa", 
+                     "device": "$PLAYBACKDEVICE",
+                     "max_pcm_rate": $MAXFS,
+                     $DSD
+                     "signal_path": [ { "quality": "lossless", "type": "output", "method": "$SIGNALTYPE" } ]
+                   },
+$VOLCTL
+    "version":     "$VERSION"
+}
+END
+
