@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2019.08-rc1 Configuration
+# Buildroot 2019.08-rc3 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_EXTERNAL_HIFIBERRY_PATH="/home/matuschd/hifiberry-os/buildroot"
@@ -175,7 +175,7 @@ BR2_BZCAT="bzcat"
 BR2_XZCAT="xzcat"
 BR2_LZCAT="lzip -d -c"
 BR2_TAR_OPTIONS=""
-BR2_DEFCONFIG="/data/hifiberryos/buildroot-2019.08-rc1/configs/raspberrypi3_defconfig"
+BR2_DEFCONFIG="/home/matuschd/buildroot-2019.08-rc3/configs/raspberrypi3_defconfig"
 BR2_DL_DIR="$(TOPDIR)/dl"
 BR2_HOST_DIR="$(BASE_DIR)/host"
 
@@ -498,7 +498,7 @@ BR2_LINUX_KERNEL_USE_DEFCONFIG=y
 # BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG is not set
 BR2_LINUX_KERNEL_DEFCONFIG="bcm2709"
 BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES=""
-BR2_LINUX_KERNEL_CUSTOM_LOGO_PATH="../hifiberry-os/hifiberry.jpg"
+BR2_LINUX_KERNEL_CUSTOM_LOGO_PATH="../hifiberry-os/hifiberryos-black.jpg"
 # BR2_LINUX_KERNEL_UIMAGE is not set
 # BR2_LINUX_KERNEL_APPENDED_UIMAGE is not set
 BR2_LINUX_KERNEL_ZIMAGE=y
@@ -562,7 +562,7 @@ BR2_PACKAGE_ALSA_UTILS=y
 # BR2_PACKAGE_ALSA_UTILS_ALSACONF is not set
 # BR2_PACKAGE_ALSA_UTILS_ACONNECT is not set
 BR2_PACKAGE_ALSA_UTILS_ALSACTL=y
-# BR2_PACKAGE_ALSA_UTILS_ALSALOOP is not set
+BR2_PACKAGE_ALSA_UTILS_ALSALOOP=y
 BR2_PACKAGE_ALSA_UTILS_ALSAMIXER=y
 # BR2_PACKAGE_ALSA_UTILS_ALSAUCM is not set
 # BR2_PACKAGE_ALSA_UTILS_ALSATPLG is not set
@@ -1137,8 +1137,6 @@ BR2_PACKAGE_PROVIDES_LIBOPENVG="rpi-userland"
 # BR2_PACKAGE_NANOCOM is not set
 # BR2_PACKAGE_NEARD is not set
 # BR2_PACKAGE_NVME is not set
-# BR2_PACKAGE_ODROID_MALI is not set
-# BR2_PACKAGE_ODROID_SCRIPTS is not set
 # BR2_PACKAGE_OFONO is not set
 # BR2_PACKAGE_OPEN2300 is not set
 # BR2_PACKAGE_OPENIPMI is not set
@@ -1774,7 +1772,7 @@ BR2_PACKAGE_LIBCONFIG=y
 # BR2_PACKAGE_GRAPHITE2 is not set
 
 #
-# gtkmm3 needs libgtk3 and a toolchain w/ C++, wchar, threads, gcc >= 4.9
+# gtkmm3 needs libgtk3 and a toolchain w/ C++, wchar, threads, gcc >= 4.9, host gcc >= 4.8
 #
 # BR2_PACKAGE_HARFBUZZ is not set
 # BR2_PACKAGE_IJS is not set
@@ -1797,7 +1795,7 @@ BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
 # BR2_PACKAGE_LIBEXIF is not set
 
 #
-# libfm needs X.org and a toolchain w/ wchar, threads, C++
+# libfm needs X.org and a toolchain w/ wchar, threads, C++, gcc >= 4.8
 #
 # BR2_PACKAGE_LIBFM_EXTRA is not set
 
@@ -1998,7 +1996,6 @@ BR2_PACKAGE_EXPAT=y
 # BR2_PACKAGE_BITSTREAM is not set
 # BR2_PACKAGE_KVAZAAR is not set
 # BR2_PACKAGE_LIBAACS is not set
-# BR2_PACKAGE_LIBAMCODEC is not set
 # BR2_PACKAGE_LIBASS is not set
 # BR2_PACKAGE_LIBBDPLUS is not set
 # BR2_PACKAGE_LIBBLURAY is not set
@@ -3132,6 +3129,10 @@ BR2_PACKAGE_HOST_UTIL_LINUX=y
 #
 # Legacy options removed in 2019.08
 #
+# BR2_PACKAGE_LIBAMCODEC is not set
+# BR2_PACKAGE_ODROID_SCRIPTS is not set
+# BR2_PACKAGE_ODROID_MALI is not set
+# BR2_PACKAGE_KODI_PLATFORM_AML is not set
 # BR2_GCC_VERSION_6_X is not set
 # BR2_GCC_VERSION_4_9_X is not set
 # BR2_GDB_VERSION_7_12 is not set
@@ -3749,6 +3750,7 @@ BR2_PACKAGE_SPOTIFYD=y
 BR2_PACKAGE_HIFIBERRY_SQUEEZELITE=y
 BR2_PACKAGE_HIFIBERRY_SHAIRPORT=y
 BR2_PACKAGE_HIFIBERRY_MPD=y
+BR2_PACKAGE_HIFIBERRY_ALSALOOP=y
 # BR2_PACKAGE_ROONBRIDGE is not set
 BR2_PACKAGE_BTSPEAKER=y
 BR2_PACKAGE_CONFIGTXT=y
