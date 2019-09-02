@@ -12,8 +12,9 @@ At the moment, the following services are supported:
 - Spotify (using Spotifyd)
 - Airplay (using shairport)
 - Squeezebox (using squeezelite)
-- MPD
 - Bluetooth A2DP sind (using BlueZ 5)
+- Roon
+- MPD
 
 Additional tools that are available:
 
