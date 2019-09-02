@@ -1,0 +1,14 @@
+[Unit]
+Description=Roon
+After=network.target sound.target
+
+[Service]
+Type=simple
+ExecStartPre=/opt/raat/configure-raat
+ExecStart=/opt/raat/raat_app /etc/hifiberry_raat.conf
+StandardOutput=journal
+Restart=Always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
