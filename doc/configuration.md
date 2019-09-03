@@ -18,3 +18,5 @@ the system and edit /etc/systemname, then run
     /opt/hifiberry/bin/reconfigure-players 
     
 or just reboot. 
+
+You can also create a file systemname on the FAT partition of the SD card. This will be used on the next boot.
