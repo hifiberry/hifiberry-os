@@ -11,7 +11,7 @@ HIFIBERRY_TOOLS_SITE = $(call github,hifiberry,hifiberry-tools,master)
 define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(@D)/detect-hifiberry \
            $(TARGET_DIR)/opt/hifiberry/bin/detect-hifiberry
-    $(INSTALL) -D -m 0755 $(@D)/reconfigure-players \
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/reconfigure-players \
            $(TARGET_DIR)/opt/hifiberry/bin/reconfigure-players
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-daemons \
            $(TARGET_DIR)/opt/hifiberry/bin/check-daemons
