@@ -13,7 +13,7 @@ else
 fi
 DRIVER=`aplay -l | grep "\[snd_rpi" | awk -F\[ '{print $2}' | awk -F\] '{print $1}'`
 CONFIGFILE=/boot/settings.txt
-VERSION=`cat /etc/hifiberry.version`
+VERSION="1.0"
 
 DIGIFIXED=0
 DIGIDOP=0
@@ -29,12 +29,16 @@ SIGNALTYPE="analog"
 
 MIXER=`cat /etc/hifiberry.state | grep CURRENT_MIXER_CONTROL | awk -F= '{print $2}'`
 
+V1='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":'
 if [ "$CARD" == "DAC+" ]; then
- if [ "$LINEARVOLUME" == "1" ]; then 
-  VOLCTL='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":$MIXER, "mode":"number" },'
+ if [ "$LINEARVOLUME" == "1" ]; then
+  V2=$MIXER
+  V3=', "mode":"number" },'
  else
-  VOLCTL='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":$MIXER, "mode":"db","db_step":0.5 ,"db_max":10, "db_min":-100},'
+  V2=$MIXER
+  V3=', "mode":"db","db_step":0.5 ,"db_max":10, "db_min":-100},'
  fi
+ VOLCTL=$V1$V2$V3
  MAXFS=192000
 elif [ "$CARD" == "Digi+" ]; then
  if [ "$DIGIFIXED" == "1" ]; then
@@ -47,12 +51,6 @@ elif [ "$CARD" == "Digi+" ]; then
 
  MAXFS=192000
  SIGNALTYPE="digital"
-fi
-
-if [ "$CARD" == "" ]; then
- echo "No HiFiBerry sound card found, aborting"
- sleep 600
- exit 1
 fi
 
 PLAYBACKDEVICE="default"
