@@ -1,0 +1,193 @@
+#!/bin/bash
+
+# Find the correct ALSA volume control 
+guess_volume_control() {
+ # Check if there is a working DSP volume control
+ dsptoolkit get-volume 2>/dev/null >/dev/null
+ if [ $? == 0 ]; then
+    MIXER_CONTROL=DSPVolume
+    return
+ fi
+
+ # DAC+ and Amp2 use "Digital" 
+ DIGITAL=`amixer scontrols | grep Digital`
+ if [ "$DIGITAL" != "" ]; then
+   MIXER_CONTROL=Digital
+   return                                 
+ fi  
+
+ # Amp+ uses "Master"
+ MASTER=`amixer scontrols | grep Master`
+ if [ "$MASTER" != "" ]; then
+   MIXER_CONTROL=Master
+   return
+ fi
+
+
+ # There should be at least a Softvol control
+ SOFTVOL=`amixer scontrols | grep Softvol`
+ if [ "$SOFTVOL" != "" ]; then
+   MIXER_CONTROL=Softvol
+   return
+ fi
+
+ echo "Could not find ALSA volume control"
+}
+
+# Guess what card is installed"
+guess_card() {
+ DACPRO=`aplay -l | grep DAC+ | grep Pro`
+ if [ "$DACPRO" != "" ]; then
+   CARD="DAC+ Pro"
+   return
+ fi
+
+ DAC=`aplay -l | grep DAC+`
+ if [ "$DAC" != "" ]; then
+   CARD="DAC+/Amp2"
+    return
+ fi
+
+ AMPPLUS=`aplay -l | grep AMP`
+ if [ "$AMPPLUS" != "" ]; then
+   CARD="Amp+"
+   return
+ fi
+
+ DIGIPRO=`aplay -l | grep Digi+ | grep Pro`
+ if [ "$DIGIPRO" != "" ]; then
+   CARD="Digi+ Pro"
+   return
+ fi
+
+ DIGI=`aplay -l | grep Digi+`
+ if [ "$DIGI" != "" ]; then
+   CARD="Digi+"
+    return
+ fi
+
+ CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
+ if [ "$CLKGEN" == "0x03" ]; then
+    CARD="Beocreate 4 channel amplifier"
+    return
+ fi
+
+ REG1=`dsptoolkit read-reg 0xf003` # expected 00 01
+ REG2=`dsptoolkit read-reg 0xf402` # expected 00 01
+ REG3=`dsptoolkit read-reg 0xc000` # expected 00 00
+ if [ "$REG1$REG2$REG3" == "00 01 00 01 00 00 " ]; then
+    CARD="DAC+ DSP"
+    return
+ fi
+}
+
+# Check if card can record
+can_record() {
+ ADC==`arecord -l | grep -i hifiberry`
+ if [ "$ADC" != "" ]; then
+   CAN_RECORD=1
+   return
+ fi
+}
+
+# Calculate system names
+system_name() {
+ if [ -f /etc/systemname ]; then
+   SYSNAME=`cat /etc/systemname`
+ else
+   SYSNAME=HiFiBerry
+   echo $SYSNAME > /etc/systemname
+ fi
+
+ SYSNAME_NO_SPACES=`echo $SYSNAME | sed s/\ /-/g`
+ SYSNAME_SED_SPACES=`echo $SYSNAME | sed 's/\ /\\\\\\ /g'` 
+}
+
+# Reconfigure SpotifyD
+reconfigure_spotify() {
+ sed -i s/mixer\ =.*/mixer\ =\ $MIXER_CONTROL/ /etc/spotifyd.conf 
+ sed -i s/device_name\ =.*/device_name\ =\ $SYSNAME_NO_SPACES/ /etc/spotifyd.conf
+
+}
+
+# Reconfigure Shairport-sync
+reconfigure_shairport() {
+ sed -i s/mixer_control_name\ =\ .*/mixer_control_name\ =\ \"$MIXER_CONTROL\"\;/ /etc/shairport-sync.conf 
+ sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
+}
+
+# Reconfigure Bluetooth
+reconfigure_bluetooth() {
+ sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
+}
+
+# Reconfigure squeezelite
+reconfigure_squeezelite() {
+ echo $SYSNAME > /var/squeezelite/squeezelite.name
+}
+
+# 
+reconfigure_recording() {
+ if [ ! -d /etc/hifiberry ]; then
+   mkdir -p /etc/hifiberry
+ fi
+ if [ "$CAN_RECORD" != "" ]; then
+   touch /etc/hifiberry/can_record
+ else if [ -f /etc/hifiberry/can_record ]; then
+     rm /etc/hifiberry/can_record
+   fi
+ fi
+}
+
+MIXER_CONTROL=""
+CARD="unknown"
+
+if [ -f /etc/hifiberry.state ]; then 
+. /etc/hifiberry.state
+fi
+
+# make sure there was some program using ALSA before looking
+# up ALSA controls
+play -q -n synth 0.1 sine 1 2>/dev/null
+
+guess_volume_control
+guess_card
+can_record
+system_name
+
+if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
+ echo "Sound card settings have been changed, reconfiguring..."
+else
+ echo "Nothing changed, exiting..."
+ exit
+fi
+                                  
+
+echo "Applying settings: "
+echo " System name: $SYSNAME"
+echo " Sound card: $CARD"
+echo " ALSA mixer control: $MIXER_CONTROL"
+echo " Recording: $CAN_RECORD"
+echo
+
+echo "Reconfiguring Spotifyd"
+reconfigure_spotify
+echo "Reconfiguring Shairport-sync"
+reconfigure_shairport
+echo "Reconfiguring Bluetooth"
+reconfigure_bluetooth
+echo "Reconfiguring squeezelite"
+reconfigure_squeezelite
+echo "Reconfigure recording"
+reconfigure_recording
+
+echo "Saving settings to /etc/hifiberry.state"
+echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" > /etc/hifiberry.state
+echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
+echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
+
+if [ "$1" == "--reboot" ]; then
+ sync
+ reboot
+fi
+
