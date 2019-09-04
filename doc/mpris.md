@@ -6,6 +6,7 @@ them quite complex. Ideally a single interface should be used for all players. A
 However, today not all applications support MPRIS.
 
 | Player | MPRIS supported | MPRIS metadata | Potential alternative |
+| --- | --- | --- | --- |
 | spotifyd | yes | yes | - |
 | shairport-sync  | yes | yes | - |
 | squeezelite | no | no | [slimpris](https://github.com/mavit/slimpris2) |
