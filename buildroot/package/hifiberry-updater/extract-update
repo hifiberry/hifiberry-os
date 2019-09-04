@@ -1,0 +1,63 @@
+#!/bin/bash
+
+UPDATER=/root/updater.tar.gz
+
+# TODO: update extract updater
+
+if [ ! -f $UPDATEROOT ]; then
+ echo "$UPDATEROOT does not exist, aborting"
+ exit 1
+fi 
+
+cd `dirname $0`
+INACTIVE=`./partitions | awk '{print $2}'`
+
+echo "Unmounting $INACTIVE..."
+umount /newroot 2>/dev/null
+
+echo "Saving configuration..."
+/opt/hifiberry/bin/save-config
+
+echo "Extracting new firmware to $INACTIVE..."
+gunzip -c $UPDATER | tar xOf - rootfs.ext2 | dd of=$INACTIVE bs=1048576
+
+echo "Mounting new root file system"
+if [ ! -d /newroot ]; then
+  mkdir /newroot
+fi
+mount -t ext4 $INACTIVE /newroot
+
+echo "Resizing new root file system"
+resize2fs $INACTIVE
+
+echo "Restoring configuration..."
+/opt/hifiberry/bin/restore-config /newroot
+
+
+echo "Extracting new kernel"
+cd /tmp
+gunzip -c $UPDATER | tar xf - zImage updater.sh
+if [ ! -f zImage ]; then
+ echo "Could not find new kernel, aborting ..."
+ exit 1
+else
+ cp /boot/zImage /boot/zImage.bak
+ mv zImage /boot/zImage 2>/dev/null
+fi
+
+echo "Looking for addtional update script"
+if [ ! -f zImage ]; then          
+ echo "No additional update script found."          
+else
+ chmod +x ./updater.sh
+ ./updater.sh
+fi
+sync
+
+echo "Switching root file system to inactive partition"
+echo "root=$INACTIVE rootwait console=tty1" > /boot/cmdline.txt 
+
+echo "Rebooting"
+sync
+reboot
+
