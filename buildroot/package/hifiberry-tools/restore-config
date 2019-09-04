@@ -1,10 +1,16 @@
 #!/bin/bash
 BACKUPDIR=/boot/configs
 
+if [ "$1" == "" ]; then
+ DSTDIR=/
+else
+ DSTDIR=$1
+fi
+
 for i in `cat /opt/hifiberry/etc/config-files`; do
   if [ -f $BACKUPDIR/$i ]; then 
     echo "Restoring $i"
-    cp $BACKUPDIR/$i $i
+    cp $BACKUPDIR/$i $DSTDIR/$i
   fi
 done
 
