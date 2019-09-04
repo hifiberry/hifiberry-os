@@ -3,7 +3,7 @@
 There are several player applications running concurrently on HiFiBerryOS. That makes controlling all of 
 them quite complex. Ideally a single interface should be used for all players. A good candidate is DBUS MPRIS.
 
-However, today not all applications support MPRIS.
+However, today not all applications support MPRIS. This is the current state of MPRIS implementations:
 
 | Player | MPRIS supported | MPRIS metadata | Potential alternative |
 | --- | --- | --- | --- |
