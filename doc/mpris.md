@@ -10,7 +10,7 @@ However, today not all applications support MPRIS. This is the current state of 
 | spotifyd | yes | yes | - | yes |
 | shairport-sync  | yes | yes | - | yes |
 | squeezelite | no | no | [slimpris](https://github.com/mavit/slimpris2) | no |
-| bluez-alsa | no | no | - | no | [mpris-proxy](https://github.com/Vudentz/BlueZ/blob/master/tools/mpris-proxy.c) | no |
+| bluez-alsa | no | no | [mpris-proxy](https://github.com/Vudentz/BlueZ/blob/master/tools/mpris-proxy.c) | no |
 | raat | no | no | - | no |
 | mpd | no | no | [mpd mpris](https://github.com/natsukagami/mpd-mpris) | no |
 | alsaloop | no | no | - | no |
