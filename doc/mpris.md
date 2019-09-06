@@ -13,3 +13,4 @@ However, today not all applications support MPRIS. This is the current state of 
 | bluez-alsa | no | no | - | no |
 | raat | no | no | - | no |
 | mpd | no | no | [mpd mpris](https://github.com/natsukagami/mpd-mpris) | no |
+| alsaloop | no | no | - | no |
