@@ -1,0 +1,30 @@
+pcm.card0 {
+  type hw
+  card 0
+}
+
+ctl.card0 {
+  type hw
+  card 0
+}
+
+pcm.monocard {
+  slave.pcm card0
+  slave.channels 2
+  type route
+  ttable {
+    0.0 0.5
+    1.0 0.5
+    0.1 0.5
+    1.1 0.5
+  }
+}
+
+ctl.monocard {
+  type hw
+  card 0
+}
+
+pcm.!default monocard
+
+
