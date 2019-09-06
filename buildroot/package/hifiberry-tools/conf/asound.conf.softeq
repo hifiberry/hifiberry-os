@@ -1,0 +1,19 @@
+pcm.!default { 
+ type plug 
+ slave.pcm plugequal; 
+} 
+ctl.!default { 
+ type hw card 0 
+} 
+ctl.equal { 
+ type equal; 
+} 
+pcm.plugequal { 
+ type equal; 
+ slave.pcm "plughw:0,0"; 
+}
+pcm.equal {
+ type plug;
+ slave.pcm plugequal;
+ }
+
