@@ -146,10 +146,6 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
-# make sure there was some program using ALSA before looking
-# up ALSA controls
-play -q -n synth 0.1 sine 1 2>/dev/null
-
 guess_volume_control
 guess_card
 can_record
