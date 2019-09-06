@@ -5,6 +5,7 @@ After=network.target network-online.target sound.target
 
 [Service]
 Type=simple
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 ExecStart=/usr/bin/spotifyd --no-daemon 
 StandardOutput=journal
 Restart=Always
