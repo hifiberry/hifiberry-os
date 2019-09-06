@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-2019-06-19
+SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-0.2.10
 
 define SPOTIFYD_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(SPOTIFYD_BIN) \
@@ -15,22 +15,25 @@ define SPOTIFYD_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/etc/spotifyd.conf
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify-watchdog \
            $(TARGET_DIR)/opt/hifiberry/bin/spotify-watchdog
-
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/dbus.conf \
+           $(TARGET_DIR)/etc/dbus-1/system.d/spotify.conf
 endef
 
 define SPOTIFYD_INSTALL_INIT_SYSV
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify \
-                $(TARGET_DIR)/etc/init.d/S99spotify
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify-watchdog \
-                $(TARGET_DIR)/etc/init.d/S99spotify-watchdog
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify-watchdog \
+           $(TARGET_DIR)/opt/hifiberry/bin/spotify-watchdog
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify \
+           $(TARGET_DIR)/etc/init.d/S99spotify
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/S99spotify-watchdog \
+           $(TARGET_DIR)/etc/init.d/S99spotify-watchdog
 
 endef
 
 define SPOTIFYD_INSTALL_INIT_SYSTEMD
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify.service \
-                $(TARGET_DIR)/usr/lib/systemd/system/spotify.service
-        ln -fs ../../../usr/lib/systemd/system/spotify.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/spotify.service
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify.service \
+           $(TARGET_DIR)/usr/lib/systemd/system/spotify.service
+    ln -fs ../../../usr/lib/systemd/system/spotify.service \
+           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/spotify.service
 endef
 
 $(eval $(generic-package))
