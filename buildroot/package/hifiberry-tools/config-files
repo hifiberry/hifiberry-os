@@ -2,6 +2,7 @@
 /etc/hifiberry/initial-volume
 /etc/hifiberry/can-record
 /etc/systemname
-/etc/bluetooth/main.cf
+/etc/bluetooth/main.conf
 /etc/shairport-sync.conf
+/etc/uuid
 
