@@ -4,12 +4,8 @@
 #
 ################################################################################
 
-HIFIBERRY_TOOLS_VERSION = master
-HIFIBERRY_TOOLS_LICENSE = MIT
-HIFIBERRY_TOOLS_SITE = $(call github,hifiberry,hifiberry-tools,master)
-
 define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
-    $(INSTALL) -D -m 0755 $(@D)/detect-hifiberry \
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/detect-hifiberry \
            $(TARGET_DIR)/opt/hifiberry/bin/detect-hifiberry
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/reconfigure-players \
            $(TARGET_DIR)/opt/hifiberry/bin/reconfigure-players
@@ -26,11 +22,11 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
 
-    for a in $(@D)/conf/asound.conf.*; do \
+    for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
             $(TARGET_DIR)/etc ; \
     done
-    $(INSTALL) -D -m 0644 $(@D)/conf/asound.conf.dmix_softvol \
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.dmix_softvol \
            $(TARGET_DIR)/etc/asound.conf
     [ -d $(TARGET_DIR)/boot ] || mkdir $(TARGET_DIR)/boot
 endef
@@ -63,7 +59,5 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
 
 endef
-
-
 
 $(eval $(generic-package))
