@@ -11,8 +11,6 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/resize-partitions \
                 $(TARGET_DIR)/opt/hifiberry/bin
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/switch-partition \
-                $(TARGET_DIR)/opt/hifiberry/bin
 endef
 
 define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
