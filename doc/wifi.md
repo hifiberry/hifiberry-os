@@ -8,6 +8,7 @@ Create a file named wpa_supplicant.conf on the FAT partition of the SD card as f
     network={
         ssid="my_network_name"
         psk="my_network_password"
+        scan_ssid=1
     }
     
 If the system can connect to the network on boot, you should hear the system saying the IP address assigned to it by DHCP.
