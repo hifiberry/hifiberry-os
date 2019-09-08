@@ -6,5 +6,4 @@ rm -rf ~/buildroot/dl
 if [ "$1" != "" ]; then
  rm -rf output/build/$1*
 fi
-
-make
+make -j 6
