@@ -2,9 +2,9 @@
 
 printf "Looking for configuration files on /boot: "
 if [ -f "/boot/wpa_supplicant.conf" ]; then
-    cp /boot/wpa_supplicant.conf /etc/wpa_supplicant.conf
+    mv /boot/wpa_supplicant.conf /etc/wpa_supplicant.conf
 fi
 
 if [ -f "/boot/systemname" ]; then 
-    cp /boot/systemname /etc/systemname
+    mv /boot/systemname /etc/systemname
 fi
