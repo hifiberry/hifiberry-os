@@ -1,0 +1,195 @@
+#!/bin/bash
+
+# default setting
+
+system_name=""
+
+wifi_ssid=""
+wifi_psk=""
+wifi_country=""
+wifi_enable=1
+
+ethernet_enable=1
+
+spotify_user=""
+spotify_password=""
+spotify_enable=1
+
+airplay_enable=1
+
+roon_enable=1
+
+squeezebox_enable=1
+
+bluetooth_enable=1
+
+sound_initialvolume=""
+
+#===============================================================================================
+# Configuration
+#===============================================================================================
+if [ -f /boot/hifiberry.conf ]; then
+  echo "Using hifiberry.conf from FAT partition"
+  CONFIG=/boot/hifiberry.conf
+else
+  CONFIG=/etc/hifiberry.conf
+fi
+
+# read config file
+if [ ! -f $CONFIG ]; then                  
+ echo "$CONFIG does not exist, aborting..."
+ exit  
+fi
+
+if [ -f /etc/hifiberry.conf.prev ]; then
+ diff $CONFIG /etc/hifiberry.conf.prev >/dev/null
+ if [ "$?" == "0" ]; then
+   echo "$CONFIG is unchanged, not reconfiguring the system"
+   exit
+ fi
+fi
+
+. $CONFIG
+cp $CONFIG /etc/hifiberry.conf.prev
+
+#===============================================================================================
+# System name
+#===============================================================================================
+if [ "$system_name" != "" ]; then
+ echo "Setting system name to $system_name"
+ SYSNAME_NO_SPACES=`echo $system_name | sed s/\ /-/g`
+ echo "$system_name" > /etc/systemname
+ echo $SYSNAME_NO_SPACES > /etc/hostname
+ cat /etc/hosts | grep -v 127.0.1.1 > /tmp/hosts
+ echo 127.0.1.1 $SYSNAME_NO_SPACES  >> /tmp/hosts
+ mv /etc/hosts /etc/hosts.bak
+ mv /tmp/hosts /etc/hosts
+fi
+
+#===============================================================================================
+# WiFi
+#=============================================================================================== 
+if [ "$wifi_enable" != "1" ]; then
+ echo "Disabling WiFi"
+ if [ -f /etc/systemd/network/wireless.network ]; then 
+   mv /etc/systemd/network/wireless.network /etc/systemd/network/wireless.network.disabled
+ fi
+else
+ if [ "$wifi_ssid" != "" ] && [ "$wifi_psk" != "" ] && [ "$wifi_country" != "" ]; then
+  echo "Enabling WiFi on network $wifi_ssid"
+  if [ -f /etc/systemd/network/wireless.network.disabled ]; then
+    mv /etc/systemd/network/wireless.network.disabled /etc/systemd/network/wireless.network
+  fi                                                                                             
+
+  mv /etc/wpa_supplicant.conf /etc/wpa_supplicant.conf.bak
+  cat >/etc/wpa_supplicant.conf <<EOF
+ctrl_interface=/var/run/wpa_supplicant
+ap_scan=1
+country=$wifi_country
+
+network={
+    ssid="$wifi_ssid"
+    psk="$wifi_psk"
+    scan_ssid=1
+}
+EOF
+
+ else
+   echo "At least one of the wifi_ssid/wifi_psk/wifi_country parameers missing, not configuring WiFi"
+ fi
+fi 
+
+#===============================================================================================
+# Ethernet                                                                                         
+#===============================================================================================
+if [ "$ethernet_enable" != "1" ]; then                                                                   
+ echo "Disabling Ethernet"                                                                               
+ if [ -f /etc/systemd/network/dhcp.network ]; then                                               
+   mv /etc/systemd/network/dhcp.network /etc/systemd/network/dhcp.network.disabled
+ fi                                                                                                  
+else 
+ echo "Enabling Ethernet"
+ if [ -f /etc/systemd/network/dhcp.network.disabled ]; then    
+   mv /etc/systemd/network/dhcp.network.disabled /etc/systemd/network/dhcp.network
+ fi
+fi
+
+
+#===============================================================================================
+# Spotify                                                                                         
+#===============================================================================================
+if [ "$spotify_user" != "" ] && [ "$spotify_password" != "" ]; then
+ echo "Configuring spotify for user $spotify_user"
+ cat /etc/spotifyd.conf | grep -v "username =" | grep -v "password =" > /tmp/spotifyd.conf
+ echo "username = $spotify_user" >> /tmp/spotifyd.conf
+ echo "password = $spotify_password" >> /tmp/spotifyd.conf
+ mv /etc/spotifyd.conf /etc/spotifyd.conf.bak
+ mv /tmp/spotifyd.conf /etc/spotifyd.conf
+fi
+
+if [ "$spotify_enable" = 1 ]; then
+  echo "Enabling Spotify"
+  systemctl enable spotify
+else
+  echo "Disabling Spotify"
+  systemctl disable spotify
+fi
+
+#===============================================================================================
+# Airplay
+#===============================================================================================
+if [ "$airplay_enable" = 1 ]; then
+  echo "Enabling Airplay"
+  systemctl enable shairport-sync
+else
+  echo "Disabling Airplay"
+  systemctl disable shairport-sync
+fi
+
+#===============================================================================================
+# Squeezebox 
+#===============================================================================================
+if [ "$squeezebox_enable" = 1 ]; then
+  echo "Enabling Squeezebox"
+  systemctl enable squeezelite
+else
+  echo "Disabling Squeezebox"
+  systemctl disable squeezelite
+fi
+
+#===============================================================================================
+# Roon
+#===============================================================================================
+if [ "$roon_enable" = 1 ]; then
+  echo "Enabling Roon"
+  systemctl enable raat
+else
+  echo "Disabling Roon"
+  systemctl disable raat
+fi
+
+#===============================================================================================
+# Bluetooth                                                                                        
+#===============================================================================================
+if [ "$bluetooth_enable" = 1 ]; then
+  echo "Enabling Bluetooth"
+  systemctl enable bluetoothd
+  systemctl enable bluealsa
+  systemctl enable bluealsa-aplay
+else
+  echo "Disabling Bluetooth"
+  systemctl disable bluetoothd
+  systemctl disable bluealsa
+  systemctl disable bluealsa-aplay
+fi 
+
+#===============================================================================================
+# Sound settings
+#===============================================================================================
+if [ "$sound_initialvolume" != "" ]; then
+  echo "Setting initial volume to $sound_initialvolume"
+  if [ ! -d /etc/hifiberry ]; then
+    mkdir -p /etc/hifiberry 
+  fi
+  echo $sound_initialvolume > /etc/hifiberry/initial-volume
+fi

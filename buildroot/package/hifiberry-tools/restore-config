@@ -10,7 +10,7 @@ fi
 for i in `cat /opt/hifiberry/etc/config-files`; do
   if [ -f $BACKUPDIR/$i ]; then 
     echo "Restoring $i"
-    DIR= `dirname $DSTDIR/$i`
+    DIR=`dirname $DSTDIR/$i`
     if [ ! -d $DIR ]; then
       mkdir -p $DIR
     fi

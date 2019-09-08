@@ -21,6 +21,10 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/myip
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system \
+           $(TARGET_DIR)/opt/hifiberry/bin/configure-system
+    $(INSTALL) -D -m 0600 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.conf.sample \
+           $(TARGET_DIR)/etc/hifiberry.conf.sample
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
@@ -57,6 +61,11 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/initial-volume.service
         ln -fs ../../../usr/lib/systemd/system/initial-volume.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system.service \
+                $(TARGET_DIR)/lib/systemd/system/configure-system.service
+        ln -fs ../../../usr/lib/systemd/system/configure-system.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-system.service
+
 
 endef
 

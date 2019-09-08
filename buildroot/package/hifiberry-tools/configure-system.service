@@ -1,0 +1,11 @@
+[Unit]
+Description=Recondigure system
+Before=network.target
+
+[Service]
+Type=Oneshot
+ExecStart=/opt/hifiberry/bin/configure-system
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
