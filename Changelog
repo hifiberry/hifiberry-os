@@ -1,3 +1,14 @@
+xxxxxxxx
+- Added a central config file /etc/hifibery.conf that can be used to configure the whole system
+- Changed sound card reconfiguration that there is no plop sound during startup anymore
+- (internal) Added mpris support to shairport-sync
+- (internal) Added first version of an updater
+- (internal) Added updater
+
+20190902
+- Added alsaloop for cards that offer recording (ADC cards)
+- Added Roon sceyerrver
+
 20190828
 - Added Bluetooth
 - Added MPD
