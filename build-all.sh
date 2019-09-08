@@ -9,6 +9,6 @@ for i in 0w 3 4; do
   ./clean.sh
   ./build-config.sh $i
   ./compile.sh
-  ./create-image $i
+  ./create-image.sh $i
 done
 
