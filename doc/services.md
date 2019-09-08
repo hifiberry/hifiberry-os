@@ -7,7 +7,5 @@ The following services are currently supported on HiFiBerryOS:
 * Squeezebox (provided by squeezelite)
 * Spotify (provided by Spotifyd)
 * mpd
-
-The following services are planned for future releases:
-
-* Roon
+* Roon (provided by RAAT)
+* Analog input on DAC+ ADC (provided by alsaloop)
