@@ -23,6 +23,8 @@ squeezebox_enable=1
 
 bluetooth_enable=1
 
+analogin_enable=1
+
 sound_initialvolume=""
 
 #===============================================================================================
@@ -182,6 +184,19 @@ else
   systemctl disable bluealsa
   systemctl disable bluealsa-aplay
 fi 
+
+#===============================================================================================
+# Analog input
+#===============================================================================================
+if [ "$analogin_enable" = 1 ]; then
+  echo "Enabling Analog input"
+  systemctl enable alsaloop
+else
+  echo "Disabling Analog input"
+  systemctl disable alsaloop
+fi
+
+
 
 #===============================================================================================
 # Sound settings
