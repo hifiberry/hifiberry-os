@@ -6,7 +6,7 @@ After=bluetoothd.service
 [Service]
 ExecStart=/opt/btspeaker/a2dp-agent.py
 RestartSec=5
-Restart=Always
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

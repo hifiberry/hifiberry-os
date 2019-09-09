@@ -7,7 +7,7 @@ After=network.target
 Type=simple
 ExecStart=/usr/bin/sigmatcpserver --alsa
 StandardOutput=journal
-Restart=Always
+Restart=always
 RestartSec=5
 
 [Install]
