@@ -50,7 +50,7 @@ define HIFIBERRY_SHAIRPORT_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-shairport/shairport-sync.conf \
                 $(TARGET_DIR)/etc/shairport-sync.conf
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-shairport/dbus.conf \
-                $(TARGET_DIR)/etc/dbus-1/system.d/spotify.conf
+                $(TARGET_DIR)/etc/dbus-1/system.d/shairport-sync.conf
 endef
 
 define HIFIBERRY_SHAIRPORT_INSTALL_INIT_SYSV
