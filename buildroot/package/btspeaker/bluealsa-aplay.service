@@ -8,7 +8,7 @@ After=bluealsa.service sound.target
 ExecStartPre=sleep 2
 ExecStart=/usr/bin/bluealsa-aplay --pcm-buffer-time=250000 00:00:00:00:00:00
 RestartSec=5  
-Restart=Always
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

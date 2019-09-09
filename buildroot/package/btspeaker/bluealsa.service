@@ -5,8 +5,8 @@ After=a2dp-agent.service
 
 [Service]
 ExecStart=/usr/bin/bluealsa -i hci0 -p a2dp-sink
+RestartSec=5
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
-RestartSec=5
-Restart=Always

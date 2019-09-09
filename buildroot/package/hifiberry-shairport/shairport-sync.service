@@ -9,7 +9,7 @@ Type=simple
 # Avahi daemon needs some time until fully ready
 ExecStartPre=/bin/sleep 5 
 ExecStart=/bin/shairport-sync
-Restart=Always
+Restart=always
 RestartSec=5
 
 [Install]

@@ -4,7 +4,6 @@ Requires=dbus.service
 After=dbus.service
 
 [Service]
-#ExecStartPre=/opt/btspeaker/btuart.sh
 ExecStart=/usr/libexec/bluetooth/bluetoothd -f /etc/bluetooth/main.conf -P sap,hostname
 
 [Install]

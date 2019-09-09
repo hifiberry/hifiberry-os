@@ -7,7 +7,7 @@ After=network.target
 Type=simple
 ExecStart=/usr/bin/squeezelite -o softvol -M HiFiBerry -N /var/squeezelite/squeezelite.name
 StandardOutput=journal
-Restart=Always
+Restart=always
 RestartSec=5
 
 [Install]
