@@ -1,10 +1,10 @@
 [Unit]
 Description=MyIP - say local IP
 Wants=network-online.target
-After=network.target network-online.target sound.target
+After=network.target network-online.target sound.target initial-volume.service
 
 [Service]
-Type=Oneshot
+Type=oneshot
 ExecStart=/opt/hifiberry/bin/myip
 StandardOutput=journal
 

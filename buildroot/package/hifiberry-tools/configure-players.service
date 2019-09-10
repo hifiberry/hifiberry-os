@@ -1,9 +1,9 @@
 [Unit]
 Description=Reconfigure players
-After=sound.target 
+After=sound.target configure-system.service hifiberry-detect.service local-fs.target
 
 [Service]
-Type=Oneshot
+Type=oneshot
 ExecStart=/opt/hifiberry/bin/reconfigure-players --reboot
 StandardOutput=journal
 

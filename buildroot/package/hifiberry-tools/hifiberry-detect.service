@@ -1,10 +1,10 @@
 [Unit]
 Description=HiFiBerry detect
 Wants=dsptoolkit.service
-After=dsptoolkit.service
+After=dsptoolkit.service configure-system.service local-fs.target
 
 [Service]
-Type=Oneshot
+Type=oneshot
 ExecStart=/opt/hifiberry/bin/detect-hifiberry
 StandardOutput=journal
 
