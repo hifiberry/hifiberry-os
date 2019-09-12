@@ -29,6 +29,9 @@ mount -t ext4 $INACTIVE /newroot
 
 echo "Resizing new root file system"
 resize2fs $INACTIVE
+if [ -f $INACTIVE/resize-me ]; then
+  rm $INACTIVE/resize-me
+fi
 
 echo "Restoring configuration..."
 /opt/hifiberry/bin/restore-config /newroot
