@@ -5,12 +5,12 @@ them quite complex. Ideally a single interface should be used for all players. A
 
 However, today not all applications support MPRIS. This is the current state of MPRIS implementations:
 
-| Player | MPRIS supported | MPRIS metadata | Potential alternative | Implemented
-| --- | --- | --- | --- | --- |
-| spotifyd | yes | yes | - | yes |
-| shairport-sync  | yes | yes | - | yes |
-| squeezelite | no | no | [slimpris](https://github.com/mavit/slimpris2) | no |
+| Player | MPRIS supported | MPRIS metadata |  Implemented
+| --- | --- | --- |  --- |
+| spotifyd | yes | yes |  yes |
+| shairport-sync  | yes | yes |  yes |
+| squeezelite | [slimpris](https://github.com/mavit/slimpris2) | no |  | no |
 | bluez-alsa | via [mpris-proxy](https://github.com/Vudentz/BlueZ/blob/master/tools/mpris-proxy.c) | yes | - | yes |
 | raat | partially | yes | - | yes |
-| mpd | no | no | [mpd mpris](https://github.com/natsukagami/mpd-mpris) | no |
+| mpd | via [mpd mpris](https://github.com/natsukagami/mpd-mpris) | yes | yes |
 | alsaloop | no | no | - | no |
