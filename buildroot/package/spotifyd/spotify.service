@@ -1,7 +1,7 @@
 [Unit]
 Description=Spotify connect
 Wants=network-online.target
-After=network.target network-online.target sound.target
+After=network.target sound.target dbus.service
 
 [Service]
 Type=simple
