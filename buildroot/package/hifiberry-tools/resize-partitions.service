@@ -1,0 +1,12 @@
+[Unit]
+Description=Resize file systems
+After=systemd-fsck@.service boot.mount
+Before=network.target configure-system.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/resize-partitions
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

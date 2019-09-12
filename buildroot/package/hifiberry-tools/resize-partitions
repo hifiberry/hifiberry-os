@@ -1,0 +1,60 @@
+#!/bin/bash
+
+DEVICE=/dev/mmcblk0
+
+if [ -f /resize-me.2 ]; then
+ echo "Resizing file system on /dev/mmcblk0p2"
+ resize2fs -p /dev/mmcblk0p2
+ rm /resize-me.2
+fi
+
+if [ ! -f /resize-me ]; then
+ echo "/resize-me does not exist, aborting"
+ exit
+fi
+
+# Delete Partition 3
+if [ -b ${DEVICE}p3 ]; then
+INITIAL=1
+fdisk $DEVICE <<EOT
+d
+3
+w
+EOT
+partprobe
+echo p | fdisk $DEVICE
+fi
+
+# Delete Partition 2
+if [ -b ${DEVICE}p2 ]; then
+fdisk $DEVICE <<EOT
+d
+2
+w
+EOT
+partprobe
+echo p | fdisk $DEVICE
+fi
+
+# Create partitions 2 and 3
+fdisk $DEVICE <<EOT
+n
+p
+2
+65537
+2162687
+n
+p
+3
+2162688
+4259838
+w
+EOT
+partprobe
+echo p | fdisk $DEVICE
+
+e2fsck -f -p $DEVICEp2
+
+rm /resize-me
+touch /resize-me.2
+echo "Resized partitions" >> /tmp/reboot
