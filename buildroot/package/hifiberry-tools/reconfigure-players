@@ -1,5 +1,7 @@
 #!/bin/bash
 
+REBOOTFILE=/tmp/reboot
+
 # Find the correct ALSA volume control 
 guess_volume_control() {
  # Check if there is a working DSP volume control
@@ -183,7 +185,6 @@ echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 
 if [ "$1" == "--reboot" ]; then
- sync
- reboot
+  echo "System configuration changed" >> $REBOOTFILE
 fi
 

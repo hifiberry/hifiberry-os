@@ -1,20 +1,15 @@
 #!/bin/bash
 
 FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
-VERSION=2
 CONFIG=/boot/config.txt
+REBOOTFILE=/tmp/reboot
 
 function check_i2c {
 	modprobe i2c-dev
         if [ ! -e /dev/i2c-1 ]; then
                 echo "I2C device file not found, need to modify config.txt"
-                echo "dtparam=i2c1=on" >> $CONFIG
-                echo "Rebooting in 5 seconds, abort reboot?"
-                read -t 5 abort
-                if [ "$abort" == "" ]; then
-                        sync
-                        reboot
-                fi
+                echo "dtparam=i2c1=on" >> $CONFI
+                echo "Enabling I2C" >> $REBOOTFILE
         fi
 }
 
@@ -78,9 +73,7 @@ if [ "$FOUND" == "" ]; then
         if [ "$?" != 0 ]; then
           echo "Found HiFiBerry DAC configuration, removing it" >>/var/log/hifiberry.log
           mv /boot/config.txt2 /boot/config.txt
-          sleep 5
-          sync
-          reboot
+          echo "Removing hifiberry-dac overlay" >> $REBOOTFILE
         fi
 
    fi
@@ -92,12 +85,7 @@ if [ "$FOUND" == "" ]; then
 	cat $CONFIG | grep -v "hifiberry" > /tmp/config.txt 
 	echo "dtoverlay=hifiberry-$card" >> /tmp/config.txt
 	mv /tmp/config.txt $CONFIG
-	echo "Rebooting in 5 seconds, abort reboot?"
-	read -t 5 abort
-	if [ "$abort" == "" ]; then
-		sync
-		reboot
-	fi
+	echo "Adding $card to config.txt" >> $REBOOTFILE
  else
 	echo "Could not find an I2C enabled sound card"
         cat /boot/config.txt | grep -v "hifiberry-digi" | grep -v "hifiberry-amp" | grep -v "hifiberry-dacplus" > /boot/config.txt2
@@ -105,9 +93,7 @@ if [ "$FOUND" == "" ]; then
         if [ "$?" != 0 ]; then
           echo "Found old configuration, removing it" >>/var/log/hifiberry.log
           mv /boot/config.txt2 /boot/config.txt
-          sleep 5
-          sync
-          reboot
+          echo "Removing old configuration in config.txt" >> $REBOOTFILE
         fi
         echo "Assuming HiFiBerry DAC+ Light, Zero"
         FOUND2=`aplay -l|grep hifiberry`
@@ -116,8 +102,7 @@ if [ "$FOUND" == "" ]; then
         else
           echo "dtoverlay=hifiberry-dac" >> /boot/config.txt
           echo "Nothing detected, assuming HiFiBerry DAC+ Light/Zero" >>/var/log/hifiberry.log
-          sleep 5
-          reboot
+          echo "Enabling DAC+ Light" >> $REBOOTFILE
         fi
  fi
 else

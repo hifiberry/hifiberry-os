@@ -25,6 +25,10 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/configure-system
     $(INSTALL) -D -m 0600 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.conf.sample \
            $(TARGET_DIR)/etc/hifiberry.conf.sample
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions \
+                $(TARGET_DIR)/opt/hifiberry/bin
+        touch $(TARGET_DIR)/resize-me
+
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
@@ -65,6 +69,14 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/configure-system.service
         ln -fs ../../../usr/lib/systemd/system/configure-system.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-system.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/resize-partitions.service
+        ln -fs ../../../usr/lib/systemd/system/resize-partitions.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/resize-partitions.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/reboot.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/reboot.service
+        ln -fs ../../../usr/lib/systemd/system/reboot.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/reboot.service
 
 
 endef
