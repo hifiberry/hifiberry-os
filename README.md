@@ -9,11 +9,11 @@ Also, there is no update mechanism included at the moment.
 
 At the moment, the following services are supported:
 
-- Spotify (using Spotifyd)
+- Spotify (using Spotifyd) - requires a paid Spotify subscription
 - Airplay (using shairport)
 - Squeezebox (using squeezelite)
 - Bluetooth A2DP sind (using BlueZ 5)
-- Roon
+- Roon - requires a Roon subscription
 - MPD
 - analogue input on DAC+ ADC (using alsaloop)
 
