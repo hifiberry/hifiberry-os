@@ -5,4 +5,5 @@
 /etc/bluetooth/main.conf
 /etc/shairport-sync.conf
 /etc/uuid
-
+/etc/mpd.conf
+/var/squeezelite/squeezelite.name
