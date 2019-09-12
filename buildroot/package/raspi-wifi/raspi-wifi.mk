@@ -15,8 +15,8 @@ endef
 define RASPI_WIFI_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/interfaces \
            $(TARGET_DIR)/etc/network/interfaces.bak
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/copy-config \
-           $(TARGET_DIR)/opt/hifiberry/bin/copy-config
+#    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/copy-config \
+#           $(TARGET_DIR)/opt/hifiberry/bin/copy-config
 endef
 
 define RASPI_WIFI_INSTALL_INIT_SYSV
@@ -25,20 +25,16 @@ define RASPI_WIFI_INSTALL_INIT_SYSV
 endef
 
 define RASPI_WIFI_INSTALL_INIT_SYSTEMD
-    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/copy-config.service \
-           $(TARGET_DIR)/usr/lib/systemd/system/copy-config.service
-    ln -fs ../../../usr/lib/systemd/system/copy-config.service \
-           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/copy-config.service
+#    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/copy-config.service \
+#           $(TARGET_DIR)/usr/lib/systemd/system/copy-config.service
+#    ln -fs ../../../usr/lib/systemd/system/copy-config.service \
+#           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/copy-config.service
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/wireless.network \
            $(TARGET_DIR)/etc/systemd/network/wireless.network
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/wpa_supplicant@wlan0.service \
            $(TARGET_DIR)/usr/lib/systemd/system/wpa_supplicant@wlan0.service
     ln -fs ../../../../usr/lib/systemd/system/wpa_supplicant@wlan0.service \
            $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/wpa_supplicant@wlan0.service
-#    ln -fs ../../../usr/lib/systemd/system/wpa_supplicant.service \
-#           $(TARGET_DIR)/etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service
-#    ln -fs ../../../../usr/lib/systemd/system/wpa_supplicant.service \
-#           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/wpa_supplicant.service
 endef
 
 $(eval $(generic-package))
