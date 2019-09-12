@@ -2,6 +2,6 @@
 
 The installed applications use the following ports:
 
-| application | ports |
-| --- | --- |
-| mpd | 6600 |
+| application | port | remarks | 
+| --- | --- | --- |
+| mpd | 6600 | mpd control port |
