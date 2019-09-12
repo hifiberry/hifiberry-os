@@ -22,3 +22,10 @@ Additional tools that are available:
 - sox
 - HiFiBerry dsptoolkit
 
+Note that there is no direct support for local music archives (e.g. MP3 files on a NAS). If you have a local
+music collection, you need to use an additional music server to stream music to HiFiBerryOS, e.g.
+
+- Roon 
+- Logitech Media Server
+- iTunes
+
