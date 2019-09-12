@@ -1,0 +1,29 @@
+config BR2_PACKAGE_HIFIBERRY_BLUEZALSA
+	bool "hifiberry-bluezalsa"
+	depends on !BR2_STATIC_LIBS # bluez5
+	depends on !BR2_PACKAGE_BLUEZ_UTILS # bluez5
+        depends on !BR2_PACKAGE_BLUEZ_ALSA
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # bluez5
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # bluez5
+	depends on BR2_USE_MMU # bluez5 -> dbus
+	depends on BR2_USE_WCHAR # libglib2
+	select BR2_PACKAGE_ALSA_LIB
+	select BR2_PACKAGE_BLUEZ5_UTILS
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_SBC
+        select BR2_PACKAGE_FDK_AAC
+	help
+	  Bluetooth Audio ALSA Backend.
+
+	  https://github.com/Arkq/bluez-alsa
+
+comment "bluez-alsa needs a toolchain w/ wchar, NPTL, headers >= 3.4, dynamic library"
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 || BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_BLUEZ_UTILS
+
+comment "HiFiBerry bluezalsa package can't be used together with buildroot bluezalsa version, disable this first!"
+        depends on BR2_PACKAGE_BLUEZ_ALSA
