@@ -1,22 +1,83 @@
 # HiFiBerryOS configuration
 
-There are very few configuration option on HiFiBerryOS as the system will automatically configure the 
-correct settings for your HiFiBerry sound card.
+There is now one main configuration file named hifiberry.conf. It can reside either on the FAT partition of the SD card 
+or in /etc. If both files exists, the file on teh FAT partition will be used.
 
-## Root password
+## General 
 
-The default root password is "hifiberry". As SSH is enabled by default, we *strongly* recommend to login and 
-set a new root password. Just login and run the command
+HiFiBerryOS will work without any special configuration. If you connect the Raspberry Pi to your local Ethernet network (that should support DHCP)
+and boot HiFiBerryOS, the system will provide the services without any additional configuration. However, some services allow additional configuration.
 
-    passwd
+Some service can be enabled or disabled. This can be controlled by setting the xxxx_enable setting to 0 or 1. Note that only 0 and
+1 are supported here.
+By default, all services are enabed (except WiFi that requires an additional configuration).
 
-## System name
+## System configuration
+```
+system_name="HiFiBerry"
+```
 
-The default system name is "HiFiBerry". It will be used to identify the system. To change this settings, login to
-the system and edit /etc/systemname, then run
+This sets the system name. It can contain spaces, but for some services that do not support spaces, these will be converted
+into dashes. Note that you should not use any special characters as not all services might be able to handle these.
 
-    /opt/hifiberry/bin/reconfigure-players 
-    
-or just reboot. 
+## WiFi
+```
+wifi_ssid=homenetwork
+wifi_psk=mypassphrase
+wifi_country=DE
+wifi_enable=1
+```
 
-You can also create a file systemname on the FAT partition of the SD card. This will be used on the next boot.
+Set SSID, passphrase and country to use WiFi. Country needs to be the 2 character country code of the country the device
+is operated. This is needed to select the correct WiFi channels that can be different in different countries.
+
+## Spotify
+```
+spotify_enable=1
+spotify_user=myuser
+spotify_password=mypass
+```
+
+Spotify is enabled by default. It will also work without setting a username and password. In our experience it makes sense
+to set these if you have a lot of Spotify-enabled systems running in your network as sometimes Spotify connect won't list all
+of them.
+
+
+## Airplay
+```
+airplay_enable=1
+```
+
+Enables/disables Airplay support
+
+## Roon
+```
+roon_enable=1
+```
+
+Enables/disables ROON support.
+Note that Roon is not supported on the Raspberry Pi Zero.
+
+
+## Squeezebox 
+```
+squeezebox_enable=1
+```
+
+Enables/disables Squeezebox support
+
+## Bluetooth
+```
+bluetooth_enable=1
+```
+
+Enables/disables Bluetooth support
+
+  
+## Sound
+```
+sound_initialvolume="80%"
+```
+
+Sets the initial volume the system uses. This is especially helpful if you're using an amplifier without a volume knob to make
+sure tha system doesn't start up at full volume.
