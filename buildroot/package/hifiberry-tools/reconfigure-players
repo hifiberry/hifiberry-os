@@ -128,6 +128,11 @@ reconfigure_squeezelite() {
  echo $SYSNAME > /var/squeezelite/squeezelite.name
 }
 
+# Reconfigure MPD
+reconfigure_mpd() {
+ sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
+}                 
+
 # 
 reconfigure_recording() {
  if [ ! -d /etc/hifiberry ]; then
@@ -176,6 +181,8 @@ echo "Reconfiguring Bluetooth"
 reconfigure_bluetooth
 echo "Reconfiguring squeezelite"
 reconfigure_squeezelite
+echo "Reconfiguring MPD"
+reconfigure_mpd
 echo "Reconfigure recording"
 reconfigure_recording
 
