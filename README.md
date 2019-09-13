@@ -9,11 +9,11 @@ Also, there is no update mechanism included at the moment.
 
 At the moment, the following services are supported:
 
-- Spotify (using Spotifyd)
+- Spotify (using Spotifyd) - requires a paid Spotify subscription
 - Airplay (using shairport)
 - Squeezebox (using squeezelite)
 - Bluetooth A2DP sind (using BlueZ 5)
-- Roon
+- Roon - requires a Roon subscription
 - MPD
 - analogue input on DAC+ ADC (using alsaloop)
 
@@ -21,4 +21,11 @@ Additional tools that are available:
 
 - sox
 - HiFiBerry dsptoolkit
+
+Note that there is no direct support for local music archives (e.g. MP3 files on a NAS). If you have a local
+music collection, you need to use an additional music server to stream music to HiFiBerryOS, e.g.
+
+- Roon 
+- Logitech Media Server
+- iTunes
 
