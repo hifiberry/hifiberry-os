@@ -1,0 +1,16 @@
+[Unit]
+Description=mpd-mpris
+Requires=mpd.service
+After=mpd.service
+
+[Service]
+Type=simple
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+# MPD needs some time to start
+ExecStartPre=sleep 5  
+ExecStart=/usr/bin/mpd-mpris -no-instance
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
