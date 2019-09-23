@@ -1,0 +1,5 @@
+config BR2_PACKAGE_HIFIBERRY_YMPD
+	bool "hifiberry-ympd"
+        help
+	  "ympd MPD web interface"
+        select BR2_PACKAGE_YMPD
