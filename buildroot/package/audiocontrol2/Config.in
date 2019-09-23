@@ -1,0 +1,10 @@
+config BR2_PACKAGE_AUDIOCONTROL2
+	bool "audiocontrol2"
+        help
+	  "Software that managed multiple concurrent audio players"
+        select BR2_PACKAGE_DBUS
+	select BR2_PACKAGE_DBUS_PYTHON
+        select BR2_PACKAGE_PYTHON_PYLAST
+        select BR2_PACKAGE_PYTHON_BOTTLE
+        select BR2_PACKAGE_PYTHON_BOTTLE_WEBSOCKET
+        select BR2_PACKAGE_PYTHON_GEVENT_WEBSOCKET
