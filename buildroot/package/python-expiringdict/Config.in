@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_EXPIRINGDICT
+	bool "python-expiringdict"
+	help
+	  Dictionary with auto-expiring values for caching purposes.
+
+	  https://github.com/mailgun/expiringdict
