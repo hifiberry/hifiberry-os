@@ -1,0 +1,16 @@
+[Unit]
+Description=Audiocontrol2
+Wants=network-online.target dbus.service
+After=network.target sound.target dbus.service
+
+[Service]
+Type=simple
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+WorkingDirectory=/opt/audiocontrol2
+ExecStart=/usr/bin/python3 /opt/audiocontrol2/audiocontrol2.py
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
