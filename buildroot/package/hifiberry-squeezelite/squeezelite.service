@@ -5,10 +5,12 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/squeezelite -o softvol -M HiFiBerry -N /var/squeezelite/squeezelite.name
+ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment MIXER=`/opt/hifiberry/bin/volume-control-name`"
+ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER}
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=5
 
 [Install]
 WantedBy=multi-user.target
