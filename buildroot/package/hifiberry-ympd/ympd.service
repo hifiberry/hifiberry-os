@@ -1,0 +1,14 @@
+[Unit]
+Description=ympd MPD web interface
+Requires=mpd.service
+After=mpd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ympd -w 9000
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
