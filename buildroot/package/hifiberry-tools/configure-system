@@ -76,6 +76,7 @@ if [ "$wifi_enable" != "1" ]; then
  if [ -f /etc/systemd/network/wireless.network ]; then 
    mv /etc/systemd/network/wireless.network /etc/systemd/network/wireless.network.disabled
  fi
+ systemctl disable wpa_supplicant@wlan0.service
 else
  if [ "$wifi_ssid" != "" ] && [ "$wifi_psk" != "" ] && [ "$wifi_country" != "" ]; then
   echo "Enabling WiFi on network $wifi_ssid"
@@ -94,6 +95,7 @@ network={
     psk="$wifi_psk"
     scan_ssid=1
 }
+ systemctl enable wpa_supplicant@wlan0.service
 EOF
 
  else
@@ -154,9 +156,11 @@ fi
 if [ "$squeezebox_enable" = 1 ]; then
   echo "Enabling Squeezebox"
   systemctl enable squeezelite
+  systemctl enable lmsmpris
 else
   echo "Disabling Squeezebox"
   systemctl disable squeezelite
+  systemctl disable lmsmpris
 fi
 
 #===============================================================================================
@@ -208,3 +212,11 @@ if [ "$sound_initialvolume" != "" ]; then
   fi
   echo $sound_initialvolume > /etc/hifiberry/initial-volume
 fi
+
+#===============================================================================================
+# Sound settings
+#===============================================================================================
+if [ "$auto_pause" != "" ]; then
+ sed -i s/auto_pause.*/auto_pause=$auto_pause/ /etc/audiocontrol2.conf
+ echo "Setting auto_pause to $auto_pause"
+fi 
