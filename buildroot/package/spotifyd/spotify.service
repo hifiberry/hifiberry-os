@@ -6,7 +6,13 @@ After=network.target sound.target dbus.service
 [Service]
 Type=simple
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+ExecStartPre=alsactl --file /tmp/spotifyvol store
 ExecStart=/usr/bin/spotifyd --no-daemon 
+ExecStartPost=sleep 1
+ExecStartPost=alsactl --file /tmp/spotifyvol restore
+ExecStartPost=rm /tmp/spotifyvol
+
+
 StandardOutput=journal
 Restart=always
 RestartSec=5
