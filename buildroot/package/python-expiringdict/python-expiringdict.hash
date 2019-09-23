@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/expiringdict/json
+md5	2dacf06b2f48f99e7f6a5d7449eaa8d2  expiringdict-1.1.4.tar.gz
+sha256	9275c3f3aa6cabe394355b6454100eb1cdfe395c6b592c26603a2a0f9e3a0587  expiringdict-1.1.4.tar.gz
+# Locally computed sha256 checksums
+sha256	93a8b351233108ec30413a12da5d2c40ea335b8a27557c42f979b86ebd668443  LICENSE
