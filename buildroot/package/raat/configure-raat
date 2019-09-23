@@ -67,7 +67,8 @@ cat <<END >/etc/hifiberry_raat.conf
                      "signal_path": [ { "quality": "lossless", "type": "output", "method": "$SIGNALTYPE" } ]
                    },
 $VOLCTL
-    "version":     "$VERSION"
+    "version":     "$VERSION",
+    "transport":   { "type": "hifiberry" }
 }
 END
 
