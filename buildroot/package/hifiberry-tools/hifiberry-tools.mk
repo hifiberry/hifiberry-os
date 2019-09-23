@@ -27,7 +27,9 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/etc/hifiberry.conf.sample
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions \
                 $(TARGET_DIR)/opt/hifiberry/bin
-        touch $(TARGET_DIR)/resize-me
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition \
+                $(TARGET_DIR)/opt/hifiberry/bin
+    touch $(TARGET_DIR)/resize-me
 
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
@@ -77,6 +79,10 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/reboot.service
         ln -fs ../../../usr/lib/systemd/system/reboot.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/reboot.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/activate-data-partition.service
+        ln -fs ../../../usr/lib/systemd/system/activate-data-partition.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/activate-data-partition.service
 
 
 endef

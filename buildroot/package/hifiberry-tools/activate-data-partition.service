@@ -1,0 +1,12 @@
+[Unit]
+Description=Activate /data
+After=boot.mount local-fs.target
+Before=mpd.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/activate-data-partition
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

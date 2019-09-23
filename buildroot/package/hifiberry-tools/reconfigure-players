@@ -4,19 +4,12 @@ REBOOTFILE=/tmp/reboot
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
- # Check if there is a working DSP volume control
- dsptoolkit get-volume 2>/dev/null >/dev/null
- if [ $? == 0 ]; then
-    MIXER_CONTROL=DSPVolume
-    return
- fi
-
- # DAC+ and Amp2 use "Digital" 
+ # DAC+ and Amp2 use "Digital"
  DIGITAL=`amixer scontrols | grep Digital`
  if [ "$DIGITAL" != "" ]; then
    MIXER_CONTROL=Digital
-   return                                 
- fi  
+   return
+ fi
 
  # Amp+ uses "Master"
  MASTER=`amixer scontrols | grep Master`
@@ -25,6 +18,12 @@ guess_volume_control() {
    return
  fi
 
+ # Check if there is a working DSP volume control
+ dsptoolkit get-volume 2>/dev/null >/dev/null
+ if [ $? == 0 ]; then
+    MIXER_CONTROL=DSPVolume
+    return
+ fi
 
  # There should be at least a Softvol control
  SOFTVOL=`amixer scontrols | grep Softvol`

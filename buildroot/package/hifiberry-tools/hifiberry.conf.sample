@@ -18,3 +18,11 @@ squeezebox_enable=1
 bluetooth_enable=1    
                       
 sound_initialvolume="80%"
+
+auto_pause=1
+
+scrobbler_network=librefm
+scrobbler_apikey=hifiberryos
+scrobbler_apisecret=hifiberryiscool
+scrobbler_username=myuser
+scrobbler_password=mypassword

@@ -1,0 +1,40 @@
+#!/bin/sh
+DEVICE=/dev/mmcblk0
+
+DATA=`mount | grep data`
+if [ "$DATA" == "" ]; then
+ echo "/data not mounted, trying to mount it"
+
+ if [ ! -d /data ]; then
+  echo "/data does not exist, creating it"
+  mkdir /data
+ fi
+
+ mount ${DEVICE}p4 /data
+ if [ "$?" != "0" ]; then
+  echo "Could not mount /data, aborting"
+  exit 1
+ fi
+
+ echo "adding /data to fstab"
+ cat /etc/fstab | grep -v ${DEVICE}p4 > /tmp/fstab
+ echo "${DEVICE}p4    /data    ext4    defaults    0    0" >>/tmp/fstab
+ mv /etc/fstab /etc/fstab.bak
+ mv /tmp/fstab /etc/fstab
+
+fi
+
+if [ -d /library ]; then
+ if [ ! -d /data/library ]; then
+  mv /library /data
+ else
+  echo "/data/library already exists, will use this one"
+  mv /library /library.bak
+ fi
+fi
+
+ln -s /data/library /library
+
+echi "disabling systemd service, this is a one-time job"
+systemctl disable activate-data-partition.service
+

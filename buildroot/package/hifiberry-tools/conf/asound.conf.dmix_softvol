@@ -1,3 +1,5 @@
+defaults.pcm.rate_converter "samplerate"
+
 pcm.hifiberry {
   type hw
   card 0
@@ -12,7 +14,8 @@ pcm.dmixer {
     period_time 0
     period_size 1024
     buffer_size 8192
-    rate 44100
+    format S32
+    rate 96000
   }
   bindings {
     0 0

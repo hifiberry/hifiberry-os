@@ -53,8 +53,26 @@ EOT
 partprobe
 echo p | fdisk $DEVICE
 
+# Create partition 4
+fdisk $DEVICE <<EOT
+n
+p
+
+
+w
+EOT
+partprobe
+echo p | fdisk $DEVICE
+
 e2fsck -f -p $DEVICEp2
 
 rm /resize-me
 touch /resize-me.2
+
+# Create fs in partition 4 if there is none
+fsck.ext2 -p -f ${DEVICE}p4
+if [ "$?" == "8" ]; then
+  mkfs -t ext4 /dev/mmcblk0p4
+fi
+
 echo "Resized partitions" >> /tmp/reboot

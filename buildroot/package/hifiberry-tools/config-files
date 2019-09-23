@@ -7,3 +7,5 @@
 /etc/uuid
 /etc/mpd.conf
 /var/squeezelite/squeezelite.name
+/etc/audiocontrol2.conf
+
