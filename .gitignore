@@ -1,3 +1,5 @@
+buildroot/PIVERSION
+configs/hifiberryos.bak
 .piversion
 images
 update-pi3
