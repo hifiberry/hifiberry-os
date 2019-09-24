@@ -25,6 +25,8 @@ bluetooth_enable=1
 
 analogin_enable=1
 
+mpd_enable=1
+
 sound_initialvolume=""
 
 #===============================================================================================
@@ -95,8 +97,8 @@ network={
     psk="$wifi_psk"
     scan_ssid=1
 }
- systemctl enable wpa_supplicant@wlan0.service
 EOF
+ systemctl enable wpa_supplicant@wlan0.service
 
  else
    echo "At least one of the wifi_ssid/wifi_psk/wifi_country parameers missing, not configuring WiFi"
@@ -200,7 +202,20 @@ else
   systemctl disable alsaloop
 fi
 
-
+#===============================================================================================
+# MPD
+#===============================================================================================
+if [ "$mpd_enable" = 1 ]; then
+  echo "Enabling MPD"
+  systemctl enable mpd
+  systemctl enable mpd-mpris
+  systemctl enable ympd
+else
+  echo "Disabling MPD"
+  systemctl disable mpd
+  systemctl disable mpd-mpris
+  systemctl disable ympd
+fi
 
 #===============================================================================================
 # Sound settings

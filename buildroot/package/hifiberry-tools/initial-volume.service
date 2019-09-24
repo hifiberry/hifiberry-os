@@ -1,7 +1,7 @@
 [Unit]
 Description=Set initial volume
 Wants=sound.target
-After=sound.target
+After=sound.target squeezelite.service
 
 [Service]
 Type=oneshot

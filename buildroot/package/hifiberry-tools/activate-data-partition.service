@@ -1,6 +1,6 @@
 [Unit]
 Description=Activate /data
-After=boot.mount local-fs.target
+After=boot.mount local-fs.target systemd-remount-fs.service systemd-sysusers.service
 Before=mpd.service
 
 [Service]

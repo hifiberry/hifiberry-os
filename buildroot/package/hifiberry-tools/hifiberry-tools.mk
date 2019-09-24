@@ -29,6 +29,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition \
                 $(TARGET_DIR)/opt/hifiberry/bin
+    $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/PIVERSION \
+                $(TARGET_DIR)/etc/PIVERSION
     touch $(TARGET_DIR)/resize-me
 
 
@@ -53,38 +55,36 @@ endef
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-detect.service \
                 $(TARGET_DIR)/lib/systemd/system/hifiberry-detect.service
-        ln -fs ../../../usr/lib/systemd/system/hifiberry-detect.service \
+        ln -fs ../../../../usr/lib/systemd/system/hifiberry-detect.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry-detect.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-players.service \
                 $(TARGET_DIR)/lib/systemd/system/configure-players.service
-        ln -fs ../../../usr/lib/systemd/system/configure-players.service \
+        ln -fs ../../../../usr/lib/systemd/system/configure-players.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-players.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip.service \
                 $(TARGET_DIR)/lib/systemd/system/myip.service
-        ln -fs ../../../usr/lib/systemd/system/myip.service \
+        ln -fs ../../../../usr/lib/systemd/system/myip.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
                 $(TARGET_DIR)/lib/systemd/system/initial-volume.service
-        ln -fs ../../../usr/lib/systemd/system/initial-volume.service \
+        ln -fs ../../../../usr/lib/systemd/system/initial-volume.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system.service \
                 $(TARGET_DIR)/lib/systemd/system/configure-system.service
-        ln -fs ../../../usr/lib/systemd/system/configure-system.service \
+        ln -fs ../../../../usr/lib/systemd/system/configure-system.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-system.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/resize-partitions.service
-        ln -fs ../../../usr/lib/systemd/system/resize-partitions.service \
+        ln -fs ../../../../usr/lib/systemd/system/resize-partitions.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/resize-partitions.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/reboot.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/reboot.service
-        ln -fs ../../../usr/lib/systemd/system/reboot.service \
+        ln -fs ../../../../usr/lib/systemd/system/reboot.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/reboot.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/activate-data-partition.service
-        ln -fs ../../../usr/lib/systemd/system/activate-data-partition.service \
+        ln -fs ../../../../usr/lib/systemd/system/activate-data-partition.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/activate-data-partition.service
-
-
 endef
 
 $(eval $(generic-package))

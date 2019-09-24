@@ -84,7 +84,7 @@ guess_card() {
 
 # Check if card can record
 can_record() {
- ADC==`arecord -l | grep -i hifiberry`
+ ADC=`arecord -l | grep -i hifiberry`
  if [ "$ADC" != "" ]; then
    CAN_RECORD=1
    return

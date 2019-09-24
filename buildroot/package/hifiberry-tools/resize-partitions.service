@@ -1,6 +1,6 @@
 [Unit]
 Description=Resize file systems
-After=systemd-fsck@.service boot.mount
+After=systemd-fsck@.service boot.mount systemd-remount-fs.service systemd-sysusers.service
 Before=network.target configure-system.service
 
 [Service]
