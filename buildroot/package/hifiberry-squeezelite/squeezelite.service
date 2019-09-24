@@ -1,12 +1,16 @@
 [Unit]
 Description=Squeezelite
 Wants=network.target
-After=network.target
+After=network.target sound.target spotify.service
+Before=initial-volume.service
 
 [Service]
 Type=simple
+ExecStartPre=alsactl --file /tmp/sqvol store
 ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment MIXER=`/opt/hifiberry/bin/volume-control-name`"
 ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER}
+ExecStartPost=sleep 5
+ExecStartPost=alsactl --file /tmp/sqvol restore
 StandardOutput=journal
 Restart=always
 RestartSec=5
