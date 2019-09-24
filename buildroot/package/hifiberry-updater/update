@@ -1,0 +1,42 @@
+#!/bin/bash
+
+BASEURL=https://www.hifiberry.com/images
+
+# Download version file first
+cd /tmp
+if [ -f listing ]; then
+ rm listing
+fi
+curl $BASEURL/listing >listing 2>/dev/null
+if [ "$?" != "0" ]; then
+ echo "Could not download listing file, aborting"
+fi
+
+# Check version
+MYVERSION=`cat /etc/hifiberry.version`
+. listing
+
+if [ "$VERSION" -le "$MYVERSION" ]; then
+ if [ "$1" != "--force" ]; then
+   echo "You are already using the latest version"
+   exit 0
+ fi
+fi
+echo "Updating from $MYVERSION to $VERSION"
+
+# find correct version
+UPDATERVAR=UPDATER`cat /etc/raspberrypi.version`
+FILENAME=${!UPDATERVAR}
+UPDATER=${BASEURL}/${FILENAME}
+
+# download it
+echo "Downloading $UPDATER"
+cd /data
+curl $UPDATER >updater.tar.gz 
+if [ "$?" != "0" ]; then
+ echo "Could not download updater $UPDATER, aborting"
+ exit 1
+fi
+
+# extract update
+/opt/hifiberry/bin/extract-update --reboot

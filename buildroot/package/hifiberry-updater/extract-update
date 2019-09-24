@@ -1,11 +1,9 @@
 #!/bin/bash
 
-UPDATER=/root/updater.tar.gz
+UPDATER=/data/updater.tar.gz
 
-# TODO: update extract updater
-
-if [ ! -f $UPDATEROOT ]; then
- echo "$UPDATEROOT does not exist, aborting"
+if [ ! -f $UPDATER ]; then
+ echo "$UPDATER does not exist, aborting"
  exit 1
 fi
 
@@ -34,13 +32,10 @@ if [ -f /newroot/resize-me ]; then
   rm /newroot/resize-me            
 fi                                 
 VERSION=`cat /newroot/etc/hifiberry.version`
-umount $INACTIVE
-fsck.ext2 -p -f -v $INACTIVE
-                                          
-echo "Restoring configuration..."         
+
+echo "Restoring configuration..."
 /opt/hifiberry/bin/restore-config /newroot
-                                          
-                            
+
 echo "Extracting new kernel"                   
 cd /tmp                                        
 gunzip -c $UPDATER | tar xf - zImage updater.sh
@@ -59,7 +54,11 @@ else
  chmod +x ./updater.sh
  ./updater.sh         
 fi           
-sync                                                   
+sync                      
+
+echo "Unmounting $INACTIVE"
+umount $INACTIVE
+fsck.ext2 -p -f -v $INACTIVE
                                                                
 echo "Switching root file system to inactive partition"        
 echo "root=$INACTIVE rootwait console=tty1" > /boot/cmdline.txt
