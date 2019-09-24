@@ -14,6 +14,7 @@ if [ "$VERSION" == "$current_version" ]; then
 fi
 
 echo $VERSION > .piversion
+echo $VERSION > buildroot/PIVERSION
 
 SRC=configs/hifiberryos
 TMP=./tmpfile.$$
