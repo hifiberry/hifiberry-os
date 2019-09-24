@@ -27,23 +27,23 @@ endef
 define BTSPEAKER_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/bluetoothd.service \
                 $(TARGET_DIR)/lib/systemd/system/bluetoothd.service
-        ln -fs ../../../etc/systemd/system/bluetoothd.service \
+        ln -fs ../../../../etc/systemd/system/bluetoothd.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluetoothd.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/btinterface.service \
                 $(TARGET_DIR)/lib/systemd/system/btinterface.service
-        ln -fs ../../../etc/systemd/system/btinterface.service \
+        ln -fs ../../../../etc/systemd/system/btinterface.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/btinterface.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/a2dp-agent.service \
                 $(TARGET_DIR)/lib/systemd/system/a2dp-agent.service
-        ln -fs ../../../usr/lib/systemd/system/a2dp-agent.service \
+        ln -fs ../../../../usr/lib/systemd/system/a2dp-agent.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/a2dp-agent.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/bluealsa.service \
                 $(TARGET_DIR)/lib/systemd/system/bluealsa.service
-        ln -fs ../../../usr/lib/systemd/system/bluealsa.service \
+        ln -fs ../../../../usr/lib/systemd/system/bluealsa.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluealsa.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/bluealsa-aplay.service\
                 $(TARGET_DIR)/usr/lib/systemd/system/bluealsa-aplay.service
-        ln -fs ../../../usr/lib/systemd/system/bluealsa-aplay.service \
+        ln -fs ../../../../usr/lib/systemd/system/bluealsa-aplay.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluealsa-aplay.service
 endef
 
