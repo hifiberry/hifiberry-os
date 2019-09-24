@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AUDIOCONTROL2_VERSION = 0c98af8b41951b54d088b59764a4fb93fefddfd6
+AUDIOCONTROL2_VERSION = fcc72c02f982db8fdcbcd2bda7467580a1dd6079
 AUDIOCONTROL2_SITE = $(call github,hifiberry,audiocontrol2,$(AUDIOCONTROL2_VERSION))
 
 define AUDIOCONTROL2_BUILD_CMDS
@@ -20,7 +20,7 @@ endef
 define AUDIOCONTROL2_INSTALL_INIT_SYSTEMD
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/audiocontrol2.service \
            $(TARGET_DIR)/usr/lib/systemd/system/audiocontrol2.service
-    ln -fs ../../../usr/lib/systemd/system/audiocontrol2.service \
+    ln -fs ../../../../usr/lib/systemd/system/audiocontrol2.service \
            $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/audiocontrol2.service
 endef
 
