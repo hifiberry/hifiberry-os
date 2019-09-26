@@ -1,14 +1,16 @@
 # HiFiBerryOS technical documentation
 
-
 - [Configuration](configuration.md)
-- [DBus](dbus.md)
-- [Known problems](known-problems.md)
-- [Links to other interesting projects](links.md)
-- [MPRIS](mpris.md)
+- [How we use DBUS MPRIS](mpris.md)
 - [How to implement a multiroom system](multiroom.md)
-- [TCP/IP port numbers in use](ports.md)
-- [How resampling is used](resampling.md)
-- [Active services](services.md)
+- [How we use resampling](resampling.md)
 - [Updater process](updater.md)
+- [TCP/IP port numbers in use](ports.md)
+- [Active services](services.md)
 - [Wishlist](wishlist.md)
+- [Known problems](known-problems.md)
+
+## More information
+
+- [Example MPRIS DBus commands](dbus.md)
+- [Links to other interesting projects](links.md)
