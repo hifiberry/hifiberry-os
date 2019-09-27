@@ -64,6 +64,8 @@ echo "Switching root file system to inactive partition"
 echo "root=$INACTIVE rootwait console=tty1" > /boot/cmdline.txt
                                                                
 if [ "$1" == "--reboot" ]; then
+ echo "Removing updater"
+ rm $UPDATER
  echo "Rebooting"
  sync            
  reboot
