@@ -13,7 +13,11 @@ if [ "$?" != "0" ]; then
 fi
 
 # Check version
-MYVERSION=`cat /etc/hifiberry.version`
+MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
+if [ "$MYVERSION" == "" ]; then
+ $MYVERSION=0
+fi
+
 . listing
 
 if [ "$VERSION" -le "$MYVERSION" ]; then
