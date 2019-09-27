@@ -1,11 +1,17 @@
 #!/bin/bash
 PLATFORM=$1
 if [ "$PLATFORM" == "" ]; then
- echo Call with $0 platform where platform is 0w, 3 or 4
- exit 1
+  echo Call with $0 platform where platform is 0w, 3 or 4
+  exit 1
 fi
 
-TS=`date +%Y%m%d`
+if [ "$2" != "" ]; then
+  echo "Using timestamp $2"
+  TS=$2
+else
+  TS=`date +%Y%m%d`
+fi
+
 cd `dirname $0`
 MYDIR=`pwd`
 echo $MYDIR
