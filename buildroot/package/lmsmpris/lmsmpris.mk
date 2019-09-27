@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LMSMPRIS_VERSION = c5b7a088095e790b72660890a264620a40e6abcd
+LMSMPRIS_VERSION = 7994fba5f1391231980ecbfca04fb4049730090f
 LMSMPRIS_SITE = $(call github,hifiberry,lmsmpris,$(LMSMPRIS_VERSION))
 
 define LMSMPRIS_BUILD_CMDS
