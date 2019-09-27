@@ -19,7 +19,7 @@ guess_volume_control() {
  fi
 
  # Check if there is a working DSP volume control
- dsptoolkit get-volume 2>/dev/null >/dev/null
+ dsptoolkit --timeout=2 get-volume 2 >/dev/null >/dev/null
  if [ $? == 0 ]; then
     MIXER_CONTROL=DSPVolume
     return
@@ -73,9 +73,9 @@ guess_card() {
     return
  fi
 
- REG1=`dsptoolkit read-reg 0xf003` # expected 00 01
- REG2=`dsptoolkit read-reg 0xf402` # expected 00 01
- REG3=`dsptoolkit read-reg 0xc000` # expected 00 00
+ REG1=`dsptoolkit --timeout=2 read-reg 0xf003` # expected 00 01
+ REG2=`dsptoolkit --timeout=2 read-reg 0xf402` # expected 00 01
+ REG3=`dsptoolkit --timeout=2 read-reg 0xc000` # expected 00 00
  if [ "$REG1$REG2$REG3" == "00 01 00 01 00 00 " ]; then
     CARD="DAC+ DSP"
     return
