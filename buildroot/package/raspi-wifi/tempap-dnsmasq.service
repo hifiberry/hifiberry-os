@@ -1,0 +1,13 @@
+[Unit]
+Description=Temporay AP: dnsmasq
+Wants=network.target
+After=network.target tempap-hostapd.service
+
+[Service]
+Type=simple
+ExecStartPre=/sbin/ifconfig wlan0 10.0.0.1 up
+ExecStart=/sbin/dnsmasq -d -C /etc/tempap-dnsmasq.conf
+ExecStopPost=/sbin/ifconfig wlan0 down
+StandardOutput=journal
+
+[Install]

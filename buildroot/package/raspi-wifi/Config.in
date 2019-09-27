@@ -1,4 +1,12 @@
 config BR2_PACKAGE_RASPI_WIFI
 	bool "raspi-wifi"
         help
-	  Add WiFi support
+	  Add WiFi support and configuration of WiFi using a 
+          temporary access point
+
+	select BR2_PACKAGE_DNSMASQ
+	select BR2_PACKAGE_DNSMASQ_DHCP
+	select BR2_PACKAGE_HOSTAPD
+	select BR2_PACKAGE_HOSTAPD_DRIVER_HOSTAP
+	select BR2_PACKAGE_HOSTAPD_DRIVER_NL80211
+	select BR2_PACKAGE_HOSTAPD_HAS_WIFI_DRIVERS

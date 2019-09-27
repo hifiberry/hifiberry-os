@@ -1,0 +1,12 @@
+[Unit]
+Description=Temporay access point for configuration
+Wants=network.target
+After=network.target tempap-hostapd.service tempap-dnsmasq.service
+Requires=tempap-hostapd.service tempap-dnsmasq.service
+
+[Service]
+Type=oneshot
+# Execute a dummy program
+ExecStart=/bin/true
+
+[Install]
