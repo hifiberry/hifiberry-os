@@ -1,28 +1,41 @@
 xxxxxxxx
-- Added a central config file /etc/hifibery.conf that can be used to configure the whole system
-- Changed sound card reconfiguration that there is no plop sound during startup anymore
-- (internal) Added mpris support to shairport-sync
-- (internal) Added first version of an updater
+- Added web radio support
+- Added LastFM love/unlove support
+
+20190926
+- Added a central config file /etc/hifibery.conf that can be used to 
+  configure the whole system
+- Changed sound card reconfiguration that there is no plop sound 
+  during startup anymore
+- Added MPD web interface
+- Added player web interface
+- Improved resampling
+- Added Last.FM support
+- (internal) Added mpris support to all players
 - (internal) Added updater
 
 20190902
 - Added alsaloop for cards that offer recording (ADC cards)
-- Added Roon sceyerrver
+- Added Roon player
 
 20190828
 - Added Bluetooth
 - Added MPD
 - DSPToolkit version 0.17
 - Changed init system to use systemd (faster startup)
+- Removed audiocontrol (as it will be replaced by audiocontrol2 
+  in the future)
 
 20181015
-- Added audiocontrol demon to support volume control via rotary controller
-- DSPTookit upgraded to 0.14 which supports log scale for shairport-sync
+- Added audiocontrol demon to support volume control 
+  via rotary controller
+- DSPTookit upgraded to 0.14 which supports log scale 
+  for shairport-sync
 
 20181011
 - Bugfix: DSPToolkit upgraded to 0.13
-- Bugfix: Shairport now working (some libraries were missing in previous
-version)
+- Bugfix: Shairport now working (some libraries were missing in 
+  previous version)
 
 20181009 
 - added nano to allow editing local files
