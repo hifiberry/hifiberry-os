@@ -1,6 +1,8 @@
 xxxxxxxx
 - Added web radio support
 - Added LastFM love/unlove support
+- Added volume control in web interface
+- Bugfix: Amp+ now uses softvol to support Airplay
 
 20190926
 - Added a central config file /etc/hifibery.conf that can be used to 
