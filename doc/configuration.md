@@ -1,7 +1,7 @@
 # HiFiBerryOS configuration
 
-There is now one main configuration file named hifiberry.conf. It can reside either on the FAT partition of the SD card 
-or in /etc. If both files exists, the file on teh FAT partition will be used.
+There is now one main configuration file named *hifiberry.conf*. It can reside either on the FAT partition of the SD card 
+or in /etc. If both files exists, the file on the FAT partition will be used.
 
 ## General 
 
