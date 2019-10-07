@@ -11,7 +11,7 @@
 - [Known problems](known-problems.md)
 
 ## Developer documentation
-- []
+- [Build HiFiBerryOS](building.md)
 
 ## More information
 
