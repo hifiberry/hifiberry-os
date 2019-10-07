@@ -23,6 +23,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system \
            $(TARGET_DIR)/opt/hifiberry/bin/configure-system
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/stop-all-players \
+           $(TARGET_DIR)/opt/hifiberry/bin/stop-all-players
     $(INSTALL) -D -m 0600 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.conf.sample \
            $(TARGET_DIR)/etc/hifiberry.conf.sample
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions \
@@ -48,8 +50,6 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
                 $(TARGET_DIR)/etc/init.d/S60initial-volume
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S98hifiberry-detect \
                 $(TARGET_DIR)/etc/init.d/S98hifiberry-detect
-	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/S99x-myip \
-                $(TARGET_DIR)/etc/init.d/S99x-myip
 endef
 
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
@@ -63,8 +63,8 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-players.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip.service \
                 $(TARGET_DIR)/lib/systemd/system/myip.service
-        ln -fs ../../../../usr/lib/systemd/system/myip.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
+#        ln -fs ../../../../usr/lib/systemd/system/myip.service \
+#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
                 $(TARGET_DIR)/lib/systemd/system/initial-volume.service
         ln -fs ../../../../usr/lib/systemd/system/initial-volume.service \
