@@ -1,0 +1,4 @@
+#!/bin/sh
+for p in shairport-sync spotify mpd bluealsa bluealsa-aplay squeezelite raat; do
+ systemctl stop $p
+done
