@@ -1,7 +1,7 @@
 [Unit]
 Description=Audiocontrol2
-Wants=network-online.target dbus.service
-After=network.target sound.target dbus.service
+Wants=dbus.service
+After=sound.target dbus.service network-online.target
 
 [Service]
 Type=simple
