@@ -66,6 +66,11 @@ packages, e.g.
 
 Creates the image and update files for a specific Raspberry Pi hardware. Parameter is the Pi version, e.g. 0w, 3 or 4.
 
+## update-pi.sh
+
+Creates an image from the latest compile run and pushes it to the Raspberry Pi given as a command line parameter.
+To make sure this works, the version of Raspberry Pi must match the version that you compiles the image for. Also the updater expects that the Pi still uses the default password. YOu also need to have the sshpass tool installed. 
+
 ## build-all.sh
 
 Starts a release build that will build images for all supported Raspberry Pi platforms. This will definitely 
