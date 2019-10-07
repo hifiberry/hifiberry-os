@@ -29,6 +29,9 @@ mpd_enable=1
 
 sound_initialvolume=""
 
+samplerate=96000
+sampleformat=S24_LE
+
 #===============================================================================================
 # Configuration
 #===============================================================================================
@@ -229,9 +232,22 @@ if [ "$sound_initialvolume" != "" ]; then
 fi
 
 #===============================================================================================
-# Sound settings
+# Autopause
 #===============================================================================================
 if [ "$auto_pause" != "" ]; then
  sed -i s/auto_pause.*/auto_pause=$auto_pause/ /etc/audiocontrol2.conf
  echo "Setting auto_pause to $auto_pause"
 fi 
+
+#===============================================================================================     
+# Samplerate & format
+#===============================================================================================     
+if [ "$samplerate" != "" ]; then
+ sed -i s/rate\ [0-9][0-9][0-9][0-9][0-9].*/rate\ $samplerate/g /etc/asound.conf
+ echo "Setting samplerate to $samplerate"
+fi
+ 
+if [ "$sampleformat" != "" ]; then
+ sed -i s/format\ .*/format\ $sampleformat/ /etc/asound.conf
+ echo "Setting sample format to $sampleformat"
+fi     
