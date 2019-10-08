@@ -54,7 +54,10 @@ else
  chmod +x ./updater.sh
  ./updater.sh         
 fi           
-sync                      
+sync
+
+echo "Migrating SSH host keys"
+cp /etc/ssh/ssh_host* /newroot/etc/ssh
 
 echo "Unmounting $INACTIVE"
 umount $INACTIVE
