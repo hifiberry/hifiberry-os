@@ -10,7 +10,7 @@ for i in 0w 2 4 3; do
   echo
   ./build-config.sh $i
   ./compile.sh
-  ./create-image.sh $i $TS
+  ./create-image.sh $TS
   echo $TS > images/VERSION
   echo "UPDATER${i}=updater-$TS-pi${i}.tar.gz" >> images/listing
 done
