@@ -13,7 +13,7 @@ if [ "$VERSION" == "" ]; then
  exit 1
 fi
 
-./create-image.sh $VERSION
+./create-image.sh
 IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 echo "Updating $HOST with $IMG"
 sshpass -p 'hifiberry' scp images/$IMG root@$HOST:/data/updater.tar.gz; 

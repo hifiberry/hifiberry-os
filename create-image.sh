@@ -1,13 +1,16 @@
 #!/bin/bash
-PLATFORM=$1
+cd `dirname $0`
+
+PLATFORM=`cat .piversion`
 if [ "$PLATFORM" == "" ]; then
-  echo Call with $0 platform where platform is 0w, 3 or 4
-  exit 1
+ echo "Pi platform undefined. You have to create the config files using build-config.sh before compiling the system."
+ echo "Aborting..."
+ exit 1
 fi
 
-if [ "$2" != "" ]; then
-  echo "Using timestamp $2"
-  TS=$2
+if [ "$1" != "" ]; then
+  echo "Using timestamp $1"
+  TS=$1
 else
   TS=`date +%Y%m%d`
 fi
@@ -17,6 +20,9 @@ MYDIR=`pwd`
 echo $MYDIR
 cp ../buildroot/output/images/sdcard.img images/hifiberryos-$TS-pi$PLATFORM.img
 pushd images
+if [ -f hifiberryos-pi$PLATFORM.zip ]; then
+ rm hifiberryos-pi$PLATFORM.zip
+fi
 zip hifiberryos-pi$PLATFORM.zip hifiberryos-$TS-pi$PLATFORM.img
 popd
 TMPDIR=/tmp/$$
