@@ -12,6 +12,7 @@
 
 ## Developer documentation
 - [Build HiFiBerryOS](building.md)
+- [Design guidelines](guidelines.md)
 
 ## More information
 
