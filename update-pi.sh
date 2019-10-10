@@ -7,6 +7,11 @@ if  [ "$HOST" == "" ]; then
  exit 1
 fi 
 
+PORT=$2
+if [ "$PORT" == "" ]; then
+ PORT=22
+fi
+
 VERSION=`cat .piversion`
 if [ "$VERSION" == "" ]; then
  echo ".piversion does not exist, create the configuration first using build-config.sh"
@@ -16,7 +21,7 @@ fi
 ./create-image.sh
 IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 echo "Updating $HOST with $IMG"
-sshpass -p 'hifiberry' scp images/$IMG root@$HOST:/data/updater.tar.gz; 
-sshpass -p 'hifiberry' ssh root@$HOST /opt/hifiberry/bin/extract-update --reboot
+sshpass -p 'hifiberry' scp -v -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
+sshpass -p 'hifiberry' ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
 
 
