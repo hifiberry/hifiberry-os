@@ -29,7 +29,7 @@ DSPTOOLKIT_POST_INSTALL_STAGING_HOOKS += DSPTOOLKIT_POST_INSTALL_STAGING_CMD
 define DSPTOOLKIT_INSTALL_INIT
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/S90sigmatcp \
 		$(TARGET_DIR)/etc/init.d/S90sigmatcp
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.service \
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/sigmatcp.service
         if [ -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
           ln -fs ../../../../usr/lib/systemd/system/sigmatcp.service \
