@@ -12,7 +12,7 @@ MPD_MPRIS_BUILD_TARGETS=./cmd/mpd-mpris/main.go
 MPD_MPRIS_BIN_NAME=mpd-mpris
 
 define MPD_MPRIS_INSTALL_INIT_SYSTEMD
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/mpd-mpris/mpd-mpris.service \
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/mpd-mpris/mpd-mpris.service \
            $(TARGET_DIR)/usr/lib/systemd/system/mpd-mpris.service
     ln -fs ../../../../usr/lib/systemd/system/mpd-mpris.service \
            $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mpd-mpris.service

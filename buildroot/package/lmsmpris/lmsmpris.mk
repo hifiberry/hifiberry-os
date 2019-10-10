@@ -16,7 +16,7 @@ define LMSMPRIS_INSTALL_TARGET_CMDS
 endef
 
 define LMSMPRIS_INSTALL_INIT_SYSTEMD
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/lmsmpris/lmsmpris.service \
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/lmsmpris/lmsmpris.service \
            $(TARGET_DIR)/usr/lib/systemd/system/lmsmpris.service
     ln -fs ../../../../usr/lib/systemd/system/lmsmpris.service \
            $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/lmsmpris.service

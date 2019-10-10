@@ -20,7 +20,7 @@ define AUDIOCONTROL_INSTALL_INIT_SYSV
 endef
 
 define AUDIOCONTROL_INSTALL_INIT_SYSTEMD
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol/audiocontrol.service \
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol/audiocontrol.service \
                 $(TARGET_DIR)/lib/systemd/system/audiocontrol.service
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol/audiocontrol.conf \
            $(TARGET_DIR)/etc
