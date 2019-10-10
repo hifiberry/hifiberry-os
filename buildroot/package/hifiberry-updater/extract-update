@@ -13,8 +13,8 @@ INACTIVE=`./partitions | awk '{print $2}'`
 echo "Unmounting $INACTIVE..."
 umount /newroot 2>/dev/null
 
-echo "Saving configuration..."
-/opt/hifiberry/bin/save-config
+#echo "Saving configuration..."
+#/opt/hifiberry/bin/save-config
 
 echo "Extracting new firmware to $INACTIVE..."
 gunzip -c $UPDATER | tar xOf - rootfs.ext2 | dd of=$INACTIVE bs=1048576
@@ -33,8 +33,8 @@ if [ -f /newroot/resize-me ]; then
 fi                                 
 VERSION=`cat /newroot/etc/hifiberry.version`
 
-echo "Restoring configuration..."
-/opt/hifiberry/bin/restore-config /newroot
+#echo "Restoring configuration..."
+#/opt/hifiberry/bin/restore-config /newroot
 
 echo "Extracting new kernel"                   
 cd /tmp                                        
@@ -58,6 +58,29 @@ sync
 
 echo "Migrating SSH host keys"
 cp /etc/ssh/ssh_host* /newroot/etc/ssh
+
+echo "Migrating other configurations"
+for i in `cat /opt/hifiberry/etc/config-files`; do
+  if [ -f $i ]; then
+    DIR=`dirname $i`
+    cd $DIR
+    if [ ! -d /newroot/$DIR ]; then
+      mkdir -p /newroot/$DIR
+    fi
+    echo $i
+    cp $i /newroot/$DIR
+  fi
+  if [ -d $i ]; then
+    DIR=`dirname $i`
+    cd $DIR
+    if [ ! -d /newroot/$DIR ]; then
+      mkdir -p /newroot/$DIR
+    fi
+    echo "$i/*"
+    cp $i/* /newroot/$DIR
+  fi
+done
+
 
 echo "Unmounting $INACTIVE"
 umount $INACTIVE
