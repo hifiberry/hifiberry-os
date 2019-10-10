@@ -15,7 +15,7 @@ fi
 # Check version
 MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
 if [ "$MYVERSION" == "" ]; then
- $MYVERSION=0
+ MYVERSION=0
 fi
 
 . listing
