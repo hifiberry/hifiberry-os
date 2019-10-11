@@ -69,10 +69,10 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/myip.service
 #        ln -fs ../../../../usr/lib/systemd/system/myip.service \
 #                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
-                $(TARGET_DIR)/lib/systemd/system/initial-volume.service
-        ln -fs ../../../../usr/lib/systemd/system/initial-volume.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
+#        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
+#                $(TARGET_DIR)/lib/systemd/system/initial-volume.service
+#        ln -fs ../../../../usr/lib/systemd/system/initial-volume.service \
+#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system.service \
                 $(TARGET_DIR)/lib/systemd/system/configure-system.service
         ln -fs ../../../../usr/lib/systemd/system/configure-system.service \
@@ -89,6 +89,17 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/activate-data-partition.service
         ln -fs ../../../../usr/lib/systemd/system/activate-data-partition.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/activate-data-partition.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/restore-volume.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/restore-volume.service
+        ln -fs ../../../../usr/lib/systemd/system/restore-volume.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/restore-volume.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/store-volume.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/store-volume.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/store-volume.timer \
+                $(TARGET_DIR)/usr/lib/systemd/system/store-volume.timer
+        [ -d $(TARGET_DIR)/etc/systemd/system/timers.target.wants ] || mkdir $(TARGET_DIR)/etc/systemd/system/timers.target.wants
+        ln -fs ../../../../usr/lib/systemd/system/store-volume.timer \
+                $(TARGET_DIR)/etc/systemd/system/timers.target.wants/store-volume.timer
 endef
 
 $(eval $(generic-package))

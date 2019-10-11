@@ -1,0 +1,10 @@
+[Unit]
+Description=Store volume
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+Unit=store-volume.service
+
+[Install]
+WantedBy=timers.target  

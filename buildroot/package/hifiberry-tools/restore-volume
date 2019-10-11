@@ -1,0 +1,4 @@
+#!/bin/bash
+STORE=/etc/alsactl.store
+alsactl -f $STORE restore
+
