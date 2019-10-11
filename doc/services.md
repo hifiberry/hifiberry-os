@@ -48,10 +48,10 @@ Squeezelite implements the Logotech Squeezebox protocol enabling the system to c
 
 |Service|config files|systemd services|
 |---|---|---|
-|alsaloop|-|-|
-|bluetooth audio|-|-|
-|mpd|-|-|
-|roon|-|-|
-|shairport-sync|-|-|
-|spotifyd|-|-|
-|squeezelite|-|-|
+|alsaloop|-|alsaloop.service|
+|bluetooth audio|/etc/bluetooth/main.conf|bluetoothd.service, bluealsa.service, bluealsa-aplay.service|
+|mpd|/etc/mpd.conf|mpd.service, mpd-mpris.service|
+|roon|/etc/hifiberry_raat.conf|raat.service|
+|shairport-sync|/etc/shairport-sync.conf|shairport-sync.service|
+|spotifyd|/etc/spotifyd.conf|spotify.service|
+|squeezelite|/var/squeezelite/squeezelite.name|squeezelite.service, lmsmpris.service|
