@@ -8,3 +8,4 @@
 /etc/audiocontrol2.conf
 /etc/spotifyd.conf
 /etc/beocreate
+/etc/alsactl.store

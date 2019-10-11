@@ -1,0 +1,13 @@
+[Unit]
+Description=Restore volume
+Wants=sound.target
+After=sound.target squeezelite.service sigmatcpserver.service
+Before=roon.service mpd.service spotifyd.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/set-initial-volume
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
