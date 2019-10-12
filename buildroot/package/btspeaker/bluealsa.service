@@ -4,6 +4,7 @@ Requires=a2dp-agent.service
 After=a2dp-agent.service
 
 [Service]
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting bluealsa"
 ExecStart=/usr/bin/bluealsa -i hci0 -p a2dp-sink
 RestartSec=5
 Restart=always

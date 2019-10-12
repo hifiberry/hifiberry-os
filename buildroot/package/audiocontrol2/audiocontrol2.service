@@ -7,6 +7,7 @@ After=sound.target dbus.service network-online.target
 Type=simple
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 WorkingDirectory=/opt/audiocontrol2
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting AudioControl2"
 ExecStart=/usr/bin/python3 /opt/audiocontrol2/audiocontrol2.py
 StandardOutput=journal
 Restart=always

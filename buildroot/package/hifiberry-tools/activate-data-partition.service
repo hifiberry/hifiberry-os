@@ -5,6 +5,7 @@ Before=mpd.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Enabling /data"
 ExecStart=/opt/hifiberry/bin/activate-data-partition
 StandardOutput=journal
 

@@ -7,6 +7,7 @@ After=network-online.target dbus.service
 Type=simple
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 WorkingDirectory=/opt/lmsmpris
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting LMS control interface"
 ExecStart=/usr/bin/python3 /opt/lmsmpris/lmsmpris.py
 StandardOutput=journal
 Restart=always

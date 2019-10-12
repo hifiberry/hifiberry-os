@@ -5,6 +5,7 @@ After=network.target sound.target
 
 [Service]
 Type=simple
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting music player daemon"
 ExecStart=/bin/mpd --no-daemon
 
 [Install]

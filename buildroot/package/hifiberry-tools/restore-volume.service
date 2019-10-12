@@ -6,7 +6,8 @@ Before=roon.service mpd.service spotifyd.service
 
 [Service]
 Type=oneshot
-ExecStart=/opt/hifiberry/bin/set-initial-volume
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Restoring volume"
+ExecStart=/opt/hifiberry/bin/restore-volume
 StandardOutput=journal
 
 [Install]

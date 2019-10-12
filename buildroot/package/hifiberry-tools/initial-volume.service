@@ -5,6 +5,7 @@ After=sound.target squeezelite.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Setting initial volume"
 ExecStart=/opt/hifiberry/bin/set-initial-volume
 StandardOutput=journal
 
