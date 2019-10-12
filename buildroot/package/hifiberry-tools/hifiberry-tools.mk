@@ -5,6 +5,8 @@
 ################################################################################
 
 define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/bootmsg \
+           $(TARGET_DIR)/opt/hifiberry/bin/bootmsg
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/detect-hifiberry \
            $(TARGET_DIR)/opt/hifiberry/bin/detect-hifiberry
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/reconfigure-players \
