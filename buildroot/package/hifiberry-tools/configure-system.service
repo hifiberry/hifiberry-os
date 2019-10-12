@@ -5,6 +5,7 @@ Before=network.target
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Configuring system"
 ExecStart=/opt/hifiberry/bin/configure-system
 StandardOutput=journal
 

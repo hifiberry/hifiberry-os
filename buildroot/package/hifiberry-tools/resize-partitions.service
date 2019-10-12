@@ -5,6 +5,7 @@ Before=network.target configure-system.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Resizing partitions"
 ExecStart=/opt/hifiberry/bin/resize-partitions
 StandardOutput=journal
 

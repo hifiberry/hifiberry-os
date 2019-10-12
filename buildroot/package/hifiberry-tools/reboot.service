@@ -6,6 +6,7 @@ ConditionPathExists=/tmp/reboot
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Rebooting"
 ExecStartPre=/bin/sync
 ExecStart=/bin/systemctl reboot
 StandardOutput=journal

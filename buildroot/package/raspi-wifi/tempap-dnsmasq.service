@@ -5,6 +5,7 @@ After=network.target tempap-hostapd.service
 
 [Service]
 Type=simple
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting temporary access point"
 ExecStartPre=/sbin/ifconfig wlan0 10.0.0.1 up
 ExecStart=/sbin/dnsmasq -d -C /etc/tempap-dnsmasq.conf
 ExecStopPost=/sbin/ifconfig wlan0 down

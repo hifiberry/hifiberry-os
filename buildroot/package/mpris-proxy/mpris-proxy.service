@@ -6,6 +6,7 @@ After=dbus.target bluealsa.service
 [Service]
 Type=simple
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Bluetooth audio control interface"
 ExecStart=/bin/mpris-proxy
 StandardOutput=journal
 Restart=always

@@ -4,6 +4,7 @@ After=sound.target configure-system.service hifiberry-detect.service local-fs.ta
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Configuring players"
 ExecStart=/opt/hifiberry/bin/reconfigure-players --reboot
 StandardOutput=journal
 

@@ -5,6 +5,7 @@ After=network.target network-online.target sound.target initial-volume.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Saying IP"
 ExecStart=/opt/hifiberry/bin/myip
 StandardOutput=journal
 
