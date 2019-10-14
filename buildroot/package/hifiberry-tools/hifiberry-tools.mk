@@ -69,8 +69,8 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-players.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip.service \
                 $(TARGET_DIR)/lib/systemd/system/myip.service
-#        ln -fs ../../../../usr/lib/systemd/system/myip.service \
-#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
+        ln -fs ../../../../usr/lib/systemd/system/myip.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
 #        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
 #                $(TARGET_DIR)/lib/systemd/system/initial-volume.service
 #        ln -fs ../../../../usr/lib/systemd/system/initial-volume.service \
@@ -102,6 +102,10 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
         [ -d $(TARGET_DIR)/etc/systemd/system/timers.target.wants ] || mkdir $(TARGET_DIR)/etc/systemd/system/timers.target.wants
         ln -fs ../../../../usr/lib/systemd/system/store-volume.timer \
                 $(TARGET_DIR)/etc/systemd/system/timers.target.wants/store-volume.timer
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.target \
+                $(TARGET_DIR)/usr/lib/systemd/system/hifiberry.target
+        ln -fs ../../../../usr/lib/systemd/system/hifiberry.target \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry.target
 endef
 
 $(eval $(generic-package))

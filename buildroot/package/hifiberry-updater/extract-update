@@ -87,7 +87,7 @@ umount $INACTIVE
 fsck.ext2 -p -f -v $INACTIVE
                                                                
 echo "Switching root file system to inactive partition"        
-echo "root=$INACTIVE rootwait console=tty1" > /boot/cmdline.txt
+echo "root=$INACTIVE rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
                                                                
 if [ "$1" == "--reboot" ]; then
  echo "Removing updater"

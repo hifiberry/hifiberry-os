@@ -27,4 +27,6 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-greenlet/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-keyboard/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-pylast/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/initial-config/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-psplash/Config.in"
+
 

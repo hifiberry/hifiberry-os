@@ -1,0 +1,12 @@
+[Unit]
+Description=HiFiBerry final 
+After=hifibery.target
+Before=psplash-quit.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/myip
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
