@@ -9,3 +9,4 @@
 /etc/spotifyd.conf
 /etc/beocreate
 /etc/alsactl.store
+/var/lib/hifiberry
