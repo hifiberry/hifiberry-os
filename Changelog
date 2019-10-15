@@ -1,8 +1,11 @@
 xxxxxxxx
-- Added web radio support
+- Added volume control
 - Added LastFM love/unlove support
-- Added volume control in web interface
+- Added remote control support
+- Added AudioControl API
+- Improved Bluetooth stability on Pi 3B+, 4B
 - Bugfix: Amp+ now uses softvol to support Airplay
+- Bugfix: Digi+ get stuck in previous release
 
 20190926
 - Added a central config file /etc/hifibery.conf that can be used to 
