@@ -21,7 +21,7 @@ fi
 ./create-image.sh
 IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 echo "Updating $HOST with $IMG"
-sshpass -p 'hifiberry' scp -v -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
+sshpass -p 'hifiberry' scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
 sshpass -p 'hifiberry' ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
 
 
