@@ -3,6 +3,7 @@ xxxxxxxx
 - Added LastFM love/unlove support
 - Added remote control support
 - Added AudioControl API
+- Splash screen
 - Improved Bluetooth stability on Pi 3B+, 4B
 - Bugfix: Amp+ now uses softvol to support Airplay
 - Bugfix: Digi+ get stuck in previous release
