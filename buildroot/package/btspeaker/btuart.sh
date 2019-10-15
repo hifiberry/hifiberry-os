@@ -11,14 +11,18 @@ else
   BDADDR=`printf b8:27:eb:%02x:%02x:%02x $((0x$B1 ^ 0xaa)) $((0x$B2 ^ 0xaa)) $((0x$B3 ^ 0xaa))`
 fi
 
-echo "Attaching Bluetooth interface"
+/opt/hifiberry/bin/bootmsg "Attaching Bluetooth interface"
 
 uart0_pins="`wc -c /proc/device-tree/soc/gpio@7e200000/uart0_pins/brcm\,pins | cut -f 1 -d ' '`"
 if [ "$uart0_pins" = "16" ] ; then
 	# This line is necessary to sort out the flow control pins
-	stty -F /dev/serial1 115200 raw -echo
-	$HCIATTACH /dev/serial1 bcm43xx 3000000 flow - $BDADDR
+	stty -F /dev/ttyAMA0 115200 raw -echo
+	/usr/bin/hciattach -n /dev/ttyAMA0 bcm43xx 3000000 flow - $BDADDR
+        if [ "$?" != "0" ]; then
+          echo "Failed"
+          /opt/hifiberry/bin/bootmsg "Attaching Bluetooth interface"
+        fi
 else
-	$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
+	/usr/bin/hciattach -n /dev/ttyAMA0 bcm43xx 460800 noflow - $BDADDR
 fi
 
