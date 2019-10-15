@@ -12,5 +12,13 @@ else
 fi
 
 echo "Attaching Bluetooth interface"
-/usr/bin/hciattach -n /dev/ttyAMA0 bcm43xx 921600 noflow - $BDADDR
+
+uart0_pins="`wc -c /proc/device-tree/soc/gpio@7e200000/uart0_pins/brcm\,pins | cut -f 1 -d ' '`"
+if [ "$uart0_pins" = "16" ] ; then
+	# This line is necessary to sort out the flow control pins
+	stty -F /dev/serial1 115200 raw -echo
+	$HCIATTACH /dev/serial1 bcm43xx 3000000 flow - $BDADDR
+else
+	$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
+fi
 
