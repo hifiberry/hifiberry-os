@@ -1,6 +1,6 @@
 [Unit]
 Description=HiFiBerry target
-After=alsaloop.service bluealsa-aplay.service mpd.service raat.service shairport-sync.service spotify.service squeezelite.service audiocontrol2.service lmsmpris.service
+After=alsaloop.service bluealsa-aplay.service mpd.service raat.service shairport-sync.service spotify.service squeezelite.service audiocontrol2.service ympd.service
 Before=psplash-quit.service
 
 [Install]
