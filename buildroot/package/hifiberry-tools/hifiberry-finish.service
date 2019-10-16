@@ -1,6 +1,6 @@
 [Unit]
 Description=HiFiBerry final 
-After=hifibery.target
+After=hifiberry.target
 Before=psplash-quit.service
 
 [Service]
