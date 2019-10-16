@@ -10,7 +10,7 @@ ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting squeezelite"
 ExecStartPre=alsactl --file /tmp/sqvol store
 ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment MIXER=`/opt/hifiberry/bin/volume-control-name`"
 ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER}
-ExecStartPost=sleep 5
+ExecStartPost=sleep 2
 ExecStartPost=alsactl --file /tmp/sqvol restore
 StandardOutput=journal
 Restart=always
