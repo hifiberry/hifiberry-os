@@ -13,12 +13,6 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/reconfigure-players
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-daemons \
            $(TARGET_DIR)/opt/hifiberry/bin/check-daemons
-    $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/config-files \
-           $(TARGET_DIR)/opt/hifiberry/etc/config-files
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/save-config \
-           $(TARGET_DIR)/opt/hifiberry/bin/save-config
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/restore-config \
-           $(TARGET_DIR)/opt/hifiberry/bin/restore-config
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip \
            $(TARGET_DIR)/opt/hifiberry/bin/myip
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
