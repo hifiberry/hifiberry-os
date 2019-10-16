@@ -15,7 +15,8 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/etc/hifiberry.version
         $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/PIVERSION \
                 $(TARGET_DIR)/etc/raspberrypi.version
-
+        $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/config-files \
+                $(TARGET_DIR)/opt/hifiberry/etc/config-files
 endef
 
 define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
