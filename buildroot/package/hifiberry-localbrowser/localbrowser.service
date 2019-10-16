@@ -1,0 +1,17 @@
+[Unit]
+Description=Local web brower to display web interface
+Wants=hifiberry.target
+After=hifiberry.target psplash-quit.service
+
+[Service]
+Type=simple
+Environment=QT_QPA_PLATFORM=linuxfb
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting web browser"
+ExecStart=/bin/qt-webkit-kiosk -u http://localhost:80
+StandardOutput=journal
+Restart=always
+RestartSec=20
+TimeoutStopSec=2
+
+[Install]
+WantedBy=multi-user.target

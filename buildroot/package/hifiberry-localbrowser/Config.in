@@ -1,0 +1,18 @@
+config BR2_PACKAGE_HIFIBERRY_LOCALBROWSER
+	bool "hifiberry-localbrowser"
+        help
+	  "local web browser"
+        select BR2_PACKAGE_QT5
+        select BR2_PACKAGE_QT_WEBKIT_KIOSK
+        select BR2_PACKAGE_OPENSSL
+        select BR2_PACKAGE_QT5BASE_GUI
+        select BR2_PACKAGE_QT5BASE_WIDGETS
+        select BR2_PACKAGE_QT5WEBKIT
+        select BR2_PACKAGE_QT5MULTIMEDIA
+	select BR2_PACKAGE_DEJAVU
+	select BR2_PACKAGE_DEJAVU_MONO
+	select BR2_PACKAGE_DEJAVU_SANS
+	select BR2_PACKAGE_DEJAVU_SERIF
+	select BR2_PACKAGE_DEJAVU_SANS_CONDENSED
+	select BR2_PACKAGE_DEJAVU_SERIF_CONDENSED
+
