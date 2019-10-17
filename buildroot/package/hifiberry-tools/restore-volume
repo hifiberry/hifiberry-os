@@ -1,4 +1,8 @@
 #!/bin/bash
-STORE=/etc/alsactl.store
+if [ "$1" == "" ]; then 
+ STORE=/etc/alsactl.store
+else
+ STORE=$1
+fi
 alsactl -f $STORE restore
 

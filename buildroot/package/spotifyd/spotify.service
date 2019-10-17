@@ -7,10 +7,10 @@ After=network.target sound.target dbus.service
 Type=simple
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Spotify"
-ExecStartPre=alsactl --file /tmp/spotifyvol store
+ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/spotifyvol
 ExecStart=/usr/bin/spotifyd --no-daemon 
 ExecStartPost=sleep 1
-ExecStartPost=alsactl --file /tmp/spotifyvol restore
+ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/spotifyvol
 ExecStartPost=rm /tmp/spotifyvol
 
 

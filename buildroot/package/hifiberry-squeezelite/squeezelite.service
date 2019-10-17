@@ -7,11 +7,11 @@ Before=initial-volume.service
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting squeezelite"
-ExecStartPre=alsactl --file /tmp/sqvol store
+ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/sqvol store
 ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment MIXER=`/opt/hifiberry/bin/volume-control-name`"
 ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER}
 ExecStartPost=sleep 2
-ExecStartPost=alsactl --file /tmp/sqvol restore
+ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/sqvol
 StandardOutput=journal
 Restart=always
 RestartSec=5
