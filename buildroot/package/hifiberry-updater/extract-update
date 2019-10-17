@@ -76,8 +76,8 @@ for i in `cat /opt/hifiberry/etc/config-files`; do
     if [ ! -d /newroot/$DIR ]; then
       mkdir -p /newroot/$DIR
     fi
-    echo "$i/*"
-    cp -r $i/* /newroot/$DIR
+    echo "$i"
+    cp -r $i /newroot/$DIR
   fi
 done
 
