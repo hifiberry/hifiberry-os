@@ -10,3 +10,4 @@
 /etc/beocreate
 /etc/alsactl.store
 /var/lib/hifiberry
+/etc/wpa_supplicant.conf
