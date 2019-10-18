@@ -1,7 +1,7 @@
 [Unit]
 Description=BlueALSA aplay
-Requires=bluealsa.service
-After=bluealsa.service sound.target
+Requires=bluealsa.service btinterface.service
+After=bluealsa.service sound.target btinterface.service
 
 [Service]
 # BlueALSA takes some time to initialize
