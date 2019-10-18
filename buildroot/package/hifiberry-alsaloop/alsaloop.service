@@ -6,8 +6,9 @@ ConditionPathExists=/etc/hifiberry/can_record
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting alsaloop"
-ExecStart=/usr/bin/alsaloop -P default -t 100000
+ExecStart=/bin/alsaloop -P default -C hw:0,0 -r 96000 -f S32_LE -t 100000
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target
