@@ -119,9 +119,9 @@ reconfigure_shairport() {
  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
 }
 
-# Reconfigure AudioCOntrol2
+# Reconfigure AudioControl2
 reconfigure_audiocontrol2() {
- sed -i s/mixer_control=.*/mixer_control=\"$MIXER_CONTROL\"\;/ /etc/audiocontrol.conf
+ sed -i s/mixer_control=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
 }
 
 
@@ -140,7 +140,7 @@ reconfigure_mpd() {
  sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
 }                 
 
-# 
+# Reconfigure "can_record"
 reconfigure_recording() {
  if [ ! -d /etc/hifiberry ]; then
    mkdir -p /etc/hifiberry
@@ -153,6 +153,12 @@ reconfigure_recording() {
  fi
 }
 
+# Reconfigure Beocreate 
+reconfigure_beocreate() {
+ sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
+}
+
+
 MIXER_CONTROL=""
 CARD="unknown"
 
@@ -164,6 +170,9 @@ guess_volume_control
 guess_card
 can_record
 system_name
+
+CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g'`            
+
 
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
  echo "Sound card settings have been changed, reconfiguring..."
@@ -194,6 +203,8 @@ echo "Reconfigure recording"
 reconfigure_recording
 echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
+echo "Reconfiguring Beocreate software"
+reconfigure_beocreate
 
 echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" > /etc/hifiberry.state
