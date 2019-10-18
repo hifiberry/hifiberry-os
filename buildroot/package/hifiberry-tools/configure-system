@@ -8,6 +8,7 @@ wifi_ssid=""
 wifi_psk=""
 wifi_country=""
 wifi_enable=1
+wifi_reconfigure=0
 
 ethernet_enable=1
 
@@ -37,7 +38,8 @@ sampleformat=S24_LE
 #===============================================================================================
 if [ -f /boot/hifiberry.conf ]; then
   echo "Using hifiberry.conf from FAT partition"
-  CONFIG=/boot/hifiberry.conf
+  mv /boot/hifiberry.conf /boot/hifiberry.conf.bak
+  CONFIG=/boot/hifiberry.conf.bak
 else
   CONFIG=/etc/hifiberry.conf
 fi
@@ -76,21 +78,22 @@ fi
 #===============================================================================================
 # WiFi
 #=============================================================================================== 
-if [ "$wifi_enable" != "1" ]; then
- echo "Disabling WiFi"
- if [ -f /etc/systemd/network/wireless.network ]; then 
+if [ "$wifi_reconfigure" == "1" ]; then 
+ if [ "$wifi_enable" != "1" ]; then
+  echo "Disabling WiFi"
+  if [ -f /etc/systemd/network/wireless.network ]; then 
    mv /etc/systemd/network/wireless.network /etc/systemd/network/wireless.network.disabled
- fi
- systemctl disable wpa_supplicant@wlan0.service
-else
- if [ "$wifi_ssid" != "" ] && [ "$wifi_psk" != "" ] && [ "$wifi_country" != "" ]; then
-  echo "Enabling WiFi on network $wifi_ssid"
-  if [ -f /etc/systemd/network/wireless.network.disabled ]; then
+  fi
+  systemctl disable wpa_supplicant@wlan0.service
+ else
+  if [ "$wifi_ssid" != "" ] && [ "$wifi_psk" != "" ] && [ "$wifi_country" != "" ]; then
+   echo "Enabling WiFi on network $wifi_ssid"
+   if [ -f /etc/systemd/network/wireless.network.disabled ]; then
     mv /etc/systemd/network/wireless.network.disabled /etc/systemd/network/wireless.network
-  fi                                                                                             
+   fi                                                                                             
 
-  mv /etc/wpa_supplicant.conf /etc/wpa_supplicant.conf.bak
-  cat >/etc/wpa_supplicant.conf <<EOF
+   mv /etc/wpa_supplicant.conf /etc/wpa_supplicant.conf.bak
+   cat >/etc/wpa_supplicant.conf <<EOF
 ctrl_interface=/var/run/wpa_supplicant
 ap_scan=1
 country=$wifi_country
@@ -101,12 +104,14 @@ network={
     scan_ssid=1
 }
 EOF
- systemctl enable wpa_supplicant@wlan0.service
+  systemctl enable wpa_supplicant@wlan0.service
 
- else
+  else
    echo "At least one of the wifi_ssid/wifi_psk/wifi_country parameers missing, not configuring WiFi"
- fi
-fi 
+  fi
+ else
+  echo "Not changing WiFi configuration as wifi_reconfigure it not enabled
+fi
 
 #===============================================================================================
 # Ethernet                                                                                         
