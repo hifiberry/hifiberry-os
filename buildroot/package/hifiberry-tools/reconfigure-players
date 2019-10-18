@@ -119,6 +119,12 @@ reconfigure_shairport() {
  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
 }
 
+# Reconfigure AudioCOntrol2
+reconfigure_audiocontrol2() {
+ sed -i s/mixer_control=.*/mixer_control=\"$MIXER_CONTROL\"\;/ /etc/audiocontrol.conf
+}
+
+
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
  sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
@@ -186,6 +192,8 @@ echo "Reconfiguring MPD"
 reconfigure_mpd
 echo "Reconfigure recording"
 reconfigure_recording
+echo "Reconfigure AudioControl2"
+reconfigure_audiocontrol2
 
 echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" > /etc/hifiberry.state
