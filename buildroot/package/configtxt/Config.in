@@ -3,3 +3,11 @@ config BR2_PACKAGE_CONFIGTXT
         help
           add I2C and SPI to config.txt
 	depends on BR2_PACKAGE_RPI_FIRMWARE
+
+config BR2_PACKAGE_CONFIGTXT_QUIET
+        bool "quiet boot mode"
+        help
+          disable all boot messages to screen
+        depends on BR2_PACKAGE_CONFIGTXT
+
+
