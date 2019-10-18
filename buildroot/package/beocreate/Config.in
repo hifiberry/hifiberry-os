@@ -1,0 +1,7 @@
+config BR2_PACKAGE_BEOCREATE
+	bool "beocreate"
+        help
+	  "Beocreate server and web interface"
+	select BR2_PACKAGE_NODEJS
+	select BR2_PACKAGE_NODEJS_NPM
+#	select BR2_PACKAGE_NODEJS_MODULES_ADDITIONAL="aplay eventemitter3 express dnssd websocket wireless-tools underscore country-list xml-js request"
