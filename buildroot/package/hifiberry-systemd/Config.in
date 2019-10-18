@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HIFIBERRY_SYSTEMD
+	bool "systemd optimisations"
+        help
+          optimize some default systemd configurations
+	depends on BR2_PACKAGE_SYSTEMD
+
