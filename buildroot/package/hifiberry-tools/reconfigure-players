@@ -171,7 +171,8 @@ guess_card
 can_record
 system_name
 
-CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g'`            
+CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
+echo $CARD_SED_SPACES
 
 
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
