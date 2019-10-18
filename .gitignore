@@ -4,3 +4,6 @@ configs/hifiberryos.bak
 images
 update-pi3
 buildroot/VERSION
+gui.txt
+userstories.txt
+build.log
