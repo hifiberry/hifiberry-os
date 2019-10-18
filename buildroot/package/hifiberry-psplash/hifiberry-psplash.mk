@@ -11,13 +11,13 @@ HIFIBERRY_PSPLASH_LICENSE_FILES = COPYING
 HIFIBERRY_PSPLASH_AUTORECONF = YES
 
 define HIFIBERRY_PSPLASH_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 package/psplash/psplash-start.service \
+	$(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/psplash-start.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/psplash-start.service
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants
 	ln -sf  ../../../../usr/lib/systemd/system/psplash-start.service \
 		$(TARGET_DIR)/etc/systemd/system/sysinit.target.wants/
 
-	$(INSTALL) -D -m 644 package/psplash/psplash-quit.service \
+	$(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/psplash-quit.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/psplash-quit.service
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
 	ln -sf  ../../../../usr/lib/systemd/system/psplash-quit.service \
