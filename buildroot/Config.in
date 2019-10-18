@@ -29,3 +29,5 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-pylast/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/initial-config/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-psplash/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-localbrowser/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/beocreate/Config.in"
+
