@@ -81,6 +81,12 @@ for i in `cat /opt/hifiberry/etc/config-files`; do
   fi
 done
 
+echo "Changing file on FAT partition"
+cd /boot
+(cd /newroot/boot ; tar cf - *) | tar xvf -
+cd /
+
+
 
 echo "Unmounting $INACTIVE"
 umount $INACTIVE
