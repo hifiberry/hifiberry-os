@@ -17,12 +17,19 @@ define HIFIBERRY_LOCALBROWSER_INSTALL_TARGET_CMDS
     sed -i s/.*vc4-kms-v3d.*//g $(BINARIES_DIR)/rpi-firmware/config.txt
     echo "dtoverlay=vc4-kms-v3d,audio=off" >> $(BINARIES_DIR)/rpi-firmware/config.txt
     # Copy local VC4 DT file with "audio" option 
+    -cd $(TARGET_DIR)/boot/overlays
     cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-localbrowser/vc4-kms-v3d.dtbo \
 	    $(BINARIES_DIR)/rpi-firmware/overlays
+    cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-localbrowser/vc4-kms-v3d.dtbo \
+            $(TARGET_DIR)/boot/overlays
 
     # Make sure it gets registered in systemd
     cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-localbrowser/60-drm.rules \
 	    $(TARGET_DIR)/usr/lib/udev/rules.d/60-drm.rules
+
+    # Weston config
+    install -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-localbrowser/weston.ini \
+            $(TARGET_DIR)/etc/xdg/weston/weston.ini
 
 endef
 
