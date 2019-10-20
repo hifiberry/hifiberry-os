@@ -110,7 +110,8 @@ EOF
    echo "At least one of the wifi_ssid/wifi_psk/wifi_country parameers missing, not configuring WiFi"
   fi
  else
-  echo "Not changing WiFi configuration as wifi_reconfigure it not enabled
+  echo "Not changing WiFi configuration as wifi_reconfigure it not enabled"
+ fi 
 fi
 
 #===============================================================================================
