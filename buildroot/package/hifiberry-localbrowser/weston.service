@@ -19,6 +19,7 @@ ConditionPathExists=/dev/tty0
 Type=notify
 ExecStartPre=-/usr/bin/mkdir /var/run/weston
 Environment=XDG_RUNTIME_DIR=/var/run/weston
+Environment=XDG_CONFIG_HOME=/etc/xdg/weston
 ExecStart=/usr/bin/weston --backend=drm-backend.so --modules=systemd-notify.so
 
 # Optional watchdog setup
