@@ -1,0 +1,18 @@
+[Unit]
+Description=Local web brower to display web interface
+Wants=weston.service
+After=weston.service beocreate2.service
+
+[Service]
+Type=simple
+Environment=COG_PLATFORM_FDO_VIEW_FULLSCREEN=1
+Environment=XDG_RUNTIME_DIR=/var/run/weston
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting web browser"
+ExecStart=cog -P fdo http://localhost:80
+StandardOutput=journal
+Restart=always
+RestartSec=20
+TimeoutStopSec=2
+
+[Install]
+WantedBy=multi-user.target
