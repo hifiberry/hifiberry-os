@@ -1,0 +1,22 @@
+[Unit]
+Description=Beocreate 2 Server
+Documentation=https://github.com/bang-olufsen/create/
+After=network.target sigmatcp.service
+Before=hifiberry.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/sleep 2
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Beocreate server"
+ExecStart=/usr/bin/node /opt/beocreate/beo-system/beo-server.js
+WorkingDirectory=/opt/beocreate/
+User=root
+Restart=on-failure
+RestartSec=10s
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=beocreate2
+
+[Install]
+WantedBy=multi-user.target
+
