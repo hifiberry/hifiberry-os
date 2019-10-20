@@ -9,6 +9,7 @@ Type=simple
 ExecStartPre=/usr/bin/sleep 2
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Beocreate server"
 ExecStart=/usr/bin/node /opt/beocreate/beo-system/beo-server.js
+ExecStartPost=/usr/bin/sleep 15
 WorkingDirectory=/opt/beocreate/
 User=root
 Restart=on-failure
