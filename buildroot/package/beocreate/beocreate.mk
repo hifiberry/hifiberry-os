@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = 006e654769ed5fa3f212d5ff0f88f5a3449ece39
+BEOCREATE_VERSION = 2f4e59900405f9c4c6b5093c59d3b5b58dfe8559
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
 define BEOCREATE_BUILD_CMDS
@@ -17,6 +17,14 @@ define BEOCREATE_INSTALL_TARGET_CMDS
 	cp -rv $(@D)/Beocreate2/beo-extensions $(TARGET_DIR)/opt/beocreate
 	cp -rv $(@D)/beocreate_essentials $(TARGET_DIR)/opt/beocreate
 	cp -rv $(@D)/Beocreate2/etc/* $(TARGET_DIR)/etc/beocreate
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/system.json \
+                $(TARGET_DIR)/etc/beocreate/system.json
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/system.json \
+                $(TARGET_DIR)/etc/beocreate/system.json.orig
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sources.json \
+                $(TARGET_DIR)/etc/beocreate/sources.json
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sources.json \
+                $(TARGET_DIR)/etc/beocreate/sources.json.orig
 endef
 
 define BEOCREATE_INSTALL_INIT_SYSTEMD
