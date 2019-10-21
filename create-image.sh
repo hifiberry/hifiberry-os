@@ -31,6 +31,7 @@ cp ../buildroot/output/images/zImage ../buildroot/output/images/rootfs.ext2 $TMP
 pushd $TMPDIR
 pwd
 ls
-tar cvfz $MYDIR/images/updater-$TS-pi$PLATFORM.tar.gz zImage rootfs.ext2
+cp $MYDIR/scripts/updater.sh .
+tar cvfz $MYDIR/images/updater-$TS-pi$PLATFORM.tar.gz updater.sh zImage rootfs.ext2
 popd
 rm -rf $TMPDIR
