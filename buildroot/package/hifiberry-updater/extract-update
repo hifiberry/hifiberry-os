@@ -13,9 +13,6 @@ INACTIVE=`./partitions | awk '{print $2}'`
 echo "Unmounting $INACTIVE..."
 umount /newroot 2>/dev/null
 
-#echo "Saving configuration..."
-#/opt/hifiberry/bin/save-config
-
 echo "Extracting new firmware to $INACTIVE..."
 gunzip -c $UPDATER | tar xOf - rootfs.ext2 | dd of=$INACTIVE bs=1048576
 
@@ -33,9 +30,6 @@ if [ -f /newroot/resize-me ]; then
 fi                                 
 VERSION=`cat /newroot/etc/hifiberry.version`
 
-#echo "Restoring configuration..."
-#/opt/hifiberry/bin/restore-config /newroot
-
 echo "Extracting new kernel"                   
 cd /tmp                                        
 gunzip -c $UPDATER | tar xf - zImage updater.sh
@@ -47,13 +41,14 @@ else
  mv zImage /boot/zImage 2>/dev/null
 fi                                        
                                           
-echo "Looking for addtional update script"
-if [ ! -f zImage ]; then                  
- echo "No additional update script found."
+echo "Looking for additional update script"
+if [ ! -f updater.sh ]; then                  
+ echo "No update script found, continuing..."
 else                                      
  chmod +x ./updater.sh
  ./updater.sh         
-fi           
+fi        
+
 sync
 
 echo "Migrating SSH host keys"

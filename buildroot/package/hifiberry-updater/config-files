@@ -12,3 +12,4 @@
 /var/lib/hifiberry
 /etc/wpa_supplicant.conf
 /etc/hifiberry.state
+/etc/machine-info
