@@ -11,7 +11,7 @@ HIFIBERRY_PSPLASH_LICENSE_FILES = COPYING
 HIFIBERRY_PSPLASH_AUTORECONF = YES
 
 define HIFIBERRY_PSPLASH_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/psplash-start.service \
+	$(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/psplash-start$(SYSTEMD_POSTFIX).service \
 		$(TARGET_DIR)/usr/lib/systemd/system/psplash-start.service
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants
 	ln -sf  ../../../../usr/lib/systemd/system/psplash-start.service \
@@ -23,6 +23,13 @@ define HIFIBERRY_PSPLASH_INSTALL_INIT_SYSTEMD
 	ln -sf  ../../../../usr/lib/systemd/system/psplash-quit.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/
 endef
+
+ifeq ($(BR2_PACKAGE_ENABLE_VC4KMS),y)
+SYSTEMD_POSTFIX = ".vc4"
+else
+SYSTEMD_POSTFIX = ""
+endif
+
 
 define HIFIBERRY_PSPLASH_CHANGE_IMAGE
 	cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/*.h $(@D)
