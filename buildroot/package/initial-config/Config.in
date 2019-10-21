@@ -1,4 +1,0 @@
-config BR2_PACKAGE_INITIAL_CONFIG
-	bool "initial-config"
-        help
-	  Allows to start a script from the FAT partition during statup
