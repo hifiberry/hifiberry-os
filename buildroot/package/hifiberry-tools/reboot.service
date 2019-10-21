@@ -6,12 +6,14 @@ ConditionPathExists=/tmp/reboot
 
 [Service]
 Type=oneshot
+StandardOutput=append:/var/log/reboot.log
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Rebooting"
-ExecStartPre=/bin/date >> /var/log/reboot.log
-ExecStartPre=cat /tmp/reboot >> /var/log/reboot.log
+ExecStartPre=/bin/date
+ExecStartPre=cat /tmp/reboot
 ExecStartPre=/bin/sync
 ExecStart=/bin/systemctl reboot
 StandardOutput=journal
+
 
 [Install]
 WantedBy=multi-user.target
