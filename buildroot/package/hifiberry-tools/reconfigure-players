@@ -12,7 +12,7 @@ guess_volume_control() {
  fi
 
  # Amp+ uses "Master"
- # however, as shiarport-sync doen't work with this, we'll use softvol
+ # however, as shairport-sync doen't work with this, we'll use softvol
  MASTER=`amixer scontrols | grep Master`
  if [ "$MASTER" != "" ]; then
    MIXER_CONTROL=Softvol
@@ -71,7 +71,7 @@ guess_card() {
 
  CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
  if [ "$CLKGEN" == "0x03" ]; then
-    CARD="Beocreate 4 channel amplifier"
+    CARD="Beocreate 4-Channel amplifier"
     return
  fi
 
