@@ -1,6 +1,6 @@
 [Unit]
 Description=Bluetooth hardware initialisiation
-After=bluetoothd.service
+After=bluetooth.service
 Before=bluealsa.service
 
 [Service]
