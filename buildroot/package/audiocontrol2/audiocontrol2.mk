@@ -15,6 +15,8 @@ define AUDIOCONTROL2_INSTALL_TARGET_CMDS
         cp -rv $(@D)/* $(TARGET_DIR)/opt/audiocontrol2
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/audiocontrol2.conf \
 		$(TARGET_DIR)/etc
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/audiocontrol2.conf \
+                $(TARGET_DIR)/etc/audiocontrol2.conf.orig
 endef
 
 define AUDIOCONTROL2_INSTALL_INIT_SYSTEMD
