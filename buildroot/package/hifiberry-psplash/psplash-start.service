@@ -1,7 +1,5 @@
 [Unit]
 Description=Starts Psplash Boot screen
-Wants=dev-dri-card0.device
-After=dev-dri-card0.device
 DefaultDependencies=no
 
 [Service]
