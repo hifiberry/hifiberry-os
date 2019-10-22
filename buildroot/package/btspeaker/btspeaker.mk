@@ -16,6 +16,9 @@ define BTSPEAKER_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/btspeaker/btspeaker.sh
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/btuart.sh \
            $(TARGET_DIR)/opt/btspeaker/btuart.sh
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/checkpi.sh \
+           $(TARGET_DIR)/opt/btspeaker/checkpi.sh
+
 endef
 
 define BTSPEAKER_INSTALL_INIT_SYSV
