@@ -6,6 +6,7 @@ Before=bluealsa.service
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Initalizing Bluetooth hardware"
+ExecStartPre=/opt/hifiberry/bin/checkpi.sh
 ExecStart=/opt/btspeaker/btuart.sh
 ExecStartPost=sleep 3
 ExecStartPost=/usr/bin/hciconfig hci0 up           
