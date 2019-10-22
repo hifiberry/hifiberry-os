@@ -71,7 +71,7 @@ guess_card() {
 
  CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
  if [ "$CLKGEN" == "0x03" ]; then
-    CARD="Beocreate 4-Channel amplifier"
+    CARD="Beocreate 4-Channel Amplifier"
     return
  fi
 
