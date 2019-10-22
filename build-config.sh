@@ -42,7 +42,7 @@ done
 
 if [ "$2" == "release" ]; then
  # for the releases, remove debug tools
- for i in BR2_PACKAGE_STRESS BR2_PACKAGE_STRESS_NG BR2_PACKAGE_STRACE; do
+ for i in BR2_PACKAGE_STRESS BR2_PACKAGE_STRESS_NG BR2_PACKAGE_STRACE BR2_PACKAGE_TCPDUMP; do
    echo "$i=n" >> $TMP
  done
 fi
