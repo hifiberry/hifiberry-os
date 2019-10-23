@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth hardware initialisiation
+Before=bluetooth.service
+
+[Service]
+Type=simple
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Initalizing Bluetooth hardware"
+#ExecStartPre=/opt/hifiberry/bin/checkpi.sh
+ExecStart=/opt/btspeaker/btuart.sh
+
+[Install]
+WantedBy=multi-user.target

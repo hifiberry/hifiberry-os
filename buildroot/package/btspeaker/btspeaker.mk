@@ -28,14 +28,14 @@ define BTSPEAKER_INSTALL_INIT_SYSV
 endef
 
 define BTSPEAKER_INSTALL_INIT_SYSTEMD
-#        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/bluetoothd.service \
-#                $(TARGET_DIR)/lib/systemd/system/bluetoothd.service
-#        ln -fs ../../../../etc/systemd/system/bluetoothd.service \
-#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluetoothd.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/btuart.service \
+                $(TARGET_DIR)/lib/systemd/system/btuart.service
+        ln -fs ../../../../etc/systemd/system/btuart.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/btuart.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/btinterface.service \
                 $(TARGET_DIR)/lib/systemd/system/btinterface.service
-        ln -fs ../../../../etc/systemd/system/btinterface.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/btinterface.service
+#        ln -fs ../../../../etc/systemd/system/btinterface.service \
+#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/btinterface.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/a2dp-agent.service \
                 $(TARGET_DIR)/lib/systemd/system/a2dp-agent.service
         ln -fs ../../../../usr/lib/systemd/system/a2dp-agent.service \
