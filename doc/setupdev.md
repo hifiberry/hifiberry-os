@@ -3,7 +3,7 @@
 ## Install necessary tools
 
 ```
-sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass zip ncurses
+sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass zip ncurses-dev screen
 ```
 
 ## Download and extract buildroot
@@ -33,8 +33,5 @@ This will take some time. Depending on your hardware and network connectivity, e
 
 ## Parallel builds
 
-You might want to work on a Pi3 and Pi4 version at the same time. This would require a complete rebuild each time you 
-switch to the other Pi version. To deal with this, you can use multiple buildroot directories.
-Just duplicate buildroot to buildroot-0w, buildroot-2, buildroot-3, buildroot-4. Note that you have to *copy* the directories, as each build will store it's data and configuration in one of these.
-If the buildroot-xxx directory does not exist, build process will use the buildroot directory, but no parallel build 
-are possible in this case.
+Builds for a specific platform (e.g. Pi3 or Pi4) are store in separate directories. This means you can run a parallel builds for multiple platforms. Especially for systems with a lots of cores and fast SSDs, this is usually faster than running 
+them sequentially. 
