@@ -5,7 +5,8 @@ The goal isn't to add as much functionality as possible, but to keep it small. T
 it is based on Buildroot and it's not possible to use package managers to add more 
 software.
 
-Also, there is no update mechanism included at the moment.
+There is a robust update mechanism that will not overwrite the system, but switch between
+the current and the new version (they run on different partitions)
 
 At the moment, the following services are supported:
 
