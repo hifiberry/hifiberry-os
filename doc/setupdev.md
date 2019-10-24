@@ -3,7 +3,7 @@
 ## Install necessary tools
 
 ```
-sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass
+sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass zip ncurses
 ```
 
 ## Download and extract buildroot
@@ -29,4 +29,4 @@ cd hifiberry-os
 ./compile 3
 ```
 
-This will take some time. Depending on your hardware and network connectivity, expect at leats one hour, but it can be also much longer.
+This will take some time. Depending on your hardware and network connectivity, expect at least one hour, but it can be also much longer.
