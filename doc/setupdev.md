@@ -30,3 +30,11 @@ cd hifiberry-os
 ```
 
 This will take some time. Depending on your hardware and network connectivity, expect at least one hour, but it can be also much longer.
+
+## Parallel builds
+
+You might want to work on a Pi3 and Pi4 version at the same time. This would require a complete rebuild each time you 
+switch to the other Pi version. To deal with this, you can use multiple buildroot directories.
+Just duplicate buildroot to buildroot-0w, buildroot-2, buildroot-3, buildroot-4. Note that you have to *copy* the directories, as each build will store it's data and configuration in one of these.
+If the buildroot-xxx directory does not exist, build process will use the buildroot directory, but no parallel build 
+are possible in this case.
