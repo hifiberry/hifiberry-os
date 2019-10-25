@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd `dirname $0`
+
+if [ "$1" == "" ]; then
+ VERSION=`cat .piversion`
+ echo No version given, assuming Pi$VERSION
+else
+ VERSION=$1
+fi
+
+BRDIR=`./brdir $VERSION`
+echo "Configuring in $BRDIR"
+cd `dirname $0`
+cd ../buildroot
+make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot menuconfig

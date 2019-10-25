@@ -1,24 +1,25 @@
 #!/bin/bash
 
+cd `dirname $0`
+
 if [ "$1" == "" ]; then
- VERSION=3
+ VERSION=`cat .piversion`
  echo No version given, assuming Pi$VERSION
 else
  VERSION=$1
-fi 
-
-current_version=`cat .piversion`
-if [ "$VERSION" == "$current_version" ]; then
- echo "Already configured for Pi${VERSION}, doing nothing"
- exit 0
 fi
 
 echo $VERSION > .piversion
+
+BRDIR=`./brdir $VERSION`
+
+echo "Building in $BRDIR"
+echo $VERSION > $BRDIR/.piversion
 echo $VERSION > buildroot/PIVERSION
 
 SRC=configs/hifiberryos
 TMP=./tmpfile.$$
-DST=./config
+DST=./config.$$
 PLATFORM=configs/config$VERSION
 
 if [ ! -f $PLATFORM ]; then
@@ -53,5 +54,8 @@ if [ "$1" == "0w" ]; then
 fi
 
 mv $TMP $DST
-mv $DST ../buildroot/.config
-./clean.sh
+mv $DST $BRDIR/.config
+
+# Update version
+TS=`date +%Y%m%d`
+echo $TS > buildroot/VERSION
