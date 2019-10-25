@@ -3,6 +3,7 @@ Description=Restore volume
 Wants=sound.target
 After=sound.target squeezelite.service sigmatcpserver.service
 Before=roon.service mpd.service spotifyd.service
+ConditionPathExists=/etc/alsactl.store
 
 [Service]
 Type=oneshot
