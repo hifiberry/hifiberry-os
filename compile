@@ -15,8 +15,9 @@ BRDIR=`./brdir $VERSION`
 echo "Building in $BRDIR"
 
 # Remove some packages
-if [ "$1" != "" ]; then
- rm -rf output/build/$1*
+if [ "$2" != "" ]; then
+ echo Removing $BRDIR/build/$2*
+ rm -rf $BRDIR/build/$2*
 fi
 
 cd ../buildroot
