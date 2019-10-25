@@ -3,7 +3,7 @@
 ## Install necessary tools
 
 ```
-sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass zip ncurses
+sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass zip ncurses-dev screen
 ```
 
 ## Download and extract buildroot
@@ -30,3 +30,8 @@ cd hifiberry-os
 ```
 
 This will take some time. Depending on your hardware and network connectivity, expect at least one hour, but it can be also much longer.
+
+## Parallel builds
+
+Builds for a specific platform (e.g. Pi3 or Pi4) are store in separate directories. This means you can run a parallel builds for multiple platforms. Especially for systems with a lots of cores and fast SSDs, this is usually faster than running 
+them sequentially. 
