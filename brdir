@@ -1,0 +1,21 @@
+#!/bin/bash
+cd `dirname $0`
+
+if [ "$1" == "" ]; then
+ VERSION=`cat .piversion`
+else 
+ VERSION=$1
+fi 
+if [ ! -d ../buildroot-${VERSION} ]; then
+ mkdir ../buildroot-${VERSION}
+fi
+
+cd ../buildroot-${VERSION}
+if [ "$?" != "0" ]; then
+ echo /tmp
+ exit 1
+fi
+
+pwd
+
+

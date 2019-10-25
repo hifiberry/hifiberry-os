@@ -1,0 +1,7 @@
+#!/bin/bash
+cd `dirname $0`
+TS=`date +%Y%m%d`
+echo "VERSION=$TS" > images/listing
+for i in 0w 2 4 3; do
+ ./build-release $i $TS
+done

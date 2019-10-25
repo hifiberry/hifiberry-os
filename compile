@@ -1,0 +1,23 @@
+#!/bin/bash
+cd `dirname $0`
+MYDIR=`pwd`
+TS=`date +%Y%m%d`
+echo $TS > buildroot/VERSION
+
+if [ "$1" == "" ]; then
+ VERSION=`cat .piversion`
+ echo No version given, assuming Pi$VERSION
+else
+ VERSION=$1
+fi
+
+BRDIR=`./brdir $VERSION`
+echo "Building in $BRDIR"
+
+# Remove some packages
+if [ "$1" != "" ]; then
+ rm -rf output/build/$1*
+fi
+
+cd ../buildroot
+make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot

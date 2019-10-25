@@ -1,0 +1,9 @@
+#!/bin/bash
+
+BRDIR=../buildroot
+echo "Fixing $BRDIR"
+
+# Gstreamer has an incorrect dependency to Valgrind
+cat $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk | grep -v BR2_PACKAGE_VALGRIND > $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk.new
+mv  $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk.orig
+mv  $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk.new $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk

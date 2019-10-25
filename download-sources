@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+ echo No version given, downloading sources for all Pi versions
+ for i in 0w 2 3 4; do
+  echo $0 $i
+  $0 $i
+ done
+ exit
+fi 
+
+BRDIR=`./brdir $1`
+echo "Downloading all sources for offline build in $BRDIR"
+
+cd ../buildroot
+make -O=$BRDIR source

@@ -1,0 +1,40 @@
+#!/bin/bash
+cd `dirname $0`
+
+if [ "$1" == "" ]; then
+ VERSION=3
+ echo No version given, assuming Pi$VERSION
+else
+ VERSION=$1
+fi
+
+BRDIR=`./brdir $VERSION`
+echo "Building image from $BRDIR"
+
+if [ "$2" != "" ]; then
+  echo "Using timestamp $2"
+  TS=$1
+else
+  TS=`date +%Y%m%d`
+fi
+
+cd `dirname $0`
+MYDIR=`pwd`
+echo Copying $BRDIR/images/sdcard.img to images/hifiberryos-$TS-pi$VERSION.img
+cp $BRDIR/images/sdcard.img images/hifiberryos-$TS-pi$VERSION.img
+pushd images
+if [ -f hifiberryos-pi$VERSION.zip ]; then
+ rm hifiberryos-pi$VERSION.zip
+fi
+zip hifiberryos-pi$VERSION.zip hifiberryos-$TS-pi$VERSION.img
+popd
+TMPDIR=/tmp/$$
+mkdir $TMPDIR
+cp $BRDIR/images/zImage $BRDIR/images/rootfs.ext2 $TMPDIR
+pushd $TMPDIR
+pwd
+ls
+cp $MYDIR/scripts/updater.sh .
+tar cvfz $MYDIR/images/updater-$TS-pi$VERSION.tar.gz updater.sh zImage rootfs.ext2
+popd
+rm -rf $TMPDIR
