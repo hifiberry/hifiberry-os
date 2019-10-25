@@ -15,6 +15,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/check-daemons
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip \
            $(TARGET_DIR)/opt/hifiberry/bin/myip
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myurl \
+           $(TARGET_DIR)/opt/hifiberry/bin/myurl
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system \
@@ -65,10 +67,6 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/myip.service
         ln -fs ../../../../usr/lib/systemd/system/myip.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
-#        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/initial-volume.service \
-#                $(TARGET_DIR)/lib/systemd/system/initial-volume.service
-#        ln -fs ../../../../usr/lib/systemd/system/initial-volume.service \
-#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/initial-volume.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system.service \
                 $(TARGET_DIR)/lib/systemd/system/configure-system.service
         ln -fs ../../../../usr/lib/systemd/system/configure-system.service \
@@ -100,6 +98,11 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/hifiberry.target
         ln -fs ../../../../usr/lib/systemd/system/hifiberry.target \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry.target
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-finish.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/hifiberry-finish.service
+        ln -fs ../../../../usr/lib/systemd/system/hifiberry-finish.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry-finish.service
+
 endef
 
 $(eval $(generic-package))

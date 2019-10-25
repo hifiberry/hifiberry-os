@@ -156,6 +156,7 @@ reconfigure_recording() {
 # Reconfigure Beocreate 
 reconfigure_beocreate() {
  sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
+ sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
 }
 
 

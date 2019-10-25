@@ -5,7 +5,9 @@ Before=psplash-quit.service
 
 [Service]
 Type=oneshot
-ExecStart=/opt/hifiberry/bin/myip
+ExecStartPre=/opt/hifiberry/bin/myip
+ExecStartPre=sleep 1
+ExecStart=/opt/hifiberry/bin/myurl
 StandardOutput=journal
 
 [Install]
