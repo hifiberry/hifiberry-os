@@ -1,6 +1,9 @@
 #!/bin/bash
 V=`cat /etc/hifiberry.version`
+echo "Upgrading from version $V"
 if [ "$V" -lt 20191022 ]; then
+ echo "Version < 20191022, overwriting some configurations"
+ echo 
  echo "Installing default configs for Audiocontrol and Beocreate"
  echo "audiocontrol2.conf"
  cp /newroot/etc/audiocontrol2.conf /newroot/etc/audiocontrol2.conf.bak
