@@ -4,5 +4,10 @@ if [ "$1" == "" ]; then
 else
  STORE=$1
 fi
+
 alsactl -f $STORE restore
 
+. /etc/hifiberry.state
+if [ "$CURRENT_MIXER_CONTROL" != "Softvol" ]; then
+	amixer sset Softvol 100%
+fi
