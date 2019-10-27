@@ -44,7 +44,8 @@ fi
 echo "Looking for additional update script"
 if [ ! -f updater.sh ]; then                  
  echo "No update script found, continuing..."
-else                                      
+else
+ echo "Starting upgrade script"
  chmod +x ./updater.sh
  ./updater.sh         
 fi        
