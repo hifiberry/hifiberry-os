@@ -1,7 +1,10 @@
-# HiFiBerryOS configuration
+# HiFiBerryOS initial configuration
 
 There is now one main configuration file named *hifiberry.conf*. It can reside either on the FAT partition of the SD card 
 or in /etc. If both files exists, the file on the FAT partition will be used.
+
+The behaviour has changed with the HiFiBerryOS release October 2019. Previously the configuration file was always used. Now it is used only once and will be automatically removed. The configuration file is only to be used for initial configuration
+now. We recommend to use it only, if you need to install a large amount of systems. Setting up a single system is easier using the GUI that's included since release 20191029.
 
 ## General 
 
@@ -72,12 +75,3 @@ bluetooth_enable=1
 ```
 
 Enables/disables Bluetooth support
-
-  
-## Sound
-```
-sound_initialvolume="80%"
-```
-
-Sets the initial volume the system uses. This is especially helpful if you're using an amplifier without a volume knob to make
-sure tha system doesn't start up at full volume.
