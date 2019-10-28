@@ -6,9 +6,9 @@ The following services are currently supported on HiFiBerryOS:
 * Analog input on DAC+ ADC
 * Bluetooth
 * mpd
-* Roon
-* Spotify
-* Squeezebox
+* Roon (not on Raspberry Pi Zero)
+* Spotify (not on Raspberry Pi Zero)
+* Squeezebox (not on Raspberry Pi Zero)
 
 
 ## Airplay 1
