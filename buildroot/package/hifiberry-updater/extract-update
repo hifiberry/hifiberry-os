@@ -82,7 +82,18 @@ cd /boot
 (cd /newroot/boot ; tar cf - *) | tar xvf -
 cd /
 
-
+echo "Checking systemctl services"
+for i in `cat /opt/hifiberry/etc/services`; do
+ systemctl is-active --quiet $i
+ if [ "$?" == "0" ]; then
+   echo "$i: enabled"
+ else
+   echo "$i: disabled"
+   if [ -f "/newroot/etc/systemd/system/multi-user.target.wants/$i" ]; 
+     rm /newroot/etc/systemd/system/multi-user.target.wants/$i
+   fi
+ fi
+done
 
 echo "Unmounting $INACTIVE"
 umount $INACTIVE
@@ -90,7 +101,7 @@ fsck.ext2 -p -f -v $INACTIVE
                                                                
 echo "Switching root file system to inactive partition"        
 echo "root=$INACTIVE rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
-                                                               
+
 if [ "$1" == "--reboot" ]; then
  echo "Removing updater"
  rm $UPDATER

@@ -1,0 +1,12 @@
+mpd.service
+raat.service
+bluealsa-aplay.service
+bluealsa.service
+mpd-mpris.service
+ympd.service
+a2dp-agent.service
+mpris-proxy.service
+spotify.service
+shairport-sync.service
+lmsmpris.service
+squeezelite.service
