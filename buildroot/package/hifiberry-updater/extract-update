@@ -89,7 +89,7 @@ for i in `cat /opt/hifiberry/etc/services`; do
    echo "$i: enabled"
  else
    echo "$i: disabled"
-   if [ -f "/newroot/etc/systemd/system/multi-user.target.wants/$i" ]; 
+   if [ -f "/newroot/etc/systemd/system/multi-user.target.wants/$i" ]; then
      rm /newroot/etc/systemd/system/multi-user.target.wants/$i
    fi
  fi
