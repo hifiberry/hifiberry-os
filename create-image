@@ -13,7 +13,7 @@ echo "Building image from $BRDIR"
 
 if [ "$2" != "" ]; then
   echo "Using timestamp $2"
-  TS=$1
+  TS=$2
 else
   TS=`date +%Y%m%d`
 fi
