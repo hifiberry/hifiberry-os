@@ -8,7 +8,7 @@ Type=notify
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 WorkingDirectory=/opt/audiocontrol2
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting AudioControl2"
-ExecStart=/usr/bin/python3 /opt/audiocontrol2/audiocontrol2.py
+ExecStart=/usr/bin/python3 /opt/audiocontrol2/audiocontrol2.py ${AUDIOCONTROL2_ARGS}
 StandardOutput=journal
 Restart=always
 RestartSec=5
