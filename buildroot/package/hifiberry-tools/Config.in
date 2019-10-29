@@ -6,3 +6,9 @@ config BR2_PACKAGE_HIFIBERRY_TOOLS
         select BR2_PACKAGE_PYTHON3
         select BR2_PACKAGE_PYTHON_SPIDEV
         select BR2_SYSTEM_BIN_SH_BASH
+
+config BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE
+        bool "audio lite mode (for Pi 0)
+        help
+          44.1kHz, trivial resampling
+        depends on BR2_PACKAGE_HIFIBERRY_TOOLS
