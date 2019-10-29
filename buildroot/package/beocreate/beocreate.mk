@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = 9dabc86e0aa5644a952473d3ffed1ec655829fdd
+BEOCREATE_VERSION = c9f9ac3777a7ec0f5afb5c00bd4d5d5b73500ac7
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
 define BEOCREATE_BUILD_CMDS
@@ -29,10 +29,14 @@ define BEOCREATE_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/etc/beocreate/sound.json
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sound.json \
                 $(TARGET_DIR)/etc/beocreate/sound.json.orig
-
+	# Temporary fix
+	#$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sound-index.js.fixed \
+	#	$(TARGET_DIR)/opt/beocreate/beo-extensions/sound/index.js
 endef
 
 define BEOCREATE_INSTALL_INIT_SYSTEMD
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/override.conf \
+                $(TARGET_DIR)/etc/systemd/system/beocreate2.service.d/override.conf
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/beocreate2.service \
                 $(TARGET_DIR)/lib/systemd/system/beocreate2.service
 	ln -fs ../../../../usr/lib/systemd/system/beocreate2.service \
