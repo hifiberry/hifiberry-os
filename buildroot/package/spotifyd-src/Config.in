@@ -1,0 +1,6 @@
+config BR2_PACKAGE_SPOTIFYD_SRC
+	bool "spotifyd from source"
+        help
+	  An open source Spotify client running as a UNIX daemon. 
+        select BR2_PACKAGE_HOST_CARGO
+	select BR2_PACKAGE_HOST_RUSTC
