@@ -48,9 +48,12 @@ if [ "$2" == "release" ]; then
  done
 fi
 
-# Roon is not supported on the Pi Zero
-if [ "$1" == "0w" ]; then
- echo "BR2_PACKAGE_RAAT=n" >> $TMP
+# Roon and Squeezelite are not supported on the Pi Zero
+if [ "$VERSION" == "0w" ]; then
+ for PKG in BR2_PACKAGE_RAAT BR2_PACKAGE_HIFIBERRY_SQUEEZELITE BR2_PACKAGE_LMSMPRIS BR2_PACKAGE_SPOTIFYD BR2_PACKAGE_HIFIBERRY_MPD BR2_PACKAGE_MPD BR2_PACKAGE_MPD_MPRIS BR2_PACKAGE_HIFIBERRY_YMPD; do
+   echo "$PKG=n" >> $TMP
+ done
+ echo BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y >> $TMP
 fi
 
 mv $TMP $DST
