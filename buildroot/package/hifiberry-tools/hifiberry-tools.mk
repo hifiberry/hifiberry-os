@@ -4,6 +4,13 @@
 #
 ################################################################################
 
+ifeq ($(BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE),y)
+ASOUNDCONF += asound.conf.dmix_softvol.lite
+else
+ASOUNDCONF += asound.conf.dmix_softvol
+endif
+
+
 define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/bootmsg \
            $(TARGET_DIR)/opt/hifiberry/bin/bootmsg
@@ -42,7 +49,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
       $(INSTALL) -D -m 0644 $$a \
             $(TARGET_DIR)/etc ; \
     done
-    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.dmix_softvol \
+    echo Using $(ASOUNDCONF)
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/$(ASOUNDCONF) \
            $(TARGET_DIR)/etc/asound.conf
     [ -d $(TARGET_DIR)/boot ] || mkdir $(TARGET_DIR)/boot
 endef
