@@ -1,14 +1,18 @@
-xxxxxxxx
+20191029
 - Added volume control
 - Added LastFM love/unlove support
 - Added remote control support
 - Added AudioControl API
 - Added support for the DAC+ ADC Pro
-- Splash screen
-- Interface of local attached screen
+- Added Beocreate integration
+- Added Splash screen
 - Improved Bluetooth stability on Pi 3B+, 4B
+- Removed Pi2 version
+- Pi Zero now gets a Lite version as it is not powerful enough for the full release
+- Improved Bluetooth stability on Pi 3B+, 4B
+- Changes samplerate to 192kHz for best audio quality when resampling
 - Bugfix: Amp+ now uses softvol to support Airplay
-- Bugfix: Digi+ get stuck in previous release
+- Bugfix: Digi+ got stuck in previous release
 
 20190926
 - Added a central config file /etc/hifibery.conf that can be used to 
