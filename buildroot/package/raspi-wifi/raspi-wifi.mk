@@ -14,6 +14,8 @@ define RASPI_WIFI_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/etc/tempap-hostapd.conf
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/dnsmasq.conf \
            $(TARGET_DIR)/etc/tempap-dnsmasq.conf
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/wpa_supplicant.conf \
+           $(TARGET_DIR)/etc/wpa_supplicant.conf
     # Disable stub resolver in systemd resolved
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/resolved.conf \
            $(TARGET_DIR)/etc/systemd/resolved.conf
@@ -37,7 +39,6 @@ define RASPI_WIFI_INSTALL_INIT_SYSTEMD
            $(TARGET_DIR)/usr/lib/systemd/system/tempap-hostapd.service
     $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/tempap.service \
            $(TARGET_DIR)/usr/lib/systemd/system/tempap.service
-
 endef
 
 $(eval $(generic-package))
