@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# On the Pi Zero, volume controls won't show up before playing something :(
+SOFTVOL=`amixer | grep Softvol`
+if [ "$SOFTVOL" == "" ]; then
+ play -n synth 1 sine 1
+fi
+
 FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
 CONFIG=/boot/config.txt
 REBOOTFILE=/tmp/reboot

@@ -13,7 +13,7 @@ pcm.dmixer {
   slave {
     period_time 0
     period_size 1024
-    buffer_size 8192
+    buffer_size 16384
     format S24_LE
     rate 192000
   }
