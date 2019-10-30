@@ -43,6 +43,7 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/PIVERSION \
                 $(TARGET_DIR)/etc/PIVERSION
     touch $(TARGET_DIR)/resize-me
+    touch $(TARGET_DIR)/etc/spotifyd.conf
 
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
