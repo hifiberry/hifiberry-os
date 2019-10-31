@@ -27,31 +27,27 @@ Contains the source of all HiFiBerryOS specific packages that are not included a
 buildroot software.
 
 
-## Configuration files
-
-TODO
-
 ## Scripts
 
 When building HiFiBerryOS, you should change to the HiFiBerryOS directory first.
 
-### clean.sh
+### clean
  
 Cleans up the buildroot folder. When using this, you have to rebuild the whole system. This can take a long time. 
 Therefore, it is recommended to only use this when changing to another processor architrecture or something is completely
 messed up.
 
-### build-config.sh
+### build-config
 
 Creates a HiFiBerryOS configuration for the given Raspberry Pi platform, e.g.
 
-`build-config.sh 3` creates the default configuration for the Raspberry Pi 3
+`build-config 3` creates the default configuration for the Raspberry Pi 3
 
-## config.sh
+## config
 
 Starts the configuration interface. Here you can add/remove packages or change other parameters.
 
-## compile.sh
+## compile
 
 Compiles a full HiFiBerryOS version. When building from scratch, this can take a long time (2 hours even on an up-to-date PC).
 
@@ -59,19 +55,19 @@ Sometimes, you want to rebuild only a specific module. Especially when changing 
 this and therefore doesn't rebuild the package. To deal with this you can add a parameter to compile.sh to rebuild specific 
 packages, e.g. 
 
-`./compile.sh spotify` will rebuild the spotify package
-`./compile.sh hifiberry` will rebuild all packages with names starting with hifiberry
+`./compile 3 spotify` will rebuild the spotify package
+`./compile 4 hifiberry` will rebuild all packages with names starting with hifiberry
 
-## create-image.sh
+## create-image
 
 Creates the image and update files for a specific Raspberry Pi hardware. Parameter is the Pi version, e.g. 0w, 3 or 4.
 
-## update-pi.sh
+## update-pi
 
 Creates an image from the latest compile run and pushes it to the Raspberry Pi given as a command line parameter.
 To make sure this works, the version of Raspberry Pi must match the version that you compiles the image for. Also the updater expects that the Pi still uses the default password. YOu also need to have the sshpass tool installed. 
 
-## build-all.sh
+## build-all
 
 Starts a release build that will build images for all supported Raspberry Pi platforms. This will definitely 
 take several hours, it should only be used when packaging a new release.
