@@ -1,4 +1,4 @@
-config BR2_PACKAGE_EANBLE_VC4KMS
+config BR2_PACKAGE_ENABLE_VC4KMS
 	bool "enable VC4 KMS"
         help
 	  "enable VC4 KMS driver in /boot/config.txt"

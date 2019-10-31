@@ -19,6 +19,7 @@ define ENABLE_VC4KMS_INSTALL_TARGET_CMDS
     # Make sure it gets registered in systemd
     cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/enable-vc4kms/60-drm.rules \
 	    $(TARGET_DIR)/usr/lib/udev/rules.d/60-drm.rules
+
 endef
 
 $(eval $(generic-package))
