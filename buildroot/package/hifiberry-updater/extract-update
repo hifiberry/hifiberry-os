@@ -56,7 +56,7 @@ echo "Migrating SSH host keys"
 cp /etc/ssh/ssh_host* /newroot/etc/ssh
 
 echo "Migrating other configurations"
-for i in `cat /opt/hifiberry/etc/config-files`; do
+for i in `cat /newroot/opt/hifiberry/etc/config-files`; do
   if [ -f $i ]; then
     DIR=`dirname $i`
     cd $DIR
