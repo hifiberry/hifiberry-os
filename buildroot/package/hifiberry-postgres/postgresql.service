@@ -1,0 +1,29 @@
+[Unit]
+Description=PostgreSQL database server
+After=network.target
+
+[Service]
+Type=notify
+
+# start timeout disabled because initdb may run a little
+# longer (eg. 5 minutes on RaspberryPi)
+TimeoutStartSec=0
+
+Group=postgres
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=postgres
+PIDFile=/data/pgsql/postmaster.pid
+
+ExecStartPre=/bin/sh -c "if [ ! -d /data/pgsql ]; then mkdir /data/pgsql; chown postgres:postgres /data/pgsql; fi"
+ExecStartPre=/bin/sh -c "if [ ! -f /data/pgsql/PG_VERSION ]; then su postgres -c '/usr/bin/initdb -D /data/pgsql --no-locale --encoding=UTF8'; fi"
+ExecStart=su postgres -c "/usr/bin/postgres -D /data/pgsql"
+ExecStartPost=/opt/hifiberry/helpers/create-hbdb
+ExecReload=/usr/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target

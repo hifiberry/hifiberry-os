@@ -1,0 +1,20 @@
+#!/bin/sh
+if [ -f "/data/pgsql/hifiberry.ready" ]; then
+ echo "HiFiBerry database already exists"
+ exit 0
+fi
+
+psql -U postgres <<EOF
+CREATE ROLE hifiberry LOGIN password 'hbos2019';
+CREATE DATABASE hifiberry ENCODING 'UTF8' OWNER hifiberry;
+EOF
+
+psql -d hifiberry -U hifiberry <<EOF
+CREATE TABLE scrobbles (
+  id serial NOT NULL,
+  songdata jsonb
+);
+EOF
+
+touch /data/pgsql/hifiberry.ready
+
