@@ -2,6 +2,14 @@
 
 REBOOTFILE=/tmp/reboot
 
+restart_service() {
+ systemctl is-active --quiet $1
+ if [ "$?" == "0" ]; then
+   echo "Restarting $1"
+   systemctl restart $1
+ fi
+}
+
 # Find the correct ALSA volume control 
 guess_volume_control() {
  # DAC+ and Amp2 use "Digital"
@@ -110,18 +118,20 @@ system_name() {
 reconfigure_spotify() {
  sed -i s/mixer\ =.*/mixer\ =\ $MIXER_CONTROL/ /etc/spotifyd.conf 
  sed -i s/device_name\ =.*/device_name\ =\ $SYSNAME_NO_SPACES/ /etc/spotifyd.conf
-
+ restart_service spotify
 }
 
 # Reconfigure Shairport-sync
 reconfigure_shairport() {
  sed -i s/mixer_control_name\ =\ .*/mixer_control_name\ =\ \"$MIXER_CONTROL\"\;/ /etc/shairport-sync.conf 
  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
+ restart_service shairport-sync
 }
 
 # Reconfigure AudioControl2
 reconfigure_audiocontrol2() {
  sed -i s/mixer_control=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
+ restart_service audiocontrol2
 }
 
 
@@ -133,11 +143,13 @@ reconfigure_bluetooth() {
 # Reconfigure squeezelite
 reconfigure_squeezelite() {
  echo $SYSNAME > /var/squeezelite/squeezelite.name
+ restart_service squeezelite
 }
 
 # Reconfigure MPD
 reconfigure_mpd() {
  sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
+ restart_service mpd
 }                 
 
 # Reconfigure "can_record"
