@@ -22,6 +22,7 @@ cd `dirname $0`
 MYDIR=`pwd`
 echo Copying $BRDIR/images/sdcard.img to images/hifiberryos-$TS-pi$VERSION.img
 cp $BRDIR/images/sdcard.img images/hifiberryos-$TS-pi$VERSION.img
+./fix-dosfs images/hifiberryos-$TS-pi$VERSION.img
 pushd images
 if [ -f hifiberryos-pi$VERSION.zip ]; then
  rm hifiberryos-pi$VERSION.zip
