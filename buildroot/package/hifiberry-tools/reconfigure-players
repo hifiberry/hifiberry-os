@@ -10,6 +10,40 @@ restart_service() {
  fi
 }
 
+# Detect Raspberry Pi model
+pi_model() {
+ modelname=$(tr -d '\0' < /proc/device-tree/model)
+ echo $modelname
+
+ if [[ $modelname == *"3 Model B+"* ]]; then
+  PIMODEL="3B+"
+  return
+ fi 
+
+ if [[ $modelname == *"3 Model B Plus"* ]]; then
+  PIMODEL="3B+"
+  return
+ fi 
+
+
+ if [[ $modelname == *"3 Model B"* ]]; then
+  PIMODEL="3B"
+  return
+ fi 
+
+ if [[ $modelname == *"4 Model B+"* ]]; then
+  PIMODEL="4"
+  return
+ fi
+
+ if [[ $modelname == *"Pi Zero W"* ]]; then
+  PIMODEL="0"
+  return
+ fi
+
+ PIMODEL="unknown" 
+}
+
 # Find the correct ALSA volume control 
 guess_volume_control() {
  # DAC+ and Amp2 use "Digital"
@@ -137,6 +171,9 @@ reconfigure_audiocontrol2() {
 
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
+ if [ "$PIVERSION" == "3B" ]; then
+   systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.server a2dp-agent.service
+ fi 
  sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
 }
 
@@ -171,6 +208,13 @@ reconfigure_beocreate() {
  sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
 }
 
+# Reconfigure asound.conf
+reconfigure_asoundconf() {
+ CONVERTER="speexrate"
+ sed -i "s/defaults.pcm.rate_converter.*/defaults.pcm.rate_converter\ \"$CONVERTER\"/g" /etc/asound.conf
+}
+
+
 
 MIXER_CONTROL=""
 CARD="unknown"
@@ -179,6 +223,8 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
+pi_model
+echo $PIMODEL
 guess_volume_control
 guess_card
 can_record
@@ -188,7 +234,7 @@ CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'`
 echo $CARD_SED_SPACES
 
 
-if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
+if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || [ "$CURRENT_PIMODEL" != "$PIMODEL" ]; then
  echo "Sound card settings have been changed, reconfiguring..."
 else
  echo "Nothing changed, exiting..."
@@ -197,12 +243,15 @@ fi
                                   
 
 echo "Applying settings: "
+echo " Raspberry Pi model: $PIMODEL"
 echo " System name: $SYSNAME"
 echo " Sound card: $CARD"
 echo " ALSA mixer control: $MIXER_CONTROL"
 echo " Recording: $CAN_RECORD"
 echo
 
+echo "Reconfiguring asound.conf"
+reconfigure_asoundconf
 echo "Reconfiguring Spotifyd"
 reconfigure_spotify
 echo "Reconfiguring Shairport-sync"
@@ -221,7 +270,8 @@ echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
 
 echo "Saving settings to /etc/hifiberry.state"
-echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" > /etc/hifiberry.state
+echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
+echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
 echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 
