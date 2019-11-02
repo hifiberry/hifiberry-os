@@ -17,4 +17,3 @@ if [ "$V" -lt 20191022 ]; then
  echo "Needs sound card reconfiguration"
  rm /newroot/etc/hifiberry.state
 fi
-
