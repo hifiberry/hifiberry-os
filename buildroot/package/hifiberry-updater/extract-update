@@ -32,7 +32,7 @@ VERSION=`cat /newroot/etc/hifiberry.version`
 
 echo "Extracting new kernel"                   
 cd /tmp                                        
-gunzip -c $UPDATER | tar xf - zImage updater.sh
+gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
 if [ ! -f zImage ]; then                       
  echo "Could not find new kernel, aborting ..."
  exit 1                                        
@@ -41,17 +41,6 @@ else
  mv zImage /boot/zImage 2>/dev/null
 fi                                        
                                           
-echo "Looking for additional update script"
-if [ ! -f updater.sh ]; then                  
- echo "No update script found, continuing..."
-else
- echo "Starting upgrade script"
- chmod +x ./updater.sh
- ./updater.sh         
-fi        
-
-sync
-
 echo "Migrating SSH host keys"
 cp /etc/ssh/ssh_host* /newroot/etc/ssh
 
@@ -94,6 +83,18 @@ for i in `cat /opt/hifiberry/etc/services`; do
    fi
  fi
 done
+
+echo "Looking for update script"
+cd /tmp
+if [ ! -f updater.sh ]; then
+ echo "No post-config update script found, continuing..."
+else
+ echo "Starting upgrade script"
+ chmod +x ./updater.sh
+ ./updater.sh
+fi
+
+sync
 
 echo "Unmounting $INACTIVE"
 umount $INACTIVE

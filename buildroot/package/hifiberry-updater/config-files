@@ -14,3 +14,5 @@
 /etc/wpa_supplicant.conf
 /etc/hifiberry.state
 /etc/machine-info
+/etc/systemd/network/dhcp.network
+/etc/systemd/network/wireless.network
