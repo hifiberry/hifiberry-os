@@ -12,9 +12,8 @@ pcm.dmixer {
   slave.pcm "hifiberry"
   slave {
     period_time 0
-    period_size 1024
-    buffer_size 16384
-    format S24_LE
+    period_size 2048
+    buffer_size 32768
     rate 192000
   }
   bindings {
