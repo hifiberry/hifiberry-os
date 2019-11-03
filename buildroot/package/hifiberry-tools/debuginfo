@@ -16,6 +16,10 @@ arecord -l > arecord.txt
 amixer > amixer.txt
 cat /etc/hifiberry.version > version.txt
 cat /etc/asound.conf > asound.conf
+df -k > df.txt
+# Collect some performance data
+top -b -n 5 > top.txt
+perf stat -a sleep 10
 
 zip /tmp/hifiberry-debug.zip $TMPDIR/*
 rm -rf $TMPDIR
