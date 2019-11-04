@@ -16,6 +16,7 @@ arecord -l > arecord.txt
 amixer > amixer.txt
 cat /etc/hifiberry.version > version.txt
 cat /etc/asound.conf > asound.conf
+cat /proc/asound/card0/pcm0p/sub0/hw_params > hw_params.txt
 df -k > df.txt
 # Collect some performance data
 top -b -n 5 > top.txt
