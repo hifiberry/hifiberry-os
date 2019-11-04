@@ -1,12 +1,12 @@
 [Unit]
 Description=Reconfigure players
 After=sound.target configure-system.service hifiberry-detect.service local-fs.target
-Before=shairport-sync.service squeezelite.service spotify.service mpd.service
+Before=shairport-sync.service squeezelite.service spotify.service mpd.service raat.service
 
 [Service]
 Type=oneshot
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Configuring players"
-ExecStart=/opt/hifiberry/bin/reconfigure-players --reboot
+ExecStart=/opt/hifiberry/bin/reconfigure-players
 StandardOutput=journal
 
 [Install]
