@@ -1,0 +1,11 @@
+#!/bin/bash
+
+psql -U hifiberry hifiberry <<EOF
+select
+ count(id) as count,
+ jsonb_array_elements(case jsonb_typeof(songdata->'tags') when 'array' then songdata->'tags' else '[]' end) tag
+ from scrobbles
+ group by tag
+ order by count desc
+EOF
+
