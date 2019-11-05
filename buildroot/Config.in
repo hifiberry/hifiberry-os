@@ -27,6 +27,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/audiocontrol2/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/beocreate/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-postgres/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-measurements/Config.in"
 
 comment "GUI"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-vc4kms/Config.in"
