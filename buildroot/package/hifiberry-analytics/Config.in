@@ -1,0 +1,5 @@
+config BR2_PACKAGE_HIFIBERRY_ANALYTICS
+	bool "hifiberry-analytics"
+        help
+	  Some analytics tools
+        depends on BR2_PACKAGE_HIFIBERRY_POSTGRES
