@@ -1,5 +1,8 @@
 defaults.pcm.rate_converter "samplerate"
 
+defaults.pcm.card 0
+defaults.ctl.card 0
+
 pcm.hifiberry {
   type hw
   card 0
