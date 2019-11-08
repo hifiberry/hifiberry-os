@@ -210,14 +210,16 @@ system_name() {
 # Reconfigure SpotifyD
 reconfigure_spotify() {
  RESTART=0
- if [ "$MIXER" != "$CURRENT_MIXER" ]; then
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer\ =.*/mixer\ =\ $MIXER_CONTROL/ /etc/spotifyd.conf 
   RESTART=1
+  echo " updated mixer"
  fi
 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i s/device_name\ =.*/device_name\ =\ $SYSNAME_NO_SPACES/ /etc/spotifyd.conf
   RESTART=1
+  echo " updated system name"
  fi
 
  if [ "$RESTART" == "1" ]; then
@@ -228,13 +230,15 @@ reconfigure_spotify() {
 # Reconfigure Shairport-sync
 reconfigure_shairport() {
  RESTART=0
- if [ "$MIXER" != "$CURRENT_MIXER" ]; then
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer_control_name\ =\ .*/mixer_control_name\ =\ \"$MIXER_CONTROL\"\;/ /etc/shairport-sync.conf 
   RESTART=1
+  echo " updated mixer"
  fi
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
   RESTART=1
+  echo " updated system name"
  fi
  if [ "$RESTART" == "1" ]; then
   restart_service shairport-sync
@@ -243,9 +247,10 @@ reconfigure_shairport() {
 
 # Reconfigure AudioControl2
 reconfigure_audiocontrol2() {
- if [ "$MIXER" != "$CURRENT_MIXER" ]; then
-  sed -i s/mixer_control=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i s/mixer_control.*=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
   restart_service audiocontrol2
+  echo " updated mixer"
  fi
 }
 
@@ -253,11 +258,13 @@ reconfigure_audiocontrol2() {
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
  if [ "$PIVERSION" == "3B" ]; then
-   systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.server a2dp-agent.service
+   systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.service a2dp-agent.service
+   echo " disabled on Pi3"
  fi 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
   restart_service bluetooth.service
+  echo " updated system name"
  fi
 }
 
@@ -266,14 +273,16 @@ reconfigure_squeezelite() {
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   echo $SYSNAME > /var/squeezelite/squeezelite.name
   restart_service squeezelite
+  echo " updated system name"
  fi
 }
 
 # Reconfigure MPD
 reconfigure_mpd() {
- if [ "$MIXER" != "$CURRENT_MIXER" ]; then
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
   restart_service mpd
+  echo " updated mixer"
  fi
 }                 
 
