@@ -79,6 +79,18 @@ pi_model() {
  PIMODEL="unknown" 
 }
 
+fix_asound_hw() {
+ sed -i "s/card\s[0-9]/card\ $HW_SHORT/g" /etc/asound.conf
+}
+
+# Find the correct input and output hardware devices
+# this is important if additional USB hardware is connected
+detect_hw () {
+ HW=`aplay -l | grep hifiberry | awk -F: '{print $1}'`
+ HW_SHORT=`echo $HW | awk '{print $2}'`
+ fix_asound_hw
+}
+
 # Find the correct ALSA volume control 
 guess_volume_control() {
  # DAC+ and Amp2 use "Digital"
@@ -116,6 +128,18 @@ guess_volume_control() {
 
 # Guess what card is installed"
 guess_card() {
+ DACPLUSADCPRO=`aplay -l | grep DAC+ | grep ADC | grep Pro`   
+ if [ "$DACPLUSADCPRO" != "" ]; then                          
+   CARD="DAC+ ADC Pro"                                        
+   return                                                     
+ fi                                                           
+                                                              
+ DACPLUSADC=`aplay -l | grep DAC+ | grep ADC`                 
+ if [ "$DACPLUSADC" != "" ]; then                             
+   CARD="DAC+ ADC"                                            
+   return                                                     
+ fi                                                           
+        
  DACPRO=`aplay -l | grep DAC+ | grep Pro`
  if [ "$DACPRO" != "" ]; then
    CARD="DAC+ Pro"
@@ -271,7 +295,11 @@ reconfigure_recording() {
 # Reconfigure Beocreate 
 reconfigure_beocreate() {
  sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
- sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
+ if [ -f "/opt/beocreate/beo-system/configure.js" ]; then
+  /bin/node /opt/beocreate/beo-system/configure.js sound mixer $MIXER_CONTROL
+ else
+  sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
+ fi
 }
 
 # Reconfigure exclusive mode
@@ -289,10 +317,16 @@ reconfigure_exclusive() {
    cp /etc/asound.conf.dmix_softvol /etc/asound.conf
   fi
  fi
+ fix_asound_hw
 
  for SERVICE in $SERVICES; do
   restart_service $SERVICE
  done
+}
+
+# Reconfigure asound.conf
+reconfigure_asound() {
+ cat /etc/asound.conf | sed s/card\\s[0-9]/card\ 0/g
 }
 
 MIXER_CONTROL=""
@@ -303,6 +337,7 @@ if [ -f /etc/hifiberry.state ]; then
 fi
 
 pi_model
+detect_hw
 guess_volume_control
 guess_card
 can_record
@@ -313,7 +348,12 @@ CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'`
 echo $CARD_SED_SPACES
 
 
-if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || [ "$CURRENT_PLAYERS" != "$PLAYERS" ] ; then
+if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
+   [ "$CURRENT_CARD" != "$CARD" ] || \
+   [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || \
+   [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
+   [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
+   [ "$CURRENT_HW" != "HW" ]; then
  echo "Sound card settings have been changed, reconfiguring..."
 else
  echo "Nothing changed, exiting..."
@@ -326,6 +366,7 @@ echo " Exclusive mode: " $EXCLUSIVE
 echo " Raspberry Pi model: $PIMODEL"
 echo " System name: $SYSNAME"
 echo " Sound card: $CARD"
+echo " HW device: $HW"
 echo " ALSA mixer control: $MIXER_CONTROL"
 echo " Recording: $CAN_RECORD"
 echo
@@ -353,6 +394,8 @@ echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
 echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
 echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
+echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
+echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
 echo "CURRENT_EXCLUSIVE=$EXCLUSIVE" >> /etc/hifiberry.state
