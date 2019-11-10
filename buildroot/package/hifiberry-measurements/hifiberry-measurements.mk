@@ -13,7 +13,10 @@ define HIFIBERRY_MEASUREMENTS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/record-sweep
     $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/room-measure \
            $(TARGET_DIR)/opt/hifiberry/bin/room-measure
-
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/input-level \
+           $(TARGET_DIR)/opt/hifiberry/bin/input-level
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/testtone \
+           $(TARGET_DIR)/opt/hifiberry/bin/testtone
 endef
 
 define HIFIBERRY_POSTGRES_INSTALL_INIT_SYSTEMD
