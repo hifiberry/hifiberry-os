@@ -52,27 +52,31 @@ pi_model() {
 
  if [[ $modelname == *"3 Model B+"* ]]; then
   PIMODEL="3B+"
+  PIVERSION=3
   return
  fi 
 
  if [[ $modelname == *"3 Model B Plus"* ]]; then
   PIMODEL="3B+"
+  PIVERSION=3
   return
  fi 
 
-
  if [[ $modelname == *"3 Model B"* ]]; then
   PIMODEL="3B"
+  PIVERSION=3
   return
  fi 
 
  if [[ $modelname == *"4 Model B+"* ]]; then
   PIMODEL="4"
+  PIVERSION=4
   return
  fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0"
+  PIVERSION=0w
   return
  fi
 
@@ -109,7 +113,7 @@ guess_volume_control() {
  fi
 
  # Check if there is a working DSP volume control
- dsptoolkit --timeout=2 get-volume 2 >/dev/null >/dev/null
+ dsptoolkit --timeout=10 get-volume 2 >/dev/null >/dev/null
  if [ $? == 0 ]; then
     MIXER_CONTROL=DSPVolume
     return
@@ -176,9 +180,9 @@ guess_card() {
     return
  fi
 
- REG1=`dsptoolkit --timeout=2 read-reg 0xf003` # expected 00 01
- REG2=`dsptoolkit --timeout=2 read-reg 0xf402` # expected 00 01
- REG3=`dsptoolkit --timeout=2 read-reg 0xc000` # expected 00 00
+ REG1=`dsptoolkit --timeout=10 read-reg 0xf003` # expected 00 01
+ REG2=`dsptoolkit --timeout=10 read-reg 0xf402` # expected 00 01
+ REG3=`dsptoolkit --timeout=10 read-reg 0xc000` # expected 00 00
  if [ "$REG1$REG2$REG3" == "00 01 00 01 00 00 " ]; then
     CARD="DAC+ DSP"
     return
@@ -408,6 +412,7 @@ echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
 echo "CURRENT_EXCLUSIVE=$EXCLUSIVE" >> /etc/hifiberry.state
+echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE
