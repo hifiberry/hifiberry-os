@@ -1,0 +1,26 @@
+#!/bin/bash
+
+CONTINUOUS=0
+CARD=hw:0,0
+for i in "$@"
+do
+case $i in
+    --continous
+    CONTINUOUS=1
+    ;;
+    --card=*)
+    CARD="${i#*=}"
+    ;;
+esac
+
+CMD=sox -q -t alsa -d -n stats trim 0 1 2>&1 | grep "RMS lev dB" | awk '{print $4}'
+
+export AUDIODEV=$CARD
+if [ "$CONTINUOUS" == "1" ]; then
+ while :
+ do
+  $CMD
+ done
+else
+ $CMD
+fi
