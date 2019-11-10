@@ -10,18 +10,18 @@ fi
 cd `dirname $0`
 INACTIVE=`./partitions | awk '{print $2}'`
 
-echo "Unmounting $INACTIVE..."
+echo "unmounting $INACTIVE..."
 umount /newroot 2>/dev/null
 
-echo "Extracting new firmware to $INACTIVE..."
+echo "extracting new firmware to $INACTIVE..."
 gunzip -c $UPDATER | tar xOf - rootfs.ext2 | dd of=$INACTIVE bs=1048576
 
-echo "Mounting new root file system"
+echo "mounting new root file system..."
 if [ ! -d /newroot ]; then
   mkdir /newroot
 fi
                                     
-echo "Resizing new root file system"
+echo "resizing new root file system..."
 resize2fs $INACTIVE                 
 mount -t ext4 $INACTIVE /newroot    
 resize2fs $INACTIVE                 
@@ -30,7 +30,7 @@ if [ -f /newroot/resize-me ]; then
 fi                                 
 VERSION=`cat /newroot/etc/hifiberry.version`
 
-echo "Extracting new kernel"                   
+echo "extracting new kernel..."                   
 cd /tmp                                        
 gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
 if [ ! -f zImage ]; then                       
@@ -41,10 +41,10 @@ else
  mv zImage /boot/zImage 2>/dev/null
 fi                                        
                                           
-echo "Migrating SSH host keys"
+echo "migrating SSH host keys..."
 cp /etc/ssh/ssh_host* /newroot/etc/ssh
 
-echo "Migrating other configurations"
+echo "migrating other configurations..."
 for i in `cat /newroot/opt/hifiberry/etc/config-files`; do
   if [ -f $i ]; then
     DIR=`dirname $i`
@@ -66,12 +66,12 @@ for i in `cat /newroot/opt/hifiberry/etc/config-files`; do
   fi
 done
 
-echo "Changing file on FAT partition"
+echo "changing files on FAT partition..."
 cd /boot
 (cd /newroot/boot ; tar cf - *) | tar xvf -
 cd /
 
-echo "Checking systemctl services"
+echo "checking systemctl services..."
 for i in `cat /opt/hifiberry/etc/services`; do
  systemctl is-active --quiet $i
  if [ "$?" == "0" ]; then
@@ -84,29 +84,34 @@ for i in `cat /opt/hifiberry/etc/services`; do
  fi
 done
 
-echo "Looking for update script"
+echo "looking for update script..."
 cd /tmp
 if [ ! -f updater.sh ]; then
- echo "No post-config update script found, continuing..."
+ echo "no post-config update script found, continuing..."
 else
- echo "Starting upgrade script"
+ echo "starting upgrade script..."
  chmod +x ./updater.sh
  ./updater.sh
 fi
 
 sync
 
-echo "Unmounting $INACTIVE"
+echo "unmounting $INACTIVE..."
 umount $INACTIVE
 fsck.ext2 -p -f -v $INACTIVE
+
+if [ "$1" == "--simulate" ]; then
+ echo "not switching to new version..."
+ exit
+fi
                                                                
-echo "Switching root file system to inactive partition"        
+echo "switching root file system to inactive partition..."
 echo "root=$INACTIVE rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
 
 if [ "$1" == "--reboot" ]; then
- echo "Removing updater"
+ echo "removing updater..."
  rm $UPDATER
- echo "Rebooting"
+ echo "rebooting..."
  sync            
  reboot
 else
