@@ -1,6 +1,25 @@
 #!/bin/bash
 
 BASEURL=https://www.hifiberry.com/images
+MODE=reboot
+FORCE=0
+
+for i in "$@"
+do
+case $i in
+    --reboot)
+    MODE=REBOOT
+    ;;
+    --simulate)
+    MODE=SIMULATE
+    ;;
+    --check)
+    MODE=CHECK
+    ;;
+    --force)
+    FORCE=1
+esac
+done
 
 # Download version file first
 cd /tmp
@@ -21,26 +40,43 @@ fi
 . listing
 
 if [ "$VERSION" -le "$MYVERSION" ]; then
- if [ "$1" != "--force" ]; then
-   echo "You are already using the latest version"
+ if [ "$MODE" == "CHECK" ]; then
+   exit 0
+ fi
+ if [ "$FORCE" != "1" ]; then
+   echo "you are already using the latest version"
    exit 0
  fi
 fi
-echo "Updating from $MYVERSION to $VERSION"
+
+if [ "$MODE" == "CHECK" ]; then
+ echo "$VERSION"
+ exit
+fi
+ 
+echo "updating from $MYVERSION to $VERSION..."
 
 # find correct version
-UPDATERVAR=UPDATER`cat /etc/raspberrypi.version`
+. /etc/hifiberry.state
+if [ "$PIVERSION" == "" ]; then
+ PIVERSION=`cat /etc/raspberrypi.version`
+fi
+UPDATERVAR=UPDATER${PIVERSION}
 FILENAME=${!UPDATERVAR}
 UPDATER=${BASEURL}/${FILENAME}
 
 # download it
-echo "Downloading $UPDATER"
+echo "downloading $UPDATER..."
 cd /data
-curl $UPDATER >updater.tar.gz 
+curl $UPDATER -o updater.tar.gz 
 if [ "$?" != "0" ]; then
  echo "Could not download updater $UPDATER, aborting"
  exit 1
 fi
 
 # extract update
-/opt/hifiberry/bin/extract-update --reboot
+if [ "$MODE" == "REBOOT" ]; then
+ /opt/hifiberry/bin/extract-update --reboot
+elif [ "$MODE" == "SIMULATE" ]; then
+ /opt/hifiberry/bin/extract-update --simulate
+fi 
