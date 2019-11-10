@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = f6516fa7a232b0bbfdf0653b940394172c69bc16
+BEOCREATE_VERSION = ec1a8be94c8d6759e41410d35a53fca4e24ef990
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
 define BEOCREATE_BUILD_CMDS
