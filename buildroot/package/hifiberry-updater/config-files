@@ -1,5 +1,6 @@
 /etc/hifiberry/initial-volume
 /etc/hostname
+/etc/hosts
 /etc/systemname
 /etc/bluetooth/main.conf
 /etc/shairport-sync.conf
