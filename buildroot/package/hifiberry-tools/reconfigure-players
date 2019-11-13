@@ -84,6 +84,10 @@ pi_model() {
 }
 
 fix_asound_hw() {
+ if [ "$HW_SHORT" == "" ]; then
+  echo "no HiFiBerry sound card detected, not changing /etc/asound.conf"
+  return
+ fi
  sed -i "s/card\s[0-9]/card\ $HW_SHORT/g" /etc/asound.conf
 }
 
