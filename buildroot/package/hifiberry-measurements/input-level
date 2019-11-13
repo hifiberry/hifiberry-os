@@ -2,25 +2,48 @@
 
 CONTINUOUS=0
 CARD=hw:0,0
+QUIT=0
+
+. /etc/hifiberry.state
+
 for i in "$@"
 do
 case $i in
-    --continous
+    --continuous)
     CONTINUOUS=1
     ;;
     --card=*)
     CARD="${i#*=}"
     ;;
+    *)
+    echo "unknown command line option $i"
+    ;;
 esac
+done
 
-CMD=sox -q -t alsa -d -n stats trim 0 1 2>&1 | grep "RMS lev dB" | awk '{print $4}'
+level() {
+  AUDIODEV=$CARD sox -q -t alsa -d -n stats trim 0 1 2>&1 | grep "RMS lev dB" | awk '{print $4}'
+}
 
-export AUDIODEV=$CARD
+getkey() {
+  old_tty_settings=$(stty -g)   # Save old settings.
+  stty -icanon time 0 min 0
+  read Keypress
+  stty "$old_tty_settings"      # Restore old settings.
+  case $Keypress in
+   [+]*) amixer sset $CURRENT_MIXER_CONTROL 5%+ ;;
+   [-]*) amixer sset $CURRENT_MIXER_CONTROL 5%- ;;
+   [QqNn]*) QUIT=1 ;;
+  esac
+}
+
 if [ "$CONTINUOUS" == "1" ]; then
- while :
- do
-  $CMD
+ while [ "$QUIT" == "0" ]; do
+  level
+  getkey
  done
 else
- $CMD
+ level
 fi
+
+
