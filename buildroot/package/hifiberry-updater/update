@@ -1,8 +1,9 @@
 #!/bin/bash
 
 BASEURL=https://www.hifiberry.com/images
-MODE=reboot
+MODE=REBOOT
 FORCE=0
+DEVMODE=0
 
 for i in "$@"
 do
@@ -18,6 +19,10 @@ case $i in
     ;;
     --force)
     FORCE=1
+    ;;
+    --development)
+    DEVMODE=1
+    ;;
 esac
 done
 
@@ -38,6 +43,10 @@ if [ "$MYVERSION" == "" ]; then
 fi
 
 . listing
+
+if [ "$DEVMODE" == "1" ]; then
+ VERSION=$DEVVERSION
+fi
 
 if [ "$VERSION" -le "$MYVERSION" ]; then
  if [ "$MODE" == "CHECK" ]; then
