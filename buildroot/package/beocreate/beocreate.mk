@@ -4,8 +4,11 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = ec1a8be94c8d6759e41410d35a53fca4e24ef990
+BEOCREATE_VERSION = f88331e1ce7aa374228df05449118dc3352e6c9f
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
+
+#BEOCREATE_VERSION = 6116d6ff5d9937a92d7b51c7846cfdd15166880b
+#BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
 define BEOCREATE_BUILD_CMDS
 endef
