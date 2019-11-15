@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = f88331e1ce7aa374228df05449118dc3352e6c9f
+BEOCREATE_VERSION = b0c3e9ae6626ee92e0e8899beb11c64c8c588295
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
 #BEOCREATE_VERSION = 6116d6ff5d9937a92d7b51c7846cfdd15166880b
