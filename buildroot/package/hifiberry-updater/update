@@ -60,6 +60,8 @@ fi
 
 if [ "$MODE" == "CHECK" ]; then
  echo "$VERSION"
+ echo
+ curl https://hifiberry.com/images/RELEASENOTES
  exit
 fi
  
@@ -77,7 +79,7 @@ UPDATER=${BASEURL}/${FILENAME}
 # download it
 echo "downloading $UPDATER..."
 cd /data
-curl $UPDATER -o updater.tar.gz 
+curl $UPDATER --progress-bar -o updater.tar.gz 
 if [ "$?" != "0" ]; then
  echo "Could not download updater $UPDATER, aborting"
  exit 1
