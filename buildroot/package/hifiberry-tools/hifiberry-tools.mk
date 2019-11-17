@@ -26,6 +26,10 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/myurl
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/debuginfo \
            $(TARGET_DIR)/opt/hifiberry/bin/debuginfo
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-cardid \
+           $(TARGET_DIR)/opt/hifiberry/bin/hifiberry-cardid
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/fix-dacadcpro-mixer \
+	   $(TARGET_DIR)/opt/hifiberry/bin/fix-dacadcpro-mixer
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system \
