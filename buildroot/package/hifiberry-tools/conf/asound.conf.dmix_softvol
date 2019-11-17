@@ -18,6 +18,7 @@ pcm.dmixer {
     period_size 2048
     buffer_size 32768
     rate 192000
+    format S32_LE
   }
   bindings {
     0 0
