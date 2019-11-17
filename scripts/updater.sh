@@ -1,5 +1,8 @@
 #!/bin/bash
 V=`cat /etc/hifiberry.version`
+if [ "$V" == "" ]; then
+ V=0
+fi
 echo "Upgrading from version $V"
 if [ "$V" -lt 20191022 ]; then
  echo "Version < 20191022, overwriting some configurations"
