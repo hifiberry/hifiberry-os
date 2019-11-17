@@ -6,7 +6,8 @@ ConditionPathExists=/etc/hifiberry/can_record
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting alsaloop"
-ExecStart=/bin/alsaloop -P default -C hw:0,0 -r 192000 -f S32_LE -t 100000
+ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment CARDID=`/opt/hifiberry/bin/hifiberry-cardid`"
+ExecStart=/bin/alsaloop -P default -C hw:${CARDID},0 -r 192000 -f S32_LE -t 100000 -S 1
 Restart=always
 RestartSec=30
 
