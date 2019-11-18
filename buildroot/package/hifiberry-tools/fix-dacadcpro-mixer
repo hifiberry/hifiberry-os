@@ -1,5 +1,5 @@
 #!/bin/bash
-ADCPRO='aplay -l | grep "snd_rpi_hifiberry_dacplusadcpro"'
+ADCPRO=`aplay -l | grep "snd_rpi_hifiberry_dacplusadcpro"`
 if [ "$ADCPRO" != "" ]; then
  amixer cset numid=21 24
  amixer cset numid=22 1
