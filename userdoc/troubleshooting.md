@@ -9,6 +9,7 @@ journalctl -u lmsmpris
 `
 
 You might see a message that lmsmpris isn't connected to a server:
+
 `
 WARNING: root - LMS socket not connected, ignoring command
 `
