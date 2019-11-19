@@ -1,6 +1,6 @@
 # Troubleshooting tips
 
-## No meatadata from Logitech Media Server
+## No metadata from Logitech Media Server
 
 Check, if the command line interface of LMS is enabled and running on port 9090:
 
