@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = b41b0b09492bb802af4b3382d7d9ba0d02513842
+DSPTOOLKIT_VERSION = 5b3953a1e4aeb3732249423a910b3d575c6b0340
 DSPTOOLKIT_SITE = $(call github,hifiberry,hifiberry-dsp,$(DSPTOOLKIT_VERSION))
 DSPTOOLKIT_SETUP_TYPE = setuptools
 DSPTOOLKIT_LICENSE = MIT
