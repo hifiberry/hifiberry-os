@@ -1,0 +1,5 @@
+config BR2_PACKAGE_DSPPROFILES
+	bool "DSP profiles"
+        help
+	  Some DSP profiles to be deployed on DAC+ DSP and/or Beocreate 4 channel amplifier
+        depends on BR2_PACKAGE_DSPTOOLKIT

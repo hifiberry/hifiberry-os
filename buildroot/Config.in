@@ -24,6 +24,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/mpris-proxy/Config.in"
 
 comment "Backend applications"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dspprofiles/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/audiocontrol2/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/beocreate/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-postgres/Config.in"
