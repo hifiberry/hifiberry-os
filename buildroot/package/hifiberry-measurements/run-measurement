@@ -12,10 +12,10 @@ if [ "$MIC" == "" ]; then
 fi
 
 MIC=hw:$MIC,0
-PLAYBACK=hw:$CURRENT_HW_SHORT,0
+#PLAYBACK=hw:$CURRENT_HW_SHORT,0
 
 echo "using microphone   $MIC,0" 
-echo "using plaback card $PLAYBACK" 
+#echo "using plaback card $PLAYBACK" 
 
 play -q -n synth sine 440 2>/dev/null &
 TONE_PID=$!
@@ -29,7 +29,7 @@ kill -KILL $TONE_PID
 
 echo "starting measurement..."
 
-/opt/hifiberry/bin/room-measure $MIC $PLAYBACK both 2
+/opt/hifiberry/bin/room-measure $MIC both 2
 
 RES=measurement.csv
 echo "storing measurement in $RES"

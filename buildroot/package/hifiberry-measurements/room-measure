@@ -1,16 +1,15 @@
 #!/bin/bash
 RECDEVICE=$1
-PLAYDEVICE=$2
-CHANNEL=$3
-COUNT=$4
+CHANNEL=$2
+COUNT=$3
 
 PATH=$PATH:/opt/hifiberry/bin
 
 if [ "$COUNT" == "" ]; then
- echo call with $0 record-device playback-device channel number-of-measurements
+ echo call with $0 record-device channel number-of-measurements
  echo 
- echo e.g. $0 hw0:0 hw1:0 left 8
- echo This will play the test tone on ALSA device hw:1,0, record the acoustics measurements on hw:0,0
+ echo e.g. $0 hw0:0 left 8
+ echo This will play the test tone, record the acoustics measurements on hw:0,0
  echo using only the left channel and averaging 8 measurements
  exit 1
 fi
@@ -20,7 +19,7 @@ RECORDINGS=""
 mkdir /tmp/rec$$
 for i in `seq 1 $COUNT`; do
  cd /tmp/rec$$
- record-sweep $RECDEVICE $PLAYDEVICE $CHANNEL
+ record-sweep $RECDEVICE $CHANNEL
  mv recording.wav rec$i.wav
  RECORDINGS="$RECORDINGS rec$i.wav"
 done
