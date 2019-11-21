@@ -18,6 +18,7 @@ echo $VERSION > $BRDIR/.piversion
 echo $VERSION > buildroot/PIVERSION
 
 SRC=configs/hifiberryos
+#SRC=configs/hifiberryos-gui
 TMP=./tmpfile.$$
 DST=./config.$$
 PLATFORM=configs/config$VERSION

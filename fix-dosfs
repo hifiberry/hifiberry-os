@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! -f "$1" ]; then
+ echo call with $0 smcardimage
+ exit 1
+fi
+
+sudo losetup /dev/loop0 $1
+sudo kpartx -a /dev/loop0
+ls -l /dev/mapper
+sudo dosfsck -a /dev/mapper/loop0p1
+sudo kpartx -d /dev/loop0
+sudo losetup -d /dev/loop0
+
+

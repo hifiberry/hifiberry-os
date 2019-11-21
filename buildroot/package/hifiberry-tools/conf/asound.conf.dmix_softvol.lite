@@ -1,3 +1,5 @@
+defaults.pcm.card 0
+defaults.ctl.card 0
 
 pcm.hifiberry {
   type hw
@@ -14,6 +16,7 @@ pcm.dmixer {
     period_size 1024
     buffer_size 8192
     rate 44100
+    format S32_LE
   }
   bindings {
     0 0

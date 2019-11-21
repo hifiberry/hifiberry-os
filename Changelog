@@ -1,3 +1,23 @@
+201911xx
+- Improved 192kHz resampling
+- Added Last.FM settings in UI
+- Added updater in UI
+- Added debug data collector
+- Added UI for SSH configuration
+- Allow to set static IP address
+- Improve covers using Musicbrainz and coverartarchive
+- Scrobble listening history to local database
+- Support more B&O speaker models with Beocreate board
+- Added command-line measurement tools (not yet available in UI)
+- Exclusive audio mode if only one player is activated
+- Enable some of the Beocreate functionalities also for the DAC+ DSP
+- Workaround against LMS/Squeezelite muting volume on pause
+- Fixed Reboot bug
+- Several other bugfixes and stability improvements
+
+Known problems:
+- alsaloop not working correctly on DAC+ ADC Pro
+
 20191029
 - Added volume control
 - Added LastFM love/unlove support

@@ -1,6 +1,103 @@
 #!/bin/bash
 
 REBOOTFILE=/tmp/reboot
+SERVICES="spotify raat mpd shairport-sync spotify squeezelite bluealsa-aplay alsaloop"
+
+restart_service() {
+ systemctl is-active --quiet $1
+ if [ "$?" == "0" ]; then
+   echo "Restarting $1"
+   systemctl restart $1
+ fi
+}
+
+check_systemd() {
+ SERVICE_ACTIVE=0
+ for SERVICE in "$@"; do 
+   systemctl is-active --quiet $SERVICE
+   if [ "$?" == "0" ]; then
+     SERVICE_ACTIVE=1
+   fi
+
+   systemctl is-enabled --quiet $SERVICE 
+   if [ "$?" == "0" ]; then
+     SERVICE_ACTIVE=1
+   fi 
+   
+ done
+}
+
+check_exclusive() {
+ PLAYERCOUNT=0
+ EXCLUSIVE=0
+ PLAYERS=""
+ for SERVICE in $SERVICES; do
+   check_systemd $SERVICE
+   if [ "$SERVICE_ACTIVE" == "1" ]; then
+     PLAYERCOUNT=$((PLAYERCOUNT + 1))
+     PLAYERS="$PLAYERS$SERVICE "
+   fi
+ done
+ echo "Players active: " $PLAYERCOUNT "(" $PLAYERS ")"
+ if [ $PLAYERCOUNT -lt 2 ]; then
+   echo "Enabling exclusive audio"
+   EXCLUSIVE=1
+ fi
+}
+
+# Detect Raspberry Pi model
+pi_model() {
+ modelname=$(tr -d '\0' < /proc/device-tree/model)
+ echo $modelname
+
+ if [[ $modelname == *"3 Model B+"* ]]; then
+  PIMODEL="3B+"
+  PIVERSION=3
+  return
+ fi 
+
+ if [[ $modelname == *"3 Model B Plus"* ]]; then
+  PIMODEL="3B+"
+  PIVERSION=3
+  return
+ fi 
+
+ if [[ $modelname == *"3 Model B"* ]]; then
+  PIMODEL="3B"
+  PIVERSION=3
+  return
+ fi 
+
+ if [[ $modelname == *"4 Model B+"* ]]; then
+  PIMODEL="4"
+  PIVERSION=4
+  return
+ fi
+
+ if [[ $modelname == *"Pi Zero W"* ]]; then
+  PIMODEL="0"
+  PIVERSION=0w
+  return
+ fi
+
+ PIMODEL="unknown" 
+}
+
+fix_asound_hw() {
+ if [ "$HW_SHORT" == "" ]; then
+  echo "no HiFiBerry sound card detected, not changing /etc/asound.conf"
+  return
+ fi
+ sed -i "s/card\s[0-9]/card\ $HW_SHORT/g" /etc/asound.conf
+}
+
+# Find the correct input and output hardware devices
+# this is important if additional USB hardware is connected
+detect_hw () {
+ HW=`aplay -l | grep hifiberry | awk -F: '{print $1}'`
+ HW_SHORT=`echo $HW | awk '{print $2}'`
+ fix_asound_hw
+}
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
@@ -20,7 +117,7 @@ guess_volume_control() {
  fi
 
  # Check if there is a working DSP volume control
- dsptoolkit --timeout=2 get-volume 2 >/dev/null >/dev/null
+ dsptoolkit --timeout=10 get-volume 2 >/dev/null >/dev/null
  if [ $? == 0 ]; then
     MIXER_CONTROL=DSPVolume
     return
@@ -39,6 +136,18 @@ guess_volume_control() {
 
 # Guess what card is installed"
 guess_card() {
+ DACPLUSADCPRO=`aplay -l | grep DAC+ | grep ADC | grep Pro`   
+ if [ "$DACPLUSADCPRO" != "" ]; then                          
+   CARD="DAC+ ADC Pro"                                        
+   return                                                     
+ fi                                                           
+                                                              
+ DACPLUSADC=`aplay -l | grep DAC+ | grep ADC`                 
+ if [ "$DACPLUSADC" != "" ]; then                             
+   CARD="DAC+ ADC"                                            
+   return                                                     
+ fi                                                           
+        
  DACPRO=`aplay -l | grep DAC+ | grep Pro`
  if [ "$DACPRO" != "" ]; then
    CARD="DAC+ Pro"
@@ -75,9 +184,9 @@ guess_card() {
     return
  fi
 
- REG1=`dsptoolkit --timeout=2 read-reg 0xf003` # expected 00 01
- REG2=`dsptoolkit --timeout=2 read-reg 0xf402` # expected 00 01
- REG3=`dsptoolkit --timeout=2 read-reg 0xc000` # expected 00 00
+ REG1=`dsptoolkit --timeout=10 read-reg 0xf003` # expected 00 01
+ REG2=`dsptoolkit --timeout=10 read-reg 0xf402` # expected 00 01
+ REG3=`dsptoolkit --timeout=10 read-reg 0xc000` # expected 00 00
  if [ "$REG1$REG2$REG3" == "00 01 00 01 00 00 " ]; then
     CARD="DAC+ DSP"
     return
@@ -108,36 +217,81 @@ system_name() {
 
 # Reconfigure SpotifyD
 reconfigure_spotify() {
- sed -i s/mixer\ =.*/mixer\ =\ $MIXER_CONTROL/ /etc/spotifyd.conf 
- sed -i s/device_name\ =.*/device_name\ =\ $SYSNAME_NO_SPACES/ /etc/spotifyd.conf
+ RESTART=0
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i s/mixer\ =.*/mixer\ =\ $MIXER_CONTROL/ /etc/spotifyd.conf 
+  RESTART=1
+  echo " updated mixer"
+ fi
 
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+  sed -i s/device_name\ =.*/device_name\ =\ $SYSNAME_NO_SPACES/ /etc/spotifyd.conf
+  RESTART=1
+  echo " updated system name"
+ fi
+
+ if [ "$RESTART" == "1" ]; then
+  restart_service spotify
+ fi
 }
 
 # Reconfigure Shairport-sync
 reconfigure_shairport() {
- sed -i s/mixer_control_name\ =\ .*/mixer_control_name\ =\ \"$MIXER_CONTROL\"\;/ /etc/shairport-sync.conf 
- sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
+ RESTART=0
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i s/mixer_control_name\ =\ .*/mixer_control_name\ =\ \"$MIXER_CONTROL\"\;/ /etc/shairport-sync.conf 
+  RESTART=1
+  echo " updated mixer"
+ fi
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
+  RESTART=1
+  echo " updated system name"
+ fi
+ if [ "$RESTART" == "1" ]; then
+  restart_service shairport-sync
+ fi
 }
 
 # Reconfigure AudioControl2
 reconfigure_audiocontrol2() {
- sed -i s/mixer_control=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i s/mixer_control.*=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
+  restart_service audiocontrol2
+  echo " updated mixer"
+ fi
 }
 
 
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
- sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
+ if [ "$PIVERSION" == "3B" ]; then
+   systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.service a2dp-agent.service
+   echo " disabled on Pi3"
+ fi 
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+  sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
+  restart_service bluetooth.service
+  echo " updated system name"
+ fi
 }
 
 # Reconfigure squeezelite
 reconfigure_squeezelite() {
- echo $SYSNAME > /var/squeezelite/squeezelite.name
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+  echo $SYSNAME > /var/squeezelite/squeezelite.name
+  restart_service squeezelite
+  echo " updated system name"
+ fi
 }
 
 # Reconfigure MPD
 reconfigure_mpd() {
- sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
+  restart_service mpd
+  echo " updated mixer"
+ fi
 }                 
 
 # Reconfigure "can_record"
@@ -147,7 +301,9 @@ reconfigure_recording() {
  fi
  if [ "$CAN_RECORD" != "" ]; then
    touch /etc/hifiberry/can_record
- else if [ -f /etc/hifiberry/can_record ]; then
+ else 
+   systemctl disable alsaloop
+   if [ -f /etc/hifiberry/can_record ]; then
      rm /etc/hifiberry/can_record
    fi
  fi
@@ -156,9 +312,39 @@ reconfigure_recording() {
 # Reconfigure Beocreate 
 reconfigure_beocreate() {
  sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
- sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
+ if [ -f "/opt/beocreate/beo-system/configure.js" ]; then
+  /bin/node /opt/beocreate/beo-system/configure.js sound mixer $MIXER_CONTROL
+ else
+  sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
+ fi
 }
 
+# Reconfigure exclusive mode
+reconfigure_exclusive() {
+ if [ "$EXCLUSIVE" = "$CURRENT_EXCLUSIVE" ]; then
+  return
+ fi
+
+ if [ "$EXCLUSIVE" = "1" ]; then
+  cp /etc/asound.conf.exclusive /etc/asound.conf
+ else
+  if [ "$PIMODEL" = "0" ]; then
+   cp /etc/asound.conf.dmix_softvol.lite /etc/asound.conf
+  else
+   cp /etc/asound.conf.dmix_softvol /etc/asound.conf
+  fi
+ fi
+ fix_asound_hw
+
+ for SERVICE in $SERVICES; do
+  restart_service $SERVICE
+ done
+}
+
+# Reconfigure asound.conf
+reconfigure_asound() {
+ cat /etc/asound.conf | sed s/card\\s[0-9]/card\ 0/g
+}
 
 MIXER_CONTROL=""
 CARD="unknown"
@@ -167,30 +353,43 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
+pi_model
+detect_hw
 guess_volume_control
 guess_card
 can_record
 system_name
+check_exclusive
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
 echo $CARD_SED_SPACES
 
 
-if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || [ "$CURRENT_CARD" != "$CARD" ] || [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
+if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
+   [ "$CURRENT_CARD" != "$CARD" ] || \
+   [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || \
+   [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
+   [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
+   [ "$CURRENT_HW" != "HW" ]; then
  echo "Sound card settings have been changed, reconfiguring..."
 else
  echo "Nothing changed, exiting..."
  exit
 fi
-                                  
 
 echo "Applying settings: "
+echo " Players: " $PLAYERS
+echo " Exclusive mode: " $EXCLUSIVE
+echo " Raspberry Pi model: $PIMODEL"
 echo " System name: $SYSNAME"
 echo " Sound card: $CARD"
+echo " HW device: $HW"
 echo " ALSA mixer control: $MIXER_CONTROL"
 echo " Recording: $CAN_RECORD"
 echo
 
+echo "Reconfiguring exclusive mode"
+reconfigure_exclusive
 echo "Reconfiguring Spotifyd"
 reconfigure_spotify
 echo "Reconfiguring Shairport-sync"
@@ -209,9 +408,15 @@ echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
 
 echo "Saving settings to /etc/hifiberry.state"
-echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" > /etc/hifiberry.state
+echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
+echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
 echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
+echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
+echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
+echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
+echo "CURRENT_EXCLUSIVE=$EXCLUSIVE" >> /etc/hifiberry.state
+echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE

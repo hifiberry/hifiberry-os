@@ -1,0 +1,36 @@
+#!/bin/sh
+
+. /etc/hifiberry.state CURRENT_HW_SHORT
+
+MIC=`/opt/hifiberry/bin/audio-inputs | grep -i usb | awk -F: '{print $1}'`
+if [ "$MIC" == "" ]; then
+ MIC=`/opt/hifiberry/bin/audio-inputs | awk -F: '{print $1}'`
+fi
+if [ "$MIC" == "" ]; then
+ echo "could not identify measurement microphone, aborting..."
+ exit 1
+fi
+
+MIC=hw:$MIC,0
+#PLAYBACK=hw:$CURRENT_HW_SHORT,0
+
+echo "using microphone   $MIC,0" 
+#echo "using plaback card $PLAYBACK" 
+
+play -q -n synth sine 440 2>/dev/null &
+TONE_PID=$!
+
+echo "ideal target volume range is between -10dB and -30dB"
+echo "change volume with the +/- keys."
+echo "move to next step (measurement) with the "n" key"
+
+/opt/hifiberry/bin/input-level --card=$MIC --continuous
+kill -KILL $TONE_PID
+
+echo "starting measurement..."
+
+/opt/hifiberry/bin/room-measure $MIC both 2
+
+RES=measurement.csv
+echo "storing measurement in $RES"
+mv /tmp/fftdB_vbw.csv $RES

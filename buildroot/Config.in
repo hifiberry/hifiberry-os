@@ -24,8 +24,12 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/mpris-proxy/Config.in"
 
 comment "Backend applications"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dspprofiles/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/audiocontrol2/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/beocreate/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-postgres/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-measurements/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-analytics/Config.in"
 
 comment "GUI"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-vc4kms/Config.in"
@@ -40,7 +44,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-gevent-websocket/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-greenlet/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-keyboard/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-pylast/Config.in"
-
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-musicbrainz-ngs/Config.in"
 
 comment "Test tools"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-test/Config.in"

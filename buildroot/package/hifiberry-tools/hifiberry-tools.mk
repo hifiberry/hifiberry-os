@@ -24,6 +24,12 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/myip
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myurl \
            $(TARGET_DIR)/opt/hifiberry/bin/myurl
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/debuginfo \
+           $(TARGET_DIR)/opt/hifiberry/bin/debuginfo
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-cardid \
+           $(TARGET_DIR)/opt/hifiberry/bin/hifiberry-cardid
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/fix-dacadcpro-mixer \
+	   $(TARGET_DIR)/opt/hifiberry/bin/fix-dacadcpro-mixer
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system \
@@ -40,8 +46,6 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition \
                 $(TARGET_DIR)/opt/hifiberry/bin
-    $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/PIVERSION \
-                $(TARGET_DIR)/etc/PIVERSION
     touch $(TARGET_DIR)/resize-me
     touch $(TARGET_DIR)/etc/spotifyd.conf
 

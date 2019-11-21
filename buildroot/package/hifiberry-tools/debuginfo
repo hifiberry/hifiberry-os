@@ -1,0 +1,29 @@
+#/bin/bash
+
+#
+# This collects all kinds of system information to allow easier debugging
+# Make sure it does not just copy files that might contain personal data or even passwords!
+#
+
+TMPDIR=/tmp/$$
+mkdir $TMPDIR
+cd $TMPDIR
+
+curl http://127.0.0.1:81/api/player/status > playerstate.txt
+systemctl > systemctl.txt
+aplay -l > aplay.txt
+arecord -l > arecord.txt
+amixer > amixer.txt
+cat /etc/hifiberry.version > version.txt
+cat /etc/asound.conf > asound.conf
+for i in 0 1 2 3; do
+ cat /proc/asound/card$i/pcm0p/sub0/hw_params > hw_params.$i.txt
+done
+df -k > df.txt
+# Collect some performance data
+top -b -n 5 > top.txt
+perf stat -a sleep 10
+
+zip /tmp/hifiberry-debug.zip $TMPDIR/*
+rm -rf $TMPDIR
+

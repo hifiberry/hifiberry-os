@@ -1,0 +1,15 @@
+#!/bin/bash
+
+psql -U hifiberry hifiberry <<EOF
+select songdata->'artist' as artist,
+       songdata->'title' as title,
+       songdata->'started' as from,
+       songdata->'finished' as to,
+       songdata->'loved' as loved,
+       songdata->'releaseDate' as released,
+       songdata->'mbid' as mbid,
+       songdata->'albummbid' as album,
+       songdata->'tags' as tags
+ from scrobbles
+EOF
+
