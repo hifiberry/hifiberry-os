@@ -1,0 +1,24 @@
+defaults.pcm.rate_converter "samplerate"
+
+defaults.pcm.card 0
+defaults.ctl.card 0
+
+pcm.hifiberry {
+  type hw
+  card 0
+  device 0
+}
+pcm.softvol {
+  type softvol
+  slave.pcm "hifiberry"
+  control {
+    name "Softvol"
+    card 0
+  }
+  min_dB -90.2
+  max_dB 0.0
+}
+pcm.!default {
+  type plug
+  slave.pcm "softvol"
+}

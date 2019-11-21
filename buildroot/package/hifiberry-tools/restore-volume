@@ -11,3 +11,7 @@ alsactl -f $STORE restore
 if [ "$CURRENT_MIXER_CONTROL" != "Softvol" ]; then
 	amixer sset Softvol 100%
 fi
+
+if [ -f /opt/hifiberry/bin/fix-dacadcpro-mixer ]; then
+        /opt/hifiberry/bin/fix-dacadcpro-mixer
+fi

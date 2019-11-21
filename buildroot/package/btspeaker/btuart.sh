@@ -24,6 +24,7 @@ if [ "$uart0_pins" = "16" ] ; then
         fi
 else
 	echo "Looks like an Raspberry Pi 3 without flow control, BT audio will not work reliably"
-	/usr/bin/hciattach -n /dev/ttyAMA0 bcm43xx 460800 noflow - $BDADDR
+        /opt/hifiberry/bin/bootmsg "Bluetooth not supported on Pi3B"
+        exit 1
 fi
 

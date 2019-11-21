@@ -1,0 +1,36 @@
+#!/bin/bash
+RECDEVICE=$1
+CHANNEL=$2
+COUNT=$3
+
+PATH=$PATH:/opt/hifiberry/bin
+
+if [ "$COUNT" == "" ]; then
+ echo call with $0 record-device channel number-of-measurements
+ echo 
+ echo e.g. $0 hw0:0 left 8
+ echo This will play the test tone, record the acoustics measurements on hw:0,0
+ echo using only the left channel and averaging 8 measurements
+ exit 1
+fi
+
+# Record
+RECORDINGS=""
+mkdir /tmp/rec$$
+for i in `seq 1 $COUNT`; do
+ cd /tmp/rec$$
+ record-sweep $RECDEVICE $CHANNEL
+ mv recording.wav rec$i.wav
+ RECORDINGS="$RECORDINGS rec$i.wav"
+done
+
+# Process the data
+/opt/hifiberry/bin/fft-analzye -v 1 -r signal.wav $RECORDINGS
+cp fftdB_vbw.csv /tmp
+cp rec1.wav /tmp/recording.wav
+cp raw.wav /tmp/raw.wav
+cp signal.wav /tmp/signal.wav
+
+# Clean up
+cd /tmp
+rm -rf /tmp/rec$$

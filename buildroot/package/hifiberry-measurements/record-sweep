@@ -1,0 +1,41 @@
+#!/bin/bash
+
+SAMPLERATE=44100
+
+if [ "$1" != "" ]; then
+ REC=$1
+else
+ REC=hw:0,0
+fi
+
+if [ "$2" == "left" ]; then
+ FILES="signal.wav silence.wav"
+elif [ "$2" == "right" ]; then
+ FILES="silence.wav signal.wav"
+else
+ FILES="signal.wav signal.wav"
+fi
+
+rec_cap() {
+ for FORMAT in S32_LE S32 S24 S24_3LE S16 S16_LE ; do
+  for CHANNELS in 2 1; do
+   arecord -D $REC -f $FORMAT -r 48000 -c $CHANNELS -d 1 x.wav 2>/dev/null 1>/dev/null
+   if [ "$?" == "0" ]; then
+    return
+   fi
+  done
+ done
+ echo "Could not find any working recording format for card $REC, aborting..."
+ exit 1
+}
+
+rec_cap
+echo "Recording device: $REC"
+echo "Using $FORMAT with $CHANNELS channels"
+sox -q -c 1 -n -r $SAMPLERATE -b 32 signal.wav synth 10 sine 20/20000 delay 1 
+sox -q -c 1 -n -r $SAMPLERATE -b 32 silence.wav trim 0 11 
+sox -M $FILES play.wav
+play -q play.wav 2>/dev/null &
+arecord --buffer-size=600000 -f $FORMAT -D $REC -c $CHANNELS -d 12 -r $SAMPLERATE -q raw.wav
+sox raw.wav -r $SAMPLERATE -c 1 -b 32 recording.wav
+
