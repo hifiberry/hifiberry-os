@@ -7,3 +7,9 @@ echo "Fixing $BRDIR"
 cat $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk | grep -v BR2_PACKAGE_VALGRIND > $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk.new
 mv  $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk.orig
 mv  $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk.new $BRDIR/package/gstreamer1/gstreamer1/gstreamer1.mk
+
+# Patch rpi firmware to use newer version
+cp ../buildroot/package/rpi-firmware/rpi-firmware.mk ../buildroot/package/rpi-firmware/rpi-firmware.mk.orig
+mv ../buildroot/package/rpi-firmware/rpi-firmware.hash ../buildroot/package/rpi-firmware/rpi-firmware.hash.orig
+sed -i s/RPI_FIRMWARE_VERSION.=.*/RPI_FIRMWARE_VERSION\ =\ 6e4a7232ca12ed4cb42326a25e2ceb13c22c06d6/ ../buildroot/package/rpi-firmware/rpi-firmware.mk
+
