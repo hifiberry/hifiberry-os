@@ -32,8 +32,6 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
 	   $(TARGET_DIR)/opt/hifiberry/bin/fix-dacadcpro-mixer
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-initial-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/set-initial-volume
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system \
-           $(TARGET_DIR)/opt/hifiberry/bin/configure-system
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/stop-all-players \
            $(TARGET_DIR)/opt/hifiberry/bin/stop-all-players
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/store-volume \
@@ -80,10 +78,6 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/myip.service
         ln -fs ../../../../usr/lib/systemd/system/myip.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-system.service \
-                $(TARGET_DIR)/lib/systemd/system/configure-system.service
-        ln -fs ../../../../usr/lib/systemd/system/configure-system.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-system.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/resize-partitions.service
         ln -fs ../../../../usr/lib/systemd/system/resize-partitions.service \

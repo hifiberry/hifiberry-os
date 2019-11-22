@@ -1,6 +1,6 @@
 [Unit]
 Description=Reboot after configuration changes
-After=configure-players.service configure-system.service hifiberry-detect.service resize-partitions.service activate-data-partition.service
+After=configure-players.service hifiberry-detect.service resize-partitions.service activate-data-partition.service
 Before=myip.service
 ConditionPathExists=/tmp/reboot
 ConditionPathExists=!/boot/noreboot
