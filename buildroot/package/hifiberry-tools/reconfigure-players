@@ -1,7 +1,22 @@
 #!/bin/bash
 
 REBOOTFILE=/tmp/reboot
-SERVICES="spotify raat mpd shairport-sync spotify squeezelite bluealsa-aplay alsaloop"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop"
+
+samplerate() {
+  . /etc/hifiberry.conf
+
+  if [ "$SAMPLERATE" == "" ]; then
+    SAMPLERATE=$CURRENT_SAMPLERATE
+  fi
+  if [ "$SAMPLERATE" == "" ]; then
+    SAMPLERATE=192000
+  fi
+
+  if [ "$PIVERSION" == "0" ]; then
+    SAMPLERATE=48000
+  fi
+}
 
 restart_service() {
  systemctl is-active --quiet $1
@@ -38,7 +53,6 @@ check_exclusive() {
      PLAYERS="$PLAYERS$SERVICE "
    fi
  done
- echo "Players active: " $PLAYERCOUNT "(" $PLAYERS ")"
  if [ $PLAYERCOUNT -lt 2 ]; then
    echo "Enabling exclusive audio"
    EXCLUSIVE=1
@@ -48,7 +62,6 @@ check_exclusive() {
 # Detect Raspberry Pi model
 pi_model() {
  modelname=$(tr -d '\0' < /proc/device-tree/model)
- echo $modelname
 
  if [[ $modelname == *"3 Model B+"* ]]; then
   PIMODEL="3B+"
@@ -75,8 +88,8 @@ pi_model() {
  fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
-  PIMODEL="0"
-  PIVERSION=0w
+  PIMODEL="0w"
+  PIVERSION=0
   return
  fi
 
@@ -311,12 +324,18 @@ reconfigure_recording() {
 
 # Reconfigure Beocreate 
 reconfigure_beocreate() {
- sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
- if [ -f "/opt/beocreate/beo-system/configure.js" ]; then
-  /bin/node /opt/beocreate/beo-system/configure.js sound mixer $MIXER_CONTROL
- else
-  sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
- fi
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
+  echo " updated card type"
+ fi 
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+   if [ -f "/opt/beocreate/beo-system/configure.js" ]; then
+    /bin/node /opt/beocreate/beo-system/configure.js sound mixer $MIXER_CONTROL
+   else
+    sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
+   fi
+   echo " updated mixer"
+ fi 
 }
 
 # Reconfigure exclusive mode
@@ -341,10 +360,19 @@ reconfigure_exclusive() {
  done
 }
 
-# Reconfigure asound.conf
-reconfigure_asound() {
- cat /etc/asound.conf | sed s/card\\s[0-9]/card\ 0/g
+# Change sample rate
+reconfigure_samplerate() {
+ if [ "$SAMPLERATE" == "$CURRENT_SAMPLERATE" ]; then
+  return
+ fi
+ sed -i "s/rate\s.[1-9].*/rate\ $SAMPLERATE/g" /etc/asound.conf
+ echo " updated asound.conf"
+  
+ for SERVICE in $SERVICES; do
+  restart_service $SERVICE
+ done
 }
+
 
 MIXER_CONTROL=""
 CARD="unknown"
@@ -360,9 +388,9 @@ guess_card
 can_record
 system_name
 check_exclusive
+samplerate
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
-echo $CARD_SED_SPACES
 
 
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
@@ -370,7 +398,9 @@ if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || \
    [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
    [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
-   [ "$CURRENT_HW" != "HW" ]; then
+   [ "$CURRENT_SAMPLERATE" != "$SAMPLERATE" ] || \
+   [ "$CURRENT_HW" != "$HW" ] || \
+    [ 1 != 1 ]; then
  echo "Sound card settings have been changed, reconfiguring..."
 else
  echo "Nothing changed, exiting..."
@@ -378,14 +408,15 @@ else
 fi
 
 echo "Applying settings: "
-echo " Players: " $PLAYERS
-echo " Exclusive mode: " $EXCLUSIVE
+echo " Players: $PLAYERS (was $CURRENT_PLAYERS)"
+echo " Exclusive mode: $EXCLUSIVE (was $CURRENT_EXCLUSIVE)"
 echo " Raspberry Pi model: $PIMODEL"
-echo " System name: $SYSNAME"
-echo " Sound card: $CARD"
-echo " HW device: $HW"
-echo " ALSA mixer control: $MIXER_CONTROL"
-echo " Recording: $CAN_RECORD"
+echo " System name: $SYSNAME (was $CURRENT_SYSNAME)"
+echo " Sound card: $CARD (was $CURRENT_CARD)"
+echo " HW device: $HW (was $CURRENT_HW)"
+echo " ALSA mixer control: $MIXER_CONTROL (was $CURRENT_MIXER_CONTROL)"
+echo " Recording: $CAN_RECORD (was $CURRENT_CAN_RECORD)"
+echo " Samplerate: ${SAMPLERATE}Hz (was $CURRENT_SAMPLERATE)"
 echo
 
 echo "Reconfiguring exclusive mode"
@@ -406,6 +437,8 @@ echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
 echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
+echo "Reconfiguring sample rate"
+reconfigure_samplerate
 
 echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
@@ -416,6 +449,7 @@ echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
 echo "CURRENT_EXCLUSIVE=$EXCLUSIVE" >> /etc/hifiberry.state
+echo "CURRENT_SAMPLERATE=$SAMPLERATE" >> /etc/hifiberry.state
 echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
 if [ "$1" == "--reboot" ]; then
