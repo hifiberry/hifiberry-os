@@ -26,6 +26,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/myurl
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/debuginfo \
            $(TARGET_DIR)/opt/hifiberry/bin/debuginfo
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/sshdconfig \
+           $(TARGET_DIR)/opt/hifiberry/bin/sshdconfig
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-cardid \
            $(TARGET_DIR)/opt/hifiberry/bin/hifiberry-cardid
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/fix-dacadcpro-mixer \
@@ -109,6 +111,11 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/hifiberry-finish.service
         ln -fs ../../../../usr/lib/systemd/system/hifiberry-finish.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry-finish.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/sshdconfig.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/sshdconfig.service
+        ln -fs ../../../../usr/lib/systemd/system/sshdconfig.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshdconfig.service
+
 
 endef
 
