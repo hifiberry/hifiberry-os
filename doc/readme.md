@@ -6,7 +6,6 @@
 - [Updater process](updater.md)
 - [TCP/IP port numbers in use](ports.md)
 - [Active services](services.md)
-- [Initial configuration](initial-configuration.md)
 - [Wishlist](wishlist.md)
 - [Known problems](known-problems.md)
 
