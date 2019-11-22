@@ -32,9 +32,6 @@ else
 HIFIBERRY_BLUEZALSA_CONF_OPTS += --disable-aac
 endif
 
-# AAC doesn't seem to work stable with current iOS
-#HIFIBERRY_BLUEZALSA_CONF_OPTS += --disable-aac
-
 #HIFIBERRY_BLUEZALSA_DEPENDENCIES += libbsd ncurses
 #HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-hcitop
 
