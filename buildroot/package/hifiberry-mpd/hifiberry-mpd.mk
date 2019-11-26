@@ -5,10 +5,10 @@
 ################################################################################
 
 define HIFIBERRY_MPD_INSTALL_TARGET_CMDS
-	mkdir -p $(TARGET_DIR)/var/mpd
 	mkdir -p $(TARGET_DIR)/library
 	mkdir -p $(TARGET_DIR)/library/music
 	mkdir -p $(TARGET_DIR)/library/playlists
+        mkdir -p $(TARGET_DIR)/var/lib/mpd
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.conf \
 		$(TARGET_DIR)/etc/mpd.conf
         # Install some sample web radio files
