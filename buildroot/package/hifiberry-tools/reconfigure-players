@@ -167,6 +167,12 @@ guess_card() {
    return
  fi
 
+ DACDSP=`aplay -l | grep DAC+DSP`
+ if [ "$DACDSP" != "" ]; then
+   CARD="DAC+ DSP"
+   return
+ fi
+
  DAC=`aplay -l | grep DAC+`
  if [ "$DAC" != "" ]; then
    CARD="DAC+/Amp2"

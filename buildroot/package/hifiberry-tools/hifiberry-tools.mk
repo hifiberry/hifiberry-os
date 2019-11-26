@@ -49,6 +49,11 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     touch $(TARGET_DIR)/resize-me
     touch $(TARGET_DIR)/etc/spotifyd.conf
 
+    # disable sshd by default
+    if [ -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshd.service ]; then \
+       rm $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshd.service; \
+    fi
+
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
