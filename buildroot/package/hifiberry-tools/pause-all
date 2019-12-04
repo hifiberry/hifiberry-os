@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+# Pause all players and make sure they are not using the sound card anymore
+#
+
+CARD=`aplay -l | grep -i hifiberry | awk '{print $2}' | sed s/://`
+DATE=`date +%Y%m%d-%H%M%S`
+
+echo "$DATE pause-all $1"
+
+check_paused() {
+  STATUS=`cat /proc/asound/card${CARD}/pcm0p/sub0/hw_params`
+  if [ "$STATUS" == "closed" ]; then
+    exit 0
+  fi
+  PROCESS=`lsof | grep /dev/snd | grep pcm${CARD} | awk '{print $2}'`
+  APP=`basename $PROCESS`
+}
+
+pause_spotify() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_mpd() {
+  mpc pause
+}
+
+pause_bluetooth() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_roon() {
+  # TODO
+  pkill -USR1 raat_app
+  sleep 0.3
+}
+
+pause_spotify() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_shairport() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_squeezelite() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_process() {
+  case $APP in
+    mpd)
+      pause_mpd
+      ;;
+    raat_app)
+      pause_raat
+      ;;
+    *)
+      echo "don't know how to pause $APP"
+      ;;
+  esac
+}
+
+kill_process() {
+  PID=`ps -ef | grep $PROCESS | awk '{print $1}'`
+  kill $PID
+  sleep 1
+  PID=`ps -ef | grep $PROCESS | grep -v grep | awk '{print $1}'`
+  if [ "$PID" != "" ]; then
+    kill -KILL $PID
+  fi
+}
+
+# Check if something is playing at all
+check_paused
+
+# Try to control the player directly, this might not work
+# for all players
+pause_process
+check_paused
+
+# Use API to pause
+curl -X post http://localhost:81/api/player/pause
+check_paused
+
+# Still in use
+echo "$APP still using the sound card killing it"
+kill_process
+
+# Now it should REALLY be available
+check_paused
+
+# Still not? Something is wrong, exit with exit code 1
+exit 1
+
