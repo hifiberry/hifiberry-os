@@ -25,12 +25,9 @@ HIFIBERRY_BLUEZALSA_CONF_OPTS = \
 	--with-alsaplugindir=/usr/lib/alsa-lib \
 	--with-alsaconfdir=/usr/share/alsa
 
-ifeq ($(BR2_PACKAGE_FDK_AAC),y)
+# Enable AAC
 HIFIBERRY_BLUEZALSA_DEPENDENCIES += fdk-aac
 HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-aac
-else
-HIFIBERRY_BLUEZALSA_CONF_OPTS += --disable-aac
-endif
 
 #HIFIBERRY_BLUEZALSA_DEPENDENCIES += libbsd ncurses
 #HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-hcitop
