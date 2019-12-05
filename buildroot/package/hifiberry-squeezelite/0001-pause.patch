@@ -1,0 +1,16 @@
+output_alsa.c: stop other players before accessing sound card
+
+Signed-off-by: HiFiBerry <info@hifiberry.com>
+
+--- a/output_alsa.c
++++ b/output_alsa.c
+@@ -335,6 +335,9 @@ static int alsa_open(const char *device,
+ 	// close if already open
+ 	if (pcmp) alsa_close();
+ 
++	LOG_ERROR("pausing other players");
++        system("/opt/hifiberry/bin/pause-all squeezelite");
++
+ 	// reset params
+ 	alsa.rate = 0;
+ #if DSD

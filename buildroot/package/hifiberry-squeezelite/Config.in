@@ -1,6 +1,18 @@
 config BR2_PACKAGE_HIFIBERRY_SQUEEZELITE
 	bool "hifiberry-squeezelite"
         help
-	  Start script and configuration files for Squeezelite
+	  Squeezelite adapted for HiFiBerryOS
         depends on BR2_PACKAGE_HIFIBERRY_BASE
-        select BR2_PACKAGE_SQUEEZELITE
+        depends on !BR2_PACKAGE_SQUEEZELITE
+        select BR2_PACKAGE_ALSA_LIB
+        select BR2_PACKAGE_ALSA_LIB_MIXER
+        select BR2_PACKAGE_FAAD2
+        select BR2_PACKAGE_LAME
+
+comment "HiFiBerry squeezelite package can't be used together with buildroot squeezelite version, disable this first!"
+        depends on BR2_PACKAGE_SQUEEZELITE
+
+~                                                                                                                                                                                                                                                  
+~                                                                                                                                                                                                                                                  
+~                                                                                                                                                                                                                                                  
+~                                                                         
