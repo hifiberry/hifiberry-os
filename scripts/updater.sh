@@ -47,16 +47,6 @@ if [ "$V" -lt 20200101 ]; then
   echo "General section already exists"
  fi
 
- echo "Adding exclusive audio mode configurations for Spotify"
- FOUND=`cat /newroot/etc/spotifyd.conf | grep pause-all`
- if [ "$FOUND" == "" ]; then
-  echo >> /newroot/etc/spotifyd.conf
-  echo 'onstart = /opt/hifiberry/bin/pause-all spotifyd' >> /newroot/etc/spotifyd.conf 
-  echo "spotifyd.conf done"
- else
-  echo "configuration already exists"
- fi
-
  echo "Adding exclusive audio mode configuration to shairport"
  FOUND=`cat /newroot/etc/shairport-sync.conf | grep pause-all`
  if [ "$FOUND" == "" ]; then
