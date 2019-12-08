@@ -69,11 +69,11 @@ pause_process() {
 }
 
 kill_process() {
-  pkill $PROCESS
+  pkill $APP
   sleep 1
   PID=`pgrep $PROCESS`
   if [ "$PID" != "" ]; then
-    pkill -KILL $PROCESS
+    pkill -KILL $APP
   fi
 }
 
@@ -86,8 +86,8 @@ pause_process
 check_paused
 
 # Use API to pause
-for i in 1 2 3 3; do 
- curl -X post http://localhost:81/api/player/pause ; echo
+curl -X post http://localhost:81/api/player/pause ; echo
+for i in 1 1 1 1 1 1 1 1; do 
  sleep $i
  check_paused
 done
