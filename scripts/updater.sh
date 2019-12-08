@@ -46,6 +46,36 @@ if [ "$V" -lt 20200101 ]; then
  else
   echo "General section already exists"
  fi
+
+ echo "Adding exclusive audio mode configurations for Spotify"
+ FOUND=`cat /newroot/etc/spotifyd.conf | grep pause-all`
+ if [ "$FOUND" == "" ]; then
+  echo >> /newroot/etc/spotifyd.conf
+  echo 'onstart = /opt/hifiberry/bin/pause-all spotifyd' >> /newroot/etc/spotifyd.conf 
+  echo "spotifyd.conf done"
+ else
+  echo "configuration already exists"
+ fi
+
+ echo "Adding exclusive audio mode configuration to shairport"
+ FOUND=`cat /newroot/etc/shairport-sync.conf | grep pause-all`
+ if [ "$FOUND" == "" ]; then
+  cp /newroot/etc/shairport-sync.conf /newroot/etc/shairport-sync.conf.orig
+  sed -i '/sessioncontrol\ =/,$d' /newroot/etc/shairport-sync.conf
+  cat <<EOF >> /newroot/etc/shairport-sync.conf
+sessioncontrol =
+{
+  run_this_before_play_begins = "/opt/hifiberry/bin/pause-all shairport";
+  wait_for_completion = "yes";
+  allow_session_interruption = "yes";
+  session_timeout = 20;
+};
+EOF
+  echo "shairport-sync.conf done"
+ else
+  echo "configuration already exists"
+ fi
+
 fi
 
 
