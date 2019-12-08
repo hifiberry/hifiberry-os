@@ -55,6 +55,7 @@ fi
 
 PLAYBACKDEVICE="default"
 
+
 cat <<END >/etc/hifiberry_raat.conf
 {
     "vendor":      "HiFiBerry",
@@ -64,7 +65,27 @@ cat <<END >/etc/hifiberry_raat.conf
                      "device": "$PLAYBACKDEVICE",
                      "max_pcm_rate": $MAXFS,
                      $DSD
-                     "signal_path": [ { "quality": "lossless", "type": "output", "method": "$SIGNALTYPE" } ]
+                     "signal_path": [ { "quality": "lossless", "type": "output", "method": "$SIGNALTYPE" } ],
+		     "supported_formats": [ 
+                         {"sample_type": "pcm", "sample_rate": 44100, "bits_per_sample": 16, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 44100, "bits_per_sample": 24, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 44100, "bits_per_sample": 32, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 88200, "bits_per_sample": 16, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 88200, "bits_per_sample": 24, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 88200, "bits_per_sample": 32, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 176400, "bits_per_sample": 16, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 176400, "bits_per_sample": 24, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 176400, "bits_per_sample": 32, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 48000, "bits_per_sample": 16, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 48000, "bits_per_sample": 24, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 48000, "bits_per_sample": 32, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 96000, "bits_per_sample": 16, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 96000, "bits_per_sample": 24, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 96000, "bits_per_sample": 32, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 192000, "bits_per_sample": 16, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 192000, "bits_per_sample": 24, "channels": 2},
+                         {"sample_type": "pcm", "sample_rate": 192000, "bits_per_sample": 32, "channels": 2}
+                     ]
                    },
 $VOLCTL
     "version":     "$VERSION",
