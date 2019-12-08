@@ -4,16 +4,17 @@
 #
 
 CARD=`aplay -l | grep -i hifiberry | awk '{print $2}' | sed s/://`
-DATE=`date +%Y%m%d-%H%M%S`
-
-echo "$DATE pause-all $1"
+DATE1=`date +%Y%m%d-%H%M%S`
+PLAYER=$1
 
 check_paused() {
   STATUS=`cat /proc/asound/card${CARD}/pcm0p/sub0/hw_params`
   if [ "$STATUS" == "closed" ]; then
+    DATE2=`date +%Y%m%d-%H%M%S`
+    echo "$DATE1 $DATE2 pause-all $PLAYER" >> /var/log/hifiberry.log
     exit 0
   fi
-  PROCESS=`lsof | grep /dev/snd | grep pcm${CARD} | awk '{print $2}'`
+  PROCESS=`lsof | grep /dev/snd | grep pcmC${CARD} | awk '{print $2}'`
   APP=`basename $PROCESS`
 }
 
@@ -31,10 +32,11 @@ pause_bluetooth() {
   echo "not yet implemented"
 }
 
-pause_roon() {
-  # TODO
+pause_raat() {
   pkill -USR1 raat_app
-  sleep 0.3
+  # unfortunately it takes 5s until RAAT stops using the sound card
+  ## therefore, we're restarting the service
+  pkill raat_app 
 }
 
 pause_spotify() {
@@ -67,12 +69,11 @@ pause_process() {
 }
 
 kill_process() {
-  PID=`ps -ef | grep $PROCESS | awk '{print $1}'`
-  kill $PID
+  pkill $PROCESS
   sleep 1
-  PID=`ps -ef | grep $PROCESS | grep -v grep | awk '{print $1}'`
+  PID=`pgrep $PROCESS`
   if [ "$PID" != "" ]; then
-    kill -KILL $PID
+    pkill -KILL $PROCESS
   fi
 }
 
@@ -85,8 +86,11 @@ pause_process
 check_paused
 
 # Use API to pause
-curl -X post http://localhost:81/api/player/pause
-check_paused
+for i in 1 2 3 3; do 
+ curl -X post http://localhost:81/api/player/pause ; echo
+ sleep $i
+ check_paused
+done
 
 # Still in use
 echo "$APP still using the sound card killing it"
@@ -96,5 +100,6 @@ kill_process
 check_paused
 
 # Still not? Something is wrong, exit with exit code 1
+DATE2=`date +%Y%m%d-%H%M%S`
+echo "$DATE1 $DATE2 pause-all $1 failed, $APP still running " >> /var/log/hifiberry.log
 exit 1
-
