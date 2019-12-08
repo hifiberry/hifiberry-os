@@ -1,6 +1,11 @@
 #!/bin/bash
 
 REBOOTFILE=/tmp/reboot
+if [ -f /etc/force_exclusive_audio ]; then
+ echo "Forcing exclusive audio mode"
+ FORCE_EXCLUSIVE=1
+fi
+
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop"
 
 samplerate() {
@@ -57,6 +62,10 @@ check_exclusive() {
    echo "Enabling exclusive audio"
    EXCLUSIVE=1
  fi
+ if [ "$FORCE_EXCLUSIVE" = "1" ]; then 
+   echo "Forcing exclusive audio"       
+   EXCLUSIVE=1                          
+ fi   
 }
 
 # Detect Raspberry Pi model
@@ -405,6 +414,7 @@ if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
    [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
    [ "$CURRENT_SAMPLERATE" != "$SAMPLERATE" ] || \
+   [ "$CURRENT_EXCLUSIVE" != "$EXCLUSIVE" ] || \                     
    [ "$CURRENT_HW" != "$HW" ] || \
     [ 1 != 1 ]; then
  echo "Sound card settings have been changed, reconfiguring..."
