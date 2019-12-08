@@ -10,7 +10,7 @@ ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting squeezelite"
 ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/sqvol store
 ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment MIXER=`/opt/hifiberry/bin/volume-control-name`"
 #ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER}
-ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER} -a 10240:10240:24_3:0 -C 0
+ExecStart=/usr/bin/squeezelite -o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V ${MIXER} -a 10240:10240:24_3:0 -C 1
 ExecStartPost=sleep 2
 ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/sqvol
 StandardOutput=journal
