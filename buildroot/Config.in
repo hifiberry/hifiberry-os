@@ -6,6 +6,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/alsa-plugins/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/configtxt/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/raspi-wifi/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-systemd/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/watchdog/Config.in"
 
 comment "Players"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/lmsmpris/Config.in"

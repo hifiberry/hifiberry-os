@@ -1,0 +1,14 @@
+[Unit]
+Description=HiFiBerry watchdog
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting watchdog"
+ExecStart=/bin/python /opt/hifiberry/bin/watchdog
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
