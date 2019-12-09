@@ -11,8 +11,3 @@ config BR2_PACKAGE_HIFIBERRY_SQUEEZELITE
 
 comment "HiFiBerry squeezelite package can't be used together with buildroot squeezelite version, disable this first!"
         depends on BR2_PACKAGE_SQUEEZELITE
-
-~                                                                                                                                                                                                                                                  
-~                                                                                                                                                                                                                                                  
-~                                                                                                                                                                                                                                                  
-~                                                                         
