@@ -18,3 +18,4 @@
 /etc/machine-info
 /etc/systemd/network/dhcp.network
 /etc/systemd/network/wireless.network
+/etc/snapcastmpris.conf
