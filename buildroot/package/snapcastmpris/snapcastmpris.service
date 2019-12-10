@@ -1,0 +1,17 @@
+[Unit]
+Description=Snapcast MPRIS
+Wants=dbus.service
+After=network-online.target dbus.service
+
+[Service]
+Type=simple
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+WorkingDirectory=/opt/snapcastmpris
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Snapcast"
+ExecStart=/usr/bin/python3 /opt/snapcastmpris/snapcastmpris.py
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
