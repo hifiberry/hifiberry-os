@@ -210,7 +210,7 @@ BR2_OPTIMIZE_S=y
 BR2_SHARED_LIBS=y
 # BR2_SHARED_STATIC_LIBS is not set
 BR2_PACKAGE_OVERRIDE_FILE="$(CONFIG_DIR)/local.mk"
-BR2_GLOBAL_PATCH_DIR=""
+BR2_GLOBAL_PATCH_DIR="../hifiberry-os/buildroot/patches"
 
 #
 # Advanced
