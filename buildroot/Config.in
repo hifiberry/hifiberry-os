@@ -24,6 +24,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/btspeaker/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/mpris-proxy/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/snapcast/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/snapcastmpris/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/webradio/Config.in"
 
 comment "Backend applications"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
