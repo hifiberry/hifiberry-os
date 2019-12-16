@@ -66,6 +66,9 @@ EOF
   echo "configuration already exists"
  fi
 
+ echo "Enabling exclusive audio mode"
+ touch /newroot/etc/force_exclusive_audio
+
 fi
 
 
