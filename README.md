@@ -16,6 +16,7 @@ At the moment, the following services are supported:
 - Bluetooth A2DP sind (using BlueZ 5)
 - Roon - requires a Roon subscription
 - MPD
+- Snapcast (experimental)
 - analogue input on DAC+ ADC (using alsaloop)
 
 Additional tools that are available:
