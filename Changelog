@@ -1,4 +1,10 @@
-201911xx
+201912xx
+- new mechanism to pause other players when a new player wants to start playback
+- new UI option to set name for sources
+- AAC audio support for Bluetooth
+- SSH enabledby default
+
+20191124
 - Improved 192kHz resampling
 - Added Last.FM settings in UI
 - Added updater in UI

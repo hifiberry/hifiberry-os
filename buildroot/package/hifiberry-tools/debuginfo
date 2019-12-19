@@ -15,8 +15,9 @@ aplay -l > aplay.txt
 arecord -l > arecord.txt
 amixer > amixer.txt
 cat /etc/hifiberry.version > version.txt
+cat /etc/hifiberry.state > hifiberry.state
 cat /etc/asound.conf > asound.conf
-for i in 0 1 2 3; do
+for i in 0 1 2; do
  cat /proc/asound/card$i/pcm0p/sub0/hw_params > hw_params.$i.txt
 done
 df -k > df.txt

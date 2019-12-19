@@ -20,6 +20,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/reconfigure-players
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-daemons \
            $(TARGET_DIR)/opt/hifiberry/bin/check-daemons
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/pause-all \
+           $(TARGET_DIR)/opt/hifiberry/bin/pause-all
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip \
            $(TARGET_DIR)/opt/hifiberry/bin/myip
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myurl \
@@ -48,6 +50,11 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
     touch $(TARGET_DIR)/resize-me
     touch $(TARGET_DIR)/etc/spotifyd.conf
+
+    # disable sshd by default
+    if [ -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshd.service ]; then \
+       rm $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshd.service; \
+    fi
 
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \

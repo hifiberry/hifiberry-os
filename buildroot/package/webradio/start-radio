@@ -1,0 +1,17 @@
+#!/bin/bash
+
+URL=$1
+if [ "$URL" == "" ]; then
+  echo "call with $0 streamurl"
+  exit 1
+fi
+
+if [[ $URL == *"opml.radiotime.com"* ]]; then
+  echo "Retrieving real stream URL (this is a TuneIn URL)"
+  URL=`curl $URL 2>/dev/null`
+fi
+
+mpc clear
+mpc load $URL
+mpc play
+

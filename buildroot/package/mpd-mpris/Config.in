@@ -3,4 +3,4 @@ config BR2_PACKAGE_MPD_MPRIS
         help
 	  MPRIS interface for mpd
         depends on BR2_PACKAGE_HIFIBERRY_BASE
-	depends on BR2_PACKAGE_MPD
+	depends on BR2_PACKAGE_HIFIBERRY_MPD

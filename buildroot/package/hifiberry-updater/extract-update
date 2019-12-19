@@ -76,9 +76,14 @@ for i in `cat /opt/hifiberry/etc/services`; do
  systemctl is-active --quiet $i
  if [ "$?" == "0" ]; then
    echo "$i: enabled"
+   if [ ! -f "/newroot/etc/systemd/system/multi-user.target.wants/$i" ]; then
+     echo "enabling..."
+     ln -s ../../../../usr/lib/systemd/system/$i /newroot/etc/systemd/system/multi-user.target.wants/$i
+   fi
  else
    echo "$i: disabled"
    if [ -f "/newroot/etc/systemd/system/multi-user.target.wants/$i" ]; then
+     echo "disabling..."
      rm /newroot/etc/systemd/system/multi-user.target.wants/$i
    fi
  fi

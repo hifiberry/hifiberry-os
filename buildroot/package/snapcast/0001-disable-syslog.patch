@@ -1,0 +1,19 @@
+aixlog.hpp: disable logging to syslog
+
+Signed-off-by: HiFiBerry <info@hifiberry.com>
+
+--- a/common/aixlog.hpp
++++ b/common/aixlog.hpp
+@@ -62,9 +62,9 @@
+ #include <os/log.h>
+ #endif
+ 
+-#ifdef HAS_SYSLOG_
+-#include <syslog.h>
+-#endif
++#ifdef HAS_SYSLOG_
++#undef HAS_SYSLOG_
++#endif
+ 
+ #ifdef __ANDROID__
+ // fix for bug "Android NDK __func__ definition is inconsistent with glibc and C++99"

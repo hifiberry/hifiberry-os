@@ -1,0 +1,16 @@
+AlsaOutputPlugin.cxx: stop other players before accessing sound card
+
+Signed-off-by: HiFiBerry <info@hifiberry.com>
+
+--- a/src/output/plugins/AlsaOutputPlugin.cxx.orig
++++ b/src/output/plugins/AlsaOutputPlugin.cxx
+@@ -676,6 +676,9 @@
+ 		}
+ 	}
+ 
++	FormatDebug(alsa_output_domain, "Stopping other processed using ALSA");
++        system("/opt/hifiberry/bin/pause-all mpd");	
++
+ 	int err = snd_pcm_open(&pcm, GetDevice(),
+ 			       SND_PCM_STREAM_PLAYBACK, mode);
+ 	if (err < 0)

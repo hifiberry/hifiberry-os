@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AUDIOCONTROL2_VERSION =  3365e494bdafdf4c3209b165cf395566bd1e6b46
+AUDIOCONTROL2_VERSION = f44387a870532edc3a820a2cc5f141dc976f4b53
 AUDIOCONTROL2_SITE = $(call github,hifiberry,audiocontrol2,$(AUDIOCONTROL2_VERSION))
 
 define AUDIOCONTROL2_BUILD_CMDS

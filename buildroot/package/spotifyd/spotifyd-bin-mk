@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-0.2.19
+SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-0.2.20-patched
 
 define SPOTIFYD_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(SPOTIFYD_BIN) \
