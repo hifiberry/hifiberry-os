@@ -1,4 +1,5 @@
 /etc/hifiberry/initial-volume
+/etc/force_exclusive_audio
 /etc/hostname
 /etc/hosts
 /etc/systemname
@@ -17,3 +18,5 @@
 /etc/machine-info
 /etc/systemd/network/dhcp.network
 /etc/systemd/network/wireless.network
+/etc/snapcastmpris.conf
+/etc/force_exclusive_audio

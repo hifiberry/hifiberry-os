@@ -1,0 +1,16 @@
+aplay.c: stop other players before accessing sound card
+
+Signed-off-by: HiFiBerry <info@hifiberry.com>
+
+--- a/utils/aplay.c
++++ b/utils/aplay.c
+@@ -198,6 +198,9 @@
+ 	char *tmp;
+ 	int err;
+ 
++	snprintf(buf, sizeof(buf), "stopping other players");
++	system("/opt/hifiberry/bin/pause-all bluetooth");	
++
+ 	if ((err = snd_pcm_open(&_pcm, device, SND_PCM_STREAM_PLAYBACK, 0)) != 0) {
+ 		snprintf(buf, sizeof(buf), "%s", snd_strerror(err));
+ 		goto fail;

@@ -10,3 +10,4 @@ spotify.service
 shairport-sync.service
 lmsmpris.service
 squeezelite.service
+sshd.service
