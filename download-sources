@@ -13,4 +13,4 @@ BRDIR=`./brdir $1`
 echo "Downloading all sources for offline build in $BRDIR"
 
 cd ../buildroot
-make -O=$BRDIR source
+make O=$BRDIR source
