@@ -7,6 +7,8 @@ fi
 
 alsactl -f $STORE restore
 
+dsptoolkit --timeout=5 set-volume `cat /etc/dspvolume.store`
+
 . /etc/hifiberry.state
 if [ "$CURRENT_MIXER_CONTROL" != "Softvol" ]; then
 	amixer sset Softvol 100%
