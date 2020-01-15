@@ -9,7 +9,9 @@ fi
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop"
 
 samplerate() {
-  . /etc/hifiberry.conf
+  if [ -f /etc/hifiberry.conf ]; then 
+    . /etc/hifiberry.conf
+  fi 
 
   if [ "$SAMPLERATE" == "" ]; then
     SAMPLERATE=$CURRENT_SAMPLERATE
@@ -414,7 +416,7 @@ if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
    [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
    [ "$CURRENT_SAMPLERATE" != "$SAMPLERATE" ] || \
-   [ "$CURRENT_EXCLUSIVE" != "$EXCLUSIVE" ] || \                     
+   [ "$CURRENT_EXCLUSIVE" != "$EXCLUSIVE" ] || \
    [ "$CURRENT_HW" != "$HW" ] || \
     [ 1 != 1 ]; then
  echo "Sound card settings have been changed, reconfiguring..."
