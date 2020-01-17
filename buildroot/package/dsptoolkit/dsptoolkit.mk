@@ -4,26 +4,19 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = 0d773c272fbbd10ab7d759f34127d64cb7ad7fe4
+DSPTOOLKIT_VERSION = df7404fb820feefd68bf2085deb3c58f687cbe60
 DSPTOOLKIT_SITE = $(call github,hifiberry,hifiberry-dsp,$(DSPTOOLKIT_VERSION))
 DSPTOOLKIT_SETUP_TYPE = setuptools
 DSPTOOLKIT_LICENSE = MIT
 DSPTOOLKIT_LICENSE_FILES = LICENSE.md
 
-define DSPTOOLKIT_POST_INSTALL_STAGING_CMD
-	echo "DSPTk 1"
-        sleep 10
+define DSPTOOLKIT_POST_INSTALL_TARGET_CMD
 	[ -d $(TARGET_DIR)/opt/hifiberry/contrib ] || mkdir $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/4way-iir.xml
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/dspdac.txt
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/muted.txt
-           $(TARGET_DIR)/opt/hifiberry/contrib
-
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.conf \
+	            $(TARGET_DIR)/etc/sigmatcp.conf
 endef
 
-DSPTOOLKIT_POST_INSTALL_STAGING_HOOKS += DSPTOOLKIT_POST_INSTALL_STAGING_CMD
+DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_POST_INSTALL_TARGET_CMD
 
 define DSPTOOLKIT_INSTALL_INIT
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/S90sigmatcp \

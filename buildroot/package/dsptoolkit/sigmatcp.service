@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network.target
 
 [Service]
-Type=simple
+Type=notify
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting DSP server"
 ExecStart=/usr/bin/sigmatcpserver --alsa  ${SIGMATCPSERVER_ARGS}
 ExecStartPost=/bin/sleep 3
