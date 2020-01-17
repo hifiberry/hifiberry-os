@@ -11,7 +11,6 @@ DSPTOOLKIT_LICENSE = MIT
 DSPTOOLKIT_LICENSE_FILES = LICENSE.md
 
 define DSPTOOLKIT_POST_INSTALL_TARGET_CMD
-	[ -d $(TARGET_DIR)/opt/hifiberry/contrib ] || mkdir $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.conf \
 	            $(TARGET_DIR)/etc/sigmatcp.conf
 endef
