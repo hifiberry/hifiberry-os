@@ -1,6 +1,6 @@
 [Unit]
 Description=Reconfigure players
-After=sound.target hifiberry-detect.service local-fs.target
+After=sound.target hifiberry-detect.service local-fs.target sigmatcp.service
 Before=shairport-sync.service squeezelite.service spotify.service mpd.service raat.service
 
 [Service]
