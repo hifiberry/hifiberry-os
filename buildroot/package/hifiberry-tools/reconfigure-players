@@ -343,22 +343,14 @@ reconfigure_recording() {
 reconfigure_beocreate() {
  # Update card type
  if [ "$CARD" != "$CURRENT_CARD" ]; then
-  if [ -f "/opt/beocreate/beo-system/configure.js" ]; then
-   /bin/node /opt/beocreate/beo-system/configure.js system cardType "$CARD"
-  else
-   sed -i "s/\"cardType\".*/\"cardType\":\"$CARD_SED_SPACES\",/g" /etc/beocreate/system.json
-  fi
+  /bin/node /opt/beocreate/beo-system/configure.js system cardType "$CARD"
   echo " updated card type"
  fi
 
  # Update mixer control
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
-   if [ -f "/opt/beocreate/beo-system/configure.js" ]; then
-    /bin/node /opt/beocreate/beo-system/configure.js sound mixer $MIXER_CONTROL
-   else
-    sed -i "s/\"mixer\".*/\"mixer\":\"$MIXER_CONTROL\",/g" /etc/beocreate/sound.json
-   fi
-   echo " updated mixer"
+  /bin/node /opt/beocreate/beo-system/configure.js sound mixer $MIXER_CONTROL
+  echo " updated mixer"
  fi 
 }
 
