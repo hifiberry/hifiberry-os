@@ -1,6 +1,8 @@
 #!/bin/bash
 
 BASEURL=https://www.hifiberry.com/images
+SYSURL=https://musicdb.hifiberry.com/update-system
+HOST=`cat /etc/uuid`
 MODE=REBOOT
 FORCE=0
 DEVMODE=0
@@ -41,6 +43,7 @@ MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
 if [ "$MYVERSION" == "" ]; then
  MYVERSION=0
 fi
+curl -d host=$HOST -d version=$VERSION -m 2 $SYSURL >/dev/null 2>/dev/null
 
 . listing
 
