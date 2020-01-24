@@ -1,8 +1,16 @@
-201912xx
+202001xx
+- Filter designer DSP-enabled boards
+- Daisy-chain Beocreate boards for stereo-setups with 3-4 channels per speaker
+- DSP settings can be stored in DSP for use without the Raspberry Pi
+- Improved external metadata download (improved performance, added fanart.tv)
+- Updated kernel to support new hardware and fix DAC+ ADC Pro bug
+- Several other bugfixes and improvements
+
+20191220
 - new mechanism to pause other players when a new player wants to start playback
 - new UI option to set name for sources
 - AAC audio support for Bluetooth
-- SSH enabledby default
+- SSH disabled by default
 
 20191124
 - Improved 192kHz resampling
