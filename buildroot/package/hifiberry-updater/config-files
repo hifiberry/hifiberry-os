@@ -21,3 +21,6 @@
 /etc/snapcastmpris.conf
 /etc/force_exclusive_audio
 /var/lib/hifiberry/dspprogram.xml
+/etc/passwd
+/etc/shadow
+/root/.ssh
