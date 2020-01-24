@@ -33,3 +33,4 @@ endef
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_INSTALL_INIT
 
 $(eval $(python-package))
+$(eval $(python-host-package))
