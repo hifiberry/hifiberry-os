@@ -6,10 +6,7 @@ ConditionPathExists=/etc/hifiberry/can_record
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting alsaloop"
-ExecStartPre=/bin/bash -c "/usr/bin/systemctl set-environment CARDID=`/opt/hifiberry/bin/hifiberry-cardid`"
-ExecStart=/bin/alsaloop -P default -C hw:${CARDID},0 -r 192000 -f S32_LE -t 100000 -S 1
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+ExecStart=/usr/bin/python3 /opt/alsaloop/alsaloopmpris.py
 Restart=always
 RestartSec=30
-
-[Install]
-WantedBy=multi-user.target
