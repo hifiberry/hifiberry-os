@@ -18,6 +18,11 @@ check_paused() {
   APP=`basename $PROCESS`
 }
 
+pause_alsaloop() {
+  ps -ef | grep alsaloopmpris | grep -v grep | awk '{print $2}'  | xargs kill -USR1
+  sleep 1
+}
+
 pause_spotify() {
   # TODO
   echo "not yet implemented"
@@ -61,6 +66,9 @@ pause_process() {
       ;;
     raat_app)
       pause_raat
+      ;;
+    alsaloop)
+      pause_alsaloop
       ;;
     *)
       echo "don't know how to pause $APP"
