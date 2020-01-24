@@ -56,6 +56,7 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
        rm $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshd.service; \
     fi
 
+    touch $(TARGET_DIR)/etc/force_exclusive_audio
 
     for a in $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/conf/asound.conf.*; do \
       $(INSTALL) -D -m 0644 $$a \
@@ -122,7 +123,6 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/sshdconfig.service
         ln -fs ../../../../usr/lib/systemd/system/sshdconfig.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshdconfig.service
-
 
 endef
 
