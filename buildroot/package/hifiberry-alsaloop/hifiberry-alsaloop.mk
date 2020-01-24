@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_ALSALOOP_VERSION = b3f20ae962fa5ff1e582cfff4df0f126e3f1512a
+HIFIBERRY_ALSALOOP_VERSION = a54a1c2020d9469b5392712e77700d287d0be4d2
 HIFIBERRY_ALSALOOP_SITE = $(call github,hifiberry,alsaloop,$(HIFIBERRY_ALSALOOP_VERSION))
 
 define SNAPCASTMPRIS_BUILD_CMDS
