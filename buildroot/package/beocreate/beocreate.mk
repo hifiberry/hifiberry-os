@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = 1598073a6cf12d1b153937113c4b88569ad9b7ce
+BEOCREATE_VERSION = cced15a38aa9cd5afe4b162ef3800e99fed1c52d
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
+#BEOCREATE_DEPENDENCIES = host-dsptoolkit
 
 define BEOCREATE_BUILD_CMDS
 endef
