@@ -1,0 +1,5 @@
+muteInvertRegister: 0
+volumeControlRegister: 0.1
+volumeLimitRegister: 0.8
+volumeLimitPiRegister: 1
+volumeLimitSPDIFRegister: 1
