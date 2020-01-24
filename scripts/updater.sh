@@ -34,7 +34,7 @@ if [ "$V" -lt 20191201 ]; then
  fi
 fi
 
-if [ "$V" -lt 20200101 ]; then
+if [ "$V" -lt 20200201 ]; then
  echo "Version < 20200101, adding privacy section to audiocontrol"
  echo
  FOUND=`cat /newroot/etc/audiocontrol2.conf | grep '\[privacy\]'`
@@ -66,9 +66,14 @@ EOF
   echo "configuration already exists"
  fi
 
+ echo "Removing CURRENT_EXCLUSIVE"
+ cat /newroot/etc/hifiberry.state | grep -v "CURRENT_EXCLUSIVE" > /tmp/x
+ mv /tmp/x /newroot/etc/hifiberry.state
+
  echo "Enabling exclusive audio mode"
  touch /newroot/etc/force_exclusive_audio
 
 fi
+
 
 
