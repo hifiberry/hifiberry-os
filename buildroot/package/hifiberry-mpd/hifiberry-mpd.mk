@@ -167,9 +167,10 @@ define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
         # Install some sample web radio files
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/radio/*.m3u \
                 $(TARGET_DIR)/library/playlists/
+	mkdir -p $(TARGET_DIR)/var/lib/mpd
 endef
 
-HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += MPD_INSTALL_EXTRA_FILES
+HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 
 define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.service \
