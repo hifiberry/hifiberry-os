@@ -13,18 +13,12 @@ define DSPPROFILES_INSTALL_TARGET_CMDS
      # Default settings
      dsptoolkit store-settings $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/beocreate.settings \
              $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/beocreate-universal-$(DSP_PROFILE_VERSION).xml
-     dsptoolkit store-settings $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac.settings \
-	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
 
      # Patch to Beocreate profile to become a DAC+ DSP profile
-     sed -i 's/Beocreate Universal/DAC+ DSP Universal/g' \
+     $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/beocreate2dacdsp.sh \
 	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
-     sed -i 's/beocreate-universal/dacdsp-universal/g' \
-	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
-     sed -i 's/beocreate-4ca-mk1/hifiberry-dacdsp/g' \
-	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
-     sed -i 's/Beocreate 4-Channel Amplifier/DAC+ DSP/g' \
-	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
+     dsptoolkit store-settings $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac.settings \
+	                  $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
 endef
 
 $(eval $(generic-package))
