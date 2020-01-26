@@ -10,6 +10,10 @@ software.
 There is a robust update mechanism that will not overwrite the system, but switch between
 the current and the new version (they run on different partitions). This is documented in more detail at [doc/updater.md](doc/updater.md).
 
+## User interface
+
+The user interface is based on the [Bang & Olufsen Beocreate project](https://github.com/bang-olufsen/create).
+
 ## Services
 
 At the moment, the following services are supported:
@@ -38,4 +42,8 @@ music collection, you need to use an additional music server to stream music to 
 - iTunes
 
 You might also configure the included music player daemon, but you have to do this from command line. A simple MPD UI names ympd is running on HTTP port 9000.
+
+## Contributions
+
+Contributions are welcome. Depending on functionality and code quality, we will decide if a contribution will be included in the base system or will be provided as a user-contributed module that users need to install by themselve.
 
