@@ -1,0 +1,11 @@
+--- a/musicbrainzngs/musicbrainz.py	2019-12-17 09:11:12.647088832 +0100
++++ b/musicbrainzngs/musicbrainz.py	2019-12-17 09:11:28.931023468 +0100
+@@ -461,7 +461,7 @@
+
+ # Core (internal) functions for calling the MB API.
+
+-def _safe_read(opener, req, body=None, max_retries=8, retry_delay_delta=2.0):
++def _safe_read(opener, req, body=None, max_retries=3, retry_delay_delta=2.0):
+ 	"""Open an HTTP request with a given URL opener and (optionally) a
+ 	request body. Transient errors lead to retries.  Permanent errors
+ 	and repeated errors are translated into a small set of handleable
