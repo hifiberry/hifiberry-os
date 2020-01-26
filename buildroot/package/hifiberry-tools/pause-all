@@ -23,6 +23,11 @@ pause_alsaloop() {
   sleep 1
 }
 
+pause_snapcast() {
+  ps -ef | grep snapcastmpris | grep -v grep | awk '{print $2}'  | xargs kill -USR1
+  sleep 1
+}
+
 pause_spotify() {
   # TODO
   echo "not yet implemented"
@@ -70,6 +75,9 @@ pause_process() {
     alsaloop)
       pause_alsaloop
       ;;
+    snapcast)
+      pause_snapcast()
+      ;;
     *)
       echo "don't know how to pause $APP"
       ;;
@@ -95,7 +103,7 @@ check_paused
 
 # Use API to pause
 curl -X post http://localhost:81/api/player/pause ; echo
-for i in 1 1 1 1 1 1 1 1; do 
+for i in 1 1 1 1 1 ; do 
  sleep $i
  check_paused
 done
