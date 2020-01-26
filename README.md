@@ -1,4 +1,4 @@
-[![GitHub contributors](https://img.shields.io/github/contributors/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/contributors/)
+[![GitHub contributors](https://img.shields.io/github/contributors/hifiberry/hifiberry-os.svg)](https://GitHub.com/hifiberry/hifiberry-os/graphs/contributors/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # HiFiBerryOS
 
