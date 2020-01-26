@@ -8,7 +8,9 @@ it is based on Buildroot and it's not possible to use package managers to add mo
 software.
 
 There is a robust update mechanism that will not overwrite the system, but switch between
-the current and the new version (they run on different partitions)
+the current and the new version (they run on different partitions).
+
+## Services
 
 At the moment, the following services are supported:
 
@@ -21,15 +23,19 @@ At the moment, the following services are supported:
 - Snapcast (experimental)
 - analogue input on DAC+ ADC (using alsaloop)
 
+## Tools 
+
 Additional tools that are available:
 
 - sox
 - HiFiBerry dsptoolkit
 
-Note that there is no direct support for local music archives (e.g. MP3 files on a NAS). If you have a local
+Note that there is no direct support for local music archives (e.g. MP3 files on a NAS) yet. If you have a local
 music collection, you need to use an additional music server to stream music to HiFiBerryOS, e.g.
 
 - Roon 
 - Logitech Media Server
 - iTunes
+
+You might also configure the included music player daemon, but you have to do this from command line. A simple MPD UI names ympd is running on HTTP port 9000.
 
