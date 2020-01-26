@@ -2,15 +2,25 @@
 - Filter designer DSP-enabled boards
 - Daisy-chain Beocreate boards for stereo-setups with 3-4 channels per speaker
 - DSP settings can be stored in DSP for use without the Raspberry Pi
+- new alsaloop backend that can be started/stopped from the UI
 - Improved external metadata download (improved performance, added fanart.tv)
 - Updated kernel to support new hardware and fix DAC+ ADC Pro bug
 - Several other bugfixes and improvements
 
 20191220
-- new mechanism to pause other players when a new player wants to start playback
+- allow actiating another source from the "Now Playing" screen
+- added Snapcast source (experimental)
+- added privacy controls in UI
 - new UI option to set name for sources
 - AAC audio support for Bluetooth
-- SSH disabled by default
+- SSH enabledby default
+- new mechanism to pause other players when a new player wants to start playback
+- AAC audio codec for Bluetooth
+- LG SoundSync support for DSP boards with a profile that can detect SPDIF activity
+- SSH server disabled by default
+- Direct to hardware: players will use native sample rate without resampling
+- Watchdog will reboot the system if it becomes unresponsive
+- Several other bugfixes and stability improvements
 
 20191124
 - Improved 192kHz resampling
