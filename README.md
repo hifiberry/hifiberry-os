@@ -43,7 +43,7 @@ music collection, you need to use an additional music server to stream music to 
 
 You might also configure the included music player daemon, but you have to do this from command line. A simple MPD UI names ympd is running on HTTP port 9000.
 
-## Integrations and additional functionbalities
+## Integrations and additional functionalities
 
 There are several ways to add functionalities to HiFiBerryOS or integrate it into other systems.
 
