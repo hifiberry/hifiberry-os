@@ -1,3 +1,5 @@
+[![GitHub contributors](https://img.shields.io/github/contributors/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/contributors/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # HiFiBerryOS
 
 HiFiBerryOS is our version of a minimal Linux distribution optimized for audio playback. 
