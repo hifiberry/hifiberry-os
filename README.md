@@ -8,7 +8,7 @@ it is based on Buildroot and it's not possible to use package managers to add mo
 software.
 
 There is a robust update mechanism that will not overwrite the system, but switch between
-the current and the new version (they run on different partitions).
+the current and the new version (they run on different partitions). This is documented in more detail at [doc/updater.md](doc/updater.md).
 
 ## Services
 
