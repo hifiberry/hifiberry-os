@@ -221,6 +221,9 @@ guess_card() {
     CARD="DAC+ DSP"
     return
  fi
+
+ # If nothing was detected, it might be a DAC+ Light/Zero or MiniAmp"
+ CARD="DAC+ Zero/Light/MiniAmp"
 }
 
 # Check if card can record
