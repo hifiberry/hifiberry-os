@@ -1,14 +1,15 @@
-202001xx
+20200127
 - Filter designer DSP-enabled boards
-- Daisy-chain Beocreate boards for stereo-setups with 3-4 channels per speaker
+- Daisy-chain Beocreate boards for stereo-setups with 3-4 channels per speaker (experimental)
 - DSP settings can be stored in DSP for use without the Raspberry Pi
 - new alsaloop backend that can be started/stopped from the UI
 - Improved external metadata download (improved performance, added fanart.tv)
+- added HiFiBerry HAT EEPROM tools to allow re-flashing HATs
 - Updated kernel to support new hardware and fix DAC+ ADC Pro bug
 - Several other bugfixes and improvements
 
 20191220
-- allow actiating another source from the "Now Playing" screen
+- allow activating another source from the "Now Playing" screen
 - added Snapcast source (experimental)
 - added privacy controls in UI
 - new UI option to set name for sources
