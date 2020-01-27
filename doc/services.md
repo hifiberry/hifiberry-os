@@ -9,6 +9,7 @@ The following services are currently supported on HiFiBerryOS:
 * Roon (not on Raspberry Pi Zero)
 * Spotify (not on Raspberry Pi Zero)
 * Squeezebox (not on Raspberry Pi Zero)
+* Snapcast (not on the Raspberry Pi Zero)
 
 
 ## Airplay 1
@@ -19,7 +20,7 @@ some additional features is not supported.
 ## Analog input
 
 alsaloop is used to enable input from analoge input of the DAC+ ADC cards. It just uses alsaloop to copy data from the input
-to the output. There is no MPRIS support for this at the moment.
+to the output.
 
 ## Bluetooth
 
@@ -40,9 +41,11 @@ Spotifyd implements a Spotify connect receiver.
 
 ## Squeezelite
 
-Squeezelite implements the Logotech Squeezebox protocol enabling the system to connect to a Logitech Media Server. MPRIS support is implemented separataly by lms-mpris. 
+Squeezelite implements the Logitech Squeezebox protocol enabling the system to connect to a Logitech Media Server. MPRIS support is implemented separataly by lms-mpris. 
 
+## Snapcast
 
+A snapcast player is included. This is still experimental.
 
 # Systemd services and config files
 
@@ -55,3 +58,4 @@ Squeezelite implements the Logotech Squeezebox protocol enabling the system to c
 |shairport-sync|/etc/shairport-sync.conf|shairport-sync.service|
 |spotifyd|/etc/spotifyd.conf|spotify.service|
 |squeezelite|/var/squeezelite/squeezelite.name|squeezelite.service, lmsmpris.service|
+|snapcast|/etc/snapcastmpris.conf|snapcastmpris.service|
