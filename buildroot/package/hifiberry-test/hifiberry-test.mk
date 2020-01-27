@@ -27,6 +27,8 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dtoverlay \
            $(TARGET_DIR)/opt/hifiberry/contrib
+	$(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/flash.sh \
+	   $(TARGET_DIR)/opt/hifiberry/contrib
 endef
 
 
@@ -108,6 +110,7 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_USB
         echo "Adding drivers to config.txt"
         echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
+
 
 ifdef HIFIBERRY_TEST_AMP2
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP2
