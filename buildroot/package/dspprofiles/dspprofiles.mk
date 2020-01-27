@@ -9,6 +9,8 @@ define DSPPROFILES_INSTALL_TARGET_CMDS
      # Create a copy of the Beocrate profile for the DAC+ DSP
      cp $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/beocreate-universal-$(DSP_PROFILE_VERSION).xml \
 	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
+     cp $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/beocreate-universal-$(DSP_PROFILE_VERSION).xml \
+	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml.orig
 
      # Default settings
      dsptoolkit store-settings $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/beocreate.settings \
@@ -18,7 +20,11 @@ define DSPPROFILES_INSTALL_TARGET_CMDS
      $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/beocreate2dacdsp.sh \
 	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
      dsptoolkit store-settings $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac.settings \
-	                  $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
+	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
+
+     # Patching seems to be buggy at the moment, use local file
+     cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-$(DSP_PROFILE_VERSION).xml \
+	     $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-universal-$(DSP_PROFILE_VERSION).xml
 endef
 
 $(eval $(generic-package))
