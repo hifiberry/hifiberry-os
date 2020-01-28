@@ -4,3 +4,4 @@ eepmake dacplus.txt dacplus.eep /boot/overlays/hifiberry-dacplus.dtbo
 eepmake digiplus.txt digiplus.eep /boot/overlays/hifiberry-digi.dtbo
 eepmake dacplusadcpro.txt digiplus.eep /boot/overlays/hifiberry-dacplusadcpro.dtbo
 eepmake dacplusadc.txt digiplus.eep /boot/overlays/hifiberry-dacplusadc.dtbo
+eepmake dacplushd.txt digiplus.eep /boot/overlays/hifiberry-dacplushd.dtbo
