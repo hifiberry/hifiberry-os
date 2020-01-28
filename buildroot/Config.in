@@ -49,6 +49,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-greenlet/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-keyboard/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-pylast/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-musicbrainz-ngs/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-tzupdate/Config.in"
 
 comment "Test tools"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-test/Config.in"
