@@ -11,7 +11,13 @@ if [[ $URL == *"opml.radiotime.com"* ]]; then
   URL=`curl $URL 2>/dev/null`
 fi
 
+# If there are multiple URLs, use only the first one
+URL=`echo $URL | awk '{ print $1 }'`
+
 mpc clear
 mpc load $URL
+if [ "$?" != 0 ]; then
+  # This doesn't seem to be a playlist, but a direct link to the stream"
+  mpc add $URL
+fi
 mpc play
-
