@@ -1,12 +1,10 @@
 #!/bin/bash
 cd `dirname $0`
 
-VERSION=$1
-
-HOST=$2
+HOST=$1
 if  [ "$HOST" == "" ]; then
- echo $0 version hostname
- echo  e.g. $0 3 10.0.1.23 will push the current Pi 3 release to the Pi with the IP address 10.0.1.23
+ echo $0 hostname
+ echo  e.g. $0 10.0.1.23 will push the current release to the Pi with the IP address 10.0.1.23
  exit 1
 fi 
 
@@ -14,6 +12,10 @@ PORT=$3
 if [ "$PORT" == "" ]; then
  PORT=22
 fi
+
+VERSION=`sshpass -p 'hifiberry' ssh -p $PORT root@$HOST cat /etc/raspberrypi.version`
+
+echo "Updating $HOST with Pi$VERSION release"
 
 ./create-image $VERSION
 IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
