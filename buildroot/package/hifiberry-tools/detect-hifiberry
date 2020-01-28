@@ -41,6 +41,12 @@ function detect_card {
                 echo "amp"
         fi
 
+	# DAC 2 HD
+	res=`i2cget -yf 1 0x62 17 2>/dev/null`
+	if [ "$res" == "0x8c" ]; then
+		echo "dachd"
+	fi
+
         # Beocreate
         res=`i2cget -y 1 0x60 2 2>/dev/null`
         if [ "$res" == "0x03" ]; then
