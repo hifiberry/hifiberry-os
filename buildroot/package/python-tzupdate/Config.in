@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_TZUPDATE
+	bool "python-tzupdate"
+	help
+	  Set the system timezone based on IP geolocation.
+
+	  https://github.com/cdown/tzupdate
