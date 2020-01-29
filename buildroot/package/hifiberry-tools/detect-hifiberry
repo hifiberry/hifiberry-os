@@ -14,7 +14,7 @@ function check_i2c {
 	modprobe i2c-dev
         if [ ! -e /dev/i2c-1 ]; then
                 echo "I2C device file not found, need to modify config.txt"
-                echo "dtparam=i2c1=on" >> $CONFI
+                echo "dtparam=i2c1=on" >> $CONFIG
                 echo "Enabling I2C" >> $REBOOTFILE
         fi
 }
