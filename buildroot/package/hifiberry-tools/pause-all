@@ -76,7 +76,7 @@ pause_process() {
       pause_alsaloop
       ;;
     snapcast)
-      pause_snapcast()
+      pause_snapcast
       ;;
     *)
       echo "don't know how to pause $APP"
