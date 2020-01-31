@@ -21,6 +21,7 @@ for i in 0 1 2; do
  cat /proc/asound/card$i/pcm0p/sub0/hw_params > hw_params.$i.txt
 done
 df -k > df.txt
+dmesg | tail -1000 > dmesg.txt
 # Collect some performance data
 top -b -n 5 > top.txt
 perf stat -a sleep 10
