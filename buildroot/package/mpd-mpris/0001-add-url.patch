@@ -1,0 +1,21 @@
+From 7286f046117bb14f512e0daf55e0bc9421aae490 Mon Sep 17 00:00:00 2001
+From: Natsu Kagami <natsukagami@gmail.com>
+Date: Fri, 31 Jan 2020 19:36:26 -0500
+Subject: [PATCH] Push xesam:url metadata
+
+---
+ tracklist.go | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tracklist.go b/tracklist.go
+index b65dab0..1aca0da 100644
+--- a/tracklist.go
++++ b/tracklist.go
+@@ -62,6 +62,7 @@ func MapFromSong(s mpd.Song) MetadataMap {
+ 
+ 	m.nonEmptyString("xesam:album", s.Album)
+ 	m.nonEmptyString("xesam:title", s.Title)
++	m.nonEmptyString("xesam:url", s.Path())
+ 	m.nonEmptyString("xesam:contentCreated", s.Date)
+ 	m.nonEmptySlice("xesam:albumArtist", []string{s.AlbumArtist})
+ 	m.nonEmptySlice("xesam:artist", []string{s.Artist})
