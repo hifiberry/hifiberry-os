@@ -26,6 +26,6 @@ echo "Updating $HOST with Pi$VERSION release"
 IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 echo "Updating $HOST with $IMG"
 sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
-sshpass -p "$PASSWORD" sh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
+sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
 
 
