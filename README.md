@@ -54,7 +54,7 @@ This is often the easiest way if you want to integrate it into other systems, e.
 
 ### Extending audiocontrol
 
-Audiocontrol provides a [plugin system](https://github.com/hifiberry/audiocontrol2/blob/master/doc/extensions.md) that can be used to add more complex integrations.
+Audiocontrol provides a [plugin system](https://github.com/hifiberry/audiocontrol2/blob/master/doc/extensions.md) that can be used to add more complex integrations.Also have a look at the ["Anatomy of a controller plugin"](https://github.com/hifiberry/audiocontrol2/blob/master/doc/rotary-controller-plugin.md)
 
 ### Adding packages
 
