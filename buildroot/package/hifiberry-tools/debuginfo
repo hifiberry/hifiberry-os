@@ -22,6 +22,8 @@ for i in 0 1 2; do
 done
 df -k > df.txt
 dmesg | tail -1000 > dmesg.txt
+cat /proc/device-tree/hat/vendor > hat.txt
+cat /proc/device-tree/hat/product >> hat.txt
 # Collect some performance data
 top -b -n 5 > top.txt
 perf stat -a sleep 10
