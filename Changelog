@@ -1,3 +1,8 @@
+202002xx
+- support for rotary controllers
+- logging to RAM now to improve overall file system robustness
+
+
 20200127
 - Filter designer DSP-enabled boards
 - Daisy-chain Beocreate boards for stereo-setups with 3-4 channels per speaker (experimental)
