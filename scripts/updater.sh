@@ -75,5 +75,19 @@ EOF
 
 fi
 
+if [ "$V" -lt 20200301 ]; then
+ echo "Version < 20200301, adapting audiocontrol.conf"
+ sed -i 's/\[keyboard\]/[controller:ac2.plugins.control.keyboard.Keyboard]/' /newroot/etc/audiocontrol2.conf
 
+ GPIO=`grep controller:ac2.plugins.control.rotary.Rotary /newroot/etc/audiocontrol2.conf`
+ if [ "$GPIO" == "" ]; then
+   cat <<EOF >> /newroot/etc/audiocontrol2.conf
 
+[controller:ac2.plugins.control.rotary.Rotary]
+clk = 4
+dt = 17
+sw = 27
+step = 5
+EOF
+ fi
+fi

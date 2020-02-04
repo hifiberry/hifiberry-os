@@ -1,7 +1,8 @@
 202002xx
-- support for rotary controllers
-- logging to RAM now to improve overall file system robustness
-
+- Local timezone is set automatically
+- Logging doesn't write the SD card anymore (logging to RAM)
+- Support for rotary controls connected to GPIO
+- Spotify update
 
 20200127
 - Filter designer DSP-enabled boards

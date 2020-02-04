@@ -6,6 +6,7 @@ After=sound.target dbus.service
 [Service]
 Type=notify
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+Environment=/data/ac2plugins:/etc/audiocontrol2
 WorkingDirectory=/opt/audiocontrol2
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting AudioControl2"
 ExecStart=/usr/bin/python3 /opt/audiocontrol2/audiocontrol2.py ${AUDIOCONTROL2_ARGS}
