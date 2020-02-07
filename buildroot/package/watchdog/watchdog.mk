@@ -4,13 +4,19 @@
 #
 ################################################################################
 
+WATCHDOG_VERSION = c29d093daab1ed1de462106ac9de52f071b1560e
+WATCHDOG_SITE = $(call github,hifiberry,watchdog,$(WATCHDOG_VERSION))
+
+					
 define WATCHDOG_INSTALL_TARGET_CMDS
-	[ -d $(TARGET_DIR)/opt/hifiberry/bin ] || mkdir $(TARGET_DIR)/opt/hifiberry/bin
-	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/watchdog/watchdog.py \
-           $(TARGET_DIR)/opt/hifiberry/bin/watchdog
+	mkdir -p $(TARGET_DIR)/opt/watchdog
+        cp -rv $(@D)/* $(TARGET_DIR)/opt/watchdog
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/watchdog/watchdog.conf \
+		$(TARGET_DIR)/etc/watchdog.conf
 endef
 
 define WATCHDOG_INSTALL_INIT_SYSTEMD
+
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/watchdog/watchdog.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/watchdog.service
         if [ -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
