@@ -3,4 +3,5 @@ config BR2_PACKAGE_WEBRADIO
         help
 	  Tools fosten to web radio stations (incl. TuneIn)
         depends on BR2_PACKAGE_HIFIBERRY_BASE
+        depends on BR2_PACKAGE_BEOCREATE
 
