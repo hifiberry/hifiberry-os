@@ -5,6 +5,8 @@
 - Support for rotary controls connected to GPIO
 - Spotify update
 - Bluetooth update
+- Watchdog can monitor network connectivity and reboot system
+  if connectivity is lost (not in UI)
 
 20200127
 - Filter designer DSP-enabled boards
