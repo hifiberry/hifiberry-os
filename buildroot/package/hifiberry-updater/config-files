@@ -23,4 +23,5 @@
 /var/lib/hifiberry/dspprogram.xml
 /etc/passwd
 /etc/shadow
+/etc/watchdog.conf
 /root/.ssh
