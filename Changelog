@@ -4,6 +4,7 @@
 - Logging doesn't write the SD card anymore (logging to RAM)
 - Support for rotary controls connected to GPIO
 - Spotify update
+- Bluetooth update
 
 20200127
 - Filter designer DSP-enabled boards
