@@ -94,7 +94,7 @@ pi_model() {
   return
  fi 
 
- if [[ $modelname == *"4 Model B+"* ]]; then
+ if [[ $modelname == *"4 Model B"* ]]; then
   PIMODEL="4"
   PIVERSION=4
   return
