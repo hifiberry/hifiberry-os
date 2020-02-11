@@ -13,11 +13,23 @@ wget https://buildroot.org/downloads/buildroot-2019.08.1.tar.gz
 tar xvzf buildroot-2019.08.1.tar.gz
 ln -s buildroot-2019.08.1 buildroot
 ```
+Note that newer releases than buildroot 2019-08 won't work at the moment due to incompatibilities
+of the Python interpreter.
 
 ## Clone the HiFiBerryOS sources
 
 ```
 git clone https://github.com/hifiberry/hifiberry-os
+```
+
+## Patch buildroot
+
+We require some changes in official buildroot packages (e.g. upgrades to newer versions). Before compiling, 
+apply these changes using
+
+```
+cd hifiberry-os
+./fix-buildroot
 ```
 
 ## Start the first build
