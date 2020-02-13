@@ -1,5 +1,6 @@
 202002xx
 - Added Web radio support
+- LaMetric support for Metadata
 - Local timezone is set automatically
 - Logging doesn't write the SD card anymore (logging to RAM)
 - Support for rotary controls connected to GPIO
