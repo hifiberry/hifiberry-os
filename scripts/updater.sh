@@ -77,7 +77,16 @@ fi
 
 if [ "$V" -lt 20200301 ]; then
  echo "Version < 20200301, adapting audiocontrol.conf"
+ # New way to include plugins
  sed -i 's/\[keyboard\]/[controller:ac2.plugins.control.keyboard.Keyboard]/' /newroot/etc/audiocontrol2.conf
+ sed -i '/s\[postgres]/[metadata:ac2.plugins.metadata.postgresql.MetadataPostgres]' /newroot/etc/audiocontrol2.conf
+
+ LAMETRIC=`grep ec2.plugins.metadata.lametric.LaMetricPush /newroot/etc/audiocontrol.conf`
+ if [ "$LAMETRIC" == "" ]; then
+cat <<EOF >> /newroot/etc/audiocontrol2.conf
+
+[metadata:ac2.plugins.metadata.lametric.LaMetricPush]
+EOF
 
  GPIO=`grep controller:ac2.plugins.control.rotary.Rotary /newroot/etc/audiocontrol2.conf`
  if [ "$GPIO" == "" ]; then
