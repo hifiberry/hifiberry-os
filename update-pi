@@ -18,19 +18,18 @@ if [ "$PASSWORD" == "" ]; then
   PASSWORD=hifiberry
 fi
 
-#VERSION=`sshpass -p 'hifiberry' ssh -p $PORT root@$HOST cat /etc/raspberrypi.version`
-
-echo "Updating $HOST with Pi$VERSION release"
-
-./create-image $VERSION
-IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
-echo "Updating $HOST with $IMG"
 REMOTEVERSION=`sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST cat /etc/piversion`
-if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then 
+if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
+
+ echo "Packaging Pi$VERSION release"
+ ./create-image $VERSION
+ IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
+
+ echo "Updating $HOST with $IMG"
  sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
  sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
+
 else
  echo "Raspberry Pi version do not match: local $VERSION != remote $REMOTEVERSION"
 fi
-
 
