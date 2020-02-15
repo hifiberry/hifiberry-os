@@ -69,7 +69,13 @@ check_exclusive() {
  if [ "$FORCE_EXCLUSIVE" = "1" ]; then 
    echo "Forcing exclusive audio"       
    EXCLUSIVE=1                          
- fi   
+ fi 
+ IS_EXCLUSIVE=`grep exclusive /etc/asound.conf`
+ if [ "$IS_EXCLUSIVE" != "" ]; then 
+   CURRENT_EXCLUSIVE=1
+ else
+   CURRENT_EXCLUSIVE=0
+ fi
 }
 
 # Detect Raspberry Pi model
