@@ -1,3 +1,6 @@
+# 
+# asound.conf for exclusive audio mode
+#
 defaults.pcm.rate_converter "samplerate"
 
 defaults.pcm.card 0
