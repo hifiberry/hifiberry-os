@@ -16,6 +16,8 @@ define HIFIBERRY_MEASUREMENTS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/fft-analzye
     $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/audio-inputs \
            $(TARGET_DIR)/opt/hifiberry/bin/audio-inputs
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/supported-mics \
+	   $(TARGET_DIR)/opt/hifiberry/bin/supported-mics
     $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/record-sweep \
            $(TARGET_DIR)/opt/hifiberry/bin/record-sweep
     $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/room-measure \

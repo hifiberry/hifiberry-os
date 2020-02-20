@@ -1,0 +1,22 @@
+#!/bin/bash
+for i in `/opt/hifiberry/bin/audio-inputs | awk -F: '{print $1}'`; do
+ USBNAME=`cat /proc/asound/card$i/id`
+ USBID=`cat /proc/asound/card$i/usbid`
+
+ if [ "$USBID" == "0d8c:0134" -a "$USBNAME" == "Microphone" ]; then
+   DEVICE="HiFiBerry Mic"
+ fi
+
+ if [ "$USBNAME" == "UMM6" ]; then
+   DEVICE="Dayton UMM6"
+ fi
+
+ if [ "$DEVICE" == "" -a "$USBNAME" != "" ]; then
+   DEVICE="Unknown ($USBNAME)"
+ fi
+
+ if [ "$DEVICE" != "" ]; then
+   echo $i:$DEVICE
+ fi
+done
+
