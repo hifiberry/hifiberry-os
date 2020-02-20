@@ -94,9 +94,9 @@ EOF
    cat <<EOF >> /newroot/etc/audiocontrol2.conf
 
 [controller:ac2.plugins.control.rotary.Rotary]
-clk = 4
-dt = 17
-sw = 27
+clk = 23
+dt = 24
+sw = 25
 step = 5
 EOF
  fi
