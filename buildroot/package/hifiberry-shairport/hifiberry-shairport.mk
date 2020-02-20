@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-HIFIBERRY_SHAIRPORT_VERSION = 3.3.5
-#HIFIBERRY_SHAIRPORT_VERSION = d64a8d1e7576127df5999cd63e8f27c93598952d
+#HIFIBERRY_SHAIRPORT_VERSION = 3.3.5
+# Bugfix for incorrect artist names
+HIFIBERRY_SHAIRPORT_VERSION = 4fc161cf0c4d0bbf500b5887da5704a600d7ab5e
 HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SHAIRPORT_VERSION))
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
