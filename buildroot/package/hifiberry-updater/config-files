@@ -24,4 +24,5 @@
 /etc/passwd
 /etc/shadow
 /etc/watchdog.conf
+/etc/machine-id
 /root/.ssh
