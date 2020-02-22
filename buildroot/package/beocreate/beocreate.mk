@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = eaabeb5e6b7da3a739580ca70bf8890cb84bd654
+BEOCREATE_VERSION = dbdbdbdc9a447d8e391adf0b28d231aada8efed9
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 #BEOCREATE_DEPENDENCIES = host-dsptoolkit
 
