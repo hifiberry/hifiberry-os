@@ -20,4 +20,5 @@ if [ "$?" != 0 ]; then
   # This doesn't seem to be a playlist, but a direct link to the stream"
   mpc add $URL
 fi
+sleep 1
 mpc play
