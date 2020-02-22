@@ -18,7 +18,7 @@ if [ "$DATA" == "" ]; then
 
  echo "adding /data to fstab"
  cat /etc/fstab | grep -v ${DEVICE}p4 > /tmp/fstab
- echo "${DEVICE}p4    /data    ext4    defaults    0    0" >>/tmp/fstab
+ echo "${DEVICE}p4    /data    ext4    noatime    0    0" >>/tmp/fstab
  mv /etc/fstab /etc/fstab.bak
  mv /tmp/fstab /etc/fstab
 
