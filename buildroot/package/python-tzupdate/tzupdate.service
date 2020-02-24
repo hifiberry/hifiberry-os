@@ -1,0 +1,13 @@
+[Unit]
+Description=Timezone update
+Wants=network-online.target
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Updating timezone"
+ExecStart=/bin/tzupdate
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

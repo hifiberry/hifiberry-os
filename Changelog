@@ -1,3 +1,16 @@
+20200224
+- Room accoustics measurements
+- Improved equaliser settings
+- Added Web radio support
+- LaMetric support for Metadata
+- Support for rotary controller connected to GPIO
+- Local timezone is set automatically
+- Logging doesn't write the SD card anymore (logging to RAM)
+- Spotify update
+- Bluetooth update
+- Watchdog can monitor network connectivity and reboot system
+  if connectivity is lost (not in UI)
+
 20200127
 - Filter designer DSP-enabled boards
 - Daisy-chain Beocreate boards for stereo-setups with 3-4 channels per speaker (experimental)

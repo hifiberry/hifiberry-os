@@ -1,11 +1,13 @@
 [Unit]
 Description=HiFiBerry watchdog
 After=network.target
+ConditionPathExists=!/boot/no_watchdog
 
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting watchdog"
-ExecStart=/bin/python /opt/hifiberry/bin/watchdog
+WorkingDirectory=/opt/watchdog
+ExecStart=/bin/python /opt/watchdog/watchdog.py
 StandardOutput=journal
 Restart=always
 RestartSec=5

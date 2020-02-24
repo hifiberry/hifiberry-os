@@ -11,10 +11,6 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dacadcaddon-test.xml \
            $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hifiberry-dacplusadc.dtbo \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hifiberry-dacplusadcpro.dtbo \
-           $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/hbflash.sh \
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplusadcpro.eep \
@@ -25,6 +21,8 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digipro.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplushd.eep \
+	   $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dtoverlay \
            $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/flash.sh \

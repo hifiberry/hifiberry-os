@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AUDIOCONTROL2_VERSION = 47f12c76b83df8e14d5f5ddc6fc9d1f6587d58d5
+AUDIOCONTROL2_VERSION = c99813a3a4f030374436484c5e53581d5afa88aa
 AUDIOCONTROL2_SITE = $(call github,hifiberry,audiocontrol2,$(AUDIOCONTROL2_VERSION))
 
 define AUDIOCONTROL2_BUILD_CMDS
@@ -17,6 +17,8 @@ define AUDIOCONTROL2_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/etc
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/audiocontrol2.conf \
                 $(TARGET_DIR)/etc/audiocontrol2.conf.orig
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/privacy.html \
+		$(TARGET_DIR)/opt/audiocontrol2/privacy.html
 endef
 
 define AUDIOCONTROL2_INSTALL_INIT_SYSTEMD

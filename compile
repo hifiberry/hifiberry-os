@@ -25,6 +25,8 @@ if [ "$2" != "" ]; then
 fi
 
 cd ../buildroot
+mkdir -p $BRDIR/target/etc
+echo $VERSION > $BRDIR/target/etc/piversion
 make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
 
 if [ -f $MYDIR/notify ]; then

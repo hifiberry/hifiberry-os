@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_BLUEZALSA_VERSION = 1.4.0
+HIFIBERRY_BLUEZALSA_VERSION = 2.1.0
 HIFIBERRY_BLUEZALSA_SITE = $(call github,Arkq,bluez-alsa,v$(HIFIBERRY_BLUEZALSA_VERSION))
 HIFIBERRY_BLUEZALSA_LICENSE = MIT
 HIFIBERRY_BLUEZALSA_LICENSE_FILES = LICENSE
@@ -23,7 +23,8 @@ HIFIBERRY_BLUEZALSA_CONF_OPTS = \
 	--enable-aplay \
 	--disable-debug-time \
 	--with-alsaplugindir=/usr/lib/alsa-lib \
-	--with-alsaconfdir=/usr/share/alsa
+	--with-alsaconfdir=/usr/share/alsa \
+	--disable-payloadcheck
 
 # Enable AAC
 HIFIBERRY_BLUEZALSA_DEPENDENCIES += fdk-aac
@@ -32,7 +33,7 @@ HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-aac
 #HIFIBERRY_BLUEZALSA_DEPENDENCIES += libbsd ncurses
 #HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-hcitop
 
-#HIFIBERRY_BLUEZALSA_DEPENDENCIES += readline
-#HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-rfcomm
+HIFIBERRY_BLUEZALSA_DEPENDENCIES += readline
+HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-rfcomm
 
 $(eval $(autotools-package))
