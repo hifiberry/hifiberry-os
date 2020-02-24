@@ -124,6 +124,9 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
         ln -fs ../../../../usr/lib/systemd/system/sshdconfig.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshdconfig.service
 
+	# Systemd logging to RAM
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/journald.conf \
+	        $(TARGET_DIR)/etc/systemd/journald.conf
 endef
 
 $(eval $(generic-package))

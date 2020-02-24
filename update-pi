@@ -1,10 +1,11 @@
 #!/bin/bash
 cd `dirname $0`
 
-HOST=$1
+VERSION=$1
+HOST=$2
 if  [ "$HOST" == "" ]; then
  echo $0 hostname
- echo  e.g. $0 10.0.1.23 will push the current release to the Pi with the IP address 10.0.1.23
+ echo  e.g. $0 piversion 10.0.1.23 will push the current release to the Pi with the IP address 10.0.1.23
  exit 1
 fi 
 
@@ -13,14 +14,22 @@ if [ "$PORT" == "" ]; then
  PORT=22
 fi
 
-VERSION=`sshpass -p 'hifiberry' ssh -p $PORT root@$HOST cat /etc/raspberrypi.version`
+if [ "$PASSWORD" == "" ]; then
+  PASSWORD=hifiberry
+fi
 
-echo "Updating $HOST with Pi$VERSION release"
+REMOTEVERSION=`sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST cat /etc/piversion`
+if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
 
-./create-image $VERSION
-IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
-echo "Updating $HOST with $IMG"
-sshpass -p 'hifiberry' scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
-sshpass -p 'hifiberry' ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
+ echo "Packaging Pi$VERSION release"
+ ./create-image $VERSION
+ IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 
+ echo "Updating $HOST with $IMG"
+ sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
+ sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
+
+else
+ echo "Raspberry Pi version do not match: local $VERSION != remote $REMOTEVERSION"
+fi
 

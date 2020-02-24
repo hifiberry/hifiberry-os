@@ -13,7 +13,7 @@ else
 fi
 DRIVER=`aplay -l | grep "\[snd_rpi" | awk -F\[ '{print $2}' | awk -F\] '{print $1}'`
 CONFIGFILE=/boot/settings.txt
-VERSION="1.0"
+VERSION=`cat /etc/hifiberry.version`
 
 DIGIFIXED=0
 DIGIDOP=0

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = a16e4f8586d2b9c01bc3763ccfaf4c005bc8c256
+BEOCREATE_VERSION = 02bdc7aa5f1eedc3953c919938be9efd098ea0c4
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 #BEOCREATE_DEPENDENCIES = host-dsptoolkit
 
@@ -14,6 +14,7 @@ endef
 define BEOCREATE_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/opt/beocreate
 	mkdir -p $(TARGET_DIR)/etc/beocreate
+	mkdir -p $(TARGET_DIR)/etc/beocreate/beo-room-compensation
         cp -rv $(@D)/Beocreate2/* $(TARGET_DIR)/opt/beocreate
         rm -rf $(TARGET_DIR)/opt/beocreate/etc
 	cp -rv $(@D)/beocreate_essentials $(TARGET_DIR)/opt/beocreate

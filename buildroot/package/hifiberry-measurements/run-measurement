@@ -17,7 +17,7 @@ MIC=hw:$MIC,0
 echo "using microphone   $MIC,0" 
 #echo "using plaback card $PLAYBACK" 
 
-play -q -n synth sine 440 2>/dev/null &
+play -q -n synth noise 2>/dev/null &
 TONE_PID=$!
 
 echo "ideal target volume range is between -10dB and -30dB"

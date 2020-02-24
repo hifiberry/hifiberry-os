@@ -4,11 +4,18 @@
 #
 ################################################################################
 
-SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-0.2.20-patched
+SPOTIFY_VERSION=v0.2.24
+SPOTIFY_RELEASE_URL=https://github.com/Spotifyd/spotifyd/releases/download/${SPOTIFY_VERSION}/spotifyd-linux-armhf-full.tar.gz
+
+#SPOTIFYD_BIN = $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-0.2.20-patched
 
 define SPOTIFYD_INSTALL_TARGET_CMDS
-    $(INSTALL) -D -m 0755 $(SPOTIFYD_BIN) \
-           $(TARGET_DIR)/usr/bin/spotifyd
+    curl -L -o $(@D)/spotify.tar.gz ${SPOTIFY_RELEASE_URL} 
+    cd $(@D) && tar xvfz spotify.tar.gz 
+    $(INSTALL) -D -m 0755 $(@D)/spotifyd \
+	$(TARGET_DIR)/usr/bin/spotifyd
+#    $(INSTALL) -D -m 0755 $(SPOTIFYD_BIN) \
+#           $(TARGET_DIR)/usr/bin/spotifyd
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd-notification \
            $(TARGET_DIR)/opt/hifiberry/bin/spotifyd-notification
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotifyd.conf \

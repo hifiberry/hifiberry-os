@@ -12,3 +12,4 @@ lmsmpris.service
 squeezelite.service
 sshd.service
 snapcastmpris.service
+watchdog.service
