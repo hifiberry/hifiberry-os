@@ -1,4 +1,4 @@
-202003xx
+20200225:
 - Bugfix: ympd not using IPv6
 - Bugfix: no uppercase letters in hostname
 
