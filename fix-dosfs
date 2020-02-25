@@ -11,11 +11,11 @@ if [ "$KPARTX" == "" ]; then
 	exit
 fi
 	
-sudo losetup /dev/loop0 $1
-sudo kpartx -a /dev/loop0
+sudo losetup /dev/loop99 $1
+sudo kpartx -a /dev/loop99
 ls -l /dev/mapper
-sudo dosfsck -a /dev/mapper/loop0p1
-sudo kpartx -d /dev/loop0
-sudo losetup -d /dev/loop0
+sudo dosfsck -a /dev/mapper/loop99p1
+sudo kpartx -d /dev/loop99
+sudo losetup -d /dev/loop99
 
 
