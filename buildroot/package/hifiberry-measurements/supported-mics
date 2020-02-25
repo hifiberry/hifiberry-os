@@ -5,22 +5,26 @@ for i in `/opt/hifiberry/bin/audio-inputs | awk -F: '{print $1}'`; do
 
  if [ "$USBID" == "0d8c:0134" -a "$USBNAME" == "Microphone" ]; then
    DEVICE="HiFiBerry Mic"
+   SENSITIVITY="115.5"
  fi
 
  if [ "$USBNAME" == "UMM6" ]; then
    DEVICE="Dayton UMM6"
+   SENSITIVITY=0
  fi
 
  if [ "$USBNAME" == "U18dB" ]; then
    DEVICE="MiniDSP Umik"
+   SENSITIVITY=115
  fi
 
  if [ "$DEVICE" == "" -a "$USBNAME" != "" ]; then
    DEVICE="Unknown ($USBNAME)"
+   SENSITIVITY=0
  fi
 
  if [ "$DEVICE" != "" ]; then
-   echo $i:$DEVICE
+   echo $i:$DEVICE:$SENSITIVITY
  fi
 done
 
