@@ -5,7 +5,7 @@
 Originally, Airplay wasn't designed for multiroom applications. Apple now used Airplay 2 
 (there are no open source implementations of this!) for multiroom audio.
 However, even the "normal" Airplay can be used to stream to multiple endpoints. The bad news:
-this doesn't work from your iPhone or iPad, but only form iTunes.  
+this doesn't work from your iPhone or iPad, but only from iTunes.  
 
 ## LMS / squeezelite
 
