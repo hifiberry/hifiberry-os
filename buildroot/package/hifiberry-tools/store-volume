@@ -12,8 +12,11 @@ if [ "$1" == "" ]; then
   cp $TMP $STORE
  fi
 
- DSPVOL=`dsptoolkit get-volume | awk '{print $2}'`
- DSPVOL_PREV=`cat /etc/dspvolume.store`
+ DSP=`grep FEATURES /etc/hifiberry.state | grep -i dsp`
+ if [ "$DSP" != "" ]; then
+  DSPVOL=`dsptoolkit get-volume | awk '{print $2}'`
+  DSPVOL_PREV=`cat /etc/dspvolume.store`
+ fi 
  if [ "$DSPVOL" != "$DSPVOL_PREV" ]; then 
    echo "Storing DSP Volume..."
    echo $DSPVOL > /etc/dspvolume.store
