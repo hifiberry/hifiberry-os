@@ -1,0 +1,15 @@
+[Unit]
+Description=Usage data collector
+Wants=network-online.target
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Data collector" 
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

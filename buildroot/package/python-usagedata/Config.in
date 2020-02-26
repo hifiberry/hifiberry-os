@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_USAGEDATA
+	bool "python-usagedata"
+        help
+	  A simple data collector that keeps historical date in RAM
+        depends on BR2_PACKAGE_PYTHON3
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_PYTHON_BOTTLE
