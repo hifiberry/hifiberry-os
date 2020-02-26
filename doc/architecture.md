@@ -2,7 +2,7 @@
 
 The modular architecture of HiFiBerryOS allows to extend it easily.
 
-![architecture][architecture.png]
+![architecture](architecture.png "Overall architecture")
 
 ## Adding a new services
 
