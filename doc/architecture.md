@@ -2,6 +2,8 @@
 
 The modular architecture of HiFiBerryOS allows to extend it easily.
 
+![architecture][architecture.png]
+
 ## Adding a new services
 
 Adding a services requires two steps:
