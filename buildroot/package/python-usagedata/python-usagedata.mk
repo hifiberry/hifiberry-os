@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PYTHON_USAGEDATA_VERSION = a0edf6ac272f77892f4f797732f76d72bdbe7a1a
+PYTHON_USAGEDATA_VERSION = dd4a066abce07cfed0ec8b69e203c8953a96c06f
 PYTHON_USAGEDATA_SITE = $(call github,hifiberry,usagecollector,$(PYTHON_USAGEDATA_VERSION))
 PYTHON_USAGEDATA_SETUP_TYPE = setuptools
 PYTHON_USAGEDATA_LICENSE = MIT
