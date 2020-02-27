@@ -5,8 +5,9 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/
-ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Data collector" 
+WorkingDirectory=/tmp
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting data collector" 
+ExecStart=/bin/python3 -m usagecollector.server
 StandardOutput=journal
 Restart=always
 RestartSec=5
