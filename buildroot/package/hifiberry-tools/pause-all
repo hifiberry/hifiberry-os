@@ -93,8 +93,18 @@ kill_process() {
   fi
 }
 
+# What's the new player?
+if [ -x /opt/hifiberry/bin/report-activation ]; then
+	 /opt/hifiberry/bin/report-activation "playercontrol_player_$PLAYER"
+fi
+
 # Check if something is playing at all
 check_paused
+if [ "$APP" != "" ]; then 
+ if [ -x /opt/hifiberry/bin/report-deactivation ]; then
+  /opt/hifiberry/bin/report-deactivation "playercontrol_player_$APP"
+ fi
+fi
 
 # Try to control the player directly, this might not work
 # for all players
