@@ -1,0 +1,3 @@
+#!/bin/sh
+curl -s -X post http://127.0.0.1:3141/api/activate/$1 >/dev/null
+
