@@ -12,6 +12,14 @@ PYTHON_USAGEDATA_LICENSE_FILES = LICENSE.md
 
 define PYTHON_USAGEDATA_POST_INSTALL_TARGET_CMD
 	mkdir -p $(TARGET_DIR)/var/lib/hifiberry
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/report-usage \
+	                $(TARGET_DIR)/opt/hifiberry/bin/
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/report-activation \
+		        $(TARGET_DIR)/opt/hifiberry/bin/
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/report-deactivation \
+		        $(TARGET_DIR)/opt/hifiberry/bin/
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/report-dump \
+		        $(TARGET_DIR)/opt/hifiberry/bin/
 endef
 
 PYTHON_USAGEDATA_POST_INSTALL_TARGET_HOOKS += PYTHON_USAGEDATA_POST_INSTALL_TARGET_CMD
