@@ -1,3 +1,10 @@
+202003xx:
+- added automatic updates
+- improved metadata handling with radio stations
+
+20260226:
+- Bugfix: Spotify configuration 
+
 20200225:
 - Bugfix: ympd not using IPv6
 - Bugfix: no uppercase letters in hostname
