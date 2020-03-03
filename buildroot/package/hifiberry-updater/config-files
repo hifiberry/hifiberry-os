@@ -25,4 +25,5 @@
 /etc/shadow
 /etc/watchdog.conf
 /etc/machine-id
+/etc/updater.release
 /root/.ssh
