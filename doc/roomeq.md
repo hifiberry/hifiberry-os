@@ -46,4 +46,6 @@ Depending on the function you are using, not all parameters may be required. You
 
 ## roomeq-range
 
-Returns the usuable
+Returns the usuable frequency range. "Usuable" means that the output is at least -10dB of the average value in the range between 200-8000Hz. This makes sure not to try to optimize at frequencies that speaker can't handle.
+
+
