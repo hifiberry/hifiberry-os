@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Start radio $2 ($1)" | systemd-cat
+
 URL=$1
 if [ "$URL" == "" ]; then
   echo "call with $0 streamurl"
