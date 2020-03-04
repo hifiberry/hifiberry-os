@@ -26,6 +26,16 @@ define HIFIBERRY_MEASUREMENTS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/input-level
     $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/run-measurement \
            $(TARGET_DIR)/opt/hifiberry/bin/run-measurement
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/roomeq-preset \
+	   $(TARGET_DIR)/opt/hifiberry/bin/roomeq-preset
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/roomeq-range \
+	   $(TARGET_DIR)/opt/hifiberry/bin/roomeq-range
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/roomeq-optimize \
+	   $(TARGET_DIR)/opt/hifiberry/bin/roomeq-optimize
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/roomeq.conf \
+    	   $(TARGET_DIR)/etc/roomeq.conf
+    $(INSTALL) -D -m 0555 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/frequency-demo.json \
+	   $(TARGET_DIR)/opt/hifiberry/contrib/frequency-demo.json
 endef
 
 define HIFIBERRY_MEASUREMENTS_INSTALL_INIT_SYSTEMD
