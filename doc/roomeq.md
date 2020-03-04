@@ -32,13 +32,13 @@ The optimzer tools expect a data in JSON format as follows
  "measurement": 
    {
    "f":     [ 20,  40,  80,  160, 320,  640, 1280, 2560, 5120, 10240, 20480],
-   "db":    [-25, -15,  -5,  2.4,  -5,  2.1,  0.5,  4.6, -2.1,  -1.3,  -7.0],
-   "phase": [  0,   0, 0.1, 0.15, 0.2, 0.25,  0.2, 0.15,  0.1,  0.05,   0.1],
-   }
+   "db":    [-25, -15, -20,  2.4,  -5,  2.1,  0.5,  4.6, -2.1,  -1.3,  -7.0],
+   "phase": [  0,   0, 0.1, 0.15, 0.2, 0.25,  0.2, 0.15,  0.1,  0.05,   0.1]
+   },
   "curve": "flat",
   "optimizer": "smooth",
   "filtercount": 10,
-  "samplerate": 48000,
+  "samplerate": 48000
 }
 ```
 
@@ -48,4 +48,8 @@ Depending on the function you are using, not all parameters may be required. You
 
 Returns the usuable frequency range. "Usuable" means that the output is at least -10dB of the average value in the range between 200-8000Hz. This makes sure not to try to optimize at frequencies that speaker can't handle.
 
+Result will look like this:
+```
+{"fmin": 20, "fmax": 20480}
+```
 
