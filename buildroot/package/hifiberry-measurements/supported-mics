@@ -10,7 +10,7 @@ for i in `/opt/hifiberry/bin/audio-inputs | awk -F: '{print $1}'`; do
 
  if [ "$USBNAME" == "UMM6" ]; then
    DEVICE="Dayton UMM6"
-   SENSITIVITY=0
+   SENSITIVITY="137.5"
  fi
 
  if [ "$USBNAME" == "U18dB" ]; then
