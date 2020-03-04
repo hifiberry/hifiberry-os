@@ -31,5 +31,12 @@ Max pressure at 0dbFS will be **115.5dB**
 
 Max pressure at 0dbFS will be **115dB**. This corresponds well to data sheet "133dB SPL @ 0dB analog gain setting"
 
+### Dayton 
+|Input level|Sound pressure|Max. pressure|
+|---|---|---|
+|66.5|-68|134.1|
+|80.5|-57|137.5|
+|90.3|-49|139.3|
+|77.2|-59.5|136.7|
 
-
+The measurements here are not fully consistent, therefore we'll do a bit guessing and expect **137.5db** at 0dbFS
