@@ -322,8 +322,5 @@ The result will look like this:
 You can run a simple test using the sample file /opt/hifiberry/contrib/frequency-demo.json:
 ```
 /opt/hifiberry/bin/roomeq-range /opt/hifiberry/contrib/frequency-demo.json
-```
-
-```
 /opt/hifiberry/bin/roomeq-optimize /opt/hifiberry/contrib/frequency-demo.json
 ```
