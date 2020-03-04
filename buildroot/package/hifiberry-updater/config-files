@@ -26,4 +26,5 @@
 /etc/watchdog.conf
 /etc/machine-id
 /etc/updater.release
+/etc/roomeq.conf
 /root/.ssh
