@@ -21,19 +21,6 @@ if [ "$V" -lt 20191022 ]; then
  rm /newroot/etc/hifiberry.state
 fi
 
-if [ "$V" -lt 20191201 ]; then
- echo "Version < 20191201, adding postgresql configuration to audiocontrol"
- echo
- FOUND=`cat /newroot/etc/audiocontrol2.conf | grep '\[postgres\]'`
- if [ "$FOUND" == "" ]; then
-  echo >> /newroot/etc/audiocontrol2.conf
-  echo '[postgres]' >> /newroot/etc/audiocontrol2.conf
-  echo "audiocontrol2.conf done"
- else
-  echo "Postgres already configured"
- fi
-fi
-
 if [ "$V" -lt 20200201 ]; then
  echo "Version < 20200101, adding privacy section to audiocontrol"
  echo
@@ -79,7 +66,6 @@ if [ "$V" -lt 20200301 ]; then
  echo "Version < 20200301, adapting audiocontrol.conf"
  # New way to include plugins
  sed -i 's/\[keyboard\]/[controller:ac2.plugins.control.keyboard.Keyboard]/' /newroot/etc/audiocontrol2.conf
- sed -i 's/\[postgres\]/[metadata:ac2.plugins.metadata.postgresql.MetadataPostgres]/' /newroot/etc/audiocontrol2.conf
 
  LAMETRIC=`grep LaMetricPush /newroot/etc/audiocontrol2.conf`
  if [ "$LAMETRIC" == "" ]; then
@@ -100,4 +86,13 @@ sw = 25
 step = 5
 EOF
  fi
+fi
+
+if [ "$V" -lt 20200401 ]; then
+ echo "Version < 20200301, adapting audiocontrol.conf"
+
+ # Remove postgres plugin
+ cat /newroot/etc/audiocontrol2.conf | grep -iv postgres > /tmp/audiocontrol2.conf
+ cp /newroot/etc/audiocontrol2.conf /newroot/etc/audiocontrol2.conf.bak
+ cp /tmp/audiocontrol2.conf  /newroot/etc/audiocontrol2.conf
 fi
