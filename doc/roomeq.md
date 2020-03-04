@@ -43,6 +43,7 @@ The optimzer tools expect a data in JSON format as follows
 ```
 
 Depending on the function you are using, not all parameters may be required. You always need to send frequency (f) and decibel (db) values.
+The JSON data will just uses as a command line argument to the scripts (see below)  
 
 ## roomeq-range
 
