@@ -1,15 +1,18 @@
 #!/bin/sh
 . /etc/roomeq.conf
+UUID=`cat /etc/uuid`
 
 if [ -f "$1" ]; then
  curl \
    --header "Content-Type: application/json" \
+   --header "X-UUID: $UUID" \
    --request POST \
    --data "@$1" \
    $ROOMEQURL/optimize
 else
  curl \
    --header "Content-Type: application/json" \
+   --header "X-UUID: $UUID" \
    --request POST \
    --data "$1" \
    $ROOMEQURL/optimize
