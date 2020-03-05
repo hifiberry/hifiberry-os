@@ -8,6 +8,9 @@ if [ "$URL" == "" ]; then
   exit 1
 fi
 
+# Start mpd if it isn't yet running
+systemctl start mpd mpd-mpris
+
 STATIONNAME=$2
 if [ "$STATIONNAME" != "" ]; then
   # URLs are often playlists or forwarders
