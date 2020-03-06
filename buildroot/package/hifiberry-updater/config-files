@@ -27,4 +27,5 @@
 /etc/machine-id
 /etc/updater.release
 /etc/roomeq.conf
+/etc/dlnampris.conf
 /root/.ssh
