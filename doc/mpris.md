@@ -14,4 +14,4 @@ Today not all applications support MPRIS. This is the current state of MPRIS imp
 | raat | yes | yes | yes |
 | mpd | [mpd mpris](https://github.com/natsukagami/mpd-mpris) | yes | yes |
 | alsaloop | via  | no | yes |
-| gmediarender | [dln-ampris](https://github.com/hifiberry/dlna-mpris) | yes | yes |
+| gmediarender | [dlna-mpris](https://github.com/hifiberry/dlna-mpris) | yes | yes |
