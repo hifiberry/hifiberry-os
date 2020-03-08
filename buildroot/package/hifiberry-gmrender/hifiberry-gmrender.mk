@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_GMRENDER_VERSION = master
+HIFIBERRY_GMRENDER_VERSION = bfd6d4e251e69169c6920e62cc041e5cf32fef79
 HIFIBERRY_GMRENDER_SITE = $(call github,hifiberry,gmrender-resurrect,$(HIFIBERRY_GMRENDER_VERSION))
 # Original distribution does not have default configure,
 # so we need to autoreconf:
