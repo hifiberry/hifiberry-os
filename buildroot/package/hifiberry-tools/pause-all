@@ -16,7 +16,7 @@ check_paused() {
   fi
   PROCESS=`lsof | grep /dev/snd | grep pcmC${CARD} | awk '{print $2}'`
   APP=`basename $PROCESS`
-  if [ "$APP" == "$PLAYER"] ]; then
+  if [ "$APP" == "$PLAYER" ]; then
     echo "$PLAYER requested pause, but is already using sound card, ignoring" | systemd-cat
     exit 0
   fi
