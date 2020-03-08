@@ -1,7 +1,7 @@
 # MPRIS
 
 There are several player applications running concurrently on HiFiBerryOS. That makes controlling all of 
-them quite complex. We're using MPRIS.
+them quite complex. We're using MPRIS as a common control and metadata API to the different players.
 
 Today not all applications support MPRIS. This is the current state of MPRIS implementations:
 
