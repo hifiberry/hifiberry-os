@@ -29,3 +29,4 @@
 /etc/roomeq.conf
 /etc/dlnampris.conf
 /root/.ssh
+/etc/sigmatcp.conf
