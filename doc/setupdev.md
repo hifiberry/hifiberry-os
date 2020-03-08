@@ -16,6 +16,12 @@ ln -s buildroot-2019.08.1 buildroot
 Note that newer releases than buildroot 2019-08 won't work at the moment due to incompatibilities
 of the Python interpreter.
 
+## Install Prerequisites
+```
+cd hifiberry-os
+./prepare-software
+```
+
 ## Clone the HiFiBerryOS sources
 
 ```
