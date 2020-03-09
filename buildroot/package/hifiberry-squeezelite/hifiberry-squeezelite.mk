@@ -25,8 +25,8 @@ define HIFIBERRY_SQUEEZELITE_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/usr/bin/squeezelite
 	mkdir -p $(TARGET_DIR)/var/squeezelite
 	echo "HiFiBerry" > $(TARGET_DIR)/var/squeezelite/squeezelite.name
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-squeezelite/volume-control-name \
-                $(TARGET_DIR)/opt/hifiberry/bin/volume-control-name
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-squeezelite/squeezelite-start \
+                $(TARGET_DIR)/bin/squeezelite-start
 endef
 
 define HIFIBERRY_SQUEEZELITE_INSTALL_INIT_SYSTEMD
