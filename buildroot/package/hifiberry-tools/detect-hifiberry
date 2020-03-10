@@ -10,6 +10,12 @@ FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
 CONFIG=/boot/config.txt
 REBOOTFILE=/tmp/reboot
 
+function exit_and_cleanup() {
+	sync
+	umount /boot
+	exit
+}
+
 function check_i2c {
 	modprobe i2c-dev
         if [ ! -e /dev/i2c-1 ]; then
@@ -63,6 +69,13 @@ function detect_card {
 if [ "$FOUND" == "" ]; then
  echo "No HiFiBerry card configured, try to probe using I2C" >> /var/log/hifiberry.log
 
+ echo "Mounting /boot"
+ mount /boot
+ if [ ! -f /boot/config.txt ]; then
+   echo "couldn't mount FAT file system, aborting card detection" >> /var/log/hifiberry.log
+   exit 1
+ fi
+
  echo "Detecting using I2C" 
  check_i2c
  card=$(detect_card)
@@ -71,7 +84,7 @@ if [ "$FOUND" == "" ]; then
    echo "Detected Beocreate"
    FOUND2=`aplay -l|grep hifiberry`
    if [ "$FOUND2" != "" ]; then
-       exit 0
+	   exit_and_cleanup
    fi
    card=dac
  fi
@@ -110,7 +123,7 @@ if [ "$FOUND" == "" ]; then
         echo "Assuming HiFiBerry DAC+ Light, Zero"
         FOUND2=`aplay -l|grep hifiberry`
         if [ "$FOUND2" != "" ]; then
-          exit 0
+          exit_and_cleanup
         else
           echo "dtoverlay=hifiberry-dac" >> /boot/config.txt
           echo "Nothing detected, assuming HiFiBerry DAC+ Light/Zero" >>/var/log/hifiberry.log
@@ -121,3 +134,4 @@ else
    echo "Found HiFiBerry card: $FOUND" >>/var/log/hifiberry.log
 fi
 
+exit_and_cleanup

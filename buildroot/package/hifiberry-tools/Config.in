@@ -8,6 +8,7 @@ config BR2_PACKAGE_HIFIBERRY_TOOLS
         select BR2_SYSTEM_BIN_SH_BASH
         select BR2_PACKAGE_LINUX_TOOLS_PERF
 	select BR2_PACKAGE_LINUX_TOOLS_PERF_TUI
+	select BR2_PACKAGE_JQ
 
 config BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE
         bool "audio lite mode (for Pi 0)"
