@@ -12,7 +12,7 @@ REBOOTFILE=/tmp/reboot
 
 function exit_and_cleanup() {
 	sync
-	umount /boot
+	mount -o ro,remount /boot
 	exit
 }
 
