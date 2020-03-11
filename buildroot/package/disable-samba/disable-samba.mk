@@ -12,6 +12,9 @@ define DISABLE_SAMBA_INSTALL_TARGET_CMDS
 	if [ -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nmb.service ]; then \
 		rm $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nmb.service; \
 	fi
+	if [ -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/winbind.service ]; then \
+		rm $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/winbind.service; \
+        fi
 endef
 
 $(eval $(generic-package))
