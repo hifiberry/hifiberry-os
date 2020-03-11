@@ -1,0 +1,6 @@
+config BR2_PACKAGE_DISABLE_SAMBA
+	bool "disable-samba"
+        help
+          do not start smbd
+	depends on BR2_PACKAGE_SAMBA4
+
