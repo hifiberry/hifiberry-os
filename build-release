@@ -16,7 +16,7 @@ clear
 echo Buildung for Raspberry Pi $1
 echo ============================
 echo
-./build-config $1
+./build-config $1 release
 ./clean $1
 ./compile $1
 ./create-image $1 $TS
