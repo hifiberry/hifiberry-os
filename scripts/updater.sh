@@ -95,4 +95,19 @@ if [ "$V" -lt 20200401 ]; then
  cat /newroot/etc/audiocontrol2.conf | grep -iv postgres > /tmp/audiocontrol2.conf
  cp /newroot/etc/audiocontrol2.conf /newroot/etc/audiocontrol2.conf.bak
  cp /tmp/audiocontrol2.conf  /newroot/etc/audiocontrol2.conf
+
+ # Overwrite asound.conf
+ TTABLE=`cat /newroot/etc/asound.conf | grep ttable_config`
+ if [ "$TTABLE" == "" ]; then 
+  echo "Adding ttable configuration to asound.conf"
+  cp /newroot/etc/asound.conf /newroot/etc/asound.conf.bak
+  cp /newroot/etc/asound.conf.exclusive /newroot/etc/asound.conf
+ fi 
+
+ # Overwrite mpd.conf
+ MPDCONFOK=`cat /newroot/etc/mpd.conf | grep device | grep default`
+ if [ "MPDCONFOK" != "" ]; then
+  echo "Using default mpd.conf"
+  cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
+  cp /newroot/etc/mpd.conf.default /newroot/etc/mpd.conf
 fi
