@@ -1,0 +1,47 @@
+#!/bin/sh
+
+if [ "$1" == "" ]; then
+ cat /etc/asound.conf | grep "ttable_config"| awk -F: '{print $2}'
+ exit
+elif [ "$1" == "mono" ]; then
+ ttable00=0.5
+ ttable11=0.5
+ ttable01=0.5
+ ttable10=0.5
+elif [ "$1" == "stereo" ]; then
+ ttable00=1
+ ttable11=1
+ ttable01=0
+ ttable10=0
+elif [ "$1" == "left" ]; then
+ ttable00=1
+ ttable11=0
+ ttable01=1
+ ttable10=0
+elif [ "$1" == "right" ]; then
+ ttable00=0
+ ttable11=1
+ ttable01=0
+ ttable10=1
+fi
+
+if [ "$2" != "" ]; then
+ isok=`echo $2'<='0 | bc -l`
+ if [ "$isok" == "1" ]; then
+  mul=`echo "e($2/20*l(10))" | bc -l`
+  echo $2 $mul
+
+  ttable00=`echo "$ttable00*$mul" | bc -l | sed 's/^\./0./'`
+  ttable11=`echo "$ttable11*$mul" | bc -l | sed 's/^\./0./'`
+  ttable10=`echo "$ttable10*$mul" | bc -l | sed 's/^\./0./'`
+  ttable01=`echo "$ttable01*$mul" | bc -l | sed 's/^\./0./'`
+ fi
+fi
+
+sed -i s/ttable.0.0.*/ttable.0.0\ $ttable00/g /etc/asound.conf
+sed -i s/ttable.1.1.*/ttable.1.1\ $ttable11/g /etc/asound.conf
+sed -i s/ttable.1.0.*/ttable.1.0\ $ttable10/g /etc/asound.conf
+sed -i s/ttable.0.1.*/ttable.0.1\ $ttable01/g /etc/asound.conf
+sed -i s/ttable_config:.*/ttable_config:$1\ $2/g /etc/asound.conf
+
+/opt/hifiberry/bin/reconfigure-players --restart-players
