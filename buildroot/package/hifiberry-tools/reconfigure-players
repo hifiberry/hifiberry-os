@@ -6,7 +6,7 @@ if [ -f /etc/force_exclusive_audio ]; then
  FORCE_EXCLUSIVE=1
 fi
 
-SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris"
 
 FEATURES=""
 
@@ -372,9 +372,6 @@ reconfigure_dlna() {
 }
 
 
-
-
-
 # Reconfigure MPD
 reconfigure_mpd() {
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
@@ -465,6 +462,13 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
+if [ "$1" == "--restart-players" ]; then
+ for SERVICE in $SERVICES; do
+  restart_service $SERVICE
+ done
+ exit
+fi 
+
 pi_model
 detect_hw
 guess_volume_control
@@ -548,4 +552,3 @@ echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE
 fi
-
