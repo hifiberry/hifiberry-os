@@ -8,7 +8,7 @@ Type=simple
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Spotify"
 ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/spotifyvol
-ExecStart=/usr/bin/spotifyd --no-daemon 
+ExecStart=/opt/hifiberry/bin/spotify-start
 ExecStartPost=sleep 1
 ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/spotifyvol
 ExecStartPost=rm /tmp/spotifyvol

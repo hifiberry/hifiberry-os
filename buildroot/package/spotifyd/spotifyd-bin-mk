@@ -22,6 +22,8 @@ define SPOTIFYD_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/etc/spotifyd.conf
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify-watchdog \
            $(TARGET_DIR)/opt/hifiberry/bin/spotify-watchdog
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/spotify-start \
+	    $(TARGET_DIR)/opt/hifiberry/bin/spotify-start
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/spotifyd/dbus.conf \
            $(TARGET_DIR)/etc/dbus-1/system.d/spotify.conf
 endef
