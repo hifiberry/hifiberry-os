@@ -110,4 +110,5 @@ if [ "$V" -lt 20200401 ]; then
   echo "Using default mpd.conf"
   cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
   cp /newroot/etc/mpd.conf.default /newroot/etc/mpd.conf
+ fi
 fi
