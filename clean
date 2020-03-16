@@ -12,5 +12,9 @@ fi
 BRDIR=`./brdir $VERSION`
 echo "Cleaning $BRDIR"
 
+if [ "$BRSRCDIR" == "" ]; then
+ BRSRCDIR=../build-root
+fi
+
 cd ../buildroot
 make O=$BRDIR clean

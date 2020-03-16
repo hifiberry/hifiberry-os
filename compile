@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ "$BRSRCDIR" == "" ]; then
+ BRSRCDIR=../buildroot
+fi
+
 cd `dirname $0`
 MYDIR=`pwd`
 TS=`date +%Y%m%d`
@@ -24,7 +28,7 @@ if [ "$2" != "" ]; then
  rm -rf $BRDIR/build/$2*
 fi
 
-cd ../buildroot
+cd $BRSRCDIR
 mkdir -p $BRDIR/target/etc
 echo $VERSION > $BRDIR/target/etc/piversion
 make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
