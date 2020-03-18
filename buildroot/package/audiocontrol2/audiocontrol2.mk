@@ -22,6 +22,9 @@ define AUDIOCONTROL2_INSTALL_TARGET_CMDS
 endef
 
 define AUDIOCONTROL2_INSTALL_INIT_SYSTEMD
+	if [ ! -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
+                mkdir -p  $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants;  \
+        fi
     	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/override.conf \
                 $(TARGET_DIR)/etc/systemd/system/audiocontrol2.service.d/override.conf
     	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/audiocontrol2.service \
