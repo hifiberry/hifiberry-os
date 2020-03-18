@@ -78,6 +78,9 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
 endef
 
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
+	if [ ! -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
+		mkdir -p  $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants;  \
+	fi
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-detect.service \
                 $(TARGET_DIR)/lib/systemd/system/hifiberry-detect.service
         ln -fs ../../../../usr/lib/systemd/system/hifiberry-detect.service \
