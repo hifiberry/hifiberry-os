@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = eda15198ad089ccea5c45d66dc6d2bf1f1bf0970
+BEOCREATE_VERSION = 9547869056093825b19534b19fb14cb8216ff2e1
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 #BEOCREATE_DEPENDENCIES = host-dsptoolkit
 
-BEOCREATE_VERSION=fdab9a4bbffdefac71cc3c35d7ddc102d1ad50e5
+BEOCREATE_VERSION = 3bc66f4e693f4464f16bc232da3819bf1489900c
 BEOCREATE_SITE = $(call github,hifiberry,create,$(BEOCREATE_VERSION))
 
 define BEOCREATE_BUILD_CMDS
