@@ -1,42 +1,33 @@
 # Setting up the development environment
 
+*Note:* The scripts are designed to work on Ubuntu. There is a good chance that they will also work on other Debian-based
+systems. For other Linux distributions, you might have to adapt some of these scripts.
+
+## Checkout HiFiBerryOS sources
+
+```
+git clone https://github.com/hifiberry/hifiberry-os
+cd hifiberry-os
+```
+
 ## Install necessary tools
 
 ```
-sudo apt-get install -y git make gcc g++ unzip rsync bc sshpass zip ncurses-dev screen
+./prepare-software
 ```
+
+This will install some packages that are required to build HiFiBerryOS.
 
 ## Download and extract buildroot
 
 ```
-wget https://buildroot.org/downloads/buildroot-2019.08.1.tar.gz
-tar xvzf buildroot-2019.08.1.tar.gz
-ln -s buildroot-2019.08.1 buildroot
-```
-Note that newer releases than buildroot 2019-08 won't work at the moment due to incompatibilities
-of the Python interpreter.
-
-## Install Prerequisites
-```
-cd hifiberry-os
-./prepare-software
+./get-buildroot
 ```
 
-## Clone the HiFiBerryOS sources
-
-```
-git clone https://github.com/hifiberry/hifiberry-os
-```
-
-## Patch buildroot
-
-We require some changes in official buildroot packages (e.g. upgrades to newer versions). Before compiling, 
-apply these changes using
-
-```
-cd hifiberry-os
-./fix-buildroot
-```
+Starting March 2020, we moved from the 2019-08 release of buildroot to the buildroot development tree.
+This was necessary as the newest version (which is not yet officially released) includes some changes that
+are required to move on with new features.
+This script will download the correct release via git and apply a few necessary patches.
 
 ## Start the first build
 
