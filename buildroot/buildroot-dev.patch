@@ -1,0 +1,43 @@
+diff -bur buildroot-dev/package/gstreamer1/gstreamer1/gstreamer1.mk brdev/package/gstreamer1/gstreamer1/gstreamer1.mk
+--- buildroot-dev/package/gstreamer1/gstreamer1/gstreamer1.mk	2020-03-19 06:27:39.898016792 +0000
++++ brdev/package/gstreamer1/gstreamer1/gstreamer1.mk	2020-03-19 06:26:19.130780046 +0000
+@@ -33,7 +33,6 @@
+ 	host-pkgconf \
+ 	libglib2 \
+ 	$(if $(BR2_PACKAGE_LIBUNWIND),libunwind) \
+-	$(if $(BR2_PACKAGE_VALGRIND),valgrind) \
+ 	$(TARGET_NLS_DEPENDENCIES)
+ 
+ GSTREAMER1_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
+diff -bur buildroot-dev/package/nodejs/nodejs.mk brdev/package/nodejs/nodejs.mk
+--- buildroot-dev/package/nodejs/nodejs.mk	2020-03-19 06:27:39.966016147 +0000
++++ brdev/package/nodejs/nodejs.mk	2020-03-18 15:55:12.021994021 +0000
+@@ -63,7 +63,6 @@
+ 		--shared-openssl \
+ 		--shared-openssl-includes=$(HOST_DIR)/include/openssl \
+ 		--shared-openssl-libpath=$(HOST_DIR)/lib \
+-		--shared-zlib \
+ 		--no-cross-compiling \
+ 		--with-intl=small-icu \
+ 	)
+diff -bur buildroot-dev/package/python-pycairo/python-pycairo.mk brdev/package/python-pycairo/python-pycairo.mk
+--- buildroot-dev/package/python-pycairo/python-pycairo.mk	2020-03-19 06:27:40.010015730 +0000
++++ brdev/package/python-pycairo/python-pycairo.mk	2020-03-18 20:58:07.365488420 +0000
+@@ -8,8 +8,16 @@
+ PYTHON_PYCAIRO_SOURCE = pycairo-$(PYTHON_PYCAIRO_VERSION).tar.gz
+ PYTHON_PYCAIRO_SITE = https://files.pythonhosted.org/packages/3c/1a/c0478ecab31baae50fda9956547788afbd0ca563adc52c9b03cab30f17eb
+ PYTHON_PYCAIRO_SETUP_TYPE = setuptools
+-PYTHON_PYCAIRO_DEPENDENCIES = cairo
++PYTHON_PYCAIRO_DEPENDENCIES = cairo host-cairo
+ PYTHON_PYCAIRO_LICENSE = LGPL-2.1 or MPL-1.1
+ PYTHON_PYCAIRO_LICENSE_FILES = COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1
+ 
++HOST_PYTHON_PYCAIRO_ENV = \
++        PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1 \
++        PKG_CONFIG_ALLOW_SYSTEM_LIBS=1 \
++        PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
++        PKG_CONFIG_SYSROOT_DIR="/" \
++        PKG_CONFIG_LIBDIR="$(HOST_DIR)/lib/pkgconfig:$(HOST_DIR)/share/pkgconfig"
++
+ $(eval $(python-package))
++$(eval $(host-python-package))
