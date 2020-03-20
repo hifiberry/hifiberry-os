@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_LOCAL
+	bool "mopidy-local"
+	help
+	  Mopidy - support for local library
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+

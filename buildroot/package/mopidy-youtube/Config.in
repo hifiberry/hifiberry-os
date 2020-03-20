@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_YOUTUBE
+	bool "mopidy-youtube"
+	help
+	  Mopidy - Youtube
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+

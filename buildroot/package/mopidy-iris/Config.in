@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_IRIS
+	bool "mopidy-iris"
+	help
+	  Mopidy - IRIS web interface
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+
