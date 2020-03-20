@@ -24,8 +24,13 @@ fi
 
 # Remove some packages
 if [ "$2" != "" ]; then
- echo Removing $BRDIR/build/$2*
- rm -rf $BRDIR/build/$2*
+ echo Removing $BRDIR/build/$2*  $BRDIR/build/host-$2*
+ rm -rf $BRDIR/build/$2*  $BRDIR/build/host-$2*
+fi
+
+if [ "$3" != "" ]; then
+ echo Removing $BRDIR/build/$3*  $BRDIR/build/host-$3*
+ rm -rf $BRDIR/build/$3*  $BRDIR/build/host-$3*
 fi
 
 cd $BRSRCDIR
