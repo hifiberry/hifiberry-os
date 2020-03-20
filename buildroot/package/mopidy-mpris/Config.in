@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_MPRIS
+	bool "mopidy-mpris"
+	help
+	  Mopidy - MPRIS support
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+

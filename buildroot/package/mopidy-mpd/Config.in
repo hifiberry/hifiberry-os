@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_MPD
+	bool "mopidy-mpd"
+	help
+	  Mopidy - MPD interface
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+

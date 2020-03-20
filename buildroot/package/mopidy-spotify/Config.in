@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_SPOTIFY
+	bool "mopidy-spotify"
+	help
+	  Mopidy - Spotify
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+
