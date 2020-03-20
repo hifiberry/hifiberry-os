@@ -8,10 +8,10 @@ HIFIBERRY_GSTREAMER_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-go
 
 define HIFIBERRY_GSTREAMER_INSTALL_EXTRA_FILES
 	echo "Hack: Copying compiled typelib files"
-	if [ ! -f $(TARGET_DIR)/usr/lib/girepository-1.0 ]; then
-		mkdir $(TARGET_DIR)/usr/lib/girepository-1.0
+	if [ ! -d $(TARGET_DIR)/usr/lib/girepository-1.0 ]; then \
+		mkdir -p $(TARGET_DIR)/usr/lib/girepository-1.0; \
 	fi
-	cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-ghstreamer/typelib/* \
+	cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-gstreamer/typelib/* \
         	$(TARGET_DIR)/usr/lib/girepository-1.0
 endef
 
