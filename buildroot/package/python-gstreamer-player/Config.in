@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_GSTREAMER_PLAYER
+	bool "python-gstreamer-player"
+	select BR2_PACKAGE_PYTHON_MUTAGEN # runtime
+	help
+	  Python 3 wrapper for playing media via gstreamer.
+
+	  https://github.com/happyleavesaoc/gstreamer-player/
