@@ -5,4 +5,6 @@ config BR2_PACKAGE_MOPIDY_YOUTUBE
 
 	  https://mopidy.com/
 	depends on BR2_PACKAGE_MOPIDY
+	select BR2_PACKAGE_PYTHON_YOUTUBE_DL
+	select BR2_PACKAGE_PYTHON_URITOOLS
 
