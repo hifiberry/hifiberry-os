@@ -26,6 +26,7 @@ cat /proc/device-tree/hat/vendor > hat.txt
 cat /proc/device-tree/hat/product >> hat.txt
 journalctl > logs.txt
 /opt/hifiberry/bin/report-dump >> usage.txt
+cat /etc/mopidy.conf > mopidy.conf
 # Collect some performance data
 top -b -n 5 > top.txt
 perf stat -a sleep 10
