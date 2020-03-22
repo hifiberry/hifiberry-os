@@ -1,6 +1,10 @@
 202003xx:
+- UPnP/DLNA source
+- Support setting maximum volume and mono/stereo mode for non-DSP sound cards
 - added automatic updates
 - improved metadata handling with radio stations
+- Squeezelite: Allow setting server address
+- 
 
 20260226:
 - Bugfix: Spotify configuration 
