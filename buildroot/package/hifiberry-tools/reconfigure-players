@@ -383,7 +383,7 @@ reconfigure_mpd() {
 # Reconfigure Mopidy
 reconfigure_mopidy() {
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
-  sed -i s/control.*ALSAMIXER/control\ =\ $MIXER_CONTROL\ \;\ ALSAMIXER/ /etc/mopidy.conf
+  sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
   restart_service mopidy
   echo " updated mixer"
  fi
