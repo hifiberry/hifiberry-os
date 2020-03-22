@@ -4,3 +4,5 @@ config BR2_PACKAGE_MOPIDY
 	  Mopidy music server
 
 	  https://mopidy.com/
+	select BR2_PACKAGE_USBMOUNT
+	select BR2_PACKAGE_PYTHON_PYKKA

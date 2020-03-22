@@ -5,4 +5,5 @@ config BR2_PACKAGE_MOPIDY_MPRIS
 
 	  https://mopidy.com/
 	depends on BR2_PACKAGE_MOPIDY
+	select BR2_PACKAGE_PYTHON_PYDBUS
 
