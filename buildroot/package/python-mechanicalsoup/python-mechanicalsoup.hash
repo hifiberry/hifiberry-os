@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/mechanicalsoup/json
+md5  117f57063a397b4932d2482c43dc0039  MechanicalSoup-0.12.0.tar.gz
+sha256  39a60627a97981869251837b8bd082485f2f681df8a3315836ffaa74663627bd  MechanicalSoup-0.12.0.tar.gz
+# Locally computed sha256 checksums
+sha256  2a41b4da4e95c95c4a9c09f87652f67cb92d7072316cc12fc16db1773976e5e3  LICENSE
