@@ -31,3 +31,4 @@
 /root/.ssh
 /etc/sigmatcp.conf
 /etc/squeezelite.json
+/etc/mopidy.conf
