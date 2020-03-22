@@ -6,3 +6,4 @@ config BR2_PACKAGE_MOPIDY
 	  https://mopidy.com/
 	select BR2_PACKAGE_USBMOUNT
 	select BR2_PACKAGE_PYTHON_PYKKA
+	select BR2_PACKAGE_PYTHON_URITOOLS
