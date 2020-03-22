@@ -111,4 +111,10 @@ if [ "$V" -lt 20200401 ]; then
   cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
   cp /newroot/etc/mpd.conf.default /newroot/etc/mpd.conf
  fi
+
+ # If Mopidy is new, remove /etc/hifiberry.state
+ if [ ! -f /etc/mopidy.conf ]; then
+  echo "Reconfiguring system after reboot"
+  rm /newroot/etc/hifiberry.state
+ fi
 fi
