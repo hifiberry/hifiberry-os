@@ -17,8 +17,8 @@ endef
 define MOPIDY_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/mopidy/mopidy.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mopidy.service
-        ln -fs ../../../../usr/lib/systemd/system/mopidy.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mopidy.service
+#        ln -fs ../../../../usr/lib/systemd/system/mopidy.service \
+#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mopidy.service
 endef
 
 MOPIDY_POST_INSTALL_TARGET_HOOKS += MOPIDY_INSTALL_CONF
