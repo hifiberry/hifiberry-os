@@ -12,7 +12,7 @@ if [ -d buildroot-dev ]; then
 fi
 
 echo "Checking out buildoot development tree"
-git clone https://git.busybox.net/buildroot buildroot-dev
+git clone https://github.com/buildroot/buildroot buildroot-dev
 
 echo "Checking out a known-good release"
 pushd buildroot-dev
