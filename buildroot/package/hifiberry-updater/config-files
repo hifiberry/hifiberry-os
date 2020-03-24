@@ -32,3 +32,4 @@
 /etc/sigmatcp.conf
 /etc/squeezelite.json
 /etc/mopidy.conf
+/etc/alsaloop.json
