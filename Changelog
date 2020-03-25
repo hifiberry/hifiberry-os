@@ -1,12 +1,13 @@
 202003xx:
 - UPnP/DLNA source
-- Analogue input: auto-enable input on signal
-- Support setting maximum volume and mono/stereo mode for non-DSP sound cards
+- analogue input: auto-enable input on signal
+- support setting maximum volume and mono/stereo mode for non-DSP sound cards
 - equalizer settings: A/B comparisson
 - named sound profiles can be stored and activated 
 - added automatic updates
 - improved metadata handling with radio stations
 - Squeezelite: Allow setting server address
+- allow to reduce dynamic range of volume control (only backend)
 - Several other bugfixes and improvements
 
 20260226:
