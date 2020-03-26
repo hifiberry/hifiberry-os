@@ -6,6 +6,7 @@
 CARD=`aplay -l | grep -i hifiberry | awk '{print $2}' | sed s/://`
 DATE1=`date +%Y%m%d-%H%M%S`
 PLAYER=$1
+CALLINGPID=$PPID
 
 check_paused() {
   STATUS=`cat /proc/asound/card${CARD}/pcm0p/sub0/hw_params`
@@ -14,10 +15,15 @@ check_paused() {
     echo "$DATE1 $DATE2 pause-all $PLAYER" | systemd-cat
     exit 0
   fi
-  PROCESS=`lsof | grep /dev/snd | grep pcmC${CARD} | awk '{print $2}'`
-  APP=`basename $PROCESS`
+  PROCESSLINE=`lsof | grep /dev/snd | grep pcmC${CARD}`
+  APP=`echo $PROCESSLINE| awk '{print $1}'`
+  PROCESSID=`echo $PROCESSLINE| awk '{print $2}'`
   if [ "$APP" == "$PLAYER" ]; then
-    echo "$PLAYER requested pause, but is already using sound card, ignoring" | systemd-cat
+    echo "$PLAYER ($PPID) requested pause, but is already using sound card, ignoring" | systemd-cat
+    exit 0
+  fi
+  if [ "$PROCESSID" == "$PPID" ]; then
+    echo "$PLAYER ($PPID) requested pause, but is already using sound card, ignoring" | systemd-cat
     exit 0
   fi
 }
