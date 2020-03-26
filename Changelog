@@ -3,6 +3,7 @@
 - analogue input: auto-enable input on signal
 - support setting maximum volume and mono/stereo mode for non-DSP sound cards
 - equalizer settings: A/B comparisson
+- support delay for DSP channels
 - named sound profiles can be stored and activated 
 - added automatic updates
 - improved metadata handling with radio stations
