@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MOPIDY_ALSAMIXER
+	bool "mopidy-alsamixer"
+	help
+	  Mopidy - ALSA mixer support
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+

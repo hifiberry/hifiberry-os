@@ -1,0 +1,8 @@
+[Unit]
+Description=Install updates
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/update
+

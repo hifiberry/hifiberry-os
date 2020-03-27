@@ -20,6 +20,8 @@ else
   exit 1
 fi
 
+exit 0
+# Leave config.txt as it is for now
 echo "Cleaning up /boot/config.txt again"
 cat /boot/config.txt | grep -v i2c_gpio | grep -v i2c-gpio > /tmp/x.conf
 mv /tmp/x.conf /boot/config.txt

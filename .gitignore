@@ -13,3 +13,5 @@ a
 b
 notify
 publish-files
+publish-dev
+update-all

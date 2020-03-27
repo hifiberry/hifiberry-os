@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_PROBOSCIS
+	bool "python-proboscis"
+	help
+	  Extends Nose with certain TestNG like features.
+
+	  https://github.com/rackspace/python-proboscis

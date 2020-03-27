@@ -7,6 +7,12 @@ if [ ! -f $UPDATER ]; then
  exit 1
 fi
 
+mount -o remount,rw /boot
+if [ ! -f /boot/cmdline.txt ]; then
+ echo "can't write to /boot/cmdline.txt, aborting"
+ exit 1
+fi
+
 cd `dirname $0`
 INACTIVE=`./partitions | awk '{print $2}'`
 

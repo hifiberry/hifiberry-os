@@ -42,6 +42,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/store-volume
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/restore-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/restore-volume
+     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/speaker-role \
+	   $(TARGET_DIR)/opt/hifiberry/bin/speaker-role
     $(INSTALL) -D -m 0600 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.conf.sample \
            $(TARGET_DIR)/etc/hifiberry.conf.sample
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions \
@@ -76,6 +78,9 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
 endef
 
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
+	if [ ! -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
+		mkdir -p  $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants;  \
+	fi
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-detect.service \
                 $(TARGET_DIR)/lib/systemd/system/hifiberry-detect.service
         ln -fs ../../../../usr/lib/systemd/system/hifiberry-detect.service \

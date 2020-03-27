@@ -15,6 +15,7 @@ sudo losetup /dev/loop99 $1
 sudo kpartx -a /dev/loop99
 ls -l /dev/mapper
 sudo dosfsck -a /dev/mapper/loop99p1
+sudo fsck.ext4 -v -f  /dev/mapper/loop99p2
 sudo kpartx -d /dev/loop99
 sudo losetup -d /dev/loop99
 

@@ -21,19 +21,6 @@ if [ "$V" -lt 20191022 ]; then
  rm /newroot/etc/hifiberry.state
 fi
 
-if [ "$V" -lt 20191201 ]; then
- echo "Version < 20191201, adding postgresql configuration to audiocontrol"
- echo
- FOUND=`cat /newroot/etc/audiocontrol2.conf | grep '\[postgres\]'`
- if [ "$FOUND" == "" ]; then
-  echo >> /newroot/etc/audiocontrol2.conf
-  echo '[postgres]' >> /newroot/etc/audiocontrol2.conf
-  echo "audiocontrol2.conf done"
- else
-  echo "Postgres already configured"
- fi
-fi
-
 if [ "$V" -lt 20200201 ]; then
  echo "Version < 20200101, adding privacy section to audiocontrol"
  echo
@@ -79,7 +66,6 @@ if [ "$V" -lt 20200301 ]; then
  echo "Version < 20200301, adapting audiocontrol.conf"
  # New way to include plugins
  sed -i 's/\[keyboard\]/[controller:ac2.plugins.control.keyboard.Keyboard]/' /newroot/etc/audiocontrol2.conf
- sed -i 's/\[postgres\]/[metadata:ac2.plugins.metadata.postgresql.MetadataPostgres]/' /newroot/etc/audiocontrol2.conf
 
  LAMETRIC=`grep LaMetricPush /newroot/etc/audiocontrol2.conf`
  if [ "$LAMETRIC" == "" ]; then
@@ -99,5 +85,43 @@ dt = 24
 sw = 25
 step = 5
 EOF
+ fi
+fi
+
+if [ "$V" -lt 20200401 ]; then
+ echo "Version < 20200301, adapting audiocontrol.conf"
+
+ # Remove postgres plugin
+ cat /newroot/etc/audiocontrol2.conf | grep -iv postgres > /tmp/audiocontrol2.conf
+ cp /newroot/etc/audiocontrol2.conf /newroot/etc/audiocontrol2.conf.bak
+ cp /tmp/audiocontrol2.conf  /newroot/etc/audiocontrol2.conf
+
+ # Overwrite asound.conf
+ TTABLE=`cat /newroot/etc/asound.conf | grep ttable_config`
+ if [ "$TTABLE" == "" ]; then 
+  echo "Adding ttable configuration to asound.conf"
+  cp /newroot/etc/asound.conf /newroot/etc/asound.conf.bak
+  cp /newroot/etc/asound.conf.exclusive /newroot/etc/asound.conf
+ fi 
+
+ # Overwrite mpd.conf
+ MPDCONFOK=`cat /newroot/etc/mpd.conf | grep device | grep default`
+ if [ "MPDCONFOK" == "" ]; then
+  echo "Using default mpd.conf"
+  cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
+  cp /newroot/etc/mpd.conf.default /newroot/etc/mpd.conf
+ fi
+
+ # If Mopidy is new, remove /etc/hifiberry.state
+ if [ ! -f /etc/mopidy.conf ]; then
+  echo "Reconfiguring system after reboot"
+  rm /newroot/etc/hifiberry.state
+ fi
+
+ # dhcp has been renamed to wireless
+ if [ -f /newroot/etc/systemd/network/dhcp.network ]; then
+  echo "Renaming dhcp.network to eth0.network"
+  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/eth0.network.bak
+  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/eth0.network
  fi
 fi

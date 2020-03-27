@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_LEVENSHTEIN
+	bool "python-levenshtein"
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	help
+	  Python extension for computing string edit distances and
+	  similarities.
+
+	  http://github.com/ztane/python-Levenshtein

@@ -1,9 +1,26 @@
 #!/bin/bash
 
+echo "Start radio $2 ($1)" | systemd-cat
+
 URL=$1
 if [ "$URL" == "" ]; then
   echo "call with $0 streamurl"
   exit 1
+fi
+
+# Start mpd if it isn't yet running
+systemctl start mpd mpd-mpris
+
+STATIONNAME=$2
+if [ "$STATIONNAME" != "" ]; then
+  # URLs are often playlists or forwarders
+  # extract the real URL of the stream using the musicdb web service
+  URLSERVICE=http://musicdb.hifiberry.com/radio/url
+  NEWURL=`curl -f -s -d stream="$URL" -d station="$STATIONNAME" -m 5 $URLSERVICE` 
+fi
+
+if [ "$NEWURL" != "" ]; then
+ URL=$NEWURL
 fi
 
 if [[ $URL == *"opml.radiotime.com"* ]]; then
