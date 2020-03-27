@@ -944,7 +944,7 @@ BR2_PACKAGE_BZIP2=y
 # BR2_PACKAGE_UNRAR is not set
 # BR2_PACKAGE_UNZIP is not set
 # BR2_PACKAGE_XZ is not set
-# BR2_PACKAGE_ZIP is not set
+BR2_PACKAGE_ZIP=y
 # BR2_PACKAGE_ZSTD is not set
 
 #
