@@ -17,6 +17,7 @@
 /etc/hifiberry.state
 /etc/machine-info
 /etc/systemd/network/dhcp.network
+/etc/systemd/network/eth0.network
 /etc/systemd/network/wireless.network
 /etc/snapcastmpris.conf
 /etc/force_exclusive_audio
@@ -33,3 +34,4 @@
 /etc/squeezelite.json
 /etc/mopidy.conf
 /etc/alsaloop.json
+/etc/asound.conf
