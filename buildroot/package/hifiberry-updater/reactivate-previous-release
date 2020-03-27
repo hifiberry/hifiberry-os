@@ -1,23 +1,35 @@
 #!/bin/bash
 PART=`/opt/hifiberry/bin/partitions | awk '{print $2}'`
-if [ "-f /boot/zImage.bak" ]; then
+if [ ! -f /boot/zImage.bak ]; then
  echo "No previous release found, aborting..."
  exit 1
 fi
-mount -o remount,rw /boot
 if [ "$PART" == "/dev/mmcblk0p3" ]; then
- echo "root=/dev/mmcblk0p3 rootwait console=tty5 systemd.show_status=0 quiet splash"
- mv /boot/zImage.bak /boot/zImage
- sync
- reboot
+ P=$PART
 fi
 if [ "$PART" == "/dev/mmcblk0p2" ]; then
- echo "root=/dev/mmcblk0p2 rootwait console=tty5 systemd.show_status=0 quiet splash"
- mv /boot/zImage.bak /boot/zImage
- sync
- reboot
+ P=$PART
 fi
 
-echo "Unknown backup partition $PART"
+if [ "$P" == "" ]; then
+ echo "Unknown backup partition $PART, aborting..."
+ exit 1
+fi
+
+mount -o remount,rw /boot
+echo "activating $P"
+echo "root=$P rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
+mv /boot/zImage.bak /boot/zImage
+umount /newroot 2>/dev/null
+if [ ! -d /oldroot ]; then
+  mkdir /oldroot
+fi
+mount $P /oldroot
+# Disable automatic updates
+echo > /etc/updater.release
+umount /oldroot
+
+sync
+reboot
 
 
