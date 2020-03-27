@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = 746ffa8c38824ec1df9ae3d2b3b0e672c4e5d11b
+BEOCREATE_VERSION = f4ee1e69e093b5685f1bb913bc410cc340777555
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
-#BEOCREATE_VERSION = 607328380fa8359c480f5b53e227eb846255341e
+#BEOCREATE_VERSION = 5b88b723788f8cf15cace8ee67b43ce035400702
 #BEOCREATE_SITE = $(call github,hifiberry,create,$(BEOCREATE_VERSION))
 
 define BEOCREATE_BUILD_CMDS
