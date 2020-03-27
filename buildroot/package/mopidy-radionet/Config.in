@@ -1,0 +1,9 @@
+config BR2_PACKAGE_MOPIDY_RADIONET
+	bool "mopidy-radionet"
+	help
+	  Mopidy - Radionet
+
+	  https://mopidy.com/
+	depends on BR2_PACKAGE_MOPIDY
+	select BR2_PACKAGE_PYTHON_URITOOLS
+

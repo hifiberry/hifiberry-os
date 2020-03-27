@@ -1,15 +1,35 @@
 #!/bin/bash
 
-BASEURL=https://www.hifiberry.com/images
-SYSURL=https://musicdb.hifiberry.com/update-system
+UPDATEURL="https://musicdb.hifiberry.com"
 HOST=`cat /etc/uuid`
 MODE=REBOOT
 FORCE=0
 DEVMODE=0
 
-for i in "$@"
-do
-case $i in
+# find correct version
+. /etc/hifiberry.state
+if [ "$PIVERSION" == "" ]; then
+ PIVERSION=`cat /etc/raspberrypi.version`
+fi
+
+#
+# There are different release tags available:
+#
+# critical:     this update needs to be installed
+# stable:       lastest stable release
+# latest:       latest official release, might include features 
+#               that are not yet in the stable release
+# experimental: development release, not recommended for normal
+#               users, might break things
+
+if [ -f /etc/updater.release ]; then
+ RELEASE=`cat /etc/updater.release`
+else
+ RELEASE=critical
+fi
+
+for i in "$@"; do
+ case $i in
     --reboot)
     MODE=REBOOT
     ;;
@@ -22,33 +42,30 @@ case $i in
     --force)
     FORCE=1
     ;;
-    --development)
-    DEVMODE=1
+    --latest)
+    RELEASE=latest
     ;;
-esac
+    --experimental)
+    RELEASE=experimental
+    ;;
+    --stable)
+    RELEASE=stable
+ esac
 done
-
-# Download version file first
-cd /tmp
-if [ -f listing ]; then
- rm listing
-fi
-curl $BASEURL/listing >listing 2>/dev/null
-if [ "$?" != "0" ]; then
- echo "Could not download listing file, aborting"
-fi
 
 # Check version
 MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
 if [ "$MYVERSION" == "" ]; then
  MYVERSION=0
 fi
-curl -d host=$HOST -d version=$VERSION -m 2 $SYSURL >/dev/null 2>/dev/null
+VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d piversion=$PIVERSION -d releasetag=$RELEASE -m 2 $UPDATEURL/update-system`
+if [ "$?" != 0 ]; then
+ echo "Couldn't get release information from $UPDATEURL/update-system, aborting..."
+ exit 1
+fi
 
-. listing
-
-if [ "$DEVMODE" == "1" ]; then
- VERSION=$DEVVERSION
+if [ "$VERSION" == "" ]; then
+ VERSION=$MYVERSION
 fi
 
 if [ "$VERSION" -le "$MYVERSION" ]; then
@@ -56,7 +73,7 @@ if [ "$VERSION" -le "$MYVERSION" ]; then
    exit 0
  fi
  if [ "$FORCE" != "1" ]; then
-   echo "you are already using the latest version"
+   echo "you are already using the latest version ($MYVERSION vs. $VERSION)"
    exit 0
  fi
 fi
@@ -64,25 +81,23 @@ fi
 if [ "$MODE" == "CHECK" ]; then
  echo "$VERSION"
  echo
- curl https://hifiberry.com/images/RELEASENOTES
+ curl  $UPDATEURL/releasenotes/$VERSION
  exit
 fi
  
 echo "updating from $MYVERSION to $VERSION..."
 
 # find correct version
-. /etc/hifiberry.state
-if [ "$PIVERSION" == "" ]; then
- PIVERSION=`cat /etc/raspberrypi.version`
+UPDATER=`curl -f -s $UPDATEURL/updater-url/$VERSION/$PIVERSION`
+if [ "$UPDATER" == "" ]; then
+ echo "No updater found for $VERSION/$PIVERSION"
+ exit 1
 fi
-UPDATERVAR=UPDATER${PIVERSION}
-FILENAME=${!UPDATERVAR}
-UPDATER=${BASEURL}/${FILENAME}
 
 # download it
 echo "downloading $UPDATER..."
 cd /data
-curl $UPDATER --progress-bar -o updater.tar.gz 
+curl -f $UPDATER --progress-bar -o updater.tar.gz 
 if [ "$?" != "0" ]; then
  echo "Could not download updater $UPDATER, aborting"
  exit 1

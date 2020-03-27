@@ -6,7 +6,7 @@ if [ -f /etc/force_exclusive_audio ]; then
  FORCE_EXCLUSIVE=1
 fi
 
-SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy"
 
 FEATURES=""
 
@@ -355,6 +355,22 @@ reconfigure_squeezelite() {
  fi
 }
 
+# Reconfigure dlnampris
+reconfigure_dlna() {
+ UPDATED=0
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+  sed -i "s/systemname\=.*/systemname=$SYSNAME_SED_SPACES/" /etc/dlnampris.conf
+  UPDATE=1
+ fi
+
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i "s/mixer\=.*/mixer=$MIXER_CONTROL/" /etc/dlnampris.conf
+  UPDATE=1
+ fi
+
+ restart_service dlna-mpris
+}
+
 # Reconfigure MPD
 reconfigure_mpd() {
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
@@ -362,7 +378,16 @@ reconfigure_mpd() {
   restart_service mpd
   echo " updated mixer"
  fi
-}                 
+}
+
+# Reconfigure Mopidy
+reconfigure_mopidy() {
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
+  restart_service mopidy
+  echo " updated mixer"
+ fi
+}
 
 # Reconfigure "can_record"
 reconfigure_recording() {
@@ -445,6 +470,13 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
+if [ "$1" == "--restart-players" ]; then
+ for SERVICE in $SERVICES; do
+  restart_service $SERVICE
+ done
+ exit
+fi 
+
 pi_model
 detect_hw
 guess_volume_control
@@ -500,6 +532,10 @@ echo "Reconfiguring squeezelite"
 reconfigure_squeezelite
 echo "Reconfiguring MPD"
 reconfigure_mpd
+echo "Reconfiguring DLNA"
+reconfigure_dlna
+echo "Reconfiguring Mopidy"
+reconfigure_mopidy
 echo "Reconfigure recording"
 reconfigure_recording
 echo "Reconfigure AudioControl2"
@@ -526,4 +562,3 @@ echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE
 fi
-

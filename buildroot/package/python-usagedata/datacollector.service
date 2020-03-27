@@ -1,0 +1,17 @@
+[Unit]
+Description=Usage data collector
+Wants=network-online.target
+After=network.target
+Before=audiocontrol2.service beocreate2.service
+
+[Service]
+Type=simple
+WorkingDirectory=/tmp
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting data collector" 
+ExecStart=/bin/python3 -m usagecollector.server
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -162,8 +162,12 @@ define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 	mkdir -p $(TARGET_DIR)/library/music
 	mkdir -p $(TARGET_DIR)/library/playlists
         mkdir -p $(TARGET_DIR)/var/lib/mpd
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/pause-state-file \
+		$(TARGET_DIR)/opt/hifiberry/bin/pause-state-file
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.conf \
 		$(TARGET_DIR)/etc/mpd.conf
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.conf \
+		$(TARGET_DIR)/etc/mpd.conf.default
         # Install some sample web radio files
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/radio/*.m3u \
                 $(TARGET_DIR)/library/playlists/

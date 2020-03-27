@@ -7,13 +7,20 @@ fi
 
 alsactl -f $STORE restore
 
-dsptoolkit --timeout=5 set-volume `cat /etc/dspvolume.store`
-
 . /etc/hifiberry.state
+DSP=`echo $CURRENT_FEATURES | grep -i dsp`
+if [ "$DSP" != "" ]; then
+ dsptoolkit --timeout=5 set-volume `cat /etc/dspvolume.store`
+fi
+
 if [ "$CURRENT_MIXER_CONTROL" != "Softvol" ]; then
-	amixer sset Softvol 100%
+ if [ -f "/etc/softvol.limit" ]; then 
+  amixer sset Softvol `cat /etc/softvol.limit`
+ else
+  amixer sset Softvol 100%
+ fi
 fi
 
 if [ -f /opt/hifiberry/bin/fix-dacadcpro-mixer ]; then
-        /opt/hifiberry/bin/fix-dacadcpro-mixer
+ /opt/hifiberry/bin/fix-dacadcpro-mixer
 fi

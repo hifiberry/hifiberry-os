@@ -3,3 +3,5 @@ config BR2_PACKAGE_HIFIBERRY_POSTGRES
         help
 	  Start script and configuration files for PostgreSQL
         select BR2_PACKAGE_POSTGRESQL
+        select BR2_PACKAGE_PYTHON_PSYCOPG2
+

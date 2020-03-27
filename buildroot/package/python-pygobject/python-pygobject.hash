@@ -1,0 +1,6 @@
+# md5, sha256 from https://pypi.org/pypi/PyGObject/json
+md5	f191a160d492a154beccc4c20f30cbc0  PyGObject-3.36.0.tar.gz
+sha256	b97f570e55017fcd3732164811f24ecf63983a4834f61b55b0aaf64ecefac856  PyGObject-3.36.0.tar.gz
+# Locally computed sha256 checksums
+sha256	32434afcc8666ba060e111d715bfdb6c2d5dd8a35fa4d3ab8ad67d8f850d2f2b  COPYING
+sha256	5c382291e88a29636da3f17b0ac11095b2bc7f9939188900037fac3d7f4f5dd7  docs/images/LICENSE

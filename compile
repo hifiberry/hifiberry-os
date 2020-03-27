@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ "$BRSRCDIR" == "" ]; then
+ BRSRCDIR=../buildroot
+fi
+
 cd `dirname $0`
 MYDIR=`pwd`
 TS=`date +%Y%m%d`
@@ -20,11 +24,16 @@ fi
 
 # Remove some packages
 if [ "$2" != "" ]; then
- echo Removing $BRDIR/build/$2*
- rm -rf $BRDIR/build/$2*
+ echo Removing $BRDIR/build/$2*  $BRDIR/build/host-$2*
+ rm -rf $BRDIR/build/$2*  $BRDIR/build/host-$2*
 fi
 
-cd ../buildroot
+if [ "$3" != "" ]; then
+ echo Removing $BRDIR/build/$3*  $BRDIR/build/host-$3*
+ rm -rf $BRDIR/build/$3*  $BRDIR/build/host-$3*
+fi
+
+cd $BRSRCDIR
 mkdir -p $BRDIR/target/etc
 echo $VERSION > $BRDIR/target/etc/piversion
 make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot

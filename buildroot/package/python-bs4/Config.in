@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_BS4
+	bool "python-bs4"
+	select BR2_PACKAGE_PYTHON_BEAUTIFULSOUP4 # runtime
+	help
+	  Dummy package for Beautiful Soup.
+
+	  https://pypi.python.org/pypi/beautifulsoup4

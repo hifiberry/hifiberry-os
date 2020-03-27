@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_OAUTH2CLIENT
+	bool "python-oauth2client"
+	select BR2_PACKAGE_PYTHON_HTTPLIB2 # runtime
+	select BR2_PACKAGE_PYTHON_PYASN1 # runtime
+	select BR2_PACKAGE_PYTHON_PYASN1_MODULES # runtime
+	select BR2_PACKAGE_PYTHON_RSA # runtime
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	help
+	  OAuth 2.0 client library.
+
+	  http://github.com/google/oauth2client/

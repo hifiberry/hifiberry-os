@@ -1,7 +1,7 @@
 [Unit]
 Description=Bluetooth A2DP agent
-Requires=bluetooth.service
-After=bluetooth.service
+Requires=bluetooth.service btuart.service
+After=bluetooth.service btuart.service
 
 [Service]
 ExecStart=/opt/btspeaker/a2dp-agent.py

@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "$2" == "" ]; then
+	DURATION=1
+else
+	DURATION=$2
+fi
+curl -s -X post http://127.0.0.1:3141/api/use/$1/${DURATION} >/dev/null
+

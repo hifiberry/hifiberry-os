@@ -9,8 +9,12 @@ else
  VERSION=$1
 fi
 
+if [ "$BRSRCDIR" == "" ]; then
+ BRSRCDIR=../buildroot
+fi
+
 BRDIR=`./brdir $VERSION`
 echo "Configuring in $BRDIR"
 cd `dirname $0`
-cd ../buildroot
+cd $BRSRCDIR
 make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot menuconfig
