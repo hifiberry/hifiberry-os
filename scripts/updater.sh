@@ -106,7 +106,7 @@ if [ "$V" -lt 20200401 ]; then
 
  # Overwrite mpd.conf
  MPDCONFOK=`cat /newroot/etc/mpd.conf | grep device | grep default`
- if [ "MPDCONFOK" != "" ]; then
+ if [ "MPDCONFOK" == "" ]; then
   echo "Using default mpd.conf"
   cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
   cp /newroot/etc/mpd.conf.default /newroot/etc/mpd.conf
@@ -116,5 +116,12 @@ if [ "$V" -lt 20200401 ]; then
  if [ ! -f /etc/mopidy.conf ]; then
   echo "Reconfiguring system after reboot"
   rm /newroot/etc/hifiberry.state
+ fi
+
+ # dhcp has been renamed to wireless
+ if [ -f /newroot/etc/systemd/network/dhcp.network ]; then
+  echo "Renaming dhcp.network to eth0.network"
+  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/eth0.network.bak
+  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/eth0.network
  fi
 fi
