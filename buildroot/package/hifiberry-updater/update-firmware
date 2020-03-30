@@ -1,0 +1,5 @@
+#!/bin/bash
+mount -o remount,rw /boot
+cp -rv /usr/lib/firmware/rpi/* /boot
+sync
+reboot
