@@ -8,6 +8,8 @@ define CONFIGTXT_INSTALL_TARGET_CMDS
         echo "# Enable I2C and SPI" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "dtparam=i2c=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "# Workaround force_eeprom_read" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 define CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
