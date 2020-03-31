@@ -32,6 +32,8 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         [ -d $(TARGET_DIR)/etc/systemd/system/timers.target.wants ] || mkdir $(TARGET_DIR)/etc/systemd/system/timers.target.wants
         ln -fs ../../../../usr/lib/systemd/system/updater.timer \
              $(TARGET_DIR)/etc/systemd/system/timers.target.wants/updater.timer
+	echo "Installing kernel"
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm/boot/zImage $(TARGET_DIR)/usr/lib/firmware/rpi
 endef
 
 define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
