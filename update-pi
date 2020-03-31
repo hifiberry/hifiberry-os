@@ -22,7 +22,7 @@ REMOTEVERSION=`sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST cat /etc/piversion
 if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
 
  echo "Packaging Pi$VERSION release"
- ./create-image $VERSION
+ ./create-updater $VERSION
  IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 
  echo "Updating $HOST with $IMG"
