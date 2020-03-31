@@ -215,13 +215,13 @@ guess_card() {
    return
  fi
 
- DIGIPRO=`aplay -l | grep Digi+ | grep Pro`
+ DIGIPRO=`aplay -l | grep Digi | grep Pro`
  if [ "$DIGIPRO" != "" ]; then
    CARD="Digi+ Pro"
    return
  fi
 
- DIGI=`aplay -l | grep Digi+`
+ DIGI=`aplay -l | grep Digi`
  if [ "$DIGI" != "" ]; then
    CARD="Digi+"
     return

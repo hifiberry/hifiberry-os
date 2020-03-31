@@ -130,3 +130,14 @@ diff -urb buildroot-dev/utils/scanpypi brdev-working/utils/scanpypi
  """
  
  Utility for building Buildroot packages for existing PyPI packages
+--- buildroot-dev/package/rpi-firmware/rpi-firmware.mk	2020-03-30 08:34:17.762664308 +0000
++++ buildroot-dev/package/rpi-firmware/rpi-firmware.mk	2020-03-30 09:07:44.410958163 +0000
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+
+-RPI_FIRMWARE_VERSION = 01ecfd2ba2b7cf3a2f4aa75ada895ee4a3e729f5
++RPI_FIRMWARE_VERSION = 5574077183389cd4c65077ba18b59144ed6ccd6d
+ RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
+ RPI_FIRMWARE_LICENSE = BSD-3-Clause
+ RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
