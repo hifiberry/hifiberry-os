@@ -11,7 +11,7 @@ PYTHON_PYGOBJECT_SETUP_TYPE = setuptools
 PYTHON_PYGOBJECT_LICENSE = GNU Lesser General Public License v2 or later (LGPLv2+)
 PYTHON_PYGOBJECT_LICENSE_FILES = COPYING docs/images/LICENSE
 
-PYTHON_PYGOBJECT_DEPENDENCIES += python3 host-python3 python-pycairo host-python-pycairo host-gstreamer1
+PYTHON_PYGOBJECT_DEPENDENCIES += python3 host-python3 python-pycairo host-python-pycairo
 
 PYTHON_PYGOBJECT_CONF_ENV = \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
