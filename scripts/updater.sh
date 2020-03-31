@@ -124,4 +124,8 @@ if [ "$V" -lt 20200401 ]; then
   mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/eth0.network.bak
   mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/eth0.network
  fi
+
+ # force_eeprom_read workaround
+ mount -o rw,remount /boot
+ echo "force_eeprom_read=0" >> /boot/config.txt
 fi
