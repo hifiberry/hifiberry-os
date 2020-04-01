@@ -10,7 +10,6 @@ if [ "$FIXCONFIG" != "" ]; then
 	echo "Fixing Bluetooth UART configuration" >> /tmp/reboot	
 fi	
 
-echo "Calculating Bluetooth address"
 if grep -q "Pi 4" /proc/device-tree/model; then
 	BDADDR=
 	PI3=0
@@ -21,6 +20,7 @@ else
 	B3=`echo $SERIAL | cut -c7-8`
 	BDADDR=`printf b8:27:eb:%02x:%02x:%02x $((0x$B1 ^ 0xaa)) $((0x$B2 ^ 0xaa)) $((0x$B3 ^ 0xaa))`
 fi
+echo "BT address is $BDADDR"
 
 /opt/hifiberry/bin/bootmsg "Attaching Bluetooth interface"
 
