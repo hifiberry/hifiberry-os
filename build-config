@@ -17,7 +17,12 @@ echo "Building in $BRDIR"
 echo $VERSION > $BRDIR/.piversion
 echo $VERSION > buildroot/PIVERSION
 
-SRC=configs/hifiberryos
+if [ "$2" == "" ]; then
+ TEMPLATE=hifiberryos
+else
+ TEMPLATE=$2
+fi
+SRC=configs/$TEMPLATE
 #SRC=configs/hifiberryos-gui
 TMP=./tmpfile.$$
 DST=./config.$$
