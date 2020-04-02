@@ -101,6 +101,9 @@ for i in `cat /opt/hifiberry/etc/services`; do
 done
 
 echo "looking for update script..."
+if [ -f /newroot/tmp/updater.sh ]; then
+ cp /newroot/tmp/updater.sh /tmp/updater.sh
+fi
 cd /tmp
 if [ ! -f updater.sh ]; then
  echo "no post-config update script found, continuing..."
