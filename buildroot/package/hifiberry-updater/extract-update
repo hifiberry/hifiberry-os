@@ -26,27 +26,32 @@ echo "mounting new root file system..."
 if [ ! -d /newroot ]; then
   mkdir /newroot
 fi
-                                    
+
 echo "resizing new root file system..."
-resize2fs $INACTIVE                 
-mount -t ext4 $INACTIVE /newroot    
-resize2fs $INACTIVE                 
-if [ -f /newroot/resize-me ]; then  
-  rm /newroot/resize-me            
-fi                                 
+resize2fs $INACTIVE
+mount -t ext4 $INACTIVE /newroot
+resize2fs $INACTIVE
+if [ -f /newroot/resize-me ]; then
+  rm /newroot/resize-me
+fi
 VERSION=`cat /newroot/etc/hifiberry.version`
 
-echo "extracting new kernel..."                   
-cd /tmp                                        
-gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
-if [ ! -f zImage ]; then                       
- echo "Could not find new kernel, aborting ..."
- exit 1                                        
-else                               
- cp /boot/zImage /boot/zImage.bak  
- mv zImage /boot/zImage 2>/dev/null
-fi                                        
-                                          
+echo "extracting new kernel..."
+if [ -f /usr/lib/firmware/rpi/zImage ]; then
+ echo "Using zImage from RPI firmware"
+ cp /boot/zImage /boot/zImage.bak
+ cp -rv /usr/lib/firmware/rpi/* /boot
+else
+ cd /tmp
+ gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
+ if [ ! -f zImage ]; then
+  echo "Could not find new kernel, aborting ..."
+  exit 1
+ else
+  cp /boot/zImage /boot/zImage.bak
+  mv zImage /boot/zImage 2>/dev/null
+ fi
+fi
 echo "migrating SSH host keys..."
 cp /etc/ssh/ssh_host* /newroot/etc/ssh
 
@@ -96,6 +101,9 @@ for i in `cat /opt/hifiberry/etc/services`; do
 done
 
 echo "looking for update script..."
+if [ -f /newroot/tmp/updater.sh ]; then
+ cp /newroot/tmp/updater.sh /tmp/updater.sh
+fi
 cd /tmp
 if [ ! -f updater.sh ]; then
  echo "no post-config update script found, continuing..."
@@ -105,6 +113,8 @@ else
  ./updater.sh
 fi
 
+echo "storing version number of previous release..."
+cp /etc/hifiberry.version /newroot/etc/hifiberry.version.previous
 sync
 
 echo "unmounting $INACTIVE..."
@@ -115,7 +125,7 @@ if [ "$1" == "--simulate" ]; then
  echo "not switching to new version..."
  exit
 fi
-                                                               
+
 echo "switching root file system to inactive partition..."
 echo "root=$INACTIVE rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
 
@@ -123,9 +133,9 @@ if [ "$1" == "--reboot" ]; then
  echo "removing updater..."
  rm $UPDATER
  echo "rebooting..."
- sync            
+ sync
  reboot
 else
  echo "Version $VERSION installed. You need to reboot to activate it"
-fi 
+fi
 

@@ -1,10 +1,6 @@
 #!/bin/bash
 
 REBOOTFILE=/tmp/reboot
-if [ -f /etc/force_exclusive_audio ]; then
- echo "Forcing exclusive audio mode"
- FORCE_EXCLUSIVE=1
-fi
 
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy"
 
@@ -49,33 +45,6 @@ check_systemd() {
    fi 
    
  done
-}
-
-check_exclusive() {
- PLAYERCOUNT=0
- EXCLUSIVE=0
- PLAYERS=""
- for SERVICE in $SERVICES; do
-   check_systemd $SERVICE
-   if [ "$SERVICE_ACTIVE" == "1" ]; then
-     PLAYERCOUNT=$((PLAYERCOUNT + 1))
-     PLAYERS="$PLAYERS$SERVICE "
-   fi
- done
- if [ $PLAYERCOUNT -lt 2 ]; then
-   echo "Enabling exclusive audio"
-   EXCLUSIVE=1
- fi
- if [ "$FORCE_EXCLUSIVE" = "1" ]; then 
-   echo "Forcing exclusive audio"       
-   EXCLUSIVE=1                          
- fi 
- IS_EXCLUSIVE=`grep exclusive /etc/asound.conf`
- if [ "$IS_EXCLUSIVE" != "" ]; then 
-   CURRENT_EXCLUSIVE=1
- else
-   CURRENT_EXCLUSIVE=0
- fi
 }
 
 # Detect Raspberry Pi model
@@ -427,28 +396,6 @@ reconfigure_beocreate() {
  fi
 }
 
-# Reconfigure exclusive mode
-reconfigure_exclusive() {
- if [ "$EXCLUSIVE" = "$CURRENT_EXCLUSIVE" ]; then
-  return
- fi
-
- if [ "$EXCLUSIVE" = "1" ]; then
-  cp /etc/asound.conf.exclusive /etc/asound.conf
- else
-  if [ "$PIMODEL" = "0" ]; then
-   cp /etc/asound.conf.dmix_softvol.lite /etc/asound.conf
-  else
-   cp /etc/asound.conf.dmix_softvol /etc/asound.conf
-  fi
- fi
- fix_asound_hw
-
- for SERVICE in $SERVICES; do
-  restart_service $SERVICE
- done
-}
-
 # Change sample rate
 reconfigure_samplerate() {
  if [ "$SAMPLERATE" == "$CURRENT_SAMPLERATE" ]; then
@@ -483,7 +430,6 @@ guess_volume_control
 guess_card
 can_record
 system_name
-check_exclusive
 samplerate
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
@@ -495,7 +441,6 @@ if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
    [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
    [ "$CURRENT_SAMPLERATE" != "$SAMPLERATE" ] || \
-   [ "$CURRENT_EXCLUSIVE" != "$EXCLUSIVE" ] || \
    [ "$CURRENT_HAT_INFO" != "$HAT_INFO" ] || \
    [ "$CURRENT_HW" != "$HW" ] || \
    [ "$CURRENT_FEATURES" != "$FEATURES" ] || \
@@ -508,7 +453,6 @@ fi
 
 echo "Applying settings: "
 echo " Players: $PLAYERS (was $CURRENT_PLAYERS)"
-echo " Exclusive mode: $EXCLUSIVE (was $CURRENT_EXCLUSIVE)"
 echo " Raspberry Pi model: $PIMODEL"
 echo " System name: $SYSNAME (was $CURRENT_SYSNAME)"
 echo " Sound card: $CARD (was $CURRENT_CARD)"
@@ -553,7 +497,6 @@ echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
 echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
-echo "CURRENT_EXCLUSIVE=$EXCLUSIVE" >> /etc/hifiberry.state
 echo "CURRENT_SAMPLERATE=$SAMPLERATE" >> /etc/hifiberry.state
 echo "CURRENT_HAT_INFO=$HAT_INFO" >> /etc/hifiberry.state
 echo "CURRENT_FEATURES=$FEATURES" >> /etc/hifiberry.state

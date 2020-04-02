@@ -7,7 +7,7 @@ After=bluealsa.service sound.target btinterface.service
 # BlueALSA takes some time to initialize
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting bluealsa-aplay"
 ExecStartPre=sleep 2
-ExecStart=/usr/bin/bluealsa-aplay --pcm-buffer-time=250000 00:00:00:00:00:00
+ExecStart=/opt/btspeaker/bluealsa-aplay-start
 RestartSec=5  
 Restart=always
 

@@ -66,79 +66,80 @@ function detect_card {
         fi
 }
 
+FORCEEEPROM=`cat /boot/config.txt | grep force_eeprom_read`
+if [ "$FORCEEEPROM" != "" ]; then
+	echo "Detected force_eeprom_read, removing it" >> /var/log/hifiberry.log
+	mount -o remount,rw /boot
+	cat /boot/config.txt | grep -v force_eeprom_read > /tmp/config.txt
+	cp /boot/config.txt /boot/config.txt.bak
+	cp /tmp/config.txt /boot/config.txt
+	sync
+fi
+
 if [ "$FOUND" == "" ]; then
- echo "No HiFiBerry card configured, try to probe using I2C" >> /var/log/hifiberry.log
+	echo "No HiFiBerry card configured, try to probe using I2C" >> /var/log/hifiberry.log
 
- echo "Mounting /boot"
- mount -o remount,rw /boot
- if [ ! -f /boot/config.txt ]; then
-   echo "couldn't mount FAT file system, aborting card detection" >> /var/log/hifiberry.log
-   exit 1
- fi
+	echo "Mounting /boot"
+	mount -o remount,rw /boot
+	if [ ! -f /boot/config.txt ]; then
+		echo "couldn't mount FAT file system, aborting card detection" >> /var/log/hifiberry.log
+   		exit 1
+ 	fi
 
- echo "Detecting force_eeprom_read"
- FORCEEEPROM=`cat /boot/config.txt | grep force_eeprom_read`
- if [ "$FORCEEEPROM" != "" ]; then
-   cat /boot/config.txt | grep -v force_eeprom_read > /tmp/config.txt
-   cp /boot/config.txt /boot/config.txt.bak
-   cp /tmp/config.txt /boot/config.txt
-   sync
- fi
+	echo "Detecting using I2C" 
+	check_i2c
+	card=$(detect_card)
 
- echo "Detecting using I2C" 
- check_i2c
- card=$(detect_card)
+	if [ "$card" == "beo" ]; then
+		echo "Detected Beocreate"
+		FOUND2=`aplay -l|grep hifiberry`
+		if [ "$FOUND2" != "" ]; then
+			exit_and_cleanup
+		fi
+		card=dac
+	fi
 
- if [ "$card" == "beo" ]; then
-   echo "Detected Beocreate"
-   FOUND2=`aplay -l|grep hifiberry`
-   if [ "$FOUND2" != "" ]; then
-	   exit_and_cleanup
-   fi
-   card=dac
- fi
+	if [ "card" == "blocked" ]; then
+		FOUND2=`aplay -l|grep hifiberry-dac`
+		if [ "$FOUND2" != "" ]; then
+			echo "HiFiBerry DAC driver used, but some card might be configured using HAT EEPROM"
+			cat /boot/config.txt | grep -v "hifiberry-dac" > /boot/config.txt2
+			diff /boot/config.txt /boot/config.txt2
+			if [ "$?" != 0 ]; then
+				echo "Found HiFiBerry DAC configuration, removing it" >>/var/log/hifiberry.log
+				mv /boot/config.txt2 /boot/config.txt
+				echo "Removing hifiberry-dac overlay" >> $REBOOTFILE
+			fi
 
- if [ "card" == "blocked" ]; then
-   FOUND2=`aplay -l|grep hifiberry-dac`
-   if [ "$FOUND2" != "" ]; then
-       echo "HiFiBerry DAC driver used, but some card might be configured using HAT EEPROM"
-       cat /boot/config.txt | grep -v "hifiberry-dac" > /boot/config.txt2
-        diff /boot/config.txt /boot/config.txt2
-        if [ "$?" != 0 ]; then
-          echo "Found HiFiBerry DAC configuration, removing it" >>/var/log/hifiberry.log
-          mv /boot/config.txt2 /boot/config.txt
-          echo "Removing hifiberry-dac overlay" >> $REBOOTFILE
-        fi
+		fi
+	fi
 
-   fi
- fi
-
- if [ "$card" != "" ]; then
- 	echo "Detected $card" >>/var/log/hifiberry.log
-	echo "Creating new config.txt" >>/var/log/hifiberry.log
-	cat $CONFIG | grep -v "hifiberry" > /tmp/config.txt 
-	echo "dtoverlay=hifiberry-$card" >> /tmp/config.txt
-	mv /tmp/config.txt $CONFIG
-	echo "Adding $card to config.txt" >> $REBOOTFILE
- else
-	echo "Could not find an I2C enabled sound card"
-        cat /boot/config.txt | grep -v "hifiberry-digi" | grep -v "hifiberry-amp" | grep -v "hifiberry-dacplus" > /boot/config.txt2
-        diff /boot/config.txt /boot/config.txt2
-        if [ "$?" != 0 ]; then
-          echo "Found old configuration, removing it" >>/var/log/hifiberry.log
-          mv /boot/config.txt2 /boot/config.txt
-          echo "Removing old configuration in config.txt" >> $REBOOTFILE
-        fi
-        echo "Assuming HiFiBerry DAC+ Light, Zero"
-        FOUND2=`aplay -l|grep hifiberry`
-        if [ "$FOUND2" != "" ]; then
-          exit_and_cleanup
-        else
-          echo "dtoverlay=hifiberry-dac" >> /boot/config.txt
-          echo "Nothing detected, assuming HiFiBerry DAC+ Light/Zero" >>/var/log/hifiberry.log
-          echo "Enabling DAC+ Light" >> $REBOOTFILE
-        fi
- fi
+	if [ "$card" != "" ]; then
+		echo "Detected $card" >>/var/log/hifiberry.log
+		echo "Creating new config.txt" >>/var/log/hifiberry.log
+		cat $CONFIG | grep -v "hifiberry" > /tmp/config.txt 
+		echo "dtoverlay=hifiberry-$card" >> /tmp/config.txt
+		mv /tmp/config.txt $CONFIG
+		echo "Adding $card to config.txt" >> $REBOOTFILE
+	else
+		echo "Could not find an I2C enabled sound card"
+		cat /boot/config.txt | grep -v "hifiberry-digi" | grep -v "hifiberry-amp" | grep -v "hifiberry-dacplus" > /boot/config.txt2
+		diff /boot/config.txt /boot/config.txt2
+		if [ "$?" != 0 ]; then
+			echo "Found old configuration, removing it" >>/var/log/hifiberry.log
+			mv /boot/config.txt2 /boot/config.txt
+			echo "Removing old configuration in config.txt" >> $REBOOTFILE
+		fi
+		echo "Assuming HiFiBerry DAC+ Light, Zero"
+		FOUND2=`aplay -l|grep hifiberry`
+		if [ "$FOUND2" != "" ]; then
+			exit_and_cleanup
+		else
+			echo "dtoverlay=hifiberry-dac" >> /boot/config.txt
+			echo "Nothing detected, assuming HiFiBerry DAC+ Light/Zero" >>/var/log/hifiberry.log
+			echo "Enabling DAC+ Light" >> $REBOOTFILE
+		fi
+	fi
 else
    echo "Found HiFiBerry card: $FOUND" >>/var/log/hifiberry.log
 fi

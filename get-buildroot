@@ -1,27 +1,33 @@
 #!/bin/bash
+TAG=2019.08.3
+BRDIR=buildroot-${TAG}
+
 cd `dirname $0`
 cd ..
-if [ -d buildroot ]; then
- echo "Saving exiting buildroot"
- mv buildroot buildroot.bak
+
+if [ -d $BRDIR ]; then
+	echo "Saving current buildroot"
+	rm -rf $BRDIR.bak
+	mv $BRDIR $BRDIR.bak
 fi
 
-if [ -d buildroot-dev ]; then
- echo "Saving buildroot-dev"
- mv buildroot-dev buildroot-dev.bak
-fi
-
-echo "Checking out buildoot development tree"
-git clone https://github.com/buildroot/buildroot buildroot-dev
+echo "Checking out buildoot tag ${TAG} from Github"
+git clone https://github.com/buildroot/buildroot $BRDIR
 
 echo "Checking out a known-good release"
-pushd buildroot-dev
-git checkout af90a104c06542a1bf5545eaf9b9c7beb7176e80
+pushd $BRDIR
+git checkout $TAG
 
-echo "Applying patch"
-patch -p1 < ../hifiberry-os/buildroot/buildroot-dev.patch
+if [ -f ../hifiberry-os/buildroot/buildroot-${TAG}.patch ]; then
+	echo "Applying patch"
+	patch -p1 < ../hifiberry-os/buildroot/buildroot-${TAG}.patch
+else	
+	ls ../hifiberry-os/buildroot/buildroot-${TAG}.patch
+	echo "No patch found - is this correct?"
+fi
 popd
 
-echo "Symlinking buildroot-dev"
-ln -s buildroot-dev buildroot
+echo "Symlinking to buildroot"
+rm buildroot
+ln -s $BRDIR buildroot
 
