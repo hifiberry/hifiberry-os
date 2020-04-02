@@ -119,13 +119,21 @@ if [ "$V" -lt 20200401 ]; then
  fi
 
  # dhcp has been renamed to wireless
- if [ -f /newroot/etc/systemd/network/dhcp.network ]; then
-  echo "Renaming dhcp.network to eth0.network"
-  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/eth0.network.bak
-  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/eth0.network
+# if [ -f /newroot/etc/systemd/network/dhcp.network ]; then
+#  echo "Renaming dhcp.network to eth0.network"
+#  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/eth0.network.bak
+#  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/eth0.network
+# fi
+
+ # Revert back change introduced with latest buildroot
+ if [ -f /newroot/etc/systemd/network/eth0.network ]; then
+  echo "Renaming eth0.network to dhcp.network"
+  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/dhcp.network.bak
+  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/dhcp.network
  fi
 
+
  # force_eeprom_read workaround
- mount -o rw,remount /boot
- echo "force_eeprom_read=0" >> /boot/config.txt
+# mount -o rw,remount /boot
+# echo "force_eeprom_read=0" >> /boot/config.txt
 fi
