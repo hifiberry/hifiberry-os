@@ -48,6 +48,8 @@ define BTSPEAKER_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/bluealsa-aplay.service
         ln -fs ../../../../usr/lib/systemd/system/bluealsa-aplay.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluealsa-aplay.service
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/bluealsa-aplay-start \
+		$(TARGET_DIR)/opt/btspeaker/bluealsa-aplay-start
 endef
 
 # Overwrite original Bluez5 package to make sure it doesn't install in systemd
