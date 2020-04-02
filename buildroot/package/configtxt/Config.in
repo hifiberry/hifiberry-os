@@ -10,4 +10,8 @@ config BR2_PACKAGE_CONFIGTXT_QUIET
           disable all boot messages to screen
         depends on BR2_PACKAGE_CONFIGTXT
 
-
+config BR2_PACKAGE_CONFIGTXT_EEPROM
+        bool "force_eeprom_read workaround"
+        help
+          set eeprom_foirce_read=0
+        depends on BR2_PACKAGE_CONFIGTXT
