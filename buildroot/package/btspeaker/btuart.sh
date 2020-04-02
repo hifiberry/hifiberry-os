@@ -1,9 +1,9 @@
 #!/bin/sh
 
-FIXCONFIG=`cat /boot/config.txt | grep "pi3-miniuart-bt"`
+FIXCONFIG=`cat /boot/config.txt | grep "miniuart-bt"`
 if [ "$FIXCONFIG" != "" ]; then
 	mount -o remount,rw /boot
-	cat /boot/config.txt | grep -v "pi3-miniuart-bt" > /tmp/config.txt
+	cat /boot/config.txt | grep -v "miniuart-bt" > /tmp/config.txt
 	cp /boot/config.txt /boot/config.txt.bak
 	mv /tmp/config.txt /boot/config.txt
 	sync
