@@ -4,12 +4,7 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE),y)
-ASOUNDCONF += asound.conf.dmix_softvol.lite
-else
-ASOUNDCONF += asound.conf.dmix_softvol
-endif
-
+ASOUNDCONF = asound.conf.exclusive
 
 define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/bootmsg \
