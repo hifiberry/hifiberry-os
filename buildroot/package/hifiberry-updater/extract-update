@@ -112,7 +112,6 @@ fi
 
 echo "storing version number of previous release..."
 cp /etc/hifiberry.version /newroot/etc/hifiberry.version.previous
-
 sync
 
 echo "unmounting $INACTIVE..."
