@@ -1,0 +1,71 @@
+diff -u alsa-eq-0.6/ctl_equal.c new-alsa-eq-0.6/ctl_equal.c
+--- alsa-eq-0.6/ctl_equal.c	2020-04-03 11:38:42.548783728 +0000
++++ new-alsa-eq-0.6/ctl_equal.c	2020-04-03 11:41:54.294339961 +0000
+@@ -263,7 +263,8 @@
+ 	for(i = 0; i < equal->num_input_controls; i++) {
+ 		if(equal->control_data->control[i].type == LADSPA_CNTRL_INPUT) {
+ 			index = equal->control_data->control[i].index;
+-			if(equal->klass->PortDescriptors[index] !=
++			if((equal->klass->PortDescriptors[index] &
++				(LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL)) !=
+ 					(LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL)) {
+ 				SNDERR("Problem with control file %s, %d.", controls, index);
+ 				return -1;
+@@ -284,12 +285,14 @@
+ 	}
+ 
+ 	/* Make sure that the control file makes sense */
+-	if(equal->klass->PortDescriptors[equal->control_data->input_index] !=
++	if((equal->klass->PortDescriptors[equal->control_data->input_index] &
++		(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)) !=
+ 			(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)) {
+ 		SNDERR("Problem with control file %s.", controls);
+ 		return -1;
+ 	}
+-	if(equal->klass->PortDescriptors[equal->control_data->output_index] !=
++	if((equal->klass->PortDescriptors[equal->control_data->output_index] &
++		(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) !=
+ 			(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) {
+ 		SNDERR("Problem with control file %s.", controls);
+ 		return -1;
+diff -u alsa-eq-0.6/ladspa_utils.c new-alsa-eq-0.6/ladspa_utils.c
+--- alsa-eq-0.6/ladspa_utils.c	2009-01-31 21:57:41.000000000 +0000
++++ new-alsa-eq-0.6/ladspa_utils.c	2020-04-03 11:43:56.720790800 +0000
+@@ -354,11 +354,13 @@
+ 						default_controls->control[index].type = LADSPA_CNTRL_OUTPUT;
+ 					}
+ 					index++;
+-				} else if(psDescriptor->PortDescriptors[i] ==
+-						(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)) {
++				} else if((psDescriptor->PortDescriptors[i] &
++					(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)) ==
++					(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)){
+ 					default_controls->input_index = i;
+-				} else if(psDescriptor->PortDescriptors[i] ==
+-						(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) {
++				} else if((psDescriptor->PortDescriptors[i] &
++					(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) ==
++					(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) {
+ 					default_controls->output_index = i;
+ 				}
+ 			}
+diff -u alsa-eq-0.6/pcm_equal.c new-alsa-eq-0.6/pcm_equal.c
+--- alsa-eq-0.6/pcm_equal.c	2020-04-03 11:38:42.548783728 +0000
++++ new-alsa-eq-0.6/pcm_equal.c	2020-04-03 11:45:19.807743231 +0000
+@@ -231,12 +231,14 @@
+ 	}
+ 
+ 	/* Make sure that the control file makes sense */
+-	if(equal->klass->PortDescriptors[equal->control_data->input_index] !=
++	if((equal->klass->PortDescriptors[equal->control_data->input_index] &
++		(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)) !=
+ 			(LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO)) {
+ 		SNDERR("Problem with control file %s.", controls);
+ 		return -1;
+ 	}
+-	if(equal->klass->PortDescriptors[equal->control_data->output_index] !=
++	if((equal->klass->PortDescriptors[equal->control_data->output_index] &
++		(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) !=
+ 			(LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO)) {
+ 		SNDERR("Problem with control file %s.", controls);
+ 		return -1;
