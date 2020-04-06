@@ -4,6 +4,7 @@ After=network.target sound.target
 
 [Service]
 Type=simple
+Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Roon"
 ExecStartPre=/opt/raat/configure-raat
 ExecStart=/opt/raat/raat_app /etc/hifiberry_raat.conf

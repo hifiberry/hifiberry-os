@@ -7,6 +7,7 @@ ConditionPathExists=/etc/alsactl.store
 
 [Service]
 Type=oneshot
+Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Restoring volume"
 ExecStart=/opt/hifiberry/bin/restore-volume
 StandardOutput=journal

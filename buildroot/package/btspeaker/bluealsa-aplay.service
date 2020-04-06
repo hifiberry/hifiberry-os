@@ -4,6 +4,7 @@ Requires=bluealsa.service btinterface.service
 After=bluealsa.service sound.target btinterface.service
 
 [Service]
+Environment=HOME=/root
 # BlueALSA takes some time to initialize
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting bluealsa-aplay"
 ExecStartPre=sleep 2

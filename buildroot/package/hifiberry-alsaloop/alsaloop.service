@@ -5,6 +5,7 @@ ConditionPathExists=/etc/hifiberry/can_record
 
 [Service]
 Type=simple
+Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting alsaloop"
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 ExecStart=/usr/bin/python3 /opt/alsaloop/alsaloopmpris.py
