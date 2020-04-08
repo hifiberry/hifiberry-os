@@ -35,3 +35,4 @@
 /etc/mopidy.conf
 /etc/alsaloop.json
 /etc/asound.conf
+/var/lib/bluetooth
