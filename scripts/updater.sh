@@ -132,8 +132,12 @@ if [ "$V" -lt 20200401 ]; then
   mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/dhcp.network
  fi
 
-
  # force_eeprom_read workaround
 # mount -o rw,remount /boot
 # echo "force_eeprom_read=0" >> /boot/config.txt
 fi
+
+if [ "$V" -lt 20200408 ]; then
+ echo "Version < 20200408, cleaning usage data"
+ rm /newroot/var/lib/hifiberry/usage.json
+fi 
