@@ -1,0 +1,10 @@
+[Unit]
+Description=Push usage data to cloud
+
+[Timer]
+OnBootSec=300min
+OnUnitActiveSec=1d
+Unit=pushdata.service
+
+[Install]
+WantedBy=timers.target
