@@ -141,3 +141,11 @@ if [ "$V" -lt 20200408 ]; then
  echo "Version < 20200408, cleaning usage data"
  rm /newroot/var/lib/hifiberry/usage.json
 fi 
+
+if [ "$V" -lt 20200416 ]; then
+ echo "Version < 20200416, switching to new asound.conf with eq support"
+ cp /newroot/etc/asound.conf /newroot/etc/asound.conf.bak
+ cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
+fi
+
+echo "Upgrading configuration files done"
