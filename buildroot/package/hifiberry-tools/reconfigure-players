@@ -290,9 +290,10 @@ reconfigure_audiocontrol2() {
 
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
- if [ "$PIVERSION" == "3B" ]; then
+ BT=`echo $FEATURES | grep bluetooth`
+ if [ "$BT" == "" ]; then
    systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.service a2dp-agent.service
-   echo " disabled on Pi3"
+   echo " disabled Bluetooth"
  fi 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
