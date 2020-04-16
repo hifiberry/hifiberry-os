@@ -148,4 +148,14 @@ if [ "$V" -lt 20200416 ]; then
  cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
 fi
 
+if [ "$V" -lt 20200420 ]; then
+ echo "Version < 20200420, extracting firmware again (due to bug in updater)"
+ if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
+  echo "Using zImage from new RPI firmware"
+  cp -rv /newroot/usr/lib/firmware/rpi/* /boot
+ fi
+fi
+
+sync
+
 echo "Upgrading configuration files done"
