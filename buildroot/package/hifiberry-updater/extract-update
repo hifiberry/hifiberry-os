@@ -37,10 +37,10 @@ fi
 VERSION=`cat /newroot/etc/hifiberry.version`
 
 echo "extracting new kernel..."
-if [ -f /usr/lib/firmware/rpi/zImage ]; then
- echo "Using zImage from RPI firmware"
+if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
+ echo "Using zImage from new RPI firmware"
  cp /boot/zImage /boot/zImage.bak
- cp -rv /usr/lib/firmware/rpi/* /boot
+ cp -rv /newroot/usr/lib/firmware/rpi/* /boot
 else
  cd /tmp
  gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh

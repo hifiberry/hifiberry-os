@@ -1,7 +1,7 @@
 [Unit]
 Description=BlueALSA aplay
-Requires=bluealsa.service btinterface.service
-After=bluealsa.service sound.target btinterface.service
+Requires=bluealsa.service btuart.service
+After=bluealsa.service sound.target btuart.service
 
 [Service]
 Environment=HOME=/root
