@@ -90,6 +90,13 @@ detect_hw () {
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
+ # DAC2 HD used "DAC"
+ DAC=`amixer scontrols | grep "'DAC',"`
+ if [ "$DAC" != "" ]; then
+   MIXER_CONTROL=DAC
+   return
+ fi
+
  # DAC+ and Amp2 use "Digital"
  DIGITAL=`amixer scontrols | grep Digital`
  if [ "$DIGITAL" != "" ]; then
@@ -127,6 +134,12 @@ guess_volume_control() {
 guess_card() {
  check_dsp
 
+ DAC2HD=`aplay -l | grep hifiberry_dacplushd`
+ if [ "$DAC2HD" != "" ]; then
+   CARD="DAC2 HD"
+   return
+ fi
+
  DACPLUSADCPRO=`aplay -l | grep DAC+ | grep ADC | grep Pro`   
  if [ "$DACPLUSADCPRO" != "" ]; then                          
    CARD="DAC+ ADC Pro"
@@ -155,12 +168,6 @@ guess_card() {
  if [ "$DAC" != "" ]; then
    CARD="DAC+/Amp2"
     return
- fi
-
- DACHD=`aplay -l | grep DAC | grep HD`
- if [ "$DACHD" != "" ]; then
-   CARD="DAC2 HD"
-   return
  fi
 
  AMPPLUS=`aplay -l | grep AMP`
