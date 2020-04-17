@@ -3,6 +3,7 @@
 GPIO_DRIVER_LOADED=`cat /boot/config.txt | grep i2c-gpio`
 
 if [ "$GPIO_DRIVER_LOADED" == "" ]; then
+  mount -o remount,rw /boot 
   echo "Need to modify config.txt and reboot"
   echo "dtoverlay=i2c-gpio" >> /boot/config.txt
   echo "dtparam=i2c_gpio_sda=0" >> /boot/config.txt
