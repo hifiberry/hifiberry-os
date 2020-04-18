@@ -58,7 +58,7 @@ Audiocontrol provides a [plugin system](https://github.com/hifiberry/audiocontro
 
 ### Adding packages
 
-HiFiBerryOS is based on buildroot. This means, you can't easily install additional software from command line. Even if you do, it will be gone after the next update as an update will replace the full filesystem. You need top integrate additonal software via the [Buildroot build system](https://buildroot.org/)
+HiFiBerryOS is based on buildroot. This means, you can't easily install additional software from command line. Even if you do, it will be gone after the next update as an update will replace the full filesystem. You need to integrate additonal software via the [Buildroot build system](https://buildroot.org/)
 
 ### Adding UI components
 
