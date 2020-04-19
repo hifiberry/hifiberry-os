@@ -33,6 +33,8 @@ dsptoolkit > dspprogram.xml
 top -b -n 5 > top.txt
 perf stat -a sleep 10
 
-zip /tmp/hifiberry-debug.zip $TMPDIR/*
+cd $TMPDIR
+zip /tmp/hifiberry-debug.zip *
+cd /
 rm -rf $TMPDIR
 
