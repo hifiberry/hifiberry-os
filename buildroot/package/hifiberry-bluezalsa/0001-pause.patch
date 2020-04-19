@@ -1,16 +1,12 @@
-aplay.c: stop other players before accessing sound card
-
-Signed-off-by: HiFiBerry <info@hifiberry.com>
-
---- a/utils/aplay.c
-+++ b/utils/aplay.c
-@@ -198,6 +198,9 @@
- 	char *tmp;
+--- a/utils/aplay/alsa-pcm.c	2020-04-07 07:32:59.000000000 +0000
++++ b/utils/aplay/alsa-pcm.c	2020-04-08 05:50:18.790076620 +0000
+@@ -125,6 +125,9 @@
+ 	char buf[256];
  	int err;
  
 +	snprintf(buf, sizeof(buf), "stopping other players");
-+	system("/opt/hifiberry/bin/pause-all bluetooth");	
++	system("/opt/hifiberry/bin/pause-all bluetooth");
 +
- 	if ((err = snd_pcm_open(&_pcm, device, SND_PCM_STREAM_PLAYBACK, 0)) != 0) {
- 		snprintf(buf, sizeof(buf), "%s", snd_strerror(err));
+ 	if ((err = snd_pcm_open(&_pcm, name, SND_PCM_STREAM_PLAYBACK, 0)) != 0) {
+ 		snprintf(buf, sizeof(buf), "Open PCM: %s", snd_strerror(err));
  		goto fail;

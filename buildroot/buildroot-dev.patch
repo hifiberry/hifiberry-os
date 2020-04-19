@@ -1,17 +1,6 @@
-diff -bur buildroot-dev/package/gstreamer1/gstreamer1/gstreamer1.mk brdev/package/gstreamer1/gstreamer1/gstreamer1.mk
---- buildroot-dev/package/gstreamer1/gstreamer1/gstreamer1.mk	2020-03-19 06:27:39.898016792 +0000
-+++ brdev/package/gstreamer1/gstreamer1/gstreamer1.mk	2020-03-19 06:26:19.130780046 +0000
-@@ -33,7 +33,6 @@
- 	host-pkgconf \
- 	libglib2 \
- 	$(if $(BR2_PACKAGE_LIBUNWIND),libunwind) \
--	$(if $(BR2_PACKAGE_VALGRIND),valgrind) \
- 	$(TARGET_NLS_DEPENDENCIES)
- 
- GSTREAMER1_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
-diff -bur buildroot-dev/package/nodejs/nodejs.mk brdev/package/nodejs/nodejs.mk
---- buildroot-dev/package/nodejs/nodejs.mk	2020-03-19 06:27:39.966016147 +0000
-+++ brdev/package/nodejs/nodejs.mk	2020-03-18 15:55:12.021994021 +0000
+diff -ru buildroot-dev/package/nodejs/nodejs.mk br-dev-april/package/nodejs/nodejs.mk
+--- buildroot-dev/package/nodejs/nodejs.mk	2020-03-31 12:59:18.553214135 +0000
++++ br-dev-april/package/nodejs/nodejs.mk	2020-03-31 12:57:07.094946091 +0000
 @@ -63,7 +63,6 @@
  		--shared-openssl \
  		--shared-openssl-includes=$(HOST_DIR)/include/openssl \
@@ -20,9 +9,9 @@ diff -bur buildroot-dev/package/nodejs/nodejs.mk brdev/package/nodejs/nodejs.mk
  		--no-cross-compiling \
  		--with-intl=small-icu \
  	)
-diff -bur buildroot-dev/package/python-pycairo/python-pycairo.mk brdev/package/python-pycairo/python-pycairo.mk
---- buildroot-dev/package/python-pycairo/python-pycairo.mk	2020-03-19 06:27:40.010015730 +0000
-+++ brdev/package/python-pycairo/python-pycairo.mk	2020-03-18 20:58:07.365488420 +0000
+diff -ru buildroot-dev/package/python-pycairo/python-pycairo.mk br-dev-april/package/python-pycairo/python-pycairo.mk
+--- buildroot-dev/package/python-pycairo/python-pycairo.mk	2020-03-31 12:59:18.593213608 +0000
++++ br-dev-april/package/python-pycairo/python-pycairo.mk	2020-03-31 12:57:07.094946091 +0000
 @@ -8,8 +8,16 @@
  PYTHON_PYCAIRO_SOURCE = pycairo-$(PYTHON_PYCAIRO_VERSION).tar.gz
  PYTHON_PYCAIRO_SITE = https://files.pythonhosted.org/packages/3c/1a/c0478ecab31baae50fda9956547788afbd0ca563adc52c9b03cab30f17eb
@@ -41,3 +30,25 @@ diff -bur buildroot-dev/package/python-pycairo/python-pycairo.mk brdev/package/p
 +
  $(eval $(python-package))
 +$(eval $(host-python-package))
+diff -ur buildroot-dev-unpatched/package/python-idna/python-idna.hash buildroot-dev/package/python-idna/python-idna.hash
+--- buildroot-dev-unpatched/package/python-idna/python-idna.hash        2020-03-31 15:45:57.312748338 +0000
++++ buildroot-dev/package/python-idna/python-idna.hash  2020-03-31 15:58:25.932079207 +0000
+@@ -1,5 +1,6 @@
+ # md5, sha256 from https://pypi.org/pypi/idna/json
+ md5  870b8b80267f00f0faf1b7ba4bdbf14e  idna-2.9.tar.gz
+ sha256  7588d1c14ae4c77d74036e8c22ff447b26d0fde8f007354fd48a7814db15b7cb  idna-2.9.tar.gz
++sha256  c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407  idna-2.8.tar.gz
+ # Locally computed sha256 checksums
+ sha256  412014420d2473dba06117c3d4d9e0eecaa6dde0ca30cd951f4ec2be39426f32  LICENSE.rst
+diff -ur buildroot-dev-unpatched/package/python-idna/python-idna.mk buildroot-dev/package/python-idna/python-idna.mk
+--- buildroot-dev-unpatched/package/python-idna/python-idna.mk  2020-03-31 15:45:57.312748338 +0000
++++ buildroot-dev/package/python-idna/python-idna.mk    2020-03-31 15:49:52.056995049 +0000
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+
+-PYTHON_IDNA_VERSION = 2.9
++PYTHON_IDNA_VERSION = 2.8
+ PYTHON_IDNA_SOURCE = idna-$(PYTHON_IDNA_VERSION).tar.gz
+ PYTHON_IDNA_SITE = https://files.pythonhosted.org/packages/cb/19/57503b5de719ee45e83472f339f617b0c01ad75cba44aba1e4c97c2b0abd
+ PYTHON_IDNA_LICENSE = BSD-3-Clause

@@ -6,6 +6,7 @@ Before=initial-volume.service
 
 [Service]
 Type=simple
+Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting squeezelite"
 ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/sqvol store
 ExecStart=/bin/squeezelite-start

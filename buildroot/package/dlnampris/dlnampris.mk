@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DLNAMPRIS_VERSION =  933d6abd1a70961c12b3dc089ca571eb052335df
+DLNAMPRIS_VERSION = f84b35a51760d313dc03f10b11186dae1d347cb3
 DLNAMPRIS_SITE = $(call github,hifiberry,dlna-mpris,$(DLNAMPRIS_VERSION))
 
 define DLNAMPRIS_BUILD_CMDS

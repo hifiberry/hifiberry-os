@@ -5,6 +5,7 @@ After=mpd.service
 
 [Service]
 Type=simple
+Environment=HOME=/var/lib/hifiberry
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 # MPD needs some time to start
 ExecStartPre=sleep 5  

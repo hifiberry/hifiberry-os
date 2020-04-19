@@ -1,6 +1,23 @@
-202003xx:
+202004xx:
+- interact: rule-based actions
+- 10-band Equalizer support for Non-DSP sound cards
+- Bluetooth volume control synchronized with system
+- allow to revert back to previous version
+- Fix DAC+ ADC Pro detection
+- Several other bugfixes and improvements
+
+20200327:
+- UPnP/DLNA source
+- analogue input: auto-enable input on signal
+- support setting maximum volume and mono/stereo mode for non-DSP sound cards
+- equalizer settings: A/B comparisson
+- support delay for DSP channels
+- named listening modes can be stored and activated 
 - added automatic updates
 - improved metadata handling with radio stations
+- Squeezelite: Allow setting server address
+- allow to reduce dynamic range of volume control (only backend)
+- Several other bugfixes and improvements
 
 20260226:
 - Bugfix: Spotify configuration 

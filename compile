@@ -15,6 +15,12 @@ else
  VERSION=$1
 fi
 
+KNOWNVERSION=`echo "3 4 0w" | grep $VERSION`
+if [ "$KNOWNVERSION" == "" ]; then
+ echo "Unsupported version $VERSION, aborting"
+ exit 1
+fi
+
 BRDIR=`./brdir $VERSION`
 echo "Building in $BRDIR"
 
@@ -24,8 +30,13 @@ fi
 
 # Remove some packages
 if [ "$2" != "" ]; then
- echo Removing $BRDIR/build/$2*
- rm -rf $BRDIR/build/$2*
+ echo Removing $BRDIR/build/$2*  $BRDIR/build/host-$2*
+ rm -rf $BRDIR/build/$2*  $BRDIR/build/host-$2*
+fi
+
+if [ "$3" != "" ]; then
+ echo Removing $BRDIR/build/$3*  $BRDIR/build/host-$3*
+ rm -rf $BRDIR/build/$3*  $BRDIR/build/host-$3*
 fi
 
 cd $BRSRCDIR

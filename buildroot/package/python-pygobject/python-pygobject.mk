@@ -13,8 +13,10 @@ PYTHON_PYGOBJECT_LICENSE_FILES = COPYING docs/images/LICENSE
 
 PYTHON_PYGOBJECT_DEPENDENCIES += python3 host-python3 python-pycairo host-python-pycairo
 
-PYTHON_GOBJECT_CONF_ENV = \
+PYTHON_PYGOBJECT_CONF_ENV = \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
 	PYTHON_INCLUDES="`$(STAGING_DIR)/usr/bin/python3-config --includes`"
+
+PYTHON_PYGOBJECT_CONF_OPTS += --with-ffi --with-gst
 
 $(eval $(python-package))

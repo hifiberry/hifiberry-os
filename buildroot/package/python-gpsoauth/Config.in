@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_GPSOAUTH
+	bool "python-gpsoauth"
+	select BR2_PACKAGE_PYTHON_PYCRYPTODOMEX # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
+	help
+	  A python client library for Google Play Services OAuth.
+
+	  https://github.com/simon-weber/gpsoauth
