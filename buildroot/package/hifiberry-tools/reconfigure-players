@@ -133,6 +133,16 @@ guess_volume_control() {
 # Guess what card is installed"
 guess_card() {
  check_dsp
+ hat_info
+
+ if [ "$HATINFO" == "HiFiBerry Amp100" ]; then
+  if [ "$HAS_DSP" == "1" ]; then
+     CARD="Amp100 + DSP Module"
+   else
+     CARD="Amp100"
+   fi
+   return
+ fi
 
  DAC2HD=`aplay -l | grep hifiberry_dacplushd`
  if [ "$DAC2HD" != "" ]; then
@@ -233,9 +243,10 @@ can_record() {
 
 # Get HAT information
 hat_info() {
- VENDOR=`cat /proc/device-tree/hat/vendor`
- PRODUCT=`cat /proc/device-tree/hat/product`
+ VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
+ PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
  HATINFO="${VENDOR} ${PRODUCT}"
+ echo $HATINFO
 }
 
 # Calculate system names
@@ -433,7 +444,7 @@ if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || \
    [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
    [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
-   [ "$CURRENT_HAT_INFO" != "$HAT_INFO" ] || \
+   [ "$CURRENT_HATINFO" != "$HATINFO" ] || \
    [ "$CURRENT_HW" != "$HW" ] || \
    [ "$CURRENT_FEATURES" != "$FEATURES" ] || \
    [ 1 != 1 ]; then
@@ -451,7 +462,7 @@ echo " Sound card: $CARD (was $CURRENT_CARD)"
 echo " HW device: $HW (was $CURRENT_HW)"
 echo " ALSA mixer control: $MIXER_CONTROL (was $CURRENT_MIXER_CONTROL)"
 echo " Recording: $CAN_RECORD (was $CURRENT_CAN_RECORD)"
-echo " Vendor/product ${HAT_INFO} (was ${CURRENT_HAT_INFO})"
+echo " Vendor/product ${HATINFO} (was ${CURRENT_HATINFO})"
 echo " Features: ${FEATURES} (was ${CURRENT_FEATURES})"
 echo
 
@@ -484,7 +495,7 @@ echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
 echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
-echo "CURRENT_HAT_INFO=$HAT_INFO" >> /etc/hifiberry.state
+echo "CURRENT_HATINFO=\"$HATINFO\"" >> /etc/hifiberry.state
 echo "CURRENT_FEATURES=\"$FEATURES\"" >> /etc/hifiberry.state
 echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
