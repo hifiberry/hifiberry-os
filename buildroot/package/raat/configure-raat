@@ -44,7 +44,7 @@ elif [ "$CARD" == "Digi+" ]; then
  if [ "$DIGIFIXED" == "1" ]; then
    VOLCTL=""
  else
-   VOLCTL='"volume": { "type": "alsa", "name": "softvol", "device": "default" },'
+   VOLCTL='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":"Softvol" },'
  fi
  # DOP not supported on HiFiBerryOS
  DSD=""

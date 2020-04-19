@@ -5,6 +5,7 @@ After=dsptoolkit.service local-fs.target
 
 [Service]
 Type=oneshot
+Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Detecting HiFiBerry sound card"
 ExecStart=/opt/hifiberry/bin/detect-hifiberry
 StandardOutput=journal

@@ -106,9 +106,56 @@ if [ "$V" -lt 20200401 ]; then
 
  # Overwrite mpd.conf
  MPDCONFOK=`cat /newroot/etc/mpd.conf | grep device | grep default`
- if [ "MPDCONFOK" != "" ]; then
+ if [ "MPDCONFOK" == "" ]; then
   echo "Using default mpd.conf"
   cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
   cp /newroot/etc/mpd.conf.default /newroot/etc/mpd.conf
  fi
+
+ # If Mopidy is new, remove /etc/hifiberry.state
+ if [ ! -f /etc/mopidy.conf ]; then
+  echo "Reconfiguring system after reboot"
+  rm /newroot/etc/hifiberry.state
+ fi
+
+ # dhcp has been renamed to wireless
+# if [ -f /newroot/etc/systemd/network/dhcp.network ]; then
+#  echo "Renaming dhcp.network to eth0.network"
+#  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/eth0.network.bak
+#  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/eth0.network
+# fi
+
+ # Revert back change introduced with latest buildroot
+ if [ -f /newroot/etc/systemd/network/eth0.network ]; then
+  echo "Renaming eth0.network to dhcp.network"
+  mv /newroot/etc/systemd/network/dhcp.network /newroot/etc/systemd/network/dhcp.network.bak
+  mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/dhcp.network
+ fi
+
+ # force_eeprom_read workaround
+# mount -o rw,remount /boot
+# echo "force_eeprom_read=0" >> /boot/config.txt
 fi
+
+if [ "$V" -lt 20200408 ]; then
+ echo "Version < 20200408, cleaning usage data"
+ rm /newroot/var/lib/hifiberry/usage.json
+fi 
+
+if [ "$V" -lt 20200416 ]; then
+ echo "Version < 20200416, switching to new asound.conf with eq support"
+ cp /newroot/etc/asound.conf /newroot/etc/asound.conf.bak
+ cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
+fi
+
+if [ "$V" -lt 20200420 ]; then
+ echo "Version < 20200420, extracting firmware again (due to bug in updater)"
+ if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
+  echo "Using zImage from new RPI firmware"
+  cp -rv /newroot/usr/lib/firmware/rpi/* /boot
+ fi
+fi
+
+sync
+
+echo "Upgrading configuration files done"

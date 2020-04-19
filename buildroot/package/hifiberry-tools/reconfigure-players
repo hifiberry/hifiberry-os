@@ -1,31 +1,10 @@
 #!/bin/bash
 
 REBOOTFILE=/tmp/reboot
-if [ -f /etc/force_exclusive_audio ]; then
- echo "Forcing exclusive audio mode"
- FORCE_EXCLUSIVE=1
-fi
 
-SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy"
 
 FEATURES=""
-
-samplerate() {
-  if [ -f /etc/hifiberry.conf ]; then 
-    . /etc/hifiberry.conf
-  fi 
-
-  if [ "$SAMPLERATE" == "" ]; then
-    SAMPLERATE=$CURRENT_SAMPLERATE
-  fi
-  if [ "$SAMPLERATE" == "" ]; then
-    SAMPLERATE=192000
-  fi
-
-  if [ "$PIVERSION" == "0" ]; then
-    SAMPLERATE=48000
-  fi
-}
 
 restart_service() {
  systemctl is-active --quiet $1
@@ -51,33 +30,6 @@ check_systemd() {
  done
 }
 
-check_exclusive() {
- PLAYERCOUNT=0
- EXCLUSIVE=0
- PLAYERS=""
- for SERVICE in $SERVICES; do
-   check_systemd $SERVICE
-   if [ "$SERVICE_ACTIVE" == "1" ]; then
-     PLAYERCOUNT=$((PLAYERCOUNT + 1))
-     PLAYERS="$PLAYERS$SERVICE "
-   fi
- done
- if [ $PLAYERCOUNT -lt 2 ]; then
-   echo "Enabling exclusive audio"
-   EXCLUSIVE=1
- fi
- if [ "$FORCE_EXCLUSIVE" = "1" ]; then 
-   echo "Forcing exclusive audio"       
-   EXCLUSIVE=1                          
- fi 
- IS_EXCLUSIVE=`grep exclusive /etc/asound.conf`
- if [ "$IS_EXCLUSIVE" != "" ]; then 
-   CURRENT_EXCLUSIVE=1
- else
-   CURRENT_EXCLUSIVE=0
- fi
-}
-
 # Detect Raspberry Pi model
 pi_model() {
  modelname=$(tr -d '\0' < /proc/device-tree/model)
@@ -85,30 +37,35 @@ pi_model() {
  if [[ $modelname == *"3 Model B+"* ]]; then
   PIMODEL="3B+"
   PIVERSION=3
+  FEATURES="$FEATURES bluetooth pi3orlater"
   return
  fi 
 
  if [[ $modelname == *"3 Model B Plus"* ]]; then
   PIMODEL="3B+"
   PIVERSION=3
+  FEATURES="$FEATURES bluetooth pi3orlater"
   return
  fi 
 
  if [[ $modelname == *"3 Model B"* ]]; then
   PIMODEL="3B"
   PIVERSION=3
+  FEATURES="$FEATURES pi3orlater"
   return
  fi 
 
  if [[ $modelname == *"4 Model B"* ]]; then
   PIMODEL="4"
   PIVERSION=4
+  FEATURES="$FEATURES bluetooth pi3orlater"
   return
  fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
   PIVERSION=0
+  FEATURES="$FEATURES bluetooth"
   return
  fi
 
@@ -133,6 +90,13 @@ detect_hw () {
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
+ # DAC2 HD used "DAC"
+ DAC=`amixer scontrols | grep "'DAC',"`
+ if [ "$DAC" != "" ]; then
+   MIXER_CONTROL=DAC
+   return
+ fi
+
  # DAC+ and Amp2 use "Digital"
  DIGITAL=`amixer scontrols | grep Digital`
  if [ "$DIGITAL" != "" ]; then
@@ -169,18 +133,36 @@ guess_volume_control() {
 # Guess what card is installed"
 guess_card() {
  check_dsp
+ hat_info
+
+ if [ "$HATINFO" == "HiFiBerry Amp100" ]; then
+  if [ "$HAS_DSP" == "1" ]; then
+     CARD="Amp100 + DSP Module"
+   else
+     CARD="Amp100"
+   fi
+   return
+ fi
+
+ DAC2HD=`aplay -l | grep hifiberry_dacplushd`
+ if [ "$DAC2HD" != "" ]; then
+   if [ "$HAS_DSP" == "1" ]; then
+     CARD="DAC2 HD + DSP Module"
+   else
+     CARD="DAC2 HD"
+   fi
+   return
+ fi
 
  DACPLUSADCPRO=`aplay -l | grep DAC+ | grep ADC | grep Pro`   
  if [ "$DACPLUSADCPRO" != "" ]; then                          
    CARD="DAC+ ADC Pro"
-   FEATURES="input"
    return                                                     
  fi                                                           
                                                               
  DACPLUSADC=`aplay -l | grep DAC+ | grep ADC`                 
  if [ "$DACPLUSADC" != "" ]; then                             
    CARD="DAC+ ADC"                                            
-   FEATURES="input"
    return                                                     
  fi                                                           
         
@@ -193,7 +175,6 @@ guess_card() {
  DACDSP=`aplay -l | grep DAC+DSP`
  if [ "$DACDSP" != "" ]; then
    CARD="DAC+ DSP"
-   FEATURES="dsp"
    return
  fi
 
@@ -203,40 +184,34 @@ guess_card() {
     return
  fi
 
- DACHD=`aplay -l | grep DAC | grep HD`
- if [ "$DACHD" != "" ]; then
-   CARD="DAC2 HD"
-   return
- fi
-
  AMPPLUS=`aplay -l | grep AMP`
  if [ "$AMPPLUS" != "" ]; then
    CARD="Amp+"
    return
  fi
 
- DIGIPRO=`aplay -l | grep Digi+ | grep Pro`
+ DIGIPRO=`aplay -l | grep Digi | grep Pro`
  if [ "$DIGIPRO" != "" ]; then
    CARD="Digi+ Pro"
+   FEATURES="$FEATURES digi"
    return
  fi
 
- DIGI=`aplay -l | grep Digi+`
+ DIGI=`aplay -l | grep Digi`
  if [ "$DIGI" != "" ]; then
    CARD="Digi+"
-    return
+   FEATURES="$FEATURES digi" 
+   return
  fi
 
  CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
  if [ "$CLKGEN" == "0x03" ]; then
     CARD="Beocreate 4-Channel Amplifier"
-    FEATURES="dsp"
     return
  fi
 
  if [ "$HAS_DSP" == "1" ]; then
     CARD="DAC+ DSP"
-    FEATURES="dsp"
     return
  fi
 
@@ -261,15 +236,17 @@ can_record() {
  ADC=`arecord -l | grep -i hifiberry`
  if [ "$ADC" != "" ]; then
    CAN_RECORD=1
+   FEATURES="$FEATURES analoginput"
    return
  fi
 }
 
 # Get HAT information
 hat_info() {
- VENDOR=`cat /proc/device-tree/hat/vendor`
- PRODUCT=`cat /proc/device-tree/hat/product`
+ VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
+ PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
  HATINFO="${VENDOR} ${PRODUCT}"
+ echo $HATINFO
 }
 
 # Calculate system names
@@ -335,9 +312,10 @@ reconfigure_audiocontrol2() {
 
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
- if [ "$PIVERSION" == "3B" ]; then
+ BT=`echo $FEATURES | grep bluetooth`
+ if [ "$BT" == "" ]; then
    systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.service a2dp-agent.service
-   echo " disabled on Pi3"
+   echo " disabled Bluetooth"
  fi 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
@@ -371,7 +349,6 @@ reconfigure_dlna() {
  restart_service dlna-mpris
 }
 
-
 # Reconfigure MPD
 reconfigure_mpd() {
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
@@ -379,7 +356,16 @@ reconfigure_mpd() {
   restart_service mpd
   echo " updated mixer"
  fi
-}                 
+}
+
+# Reconfigure Mopidy
+reconfigure_mopidy() {
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
+  restart_service mopidy
+  echo " updated mixer"
+ fi
+}
 
 # Reconfigure "can_record"
 reconfigure_recording() {
@@ -413,47 +399,20 @@ reconfigure_beocreate() {
   UPDATE=1
  fi 
 
+ # Update features
+ if [ "$FEATURES" != "$CURRENT_FEATURES" ]; then
+  JSONFEATURES=`echo $FEATURES | sed s/\ /\",\"/g`
+  JSONFEATURES="[\"$JSONFEATURES\"]"
+  echo "$JSONFEATURES"
+  /bin/node /opt/beocreate/beo-system/configure.js system cardFeatures $JSONFEATURES
+  UPDATE=1
+ fi
+
  if [ "$UPDATE" == "1" ]; then
   systemctl restart beocreate2
   echo " restarting Beocreate"
  fi
 }
-
-# Reconfigure exclusive mode
-reconfigure_exclusive() {
- if [ "$EXCLUSIVE" = "$CURRENT_EXCLUSIVE" ]; then
-  return
- fi
-
- if [ "$EXCLUSIVE" = "1" ]; then
-  cp /etc/asound.conf.exclusive /etc/asound.conf
- else
-  if [ "$PIMODEL" = "0" ]; then
-   cp /etc/asound.conf.dmix_softvol.lite /etc/asound.conf
-  else
-   cp /etc/asound.conf.dmix_softvol /etc/asound.conf
-  fi
- fi
- fix_asound_hw
-
- for SERVICE in $SERVICES; do
-  restart_service $SERVICE
- done
-}
-
-# Change sample rate
-reconfigure_samplerate() {
- if [ "$SAMPLERATE" == "$CURRENT_SAMPLERATE" ]; then
-  return
- fi
- sed -i "s/rate\s.[1-9].*/rate\ $SAMPLERATE/g" /etc/asound.conf
- echo " updated asound.conf"
-  
- for SERVICE in $SERVICES; do
-  restart_service $SERVICE
- done
-}
-
 
 MIXER_CONTROL=""
 CARD="unknown"
@@ -475,23 +434,20 @@ guess_volume_control
 guess_card
 can_record
 system_name
-check_exclusive
-samplerate
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
 
+FEATURES=`echo $FEATURES | xargs`
 
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_CARD" != "$CARD" ] || \
    [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || \
    [ "$CURRENT_PIMODEL" != "$PIMODEL" ] || \
    [ "$CURRENT_PLAYERS" != "$PLAYERS" ] || \
-   [ "$CURRENT_SAMPLERATE" != "$SAMPLERATE" ] || \
-   [ "$CURRENT_EXCLUSIVE" != "$EXCLUSIVE" ] || \
-   [ "$CURRENT_HAT_INFO" != "$HAT_INFO" ] || \
+   [ "$CURRENT_HATINFO" != "$HATINFO" ] || \
    [ "$CURRENT_HW" != "$HW" ] || \
    [ "$CURRENT_FEATURES" != "$FEATURES" ] || \
-    [ 1 != 1 ]; then
+   [ 1 != 1 ]; then
  echo "Sound card settings have been changed, reconfiguring..."
 else
  echo "Nothing changed, exiting..."
@@ -500,20 +456,16 @@ fi
 
 echo "Applying settings: "
 echo " Players: $PLAYERS (was $CURRENT_PLAYERS)"
-echo " Exclusive mode: $EXCLUSIVE (was $CURRENT_EXCLUSIVE)"
 echo " Raspberry Pi model: $PIMODEL"
 echo " System name: $SYSNAME (was $CURRENT_SYSNAME)"
 echo " Sound card: $CARD (was $CURRENT_CARD)"
 echo " HW device: $HW (was $CURRENT_HW)"
 echo " ALSA mixer control: $MIXER_CONTROL (was $CURRENT_MIXER_CONTROL)"
 echo " Recording: $CAN_RECORD (was $CURRENT_CAN_RECORD)"
-echo " Samplerate: ${SAMPLERATE}Hz (was $CURRENT_SAMPLERATE)"
-echo " Vendor/product ${HAT_INFO} (was ${CURRENT_HAT_INFO})"
+echo " Vendor/product ${HATINFO} (was ${CURRENT_HATINFO})"
 echo " Features: ${FEATURES} (was ${CURRENT_FEATURES})"
 echo
 
-echo "Reconfiguring exclusive mode"
-reconfigure_exclusive
 echo "Reconfiguring Spotifyd"
 reconfigure_spotify
 echo "Reconfiguring Shairport-sync"
@@ -526,14 +478,14 @@ echo "Reconfiguring MPD"
 reconfigure_mpd
 echo "Reconfiguring DLNA"
 reconfigure_dlna
+echo "Reconfiguring Mopidy"
+reconfigure_mopidy
 echo "Reconfigure recording"
 reconfigure_recording
 echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
 echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
-echo "Reconfiguring sample rate"
-reconfigure_samplerate
 
 echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
@@ -543,10 +495,8 @@ echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
 echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
 echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
 echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
-echo "CURRENT_EXCLUSIVE=$EXCLUSIVE" >> /etc/hifiberry.state
-echo "CURRENT_SAMPLERATE=$SAMPLERATE" >> /etc/hifiberry.state
-echo "CURRENT_HAT_INFO=$HAT_INFO" >> /etc/hifiberry.state
-echo "CURRENT_FEATURES=$FEATURES" >> /etc/hifiberry.state
+echo "CURRENT_HATINFO=\"$HATINFO\"" >> /etc/hifiberry.state
+echo "CURRENT_FEATURES=\"$FEATURES\"" >> /etc/hifiberry.state
 echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
 if [ "$1" == "--reboot" ]; then

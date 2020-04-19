@@ -6,6 +6,9 @@
 
 HIFIBERRY_BLUEZALSA_VERSION = 2.1.0
 HIFIBERRY_BLUEZALSA_SITE = $(call github,Arkq,bluez-alsa,v$(HIFIBERRY_BLUEZALSA_VERSION))
+HIFIBERRY_BLUEZALSA_VERSION = 01fc155f2200d457f19c11692994e58e606b6433
+#HIFIBERRY_BLUEZALSA_VERSION = c9021d932ae9464b6cdc4ca5ac240a6b8ada6e36
+HIFIBERRY_BLUEZALSA_SITE = $(call github,joerg-krause,bluez-alsa,$(HIFIBERRY_BLUEZALSA_VERSION))
 HIFIBERRY_BLUEZALSA_LICENSE = MIT
 HIFIBERRY_BLUEZALSA_LICENSE_FILES = LICENSE
 HIFIBERRY_BLUEZALSA_DEPENDENCIES = alsa-lib bluez5_utils libglib2 sbc host-pkgconf
@@ -35,5 +38,19 @@ HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-aac
 
 HIFIBERRY_BLUEZALSA_DEPENDENCIES += readline
 HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-rfcomm
+
+define HIFIBERRY_BLUEZALSA_INSTALL_INIT_SYSTEMD
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-bluezalsa/bluealsa.service \
+                $(TARGET_DIR)/lib/systemd/system/bluealsa.service
+        ln -fs ../../../../usr/lib/systemd/system/bluealsa.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluealsa.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-bluezalsa/bluealsa-aplay.service\
+                $(TARGET_DIR)/usr/lib/systemd/system/bluealsa-aplay.service
+        ln -fs ../../../../usr/lib/systemd/system/bluealsa-aplay.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/bluealsa-aplay.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-bluezalsa/bluealsa-aplay-start \
+                $(TARGET_DIR)/opt/btspeaker/bluealsa-aplay-start
+endef
+
 
 $(eval $(autotools-package))

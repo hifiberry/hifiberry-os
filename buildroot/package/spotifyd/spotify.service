@@ -5,7 +5,10 @@ After=network.target sound.target dbus.service
 
 [Service]
 Type=simple
+Environment=HOME=/root
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+# Temporary clientID until metadata fetching is handled without API requests
+Environment=SPOTIFYD_CLIENT_ID=9223bb6a6d924c8da9b02519d03c987a
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Spotify"
 ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/spotifyvol
 ExecStart=/opt/hifiberry/bin/spotify-start

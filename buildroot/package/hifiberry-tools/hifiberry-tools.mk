@@ -4,12 +4,7 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE),y)
-ASOUNDCONF += asound.conf.dmix_softvol.lite
-else
-ASOUNDCONF += asound.conf.dmix_softvol
-endif
-
+ASOUNDCONF = asound.conf.exclusive
 
 define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/bootmsg \
@@ -28,6 +23,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/myurl
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/debuginfo \
            $(TARGET_DIR)/opt/hifiberry/bin/debuginfo
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/alsa-mode \
+           $(TARGET_DIR)/opt/hifiberry/bin/alsa-mode
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/sshdconfig \
            $(TARGET_DIR)/opt/hifiberry/bin/sshdconfig
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-cardid \

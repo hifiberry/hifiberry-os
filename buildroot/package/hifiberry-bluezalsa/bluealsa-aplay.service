@@ -1,0 +1,16 @@
+[Unit]
+Description=BlueALSA aplay
+Requires=bluealsa.service btuart.service
+After=bluealsa.service sound.target btuart.service
+
+[Service]
+Environment=HOME=/root
+# BlueALSA takes some time to initialize
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting bluealsa-aplay"
+ExecStartPre=sleep 2
+ExecStart=/opt/btspeaker/bluealsa-aplay-start
+RestartSec=5  
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
