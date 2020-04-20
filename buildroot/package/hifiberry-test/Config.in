@@ -11,6 +11,8 @@ choice
     prompt "Card to test"
     config HIFIBERRY_TEST_NONE
           bool "None - just copy flash tools"
+    config HIFIBERRY_TEST_DAC2HD
+          bool "DAC2 HD"
     config HIFIBERRY_TEST_AMP2
           bool "Amp2"
     config HIFIBERRY_TEST_DACRTC

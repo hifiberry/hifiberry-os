@@ -39,6 +39,15 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP2
         echo "dtoverlay=hifiberry-dacplus" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
+        echo "Installing DAC2HD test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdac2hd \
+                $(TARGET_DIR)/etc/init.d/S99testdac2hd
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=hifiberry-dacplushd" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDAC
 	echo "Installing DAC+ DSP test script"
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdacdsp \
@@ -109,6 +118,10 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_USB
         echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+
+ifdef HIFIBERRY_TEST_DAC2HD
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
+endif
 
 ifdef HIFIBERRY_TEST_AMP2
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP2
