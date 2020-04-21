@@ -4,7 +4,7 @@ REBOOTFILE=/tmp/reboot
 
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy"
 
-FEATURES=""
+FEATURES="pi"
 
 restart_service() {
  systemctl is-active --quiet $1
@@ -46,7 +46,14 @@ pi_model() {
   PIVERSION=3
   FEATURES="$FEATURES bluetooth pi3orlater"
   return
- fi 
+ fi
+
+ if [[ $modelname == *"3 Model A Plus"* ]]; then
+  PIMODEL="3A+"
+  PIVERSION=3
+  FEATURES="$FEATURES bluetooth pi3orlater"
+  return
+ fi
 
  if [[ $modelname == *"3 Model B"* ]]; then
   PIMODEL="3B"
@@ -243,10 +250,15 @@ can_record() {
 
 # Get HAT information
 hat_info() {
- VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
- PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
- HATINFO="${VENDOR} ${PRODUCT}"
- echo $HATINFO
+ if [ -f /proc/device-tree/hat/product ]; then 
+  VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
+  PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
+  HATINFO="${VENDOR} ${PRODUCT}"
+ else
+  VENDOR=""
+  PRODUCT=""
+  HATINFO=""
+ fi
 }
 
 # Calculate system names
