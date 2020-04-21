@@ -6,6 +6,15 @@ SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dl
 
 FEATURES="pi"
 
+if [ ! -d /etc/features ]; then
+ # Looks like a fresh installation or update, 
+ # reconfigure everything
+ if [ -f /etc/hifiberry.state ]; then
+   mv /etc/hifiberry.state /etc/hifiberry.state.bak
+ fi
+ mkdir /etc/features
+fi 
+
 restart_service() {
  systemctl is-active --quiet $1
  if [ "$?" == "0" ]; then
@@ -37,14 +46,14 @@ pi_model() {
  if [[ $modelname == *"3 Model B+"* ]]; then
   PIMODEL="3B+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi 
 
  if [[ $modelname == *"3 Model B Plus"* ]]; then
   PIMODEL="3B+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
@@ -58,21 +67,21 @@ pi_model() {
  if [[ $modelname == *"3 Model B"* ]]; then
   PIMODEL="3B"
   PIVERSION=3
-  FEATURES="$FEATURES pi3orlater"
+  FEATURES="$FEATURES pi3orlater arm7"
   return
  fi 
 
  if [[ $modelname == *"4 Model B"* ]]; then
   PIMODEL="4"
   PIVERSION=4
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
   PIVERSION=0
-  FEATURES="$FEATURES bluetooth"
+  FEATURES="$FEATURES bluetooth arm7"
   return
  fi
 
@@ -426,6 +435,17 @@ reconfigure_beocreate() {
  fi
 }
 
+# Reconfigure features
+reconfigure_features() {
+ # Update features in /etc/features
+ if [ "$FEATURES" != "$CURRENT_FEATURES" ]; then
+   rm /etc/features/*
+   for f in $FEATURES; do
+     touch /etc/features/$f
+   done
+ fi
+}
+
 MIXER_CONTROL=""
 CARD="unknown"
 
@@ -478,6 +498,8 @@ echo " Vendor/product ${HATINFO} (was ${CURRENT_HATINFO})"
 echo " Features: ${FEATURES} (was ${CURRENT_FEATURES})"
 echo
 
+echo "Reconfigure features"
+reconfigure_features
 echo "Reconfiguring Spotifyd"
 reconfigure_spotify
 echo "Reconfiguring Shairport-sync"
