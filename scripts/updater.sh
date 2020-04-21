@@ -75,17 +75,6 @@ cat <<EOF >> /newroot/etc/audiocontrol2.conf
 EOF
  fi
 
- GPIO=`grep controller:ac2.plugins.control.rotary.Rotary /newroot/etc/audiocontrol2.conf`
- if [ "$GPIO" == "" ]; then
-   cat <<EOF >> /newroot/etc/audiocontrol2.conf
-
-[controller:ac2.plugins.control.rotary.Rotary]
-clk = 23
-dt = 24
-sw = 25
-step = 5
-EOF
- fi
 fi
 
 if [ "$V" -lt 20200401 ]; then
