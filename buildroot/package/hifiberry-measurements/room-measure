@@ -23,6 +23,7 @@ for i in `seq 1 $COUNT`; do
  mv recording.wav rec$i.wav
  RECORDINGS="$RECORDINGS rec$i.wav"
 done
+echo "Recording finished"
 
 # Process the data
 /opt/hifiberry/bin/fft-analzye -v 1 -r signal.wav $RECORDINGS
