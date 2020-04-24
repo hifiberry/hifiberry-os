@@ -13,6 +13,8 @@ the other one. Both buildroot and HifiberryOS need to share the same parent dire
 
 This is necessary as all HiFiBerryOS packages uses relative paths when referring to buildroot packages.
 
+Please make sure you have 20+GB disk space for each hardware version being built.
+
 ### configs
 
 All config files reside here
