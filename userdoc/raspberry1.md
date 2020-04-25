@@ -1,9 +1,8 @@
 # Getting Hifiberry OS to run on a Raspberry model B
 
-Please note: very basic setup with squeezelite only.
+Please note: very basic setup with squeezelite only. This is a guide created by https://github.com/KomtGoed. It might help you, just note there's no support from HiFiBerry.
+
 Hardware seems too weak for audiocontrol2 and beocreate2. Gstreamer interfered with squeezelite. Could not get a Bluetooth dongle to work.
-
-
 
 ## buildroot config
 
