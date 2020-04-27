@@ -1,0 +1,8 @@
+[Unit]
+Description=Push usage data to cloud
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/curl -X POST http://127.0.0.1:3141/api/push
+

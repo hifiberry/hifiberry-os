@@ -2,6 +2,15 @@
 cd `dirname $0`
 TS=`date +%Y%m%d`
 echo "VERSION=$TS" > images/listing
-for i in 3 4 0w; do
- ./build-release $i $TS
+for i in 2 3 4 0w; do
+ if [ "$1" == "parallel" ]; then
+  ./build-release $i $TS &
+  pids[${i}]=$!
+ else
+  ./build-release $i $TS
+ fi
+done
+
+for pid in ${pids[*]}; do
+ wait $pid
 done

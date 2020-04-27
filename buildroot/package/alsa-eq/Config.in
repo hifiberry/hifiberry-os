@@ -1,0 +1,9 @@
+config BR2_PACKAGE_ALSA_EQ
+	bool "alsa-eq"
+	depends on BR2_PACKAGE_ALSA_LIB
+	help
+	  ALSA EQ - an equalizer plugin for ALSA
+
+	  https://thedigitalmachine.net/alsaequal.html
+	select BR2_PACKAGE_CAPS
+
