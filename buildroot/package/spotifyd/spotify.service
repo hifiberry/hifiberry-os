@@ -2,9 +2,11 @@
 Description=Spotify connect
 Wants=network-online.target
 After=network.target sound.target dbus.service
+ConditionPathExists=/etc/features/arm7
 
 [Service]
 Type=simple
+Environment=HOME=/root
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 # Temporary clientID until metadata fetching is handled without API requests
 Environment=SPOTIFYD_CLIENT_ID=9223bb6a6d924c8da9b02519d03c987a

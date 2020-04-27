@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DSP_PROMO_VERSION = bcd09e273f59d530ccf233e28c53b0a1b94f2092
+DSP_PROMO_VERSION = 0963a320266f134f309a14894aefa6fe3b2486cc
 DSP_PROMO_SITE = $(call github,hifiberry,create-dsp-promo,$(DSP_PROMO_VERSION))
 
 define DSP_PROMO_INSTALL_TARGET_CMDS

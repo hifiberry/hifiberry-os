@@ -75,17 +75,6 @@ cat <<EOF >> /newroot/etc/audiocontrol2.conf
 EOF
  fi
 
- GPIO=`grep controller:ac2.plugins.control.rotary.Rotary /newroot/etc/audiocontrol2.conf`
- if [ "$GPIO" == "" ]; then
-   cat <<EOF >> /newroot/etc/audiocontrol2.conf
-
-[controller:ac2.plugins.control.rotary.Rotary]
-clk = 23
-dt = 24
-sw = 25
-step = 5
-EOF
- fi
 fi
 
 if [ "$V" -lt 20200401 ]; then
@@ -132,8 +121,30 @@ if [ "$V" -lt 20200401 ]; then
   mv /newroot/etc/systemd/network/eth0.network /newroot/etc/systemd/network/dhcp.network
  fi
 
-
  # force_eeprom_read workaround
 # mount -o rw,remount /boot
 # echo "force_eeprom_read=0" >> /boot/config.txt
 fi
+
+if [ "$V" -lt 20200408 ]; then
+ echo "Version < 20200408, cleaning usage data"
+ rm /newroot/var/lib/hifiberry/usage.json
+fi 
+
+if [ "$V" -lt 20200416 ]; then
+ echo "Version < 20200416, switching to new asound.conf with eq support"
+ cp /newroot/etc/asound.conf /newroot/etc/asound.conf.bak
+ cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
+fi
+
+if [ "$V" -lt 20200420 ]; then
+ echo "Version < 20200420, extracting firmware again (due to bug in updater)"
+ if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
+  echo "Using zImage from new RPI firmware"
+  cp -rv /newroot/usr/lib/firmware/rpi/* /boot
+ fi
+fi
+
+sync
+
+echo "Upgrading configuration files done"

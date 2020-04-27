@@ -12,6 +12,7 @@ config BR2_PACKAGE_HIFIBERRY_TOOLS
 	select BR2_PACKAGE_JQ
 	select BR2_PACKAGE_RNG_TOOLS
 	select BR2_PACKAGE_ZIP
+	select BR2_PACKAGE_PROCPS_NG
 
 config BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE
         bool "audio lite mode (for Pi 0)"

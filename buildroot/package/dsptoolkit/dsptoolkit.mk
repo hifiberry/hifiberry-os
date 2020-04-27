@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = db7a16ec7f27d0029e5d3e2787c3d5871430abd6
+DSPTOOLKIT_VERSION = 0e8ab2bdf2eb1e21ab962e9e1711720eb77c3794
 DSPTOOLKIT_SITE = $(call github,hifiberry,hifiberry-dsp,$(DSPTOOLKIT_VERSION))
 DSPTOOLKIT_SETUP_TYPE = setuptools
 DSPTOOLKIT_LICENSE = MIT
@@ -28,6 +28,10 @@ define DSPTOOLKIT_INSTALL_INIT
           ln -fs ../../../../usr/lib/systemd/system/sigmatcp.service \
                   $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sigmatcp.service; \
         fi
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/dspvolume.ctl \
+		$(TARGET_DIR)/etc/dspvolume.ctl
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/create-dspvolume \
+		$(TARGET_DIR)/opt/hifiberry/bin/create-dspvolume
 endef
 
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_INSTALL_INIT

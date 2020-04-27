@@ -6,6 +6,7 @@ After=network.target sound.target avahi-daemon.service
 
 [Service]
 Type=simple
+Environment=HOME=/root
 # Avahi daemon needs some time until fully ready
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting shairport-sync"
 ExecStartPre=/bin/sleep 3

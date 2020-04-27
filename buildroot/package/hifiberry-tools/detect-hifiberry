@@ -25,7 +25,32 @@ function check_i2c {
         fi
 }
 
+function check_hat {
+	if [ -f /proc/device-tree/hat/product ]; then
+		HATCARD=`cat /proc/device-tree/hat/product`
+	else
+		HATCARD=""
+	fi
+}
+
 function detect_card {
+	check_hat()
+
+	if [ "$HATCARD" == "DAC+ ADC Pro" ]; then
+		echo "dacplusadcpro"
+		return
+	fi
+
+	if [ "$HATCARD" == "DAC+ ADC" ]; then
+                echo "dacplusadc"
+                return
+        fi
+
+	if [ "$HATCARD" == "DAC 2 HD" ]; then
+		echo "dac2hd"
+		return
+	fi
+
 	# Digi/Digi+
 	res=`i2cget -y 1 0x3b 1 2>/dev/null`
 	if [ "$res" == "0x88" ]; then
