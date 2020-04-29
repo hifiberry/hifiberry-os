@@ -60,7 +60,7 @@ pi_model() {
  if [[ $modelname == *"3 Model A Plus"* ]]; then
   PIMODEL="3A+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
