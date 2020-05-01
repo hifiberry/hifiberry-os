@@ -16,7 +16,7 @@ git clone https://github.com/buildroot/buildroot buildroot-dev
 
 echo "Checking out a known-good release"
 pushd buildroot-dev
-git checkout 8aef2d3a5b1e56c82d4d61deded1a742899b1a1c
+git checkout 197da6286612df9c0c1b5f41e307e1a9be780d0d
 
 echo "Applying patch"
 patch -p1 < ../hifiberry-os/buildroot/buildroot-dev.patch
