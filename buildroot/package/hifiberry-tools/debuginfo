@@ -28,10 +28,13 @@ journalctl > logs.txt
 /opt/hifiberry/bin/report-dump >> usage.txt
 cat /etc/mopidy.conf > mopidy.conf
 cat /boot/config.txt > config.txt
+dsptoolkit > dspprogram.xml
 # Collect some performance data
 top -b -n 5 > top.txt
 perf stat -a sleep 10
 
-zip /tmp/hifiberry-debug.zip $TMPDIR/*
+cd $TMPDIR
+zip /tmp/hifiberry-debug.zip *
+cd /
 rm -rf $TMPDIR
 
