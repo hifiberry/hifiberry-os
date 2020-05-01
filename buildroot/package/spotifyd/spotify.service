@@ -2,6 +2,7 @@
 Description=Spotify connect
 Wants=network-online.target
 After=network.target sound.target dbus.service
+ConditionPathExists=/etc/features/arm7
 
 [Service]
 Type=simple

@@ -1,11 +1,12 @@
 [Unit]
 Description=SigmaTCP Server for HiFiBerry DSP
-Wants=network-online.target
-After=network.target
+Wants=network-online.target sound.target
+After=network.target sound.target
 
 [Service]
 Type=notify
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting DSP server"
+ExecStartPre=/opt/hifiberry/bin/create-dspvolume
 ExecStart=/usr/bin/sigmatcpserver --alsa  ${SIGMATCPSERVER_ARGS}
 ExecStartPost=/bin/sleep 3
 StandardOutput=journal
