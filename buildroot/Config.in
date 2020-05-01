@@ -9,6 +9,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/raspi-wifi/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-systemd/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/watchdog/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/disable-samba/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-arm7/Config.in"
 
 comment "Players"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/lmsmpris/Config.in"

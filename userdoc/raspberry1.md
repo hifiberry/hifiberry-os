@@ -1,9 +1,219 @@
+# Getting Hifiberry OS to run on a Raspberry model B
+
+Please note: very basic setup with squeezelite only. This is a guide created by https://github.com/KomtGoed. It might help you, just note there's no support from HiFiBerry.
+
+Hardware seems too weak for audiocontrol2 and beocreate2. Gstreamer interfered with squeezelite. Could not get a Bluetooth dongle to work.
+
+## buildroot config
+
+Please note: steps below are recorded from memory, so might not be complete/correct.
+
+Follow the instructions for setting up the development environment, stop before running build-config.
+
+See config file below.
+Please make sure to adjust file paths.
+
+Copy to hifiberry-os/configs/config1
+
+./build-config 1
+
+Copy the configs/config1 file to ../buildroot-1/.config
+
+./config 1
+Perform changes as needed, exit and save
+
+
+## Changes to hifiberry packages
+
+1) In hifiberry-os/buildroot/package/hifiberry-squeezelite/squeezelite-start
+
+Replace the `ARGS=` row with
+`ARGS="-o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -a 16"`
+
+
+2) In hifiberry-os/buildroot/package/hifiberry-squeezelite/hifiberry-tools/reconfigure-players
+
+Find the right spot to add
+```
+ if [[ $modelname == *"Pi Model B"* ]]; then
+  PIMODEL="0w"
+  PIVERSION=0
+  return
+ fi
+```
+
+3) hifiberry-os/buildroot/package/configtxt/configtxt.mk
+
+```
+################################################################################
+#
+# configtxt
+#
+################################################################################
+
+define CONFIGTXT_INSTALL_TARGET_CMDS
+        echo "# Enable I2C and SPI" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+define CONFIGTXT_LEGACY_HIFIBERRY
+        echo "dtparam=i2c_arm=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=hifiberry-dac" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+define CONFIGTXT_EEPROM_WORKAROUND
+        echo "# Workaround force_eeprom_read" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+define CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
+        echo "Installing quiet cmdline.txt"
+        $(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/configtxt/cmdline.quiet \
+                $(BINARIES_DIR)/rpi-firmware/cmdline.txt
+endef
+
+define CONFIGTXT_VERBOSE_INSTALL_TARGET_CMDS
+        echo "Installing verbose cmdline.txt"
+        $(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/configtxt/cmdline.verbose \
+                $(BINARIES_DIR)/rpi-firmware/cmdline.txt
+endef
+
+ifeq ($(BR2_PACKAGE_CONFIGTXT_QUIET),y)
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
+else
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_VERBOSE_INSTALL_TARGET_CMDS
+endif
+
+ifeq ($(BR2_PACKAGE_CONFIGTXT_EEPROM),y)
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_EEPROM_WORKAROUND
+endif
+
+ifeq ($(BR2_PACKAGE_LEGACY_HIFIBERRY),y)
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_LEGACY_HIFIBERRY
+endif
+
+$(eval $(generic-package))
+```
+
+
+
+## Other changes
+
+Add a few files to hifiberry-os/buildroot/board/raspberrypi3/overlay/
+
+- etc/asound.conf
+```
+pcm.!default {
+ type hw card 0
+}
+ctl.!default {
+ type hw card 0
+}
+```
+
+- root/.ssh/authorized_keys
+With respective ssh key signature
+
+- root/.profile
+Any bash-simplifications you would like to have
+
+
+
+## Compile
+
+
+./compile 1
+
+This will create the image under ../buildroot-1/images/sdcard.img
+
+Write image to SD card
+
+
+## Changes after imaging
+
+Create a file called ssh in the root folder of the vfat partition
+
+Create a directory called `overlays` and copy the hifiberry-dac.dtbo from the rpi Kernel repository.
+  
+
+## Booting
+Make sure you have ethernet, a monitor and a keyboard attached.
+
+
+
+## Changes done after first boot
+
+After the first start, Hifiberry OS will automatically reboot
+After that first reboot, please either try to login through ssh (sometimes worked, sometimes not) or to the console
+
+systemctl enable sshd
+systemctl start sshd
+
+You can continue through ssh now.
+
+
+Changing the name of the RPI in the following files:
+nano /var/squeezelite/squeezelite.name
+nano /etc/hostname
+nano /etc/systemname
+nano /etc/hosts
+nano /etc/machine-info
+
+
+/opt/hifiberry/bin/reconfigure-players
+
+
+systemctl disable hifiberry-detect.service
+
+
+Check if timezone is OK:
+cat /etc/timezone
+
+Then
+systemctl disable tzupdate
+
+
+Configure Wifi
+wpa_passphrase <your WiFi ID>
+
+Copy results and add to:
+nano /etc/wpa_supplicant.conf
+
+
+systemctl enable wpa_supplicant@wlan0.service
+
+For an old Realtek WiFi USB stick, the following was needed: 
+- nano /lib/systemd/system/wpa_supplicant@wlan0.service
+- Add the `-D wext` option to the wpa_supplicant parameters (thanks to https://www.raspberrypi.org/forums/viewtopic.php?t=104856).
+- systemctl daemon-reload
+
+systemctl restart wpa_supplicant@wlan0.service
+
+systemctl status -l wpa_supplicant@wlan0.service
+
+ifconfig
+
+
+Only issue the following command after you are sure the WiFi is working since the squeezelite player will be registered with the LMS under the IP of the wired device otherwise. That caused some debugging time.
+systemctl enable squeezelite.service
+
+
+reboot 
+and remove ethernet cable
+
+Should work now.
+
+
+
+## config file
+```
 #
 # Automatically generated file; DO NOT EDIT.
 # Buildroot 2019.08.3-dirty Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
-BR2_EXTERNAL_HIFIBERRY_PATH="/home/matuschd/hifiberry-os/buildroot"
+BR2_EXTERNAL_HIFIBERRY_PATH="/home/<user>/hifiberry-os/buildroot"
 BR2_HOST_GCC_AT_LEAST_4_5=y
 BR2_HOST_GCC_AT_LEAST_4_6=y
 BR2_HOST_GCC_AT_LEAST_4_7=y
@@ -12,6 +222,7 @@ BR2_HOST_GCC_AT_LEAST_4_9=y
 BR2_HOST_GCC_AT_LEAST_5=y
 BR2_HOST_GCC_AT_LEAST_6=y
 BR2_HOST_GCC_AT_LEAST_7=y
+BR2_HOST_GCC_AT_LEAST_8=y
 BR2_NEEDS_HOST_UTF8_LOCALE=y
 
 #
@@ -49,22 +260,18 @@ BR2_ARCH_HAS_TOOLCHAIN_BUILDROOT=y
 BR2_ARCH="arm"
 BR2_ENDIAN="LITTLE"
 BR2_GCC_TARGET_ABI="aapcs-linux"
-BR2_GCC_TARGET_CPU="cortex-a53"
-BR2_GCC_TARGET_FPU="neon-vfpv4"
+BR2_GCC_TARGET_CPU="arm1176jzf-s"
+BR2_GCC_TARGET_FPU="vfp"
 BR2_GCC_TARGET_FLOAT_ABI="hard"
 BR2_GCC_TARGET_MODE="arm"
 BR2_BINFMT_SUPPORTS_SHARED=y
 BR2_READELF_ARCH_NAME="ARM"
 BR2_BINFMT_ELF=y
-BR2_ARM_CPU_HAS_NEON=y
 BR2_ARM_CPU_HAS_FPU=y
 BR2_ARM_CPU_HAS_VFPV2=y
-BR2_ARM_CPU_HAS_VFPV3=y
-BR2_ARM_CPU_HAS_VFPV4=y
-BR2_ARM_CPU_HAS_FP_ARMV8=y
 BR2_ARM_CPU_HAS_ARM=y
-BR2_ARM_CPU_HAS_THUMB2=y
-BR2_ARM_CPU_ARMV8A=y
+BR2_ARM_CPU_HAS_THUMB=y
+BR2_ARM_CPU_ARMV6=y
 
 #
 # armv4 cores
@@ -87,7 +294,7 @@ BR2_ARM_CPU_ARMV8A=y
 # BR2_arm1136j_s is not set
 # BR2_arm1136jf_s is not set
 # BR2_arm1176jz_s is not set
-# BR2_arm1176jzf_s is not set
+BR2_arm1176jzf_s=y
 # BR2_arm11mpcore is not set
 
 #
@@ -116,7 +323,7 @@ BR2_ARM_CPU_ARMV8A=y
 #
 # BR2_cortex_a32 is not set
 # BR2_cortex_a35 is not set
-BR2_cortex_a53=y
+# BR2_cortex_a53 is not set
 # BR2_cortex_a57 is not set
 # BR2_cortex_a57_a53 is not set
 # BR2_cortex_a72 is not set
@@ -143,17 +350,12 @@ BR2_cortex_a53=y
 #
 # BR2_ARM_EABI is not set
 BR2_ARM_EABIHF=y
-# BR2_ARM_FPU_VFPV2 is not set
-# BR2_ARM_FPU_VFPV3 is not set
-# BR2_ARM_FPU_VFPV3D16 is not set
-# BR2_ARM_FPU_VFPV4 is not set
-# BR2_ARM_FPU_VFPV4D16 is not set
-# BR2_ARM_FPU_NEON is not set
-BR2_ARM_FPU_NEON_VFPV4=y
-# BR2_ARM_FPU_FP_ARMV8 is not set
-# BR2_ARM_FPU_NEON_FP_ARMV8 is not set
+BR2_ARM_FPU_VFPV2=y
 BR2_ARM_INSTRUCTIONS_ARM=y
-# BR2_ARM_INSTRUCTIONS_THUMB2 is not set
+
+#
+# Thumb1 is not compatible with VFP
+#
 
 #
 # Build options
@@ -175,7 +377,7 @@ BR2_BZCAT="bzcat"
 BR2_XZCAT="xzcat"
 BR2_LZCAT="lzip -d -c"
 BR2_TAR_OPTIONS=""
-BR2_DEFCONFIG="/home/matuschd/buildroot-2019.08-rc3/configs/raspberrypi3_defconfig"
+BR2_DEFCONFIG="/home/<user>/buildroot-2019.08.3/configs/raspberrypi_defconfig"
 BR2_DL_DIR="$(TOPDIR)/dl"
 BR2_HOST_DIR="$(BASE_DIR)/host"
 
@@ -194,12 +396,12 @@ BR2_JLEVEL=0
 BR2_STRIP_strip=y
 BR2_STRIP_EXCLUDE_FILES=""
 BR2_STRIP_EXCLUDE_DIRS=""
-# BR2_OPTIMIZE_0 is not set
+BR2_OPTIMIZE_0=y
 # BR2_OPTIMIZE_1 is not set
 # BR2_OPTIMIZE_2 is not set
 # BR2_OPTIMIZE_3 is not set
 # BR2_OPTIMIZE_G is not set
-BR2_OPTIMIZE_S=y
+# BR2_OPTIMIZE_S is not set
 # BR2_OPTIMIZE_FAST is not set
 # BR2_GOOGLE_BREAKPAD_ENABLE is not set
 # BR2_STATIC_LIBS is not set
@@ -226,9 +428,10 @@ BR2_SSP_NONE=y
 BR2_RELRO_NONE=y
 # BR2_RELRO_PARTIAL is not set
 # BR2_RELRO_FULL is not set
-BR2_FORTIFY_SOURCE_NONE=y
-# BR2_FORTIFY_SOURCE_1 is not set
-# BR2_FORTIFY_SOURCE_2 is not set
+
+#
+# Fortify Source needs a glibc toolchain and optimization
+#
 
 #
 # Toolchain
@@ -338,7 +541,6 @@ BR2_PACKAGE_HOST_GDB_ARCH_SUPPORTS=y
 # Host GDB Options
 #
 # BR2_PACKAGE_HOST_GDB is not set
-BR2_GDB_VERSION="8.2.1"
 
 #
 # Toolchain Generic Options
@@ -475,10 +677,10 @@ BR2_TARGET_TZ_ZONELIST="default"
 BR2_TARGET_LOCALTIME="Etc/UTC"
 BR2_ROOTFS_USERS_TABLES=""
 BR2_ROOTFS_OVERLAY="../hifiberry-os/buildroot/board/raspberrypi3/overlay/"
-BR2_ROOTFS_POST_BUILD_SCRIPT="board/raspberrypi3/post-build.sh"
+BR2_ROOTFS_POST_BUILD_SCRIPT="board/raspberrypi/post-build.sh"
 BR2_ROOTFS_POST_FAKEROOT_SCRIPT=""
-BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypi3/post-image.sh"
-BR2_ROOTFS_POST_SCRIPT_ARGS="--add-miniuart-bt-overlay"
+BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypi/post-image.sh"
+BR2_ROOTFS_POST_SCRIPT_ARGS=""
 
 #
 # Kernel
@@ -491,13 +693,13 @@ BR2_LINUX_KERNEL_CUSTOM_TARBALL=y
 # BR2_LINUX_KERNEL_CUSTOM_GIT is not set
 # BR2_LINUX_KERNEL_CUSTOM_HG is not set
 # BR2_LINUX_KERNEL_CUSTOM_SVN is not set
-BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="$(call github,raspberrypi,linux,655c29926652b16cd21e05fc63a1e4367aa1c6d7)/655c29926652b16cd21e05fc63a1e4367aa1c6d7.tar.gz"
+BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="$(call github,raspberrypi,linux,64d0a9870ac14d5eb5253f67d984ae348eec1393)/64d0a9870ac14d5eb5253f67d984ae348eec1393.tar.gz"
 BR2_LINUX_KERNEL_VERSION="custom"
 BR2_LINUX_KERNEL_PATCH=""
 BR2_LINUX_KERNEL_USE_DEFCONFIG=y
 # BR2_LINUX_KERNEL_USE_ARCH_DEFAULT_CONFIG is not set
 # BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG is not set
-BR2_LINUX_KERNEL_DEFCONFIG="bcm2709"
+BR2_LINUX_KERNEL_DEFCONFIG="bcmrpi"
 BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES=""
 BR2_LINUX_KERNEL_CUSTOM_LOGO_PATH=""
 # BR2_LINUX_KERNEL_UIMAGE is not set
@@ -513,7 +715,7 @@ BR2_LINUX_KERNEL_GZIP=y
 # BR2_LINUX_KERNEL_XZ is not set
 BR2_LINUX_KERNEL_DTS_SUPPORT=y
 # BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT is not set
-BR2_LINUX_KERNEL_INTREE_DTS_NAME="bcm2710-rpi-3-b bcm2710-rpi-3-b-plus bcm2710-rpi-cm3"
+BR2_LINUX_KERNEL_INTREE_DTS_NAME="bcm2708-rpi-b bcm2708-rpi-b-plus bcm2708-rpi-cm"
 BR2_LINUX_KERNEL_CUSTOM_DTS_PATH=""
 # BR2_LINUX_KERNEL_DTB_OVERLAY_SUPPORT is not set
 # BR2_LINUX_KERNEL_INSTALL_TARGET is not set
@@ -664,7 +866,6 @@ BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_OPUS=y
 BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_PANGO=y
 BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_THEORA=y
 BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VORBIS=y
-# BR2_PACKAGE_GST1_PLUGINS_BAYER2RGB_NEON is not set
 BR2_PACKAGE_GST1_PLUGINS_GOOD=y
 BR2_PACKAGE_GST1_PLUGINS_GOOD_JPEG=y
 BR2_PACKAGE_GST1_PLUGINS_GOOD_PNG=y
@@ -922,7 +1123,7 @@ BR2_PACKAGE_TWOLAME=y
 # BR2_PACKAGE_VORBIS_TOOLS is not set
 BR2_PACKAGE_WAVPACK=y
 # BR2_PACKAGE_YAVTA is not set
-BR2_PACKAGE_YMPD=y
+# BR2_PACKAGE_YMPD is not set
 
 #
 # Compressors and decompressors
@@ -965,10 +1166,7 @@ BR2_PACKAGE_ZIP=y
 # BR2_PACKAGE_DUMA is not set
 # BR2_PACKAGE_FIO is not set
 BR2_PACKAGE_GDB_ARCH_SUPPORTS=y
-BR2_PACKAGE_GDB=y
-# BR2_PACKAGE_GDB_SERVER is not set
-BR2_PACKAGE_GDB_DEBUGGER=y
-# BR2_PACKAGE_GDB_TUI is not set
+# BR2_PACKAGE_GDB is not set
 BR2_PACKAGE_GOOGLE_BREAKPAD_ARCH_SUPPORTS=y
 # BR2_PACKAGE_GOOGLE_BREAKPAD is not set
 # BR2_PACKAGE_IOZONE is not set
@@ -1197,7 +1395,7 @@ BR2_PACKAGE_NETSURF_ARCH_SUPPORTS=y
 # BR2_PACKAGE_LINUX_FUSION is not set
 # BR2_PACKAGE_MESA3D is not set
 # BR2_PACKAGE_OCRAD is not set
-# BR2_PACKAGE_PSPLASH is not set
+BR2_PACKAGE_PSPLASH=y
 # BR2_PACKAGE_SDL is not set
 # BR2_PACKAGE_SDL2 is not set
 
@@ -1232,16 +1430,126 @@ BR2_PACKAGE_QT5_JSCORE_AVAILABLE=y
 # BR2_PACKAGE_AM33X_CM3 is not set
 # BR2_PACKAGE_ARMBIAN_FIRMWARE is not set
 # BR2_PACKAGE_B43_FIRMWARE is not set
-# BR2_PACKAGE_LINUX_FIRMWARE is not set
+BR2_PACKAGE_LINUX_FIRMWARE=y
+
+#
+# Audio firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_INTEL_SST_DSP is not set
+
+#
+# Video firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_AMDGPU is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_I915 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_RADEON is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QCOM_VENUS is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO is not set
+
+#
+# Bluetooth firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_IBT is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7650 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_TI_CC2560 is not set
+
+#
+# WiFi firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_6002 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_6003 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_6004 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_7010 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_9170 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_9271 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA998X is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA6174 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XX is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43XXX is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3160 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3168 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_5000 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6000G2A is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6000G2B is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7260 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7265 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7265D is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_8000C is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_8265 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_9XXX is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_SD8686_V8 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_SD8686_V9 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_SD8688 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_USB8388_V9 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_USB8388_OLPC is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_USB_THINFIRM is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SD8787 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SD8797 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_USB8797 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_USB8801 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SD8887 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SD8897 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_USB8897 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIE8897 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7601U is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT76X2E is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT61 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT73 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT2XX is not set
+BR2_PACKAGE_LINUX_FIRMWARE_RTL_81XX=y
+BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX=y
+BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX=y
+# BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9113 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_TI_WL127X is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_TI_WL128X is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_TI_WL18XX is not set
+
+#
+# Ethernet firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_BNX2X is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T4 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T5 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_INTEL_E100 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_4X is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_RTL_8169 is not set
+
+#
+# DVB firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_AS102 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_DIB0700 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_ITETECH_IT9135 is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_H5_DRXK is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_XCx000 is not set
+
+#
+# SoC Firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA is not set
+
+#
+# Fibre Channel Adapter Firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_2XXX is not set
+
+#
+# Intel QuickAssist Firmware
+#
+# BR2_PACKAGE_LINUX_FIRMWARE_QAT_DH895XCC is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QAT_C3XXX is not set
+# BR2_PACKAGE_LINUX_FIRMWARE_QAT_C62X is not set
 # BR2_PACKAGE_MURATA_CYW_FW is not set
 BR2_PACKAGE_RPI_BT_FIRMWARE=y
 BR2_PACKAGE_RPI_FIRMWARE=y
 BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI=y
 # BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4 is not set
-BR2_PACKAGE_RPI_FIRMWARE_DEFAULT=y
-# BR2_PACKAGE_RPI_FIRMWARE_X is not set
+# BR2_PACKAGE_RPI_FIRMWARE_DEFAULT is not set
+BR2_PACKAGE_RPI_FIRMWARE_X=y
 # BR2_PACKAGE_RPI_FIRMWARE_CD is not set
-BR2_PACKAGE_RPI_FIRMWARE_BOOT=""
+BR2_PACKAGE_RPI_FIRMWARE_BOOT="_x"
 BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTB_OVERLAYS=y
 # BR2_PACKAGE_RPI_FIRMWARE_INSTALL_VCDBG is not set
 BR2_PACKAGE_RPI_WIFI_FIRMWARE=y
@@ -1306,7 +1614,7 @@ BR2_PACKAGE_FLASHROM_ARCH_SUPPORTS=y
 # BR2_PACKAGE_HDPARM is not set
 # BR2_PACKAGE_HWDATA is not set
 # BR2_PACKAGE_HWLOC is not set
-# BR2_PACKAGE_I2C_TOOLS is not set
+BR2_PACKAGE_I2C_TOOLS=y
 # BR2_PACKAGE_INPUT_EVENT_DAEMON is not set
 # BR2_PACKAGE_IOSTAT is not set
 # BR2_PACKAGE_IPMITOOL is not set
@@ -1369,7 +1677,7 @@ BR2_PACKAGE_SEDUTIL_ARCH_SUPPORTS=y
 # BR2_PACKAGE_SISPMCTL is not set
 # BR2_PACKAGE_SMARTMONTOOLS is not set
 # BR2_PACKAGE_SMSTOOLS3 is not set
-# BR2_PACKAGE_SPI_TOOLS is not set
+BR2_PACKAGE_SPI_TOOLS=y
 # BR2_PACKAGE_SREDIRD is not set
 # BR2_PACKAGE_STATSERIAL is not set
 # BR2_PACKAGE_STM32FLASH is not set
@@ -1627,7 +1935,7 @@ BR2_PACKAGE_PYTHON_PROTOBUF=y
 # BR2_PACKAGE_PYTHON_PYASN_MODULES is not set
 BR2_PACKAGE_PYTHON_PYASN1=y
 BR2_PACKAGE_PYTHON_PYASN1_MODULES=y
-BR2_PACKAGE_PYTHON_PYCAIRO=y
+# BR2_PACKAGE_PYTHON_PYCAIRO is not set
 # BR2_PACKAGE_PYTHON_PYCARES is not set
 # BR2_PACKAGE_PYTHON_PYCLI is not set
 BR2_PACKAGE_PYTHON_PYCPARSER=y
@@ -1963,7 +2271,6 @@ BR2_PACKAGE_LIBSYSFS=y
 #
 # BR2_PACKAGE_ATK is not set
 # BR2_PACKAGE_ATKMM is not set
-# BR2_PACKAGE_BAYER2RGB_NEON is not set
 # BR2_PACKAGE_BULLET is not set
 BR2_PACKAGE_CAIRO=y
 # BR2_PACKAGE_CAIRO_PS is not set
@@ -2003,7 +2310,6 @@ BR2_PACKAGE_HARFBUZZ=y
 #
 # BR2_PACKAGE_JASPER is not set
 BR2_PACKAGE_JPEG=y
-BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
 # BR2_PACKAGE_LIBJPEG is not set
 BR2_PACKAGE_JPEG_TURBO=y
 BR2_PACKAGE_HAS_JPEG=y
@@ -2132,7 +2438,7 @@ BR2_PACKAGE_GNU_EFI_ARCH_SUPPORTS=y
 # BR2_PACKAGE_LIBGUDEV is not set
 # BR2_PACKAGE_LIBHID is not set
 # BR2_PACKAGE_LIBIIO is not set
-# BR2_PACKAGE_LIBINPUT is not set
+BR2_PACKAGE_LIBINPUT=y
 # BR2_PACKAGE_LIBIQRF is not set
 # BR2_PACKAGE_LIBLLCP is not set
 # BR2_PACKAGE_LIBMBIM is not set
@@ -2156,8 +2462,11 @@ BR2_PACKAGE_LIBUSB=y
 # BR2_PACKAGE_LIBV4L is not set
 # BR2_PACKAGE_LIBXKBCOMMON is not set
 # BR2_PACKAGE_MRAA is not set
-# BR2_PACKAGE_MTDEV is not set
-# BR2_PACKAGE_NE10 is not set
+BR2_PACKAGE_MTDEV=y
+
+#
+# ne10 needs a toolchain w/ neon
+#
 # BR2_PACKAGE_NEARDAL is not set
 # BR2_PACKAGE_OWFS is not set
 # BR2_PACKAGE_PCSC_LITE is not set
@@ -2259,7 +2568,7 @@ BR2_PACKAGE_LIBOPENH264=y
 # BR2_PACKAGE_LIBOPUSENC is not set
 # BR2_PACKAGE_LIBPLAYER is not set
 BR2_PACKAGE_LIBTHEORA=y
-# BR2_PACKAGE_LIBVPX is not set
+BR2_PACKAGE_LIBVPX=y
 # BR2_PACKAGE_LIBYUV is not set
 # BR2_PACKAGE_LIVE555 is not set
 # BR2_PACKAGE_MEDIASTREAMER is not set
@@ -2277,7 +2586,6 @@ BR2_PACKAGE_LIBTHEORA=y
 # BR2_PACKAGE_AZMQ is not set
 # BR2_PACKAGE_AZURE_IOT_SDK_C is not set
 # BR2_PACKAGE_BATMAN_ADV is not set
-BR2_PACKAGE_BLUEZ5_UTILS_HEADERS=y
 BR2_PACKAGE_C_ARES=y
 BR2_PACKAGE_CANFESTIVAL_ARCH_SUPPORTS=y
 # BR2_PACKAGE_CANFESTIVAL is not set
@@ -2360,7 +2668,7 @@ BR2_PACKAGE_LIBSOUP=y
 # BR2_PACKAGE_LIBSOUP_SSL is not set
 # BR2_PACKAGE_LIBSRTP is not set
 # BR2_PACKAGE_LIBSTROPHE is not set
-# BR2_PACKAGE_LIBTIRPC is not set
+BR2_PACKAGE_LIBTIRPC=y
 # BR2_PACKAGE_LIBTORRENT is not set
 # BR2_PACKAGE_LIBTORRENT_RASTERBAR is not set
 BR2_PACKAGE_LIBUPNP=y
@@ -2495,7 +2803,7 @@ BR2_PACKAGE_LIBCAP=y
 BR2_PACKAGE_LIBDAEMON=y
 # BR2_PACKAGE_LIBEE is not set
 # BR2_PACKAGE_LIBEV is not set
-# BR2_PACKAGE_LIBEVDEV is not set
+BR2_PACKAGE_LIBEVDEV=y
 BR2_PACKAGE_LIBEVENT=y
 BR2_PACKAGE_LIBFFI=y
 # BR2_PACKAGE_LIBGEE is not set
@@ -2542,6 +2850,9 @@ BR2_PACKAGE_LLVM_TARGET_ARCH="ARM"
 # BR2_PACKAGE_MPIR is not set
 # BR2_PACKAGE_MSGPACK is not set
 # BR2_PACKAGE_MTDEV2TUIO is not set
+BR2_PACKAGE_OPENBLAS_DEFAULT_TARGET="ARMV6"
+BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS=y
+# BR2_PACKAGE_OPENBLAS is not set
 # BR2_PACKAGE_ORC is not set
 # BR2_PACKAGE_P11_KIT is not set
 # BR2_PACKAGE_POCO is not set
@@ -2638,7 +2949,7 @@ BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET=y
 # BR2_PACKAGE_QPDF is not set
 # BR2_PACKAGE_SHARED_MIME_INFO is not set
 # BR2_PACKAGE_TASKD is not set
-# BR2_PACKAGE_XUTIL_UTIL_MACROS is not set
+BR2_PACKAGE_XUTIL_UTIL_MACROS=y
 
 #
 # Networking applications
@@ -2663,19 +2974,8 @@ BR2_PACKAGE_AVAHI_DAEMON=y
 # BR2_PACKAGE_BCUSDK is not set
 # BR2_PACKAGE_BIND is not set
 # BR2_PACKAGE_BIRD is not set
-BR2_PACKAGE_BLUEZ_TOOLS=y
 # BR2_PACKAGE_BLUEZ_UTILS is not set
-BR2_PACKAGE_BLUEZ5_UTILS=y
-# BR2_PACKAGE_BLUEZ5_UTILS_OBEX is not set
-BR2_PACKAGE_BLUEZ5_UTILS_CLIENT=y
-BR2_PACKAGE_BLUEZ5_UTILS_DEPRECATED=y
-# BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL is not set
-# BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH is not set
-# BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_MIDI is not set
-# BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NFC is not set
-# BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP is not set
-# BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SIXAXIS is not set
-# BR2_PACKAGE_BLUEZ5_UTILS_TEST is not set
+# BR2_PACKAGE_BLUEZ5_UTILS is not set
 # BR2_PACKAGE_BMON is not set
 # BR2_PACKAGE_BOA is not set
 # BR2_PACKAGE_BOINC is not set
@@ -2753,7 +3053,7 @@ BR2_PACKAGE_HOSTAPD_VLAN_NETLINK=y
 # BR2_PACKAGE_IFMETRIC is not set
 # BR2_PACKAGE_IFPLUGD is not set
 # BR2_PACKAGE_IFTOP is not set
-# BR2_PACKAGE_IFUPDOWN is not set
+BR2_PACKAGE_IFUPDOWN=y
 # BR2_PACKAGE_IGD2_FOR_LINUX is not set
 # BR2_PACKAGE_IGH_ETHERCAT is not set
 # BR2_PACKAGE_IGMPPROXY is not set
@@ -2764,7 +3064,9 @@ BR2_PACKAGE_HOSTAPD_VLAN_NETLINK=y
 # BR2_PACKAGE_IPROUTE2 is not set
 # BR2_PACKAGE_IPSEC_TOOLS is not set
 # BR2_PACKAGE_IPSET is not set
-# BR2_PACKAGE_IPTABLES is not set
+BR2_PACKAGE_IPTABLES=y
+# BR2_PACKAGE_IPTABLES_BPF_NFSYNPROXY is not set
+# BR2_PACKAGE_IPTABLES_NFTABLES is not set
 # BR2_PACKAGE_IPTRAF_NG is not set
 # BR2_PACKAGE_IPUTILS is not set
 # BR2_PACKAGE_IRSSI is not set
@@ -2878,10 +3180,7 @@ BR2_PACKAGE_OPENSSH=y
 # BR2_PACKAGE_RYGEL is not set
 # BR2_PACKAGE_S6_DNS is not set
 # BR2_PACKAGE_S6_NETWORKING is not set
-BR2_PACKAGE_SAMBA4=y
-# BR2_PACKAGE_SAMBA4_AD_DC is not set
-# BR2_PACKAGE_SAMBA4_ADS is not set
-# BR2_PACKAGE_SAMBA4_SMBTORTURE is not set
+# BR2_PACKAGE_SAMBA4 is not set
 # BR2_PACKAGE_SCONESERVER is not set
 # BR2_PACKAGE_SER2NET is not set
 # BR2_PACKAGE_SHADOWSOCKS_LIBEV is not set
@@ -2948,7 +3247,7 @@ BR2_PACKAGE_WPA_SUPPLICANT_CLI=y
 BR2_PACKAGE_WPA_SUPPLICANT_WPA_CLIENT_SO=y
 BR2_PACKAGE_WPA_SUPPLICANT_PASSPHRASE=y
 # BR2_PACKAGE_WPA_SUPPLICANT_DBUS_OLD is not set
-# BR2_PACKAGE_WPA_SUPPLICANT_DBUS_NEW is not set
+BR2_PACKAGE_WPA_SUPPLICANT_DBUS_NEW=y
 BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION=y
 # BR2_PACKAGE_WPAN_TOOLS is not set
 # BR2_PACKAGE_XINETD is not set
@@ -3042,7 +3341,7 @@ BR2_PACKAGE_BASH=y
 # Utilities
 #
 # BR2_PACKAGE_AT is not set
-# BR2_PACKAGE_BASH_COMPLETION is not set
+BR2_PACKAGE_BASH_COMPLETION=y
 # BR2_PACKAGE_CCRYPT is not set
 # BR2_PACKAGE_DIALOG is not set
 # BR2_PACKAGE_DTACH is not set
@@ -3114,7 +3413,7 @@ BR2_PACKAGE_KMOD_TOOLS=y
 # pamtester depends on linux-pam
 #
 # BR2_PACKAGE_POLKIT is not set
-BR2_PACKAGE_PROCPS_NG=y
+# BR2_PACKAGE_PROCPS_NG is not set
 # BR2_PACKAGE_PROCRANK_LINUX is not set
 # BR2_PACKAGE_PSMISC is not set
 # BR2_PACKAGE_PWGEN is not set
@@ -3245,7 +3544,8 @@ BR2_PACKAGE_XVISOR_ARCH_SUPPORTS=y
 # BR2_PACKAGE_LESS is not set
 # BR2_PACKAGE_MC is not set
 # BR2_PACKAGE_MOST is not set
-# BR2_PACKAGE_NANO is not set
+BR2_PACKAGE_NANO=y
+BR2_PACKAGE_NANO_TINY=y
 # BR2_PACKAGE_UEMACS is not set
 # BR2_PACKAGE_VIM is not set
 
@@ -3265,10 +3565,10 @@ BR2_TARGET_ROOTFS_EXT2_4=y
 BR2_TARGET_ROOTFS_EXT2_GEN=4
 BR2_TARGET_ROOTFS_EXT2_REV=1
 BR2_TARGET_ROOTFS_EXT2_LABEL="hifiberryos"
-BR2_TARGET_ROOTFS_EXT2_SIZE="550M"
+BR2_TARGET_ROOTFS_EXT2_SIZE="500M"
 BR2_TARGET_ROOTFS_EXT2_INODES=0
 BR2_TARGET_ROOTFS_EXT2_RESBLKS=5
-BR2_TARGET_ROOTFS_EXT2_MKFS_OPTIONS="-O ^64bit"
+BR2_TARGET_ROOTFS_EXT2_MKFS_OPTIONS=""
 BR2_TARGET_ROOTFS_EXT2_NONE=y
 # BR2_TARGET_ROOTFS_EXT2_GZIP is not set
 # BR2_TARGET_ROOTFS_EXT2_BZIP2 is not set
@@ -3294,7 +3594,6 @@ BR2_TARGET_ROOTFS_EXT2_NONE=y
 BR2_TARGET_GRUB2_ARCH_SUPPORTS=y
 # BR2_TARGET_GRUB2 is not set
 # BR2_TARGET_MXS_BOOTLETS is not set
-# BR2_TARGET_OPTEE_OS is not set
 # BR2_TARGET_S500_BOOTLOADER is not set
 # BR2_TARGET_UBOOT is not set
 
@@ -4013,7 +4312,7 @@ BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION=""
 #
 
 #
-# Additional HiFiBerry modules (in /home/matuschd/hifiberry-os/buildroot)
+# Additional HiFiBerry modules (in /home/<user>/hifiberry-os/buildroot)
 #
 
 #
@@ -4021,67 +4320,52 @@ BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION=""
 #
 BR2_PACKAGE_HIFIBERRY_BASE=y
 BR2_PACKAGE_HIFIBERRY_TOOLS=y
-# BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE is not set
-BR2_PACKAGE_HIFIBERRY_UPDATER=y
+BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y
+# BR2_PACKAGE_HIFIBERRY_UPDATER is not set
 BR2_PACKAGE_ALSA_PLUGINS=y
-BR2_PACKAGE_ALSA_EQ=y
 BR2_PACKAGE_CONFIGTXT=y
-BR2_PACKAGE_CONFIGTXT_QUIET=y
-BR2_PACKAGE_CONFIGTXT_EEPROM=y
+# BR2_PACKAGE_CONFIGTXT_QUIET is not set
+# BR2_PACKAGE_CONFIGTXT_EEPROM is not set
 BR2_PACKAGE_RASPI_WIFI=y
 BR2_PACKAGE_HIFIBERRY_SYSTEMD=y
 BR2_PACKAGE_WATCHDOG=y
-BR2_PACKAGE_DISABLE_SAMBA=y
-BR2_PACKAGE_ENABLE_ARM7=y
 
 #
 # Players
 #
-BR2_PACKAGE_LMSMPRIS=y
-BR2_PACKAGE_SPOTIFYD=y
-BR2_PACKAGE_RAAT=y
+# BR2_PACKAGE_LMSMPRIS is not set
+# BR2_PACKAGE_SPOTIFYD is not set
+# BR2_PACKAGE_RAAT is not set
 BR2_PACKAGE_HIFIBERRY_SQUEEZELITE=y
-BR2_PACKAGE_HIFIBERRY_BLUEZALSA=y
-BR2_PACKAGE_HIFIBERRY_GMRENDER=y
-BR2_PACKAGE_HIFIBERRY_GSTREAMER=y
-BR2_PACKAGE_DLNAMPRIS=y
-BR2_PACKAGE_HIFIBERRY_SHAIRPORT=y
+# BR2_PACKAGE_HIFIBERRY_BLUEZALSA is not set
+# BR2_PACKAGE_HIFIBERRY_GMRENDER is not set
+# BR2_PACKAGE_HIFIBERRY_GSTREAMER is not set
+# BR2_PACKAGE_DLNAMPRIS is not set
+# BR2_PACKAGE_HIFIBERRY_SHAIRPORT is not set
 # BR2_PACKAGE_MOPIDY is not set
-BR2_PACKAGE_HIFIBERRY_MPD=y
-BR2_PACKAGE_HIFIBERRY_YMPD=y
-BR2_PACKAGE_MPD_MPRIS=y
-BR2_PACKAGE_HIFIBERRY_ALSALOOP=y
-BR2_PACKAGE_BTSPEAKER=y
-BR2_PACKAGE_MPRIS_PROXY=y
-BR2_PACKAGE_SNAPCAST=y
-BR2_PACKAGE_SNAPCAST_CLIENT=y
-# BR2_PACKAGE_SNAPCAST_SERVER is not set
-BR2_PACKAGE_SNAPCASTMPRIS=y
-BR2_PACKAGE_WEBRADIO=y
+# BR2_PACKAGE_HIFIBERRY_MPD is not set
+# BR2_PACKAGE_HIFIBERRY_YMPD is not set
+# BR2_PACKAGE_HIFIBERRY_ALSALOOP is not set
+# BR2_PACKAGE_BTSPEAKER is not set
+# BR2_PACKAGE_MPRIS_PROXY is not set
+# BR2_PACKAGE_SNAPCAST is not set
 
 #
 # Backend applications
 #
-BR2_PACKAGE_DSPTOOLKIT=y
-BR2_PACKAGE_DSPPROFILES=y
-BR2_PACKAGE_AUDIOCONTROL2=y
+# BR2_PACKAGE_DSPTOOLKIT is not set
+# BR2_PACKAGE_AUDIOCONTROL2 is not set
 # BR2_PACKAGE_HIFIBERRY_POSTGRES is not set
-BR2_PACKAGE_HIFIBERRY_MEASUREMENTS=y
-BR2_PACKAGE_SMBTOOLS=y
+# BR2_PACKAGE_HIFIBERRY_MEASUREMENTS is not set
+# BR2_PACKAGE_SMBTOOLS is not set
 
 #
 # GUI
 #
-BR2_PACKAGE_BEOCREATE=y
-BR2_PACKAGE_DSP_PROMO=y
+# BR2_PACKAGE_BEOCREATE is not set
 # BR2_PACKAGE_ENABLE_VC4KMS is not set
 BR2_PACKAGE_HIFIBERRY_PSPLASH=y
 # BR2_PACKAGE_HIFIBERRY_LOCALBROWSER is not set
-
-#
-# Libraries
-#
-BR2_PACKAGE_CAPS=y
 
 #
 # Python modules
@@ -4090,37 +4374,36 @@ BR2_PACKAGE_CAPS=y
 # BR2_PACKAGE_PYTHON_BOTTLE_WEBSOCKET is not set
 # BR2_PACKAGE_PYTHON_BS4 is not set
 # BR2_PACKAGE_PYTHON_CACHETOOLS is not set
-BR2_PACKAGE_PYTHON_EXPIRINGDICT=y
+# BR2_PACKAGE_PYTHON_EXPIRINGDICT is not set
 # BR2_PACKAGE_PYTHON_GEVENT is not set
 # BR2_PACKAGE_PYTHON_GEVENT_WEBSOCKET is not set
 # BR2_PACKAGE_PYTHON_GMUSICAPI is not set
 # BR2_PACKAGE_PYTHON_GPSOAUTH is not set
 # BR2_PACKAGE_PYTHON_GREENLET is not set
-BR2_PACKAGE_PYTHON_GSTREAMER_PLAYER=y
-BR2_PACKAGE_PYTHON_KEYBOARD=y
-BR2_PACKAGE_PYTHON_LEVENSHTEIN=y
+# BR2_PACKAGE_PYTHON_GSTREAMER_PLAYER is not set
+# BR2_PACKAGE_PYTHON_KEYBOARD is not set
+# BR2_PACKAGE_PYTHON_LEVENSHTEIN is not set
 # BR2_PACKAGE_PYTHON_MECHANICALSOUP is not set
 # BR2_PACKAGE_PYTHON_MOCK is not set
-BR2_PACKAGE_PYTHON_MUSICBRAINZ_NGS=y
+# BR2_PACKAGE_PYTHON_MUSICBRAINZ_NGS is not set
 # BR2_PACKAGE_PYTHON_OAUTH2CLIENT is not set
 # BR2_PACKAGE_PYTHON_PROBOSCIS is not set
 # BR2_PACKAGE_PYTHON_PYDBUS is not set
 # BR2_PACKAGE_PYTHON_PYGOBJECT is not set
 # BR2_PACKAGE_PYTHON_PYKKA is not set
-BR2_PACKAGE_PYTHON_PYKY040=y
-BR2_PACKAGE_PYTHON_PYLAST=y
+# BR2_PACKAGE_PYTHON_PYKY040 is not set
+# BR2_PACKAGE_PYTHON_PYLAST is not set
 BR2_PACKAGE_PYTHON_TZUPDATE=y
 # BR2_PACKAGE_PYTHON_URITOOLS is not set
-BR2_PACKAGE_PYTHON_USAGEDATA=y
+# BR2_PACKAGE_PYTHON_USAGEDATA is not set
 # BR2_PACKAGE_PYTHON_VALIDICTORY is not set
 # BR2_PACKAGE_PYTHON_YOUTUBE_DL is not set
 
 #
 # Test tools
 #
-BR2_PACKAGE_HIFIBERRY_TEST=y
+# BR2_PACKAGE_HIFIBERRY_TEST is not set
 HIFIBERRY_TEST_NONE=y
-# HIFIBERRY_TEST_DAC2HD is not set
 # HIFIBERRY_TEST_AMP2 is not set
 # HIFIBERRY_TEST_DACRTC is not set
 # HIFIBERRY_TEST_DSPDAC is not set
@@ -4129,3 +4412,4 @@ HIFIBERRY_TEST_NONE=y
 # HIFIBERRY_TEST_DACADCPRO is not set
 # HIFIBERRY_TEST_DSPDACADC is not set
 # HIFIBERRY_TEST_USB is not set
+```

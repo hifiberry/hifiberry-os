@@ -4,7 +4,16 @@ REBOOTFILE=/tmp/reboot
 
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy"
 
-FEATURES=""
+FEATURES="pi"
+
+if [ ! -d /etc/features ]; then
+ # Looks like a fresh installation or update, 
+ # reconfigure everything
+ if [ -f /etc/hifiberry.state ]; then
+   mv /etc/hifiberry.state /etc/hifiberry.state.bak
+ fi
+ mkdir /etc/features
+fi 
 
 restart_service() {
  systemctl is-active --quiet $1
@@ -37,35 +46,42 @@ pi_model() {
  if [[ $modelname == *"3 Model B+"* ]]; then
   PIMODEL="3B+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi 
 
  if [[ $modelname == *"3 Model B Plus"* ]]; then
   PIMODEL="3B+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
- fi 
+ fi
+
+ if [[ $modelname == *"3 Model A Plus"* ]]; then
+  PIMODEL="3A+"
+  PIVERSION=3
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  return
+ fi
 
  if [[ $modelname == *"3 Model B"* ]]; then
   PIMODEL="3B"
   PIVERSION=3
-  FEATURES="$FEATURES pi3orlater"
+  FEATURES="$FEATURES pi3orlater arm7"
   return
  fi 
 
  if [[ $modelname == *"4 Model B"* ]]; then
   PIMODEL="4"
   PIVERSION=4
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
   PIVERSION=0
-  FEATURES="$FEATURES bluetooth"
+  FEATURES="$FEATURES bluetooth arm7"
   return
  fi
 
@@ -113,7 +129,7 @@ guess_volume_control() {
  fi
 
  # Check if there is a working DSP volume control
- dsptoolkit --timeout=10 get-volume 2 >/dev/null >/dev/null
+ dsptoolkit --timeout=20 get-volume 2 >/dev/null >/dev/null
  if [ $? == 0 ]; then
     MIXER_CONTROL=DSPVolume
     return
@@ -207,6 +223,9 @@ guess_card() {
  CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
  if [ "$CLKGEN" == "0x03" ]; then
     CARD="Beocreate 4-Channel Amplifier"
+    if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
+      FEATURES="$FEATURES dsp"
+    fi
     return
  fi
 
@@ -219,10 +238,18 @@ guess_card() {
  CARD="DAC+ Zero/Light/MiniAmp"
 }
 
+reset_dsp() {
+ gpio mode 0 out
+ gpio write 0 0
+ gpio write 0 1
+ gpio mode 0 in
+}
+
 check_dsp() {
- REG1=`dsptoolkit --timeout=10 read-reg 0xf003` # expected 00 01
- REG2=`dsptoolkit --timeout=10 read-reg 0xf402` # expected 00 01
- REG3=`dsptoolkit --timeout=10 read-reg 0xc000` # expected 00 00
+ # Read some data
+ REG1=`dsptoolkit --timeout=20 read-reg 0xf003` # expected 00 01
+ REG2=`dsptoolkit --timeout=20 read-reg 0xf402` # expected 00 01
+ REG3=`dsptoolkit --timeout=20 read-reg 0xc000` # expected 00 00
  if [ "$REG1$REG2$REG3" == "00 01 00 01 00 00 " ]; then
    HAS_DSP=1
    FEATURES="$FEATURES dsp"
@@ -243,10 +270,15 @@ can_record() {
 
 # Get HAT information
 hat_info() {
- VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
- PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
- HATINFO="${VENDOR} ${PRODUCT}"
- echo $HATINFO
+ if [ -f /proc/device-tree/hat/product ]; then 
+  VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
+  PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
+  HATINFO="${VENDOR} ${PRODUCT}"
+ else
+  VENDOR=""
+  PRODUCT=""
+  HATINFO=""
+ fi
 }
 
 # Calculate system names
@@ -313,14 +345,22 @@ reconfigure_audiocontrol2() {
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
  BT=`echo $FEATURES | grep bluetooth`
+ RESTART_BT=0
  if [ "$BT" == "" ]; then
    systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.service a2dp-agent.service
    echo " disabled Bluetooth"
  fi 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
-  restart_service bluetooth.service
+  RESTART_BT=1
   echo " updated system name"
+ fi
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  RESTART_BT=1
+  echo " updated mixer"
+ fi
+ if [ "$RESTART_BT" == "1" ]; then
+  restart_service bluetooth.service
  fi
 }
 
@@ -414,6 +454,17 @@ reconfigure_beocreate() {
  fi
 }
 
+# Reconfigure features
+reconfigure_features() {
+ # Update features in /etc/features
+ if [ "$FEATURES" != "$CURRENT_FEATURES" ]; then
+   rm /etc/features/*
+   for f in $FEATURES; do
+     touch /etc/features/$f
+   done
+ fi
+}
+
 MIXER_CONTROL=""
 CARD="unknown"
 
@@ -466,6 +517,20 @@ echo " Vendor/product ${HATINFO} (was ${CURRENT_HATINFO})"
 echo " Features: ${FEATURES} (was ${CURRENT_FEATURES})"
 echo
 
+echo "Saving settings to /etc/hifiberry.state"
+echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
+echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
+echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
+echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
+echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
+echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state
+echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
+echo "CURRENT_HATINFO=\"$HATINFO\"" >> /etc/hifiberry.state
+echo "CURRENT_FEATURES=\"$FEATURES\"" >> /etc/hifiberry.state
+echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
+
+echo "Reconfigure features"
+reconfigure_features
 echo "Reconfiguring Spotifyd"
 reconfigure_spotify
 echo "Reconfiguring Shairport-sync"
@@ -486,18 +551,6 @@ echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
 echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
-
-echo "Saving settings to /etc/hifiberry.state"
-echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
-echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
-echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
-echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
-echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
-echo "CURRENT_SYSNAME=\"$SYSNAME\"" >> /etc/hifiberry.state 
-echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
-echo "CURRENT_HATINFO=\"$HATINFO\"" >> /etc/hifiberry.state
-echo "CURRENT_FEATURES=\"$FEATURES\"" >> /etc/hifiberry.state
-echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE

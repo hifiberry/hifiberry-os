@@ -1,6 +1,7 @@
 [Unit]
 Description=Roon
 After=network.target sound.target
+ConditionPathExists=/etc/features/arm7
 
 [Service]
 Type=simple

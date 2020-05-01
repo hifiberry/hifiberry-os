@@ -1,9 +1,12 @@
 202004xx:
+- Room equalization optimizer
 - interact: rule-based actions
 - 10-band Equalizer support for Non-DSP sound cards
 - Bluetooth volume control synchronized with system
-- allow to revert back to previous version
+- Allow to revert back to previous version
 - Fix DAC+ ADC Pro detection
+- Improve DSP detection
+- Allow to disable WiFi
 - Several other bugfixes and improvements
 
 20200327:
