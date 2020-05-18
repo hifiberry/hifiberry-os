@@ -12,11 +12,12 @@ if [ -d buildroot-dev ]; then
 fi
 
 echo "Checking out buildoot development tree"
-git clone https://github.com/buildroot/buildroot buildroot-dev
+#git clone https://github.com/buildroot/buildroot buildroot-dev
+git clone https://git.buildroot.net/buildroot buildroot-dev
 
 echo "Checking out a known-good release"
 pushd buildroot-dev
-git checkout 197da6286612df9c0c1b5f41e307e1a9be780d0d
+git checkout b5cd3142963
 
 echo "Applying patch"
 patch -p1 < ../hifiberry-os/buildroot/buildroot-dev.patch
