@@ -145,6 +145,11 @@ if [ "$V" -lt 20200420 ]; then
  fi
 fi
 
+if [ "$V" -lt 20200530 ]; then
+ echo "Version < 20200530, disabling alsaeq"
+ cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
+fi
+
 sync
 
 echo "Upgrading configuration files done"
