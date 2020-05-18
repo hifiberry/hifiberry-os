@@ -472,6 +472,11 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
+if [ "$SETTINGS_LOCKED" == "yes" ]; then
+  echo "Sound card settings locked, won't re-detect"
+  exit
+fi
+
 if [ "$1" == "--restart-players" ]; then
  for SERVICE in $SERVICES; do
   restart_service $SERVICE
