@@ -24,6 +24,8 @@ define HIFIBERRY_LOCALBROWSER_INSTALL_INIT_SYSTEMD
            $(TARGET_DIR)/usr/lib/systemd/system/cog.service
     ln -fs ../../../../usr/lib/systemd/system/cog.service \
            $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/cog.service
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-localbrowser/enable-vc \
+	   $(TARGET_DIR)/opt/hifiberry/bin/enable-vc
 endef
 
 $(eval $(generic-package))
