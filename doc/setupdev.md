@@ -3,6 +3,12 @@
 *Note:* The scripts are designed to work on Ubuntu. There is a good chance that they will also work on other Debian-based
 systems. For other Linux distributions, you might have to adapt some of these scripts.
 
+## Compilation environment
+
+The system you're using should have at least 8GM RAM (more is better). Using a VM for the compilation works well. However, we can't recommend the Windows Subsystem for Linux due to it's poor I/O performance. As the build creates, reads and writes a huge amount of files, the build on WSL will be very slow.
+
+In any case, expect a full build to take at least 50 minutes on a high-end system (>80 minutes for newer versions that include the local graphical interface) and much longer on slower systems. 
+
 ## Checkout HiFiBerryOS sources
 
 ```
