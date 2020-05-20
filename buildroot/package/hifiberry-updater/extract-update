@@ -1,6 +1,21 @@
 #!/bin/bash
 
-UPDATER=/data/updater.tar.gz
+if [ -f /data/updater.zip ]; then
+ UPDATER=/data/updater.zip
+ ISTAR=0
+ F2FS=`unzip -l $UPDATER | grep rootfs.f2fs`
+ if [ "$FS2FS" != "" ]; then
+  FSTYPE=f2fs
+ fi
+
+else
+ UPDATER=/data/updater.tar.gz
+ ISTAR=1
+fi
+
+if [ "$FSTYPE" == "" ]; then
+ FSTYPE=ext2
+fi
 
 if [ ! -f $UPDATER ]; then
  echo "$UPDATER does not exist, aborting"
@@ -20,7 +35,11 @@ echo "unmounting $INACTIVE..."
 umount /newroot 2>/dev/null
 
 echo "extracting new firmware to $INACTIVE..."
-gunzip -c $UPDATER | tar xOf - rootfs.ext2 | dd of=$INACTIVE bs=1048576
+if [ "$ISTAR" == "1" ]; then 
+ gunzip -c $UPDATER | tar xOf - rootfs.$FSTYPE | dd of=$INACTIVE bs=1048576
+else
+ unzip -p $UPDATER rootfs.$FSTYPE | dd of=$INACTIVE bs=1048576
+fi
 
 echo "mounting new root file system..."
 if [ ! -d /newroot ]; then
@@ -28,9 +47,13 @@ if [ ! -d /newroot ]; then
 fi
 
 echo "resizing new root file system..."
-resize2fs $INACTIVE
+if [ "$FSTYPE" == "ext2" ]; then
+ resize2fs $INACTIVE
+else
+ resize.f2fs $INACTIVE
+fi
+
 mount -t ext4 $INACTIVE /newroot
-resize2fs $INACTIVE
 if [ -f /newroot/resize-me ]; then
   rm /newroot/resize-me
 fi
@@ -43,7 +66,11 @@ if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
  cp -rv /newroot/usr/lib/firmware/rpi/* /boot
 else
  cd /tmp
- gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
+ if [ "$ISTAR" == "1" ]; then
+  gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
+ else
+   unzip $UPDATER  zImage updater.sh updater2.sh
+ fi
  if [ ! -f zImage ]; then
   echo "Could not find new kernel, aborting ..."
   exit 1
