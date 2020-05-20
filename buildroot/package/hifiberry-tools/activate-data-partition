@@ -35,6 +35,6 @@ fi
 
 ln -s /data/library /library
 
-echi "disabling systemd service, this is a one-time job"
+echo "disabling systemd service, this is a one-time job"
 systemctl disable activate-data-partition.service
 
