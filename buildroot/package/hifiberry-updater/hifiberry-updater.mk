@@ -36,6 +36,8 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm/boot/zImage $(TARGET_DIR)/usr/lib/firmware/rpi
 	echo "Installing updater"
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
+	echo "F2FS supported"
+	touch $(TARGET_DIR)/etc/f2fs
 endef
 
 define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
