@@ -57,7 +57,7 @@ if [ "$2" == "release" ]; then
  for i in BR2_PACKAGE_STRESS BR2_PACKAGE_STRESS_NG BR2_PACKAGE_STRACE BR2_PACKAGE_TCPDUMP; do
   echo "$i=n" >> $TMP
  done
- for i in BR2_PACKAGE_CONFIGTXT_QUIET; do
+ for i in BR2_PACKAGE_CONFIGTXT_QUIET BR2_STRIP; do
   echo "$i=y" >> $TMP
  done
 else
