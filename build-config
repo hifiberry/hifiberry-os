@@ -61,9 +61,11 @@ if [ "$2" == "release" ]; then
   echo "$i=y" >> $TMP
  done
 else
- # use verbose mode for development release
+ # use verbose mode for development release and larger file systems
  for i in BR2_PACKAGE_CONFIGTXT_QUIET; do
   echo "$i=n" >> $TMP
+  echo "BR2_TARGET_ROOTFS_EXT2_SIZE=\"900M\"" >> $TMP
+  echo "BR2_TARGET_ROOTFS_F2FS_SIZE=\"1000M\"" >> $TMP
  done
 fi
 
