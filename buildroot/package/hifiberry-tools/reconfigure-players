@@ -6,6 +6,17 @@ SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dl
 
 FEATURES="pi"
 
+# Check that UUID exists
+if [ ! -f "/etc/uuid" ]; then
+ /usr/bin/uuidgen > /etc/uuid
+fi
+
+if [ -s "/etc/uuid" ]; then
+ /usr/bin/uuidgen > /etc/uuid
+fi
+
+
+
 if [ ! -d /etc/features ]; then
  # Looks like a fresh installation or update, 
  # reconfigure everything
