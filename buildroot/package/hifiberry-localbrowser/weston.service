@@ -40,6 +40,6 @@ User=root
 # Fail to start if not controlling the tty.
 StandardInput=tty-fail
 
-[install]
+[Install]
 WantedBy=multiuser.target
 
