@@ -44,6 +44,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/snapcastmpris/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/webradio/Config.in"
 
 comment "Backend applications"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/brutefir/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dspprofiles/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/audiocontrol2/Config.in"
@@ -97,4 +98,3 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-youtube-dl/Config.in"
 
 comment "Test tools"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-test/Config.in"
-
