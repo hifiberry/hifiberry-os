@@ -1,6 +1,6 @@
 [Unit]
 Description=Local web brower to display web interface
-Wants=weston.service
+Requires=weston.service
 After=weston.service beocreate2.service
 
 [Service]
