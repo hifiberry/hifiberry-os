@@ -5,8 +5,12 @@ systems. For other Linux distributions, you might have to adapt some of these sc
 
 ## Compilation environment
 
-The system you're using should have at least 8GM RAM (more is better). Using a VM for the compilation works well. However, we can't recommend the Windows Subsystem for Linux due to it's poor I/O performance. As the build creates, reads and writes a huge amount of files, the build on WSL will be very slow.
+The system you're using should have at least 16GM RAM (more is better). With the latest addition of Webkit, running on a CPU with many cores/threads (eg. 16/32), 16GB might not be enough memory anymore. Using a VM for the compilation works well, but we recommend at least 150GB disk space for it (might not be enough for multiple parallel builds). An SSD is highly recommended
 
+We can't recommend the Windows Subsystem for Linux due to it's poor I/O performance. As the build creates, reads and writes a huge amount of files, the build on WSL will be very slow.
+
+Our build system uses an Ryzen 3950X with 64GB RAM (max. 50MB to the build VM) and 300GB SSD disk space. This allows to run multiple build (e.g. Pi 2,3,4) in parallel.
+ 
 In any case, expect a full build to take at least 50 minutes on a high-end system (>80 minutes for newer versions that include the local graphical interface) and much longer on slower systems. 
 
 ## Checkout HiFiBerryOS sources
