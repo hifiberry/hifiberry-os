@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+HIFIBERRY_MEASUREMENTS_DEPENDENCIES += alsa-lib
+
 define HIFIBERRY_MEASUREMENTS_BUILD_CMDS
     cd $(@D); \
       pwd; \
