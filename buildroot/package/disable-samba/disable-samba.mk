@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+DISABLE_SAMBE_DEPENDENCIES = samba
+
 define DISABLE_SAMBA_INSTALL_IMAGES_CMDS
  	echo "Removing SAMBA services"
 	for s in smb nmb winbind samba; do \

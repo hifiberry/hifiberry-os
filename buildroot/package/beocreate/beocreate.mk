@@ -41,6 +41,7 @@ define BEOCREATE_INSTALL_TARGET_CMDS
 endef
 
 define BEOCREATE_INSTALL_INIT_SYSTEMD
+        -mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/override.conf \
                 $(TARGET_DIR)/etc/systemd/system/beocreate2.service.d/override.conf
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/beocreate2.service \

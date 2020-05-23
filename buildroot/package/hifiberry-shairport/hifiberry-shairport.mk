@@ -11,7 +11,7 @@ HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SH
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
 HIFIBERRY_SHAIRPORT_LICENSE_FILES = LICENSES
-HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf
+HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi
 
 # git clone, no configure
 HIFIBERRY_SHAIRPORT_AUTORECONF = YES
@@ -61,6 +61,7 @@ define HIFIBERRY_SHAIRPORT_INSTALL_INIT_SYSV
 endef
 
 define HIFIBERRY_SHAIRPORT_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-shairport/shairport-sync.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/shairport-sync.service
         ln -fs ../../../../usr/lib/systemd/system/shairport-sync.service \
