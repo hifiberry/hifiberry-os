@@ -177,7 +177,7 @@ endef
 HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 
 define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
-	mkdir $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
         ln -fs ../../../../usr/lib/systemd/system/shairport-sync.service \
