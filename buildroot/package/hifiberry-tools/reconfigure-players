@@ -125,7 +125,7 @@ detect_hw () {
 # Find the correct ALSA volume control 
 guess_volume_control() {
  if [ -f /etc/hifiberry/mixer ]; then
-   MIXER_CONTROL=`cat /etc/hifiberry/mixer
+   MIXER_CONTROL=`cat /etc/hifiberry/mixer`
    if [ "MIXER_CONTROL" != "" ]; then
      return
    fi
@@ -431,6 +431,9 @@ reconfigure_mpd() {
 
 # Reconfigure Mopidy
 reconfigure_mopidy() {
+ if [ ! -f /etc/mopidy.conf ]; then
+  echo "modidy not installed, ignoring"
+ fi
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
   restart_service mopidy
@@ -521,6 +524,7 @@ guess_volume_control
 guess_card
 can_record
 system_name
+read_features
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
 
