@@ -71,7 +71,10 @@ fi
 
 # Roon and Spotify are not supported on the Pi Zero
 if [ "$VERSION" == "0w" ]; then
- for PKG in BR2_PACKAGE_RAAT BR2_PACKAGE_SPOTIF BR2_PACKAGE_ENABLE_ARM7 BR2_PACKAGE_WESTON BR2_PACKAGE_LIBWPE BR2_PACKAGE_WPEWEBKIT BR2_PACKAGE_HIFIBERRY_LOCALBROWSER; do
+ for PKG in BR2_PACKAGE_RAAT BR2_PACKAGE_SPOTIFY BR2_PACKAGE_ENABLE_ARM7; do
+   echo "$PKG=n" >> $TMP
+ done
+ for PKG in `cat configs/remove-slowpi`; do 
    echo "$PKG=n" >> $TMP
  done
  echo BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y >> $TMP
