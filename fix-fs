@@ -47,6 +47,7 @@ sudo kpartx -a  /dev/${LOOPDEVICE}
 ls -l /dev/mapper
 sudo dosfsck -a /dev/mapper/${LOOPDEVICE}p1
 sudo fsck.ext4 -v -f  /dev/mapper/${LOOPDEVICE}p2
+sudo fsck.f2fs -y -f  /dev/mapper/${LOOPDEVICE}p2
 sudo kpartx -d /dev/${LOOPDEVICE}
 sudo losetup -d /dev/${LOOPDEVICE}
 
