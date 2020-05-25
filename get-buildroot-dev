@@ -26,3 +26,4 @@ popd
 echo "Symlinking buildroot-dev"
 ln -s buildroot-dev buildroot
 
+cp hifiberry-os/buildroot/board/raspberrypi/*.cfg buildroot/board/raspberrypi/
