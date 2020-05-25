@@ -18,7 +18,7 @@ echo $VERSION > $BRDIR/.piversion
 echo $VERSION > buildroot/PIVERSION
 
 if [[ "$2" == "" || "$2" == "release" ]]; then
- TEMPLATE=hifiberryos
+ TEMPLATE=hifiberryos-gui
 else
  TEMPLATE=$2
 fi
