@@ -151,6 +151,8 @@ fi
 if [ "$V" -lt 20200530 ]; then
  echo "Version < 20200530, disabling alsaeq"
  cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
+ echo "Reconfigure system after reboot"
+ rm /newroot/etc/hifiberry.state
 fi
 
 sync
