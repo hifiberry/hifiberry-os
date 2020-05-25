@@ -15,8 +15,6 @@ if [ -s "/etc/uuid" ]; then
  /usr/bin/uuidgen > /etc/uuid
 fi
 
-
-
 if [ ! -d /etc/features ]; then
  # Looks like a fresh installation or update, 
  # reconfigure everything
@@ -25,6 +23,15 @@ if [ ! -d /etc/features ]; then
  fi
  mkdir /etc/features
 fi 
+
+read_features() {
+ pushd /etc/hifiberry
+ for f in *.feature; do
+  F=${f/.feature/}
+  FEATURES="$FEATURES $F"
+ done
+ popd
+}
 
 restart_service() {
  systemctl is-active --quiet $1
@@ -117,6 +124,13 @@ detect_hw () {
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
+ if [ -f /etc/hifiberry/mixer ]; then
+   MIXER_CONTROL=`cat /etc/hifiberry/mixer
+   if [ "MIXER_CONTROL" != "" ]; then
+     return
+   fi
+ fi
+
  # DAC2 HD used "DAC"
  DAC=`amixer scontrols | grep "'DAC',"`
  if [ "$DAC" != "" ]; then
@@ -257,6 +271,12 @@ reset_dsp() {
 }
 
 check_dsp() {
+ if [ -f /etc/hifiberry/has_dsp ]; then
+   HAS_DSP=1
+   FEATURES="$FEATURES dsp"
+   return
+ fi
+
  # Read some data
  REG1=`dsptoolkit --timeout=20 read-reg 0xf003` # expected 00 01
  REG2=`dsptoolkit --timeout=20 read-reg 0xf402` # expected 00 01
