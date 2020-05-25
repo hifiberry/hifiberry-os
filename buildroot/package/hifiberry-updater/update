@@ -97,7 +97,12 @@ fi
 # download it
 echo "downloading $UPDATER..."
 cd /data
-curl -f $UPDATER --progress-bar -o updater.tar.gz 
+if [[ $UPDATER == *tar.gz ]]; then
+ curl -f $UPDATER --progress-bar -o updater.tar.gz 
+else
+ curl -f $UPDATER --progress-bar -o updater.zip
+fi 
+
 if [ "$?" != "0" ]; then
  echo "Could not download updater $UPDATER, aborting"
  exit 1
