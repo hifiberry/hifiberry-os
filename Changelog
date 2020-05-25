@@ -1,5 +1,5 @@
 202005xx:
-- Local user interface running on the Pi (Pi3 only)
+- Local user interface running on the Pi (Pi3/4 only)
 - ALSA eq disabled by default
 - Several bugfixes and stability improvements
 - Internal: New updater that supports ZIP archives and F2FS file systems
