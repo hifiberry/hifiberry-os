@@ -52,6 +52,11 @@ for i in BR2_PACKAGE_KVM_UNIT_TESTS BR2_PACKAGE_WF111 BR2_PACKAGE_XEN BR2_TARGET
  echo "$i=n" >> $TMP
 done
 
+# Always enable these
+for i in BR2_STRIP_strip; do
+ echo "$i=y" >> $TMP
+done
+
 if [ "$2" == "release" ]; then
  # for the releases, remove debug tools
  for i in `cat configs/devpackages` ; do
@@ -79,6 +84,9 @@ if [ "$VERSION" == "0w" ]; then
  done
  echo BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y >> $TMP
 fi
+
+# Workaround
+echo "BR2_JLEVEL=16" >> $TMP
 
 mv $TMP $DST
 mv $DST $BRDIR/.config
