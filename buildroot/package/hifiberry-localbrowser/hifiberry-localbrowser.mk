@@ -14,7 +14,7 @@ define HIFIBERRY_LOCALBROWSER_INSTALL_TARGET_CMDS
             $(TARGET_DIR)/etc/xdg/weston/weston.ini
     # Local browser indication
     mkdir -p $(TARGET_DIR)/etc/hifiberry
-    touch $(TARGET_DIR)/etc/hifiberry/localbrowser.feature
+    touch $(TARGET_DIR)/etc/hifiberry/localui.feature
 endef
 
 define HIFIBERRY_LOCALBROWSER_INSTALL_INIT_SYSTEMD
