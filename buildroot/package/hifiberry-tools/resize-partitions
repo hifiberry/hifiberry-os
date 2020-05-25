@@ -42,12 +42,12 @@ n
 p
 2
 65537
-2162687
+3065536
 n
 p
 3
-2162688
-4259838
+3065537
+6065536
 w
 EOT
 partprobe
@@ -70,9 +70,10 @@ rm /resize-me
 touch /resize-me.2
 
 # Create fs in partition 4 if there is none
-fsck.ext2 -p -f ${DEVICE}p4
-if [ "$?" == "8" ]; then
-  mkfs -t ext4 /dev/mmcblk0p4
+fsck.f2fs -p -f ${DEVICE}p4
+RET=$?
+if [[ $RET == 8 ] || [ $RET==255 ]] ; then
+  mkfs -t f2fs /dev/mmcblk0p4
 fi
 
 echo "Resized partitions" >> /tmp/reboot
