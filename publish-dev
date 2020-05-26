@@ -1,0 +1,16 @@
+#!/bin/bash
+HOST=$1
+PW=$2
+if [ "$PW" == "" ]; then
+ echo "call with $0 hostname password"
+ exit 1
+fi
+
+./clean-images
+for i in 0w 2 3 4; do
+ ./create-image $i
+done
+for i in images/updater*; do
+ sha256sum $i
+done
+sshpass -p $PW scp images/updater* images/*.zip $HOST:dev
