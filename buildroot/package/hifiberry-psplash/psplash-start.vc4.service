@@ -3,8 +3,10 @@ Description=Starts Psplash Boot screen
 Wants=dev-dri-card0.device
 After=dev-dri-card0.device
 DefaultDependencies=no
+ConditionPathExists=!/boot/nosplash
 
 [Service]
+Type=oneshot
 ExecStart=/usr/bin/psplash -n
 
 [Install]
