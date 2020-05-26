@@ -86,7 +86,7 @@ if [ "$VERSION" == "0w" ]; then
 fi
 
 # Remove some stuff from the Pi2 release"
-if [ "$VERSION" == "0w" ]; then
+if [ "$VERSION" == "2" ]; then
  for PKG in `cat configs/remove-slowpi`; do
   echo "$PKG=n" >> $TMP
  done
