@@ -41,6 +41,14 @@ restart_service() {
  fi
 }
 
+read_fixed() {
+ if [ -f /etc/hifiberry/config.fixed ]; then
+  . /etc/hifiberry/config.fixed
+  for N in MIXER_CONTROL CARD FEATURES; do
+    $N=${CURRENT_$N}
+  done
+}
+
 check_systemd() {
  SERVICE_ACTIVE=0
  for SERVICE in "$@"; do 
@@ -124,6 +132,11 @@ detect_hw () {
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
+ if [ "$MIXER_CONTROL" != "" ]; then
+   echo "Using fixed mixer control $MIXER_CONTROL"
+   return
+ fi
+	
  if [ -f /etc/hifiberry/mixer ]; then
    MIXER_CONTROL=`cat /etc/hifiberry/mixer`
    if [ "MIXER_CONTROL" != "" ]; then
@@ -173,6 +186,11 @@ guess_volume_control() {
 
 # Guess what card is installed"
 guess_card() {
+ if [ "$CARD" != "" ]; then
+  echo "Using fixed card $CARD with fetaures $FEATURES"
+  return
+ fi
+
  check_dsp
  hat_info
 
@@ -518,6 +536,7 @@ if [ "$1" == "--restart-players" ]; then
  exit
 fi 
 
+read_fixed
 pi_model
 detect_hw
 guess_volume_control
