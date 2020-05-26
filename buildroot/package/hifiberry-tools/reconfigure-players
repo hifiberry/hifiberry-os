@@ -7,11 +7,7 @@ SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dl
 FEATURES="pi"
 
 # Check that UUID exists
-if [ ! -f "/etc/uuid" ]; then
- /usr/bin/uuidgen > /etc/uuid
-fi
-
-if [ -s "/etc/uuid" ]; then
+if [ ! -s "/etc/uuid" ]; then
  /usr/bin/uuidgen > /etc/uuid
 fi
 
@@ -47,6 +43,7 @@ read_fixed() {
   for N in MIXER_CONTROL CARD FEATURES; do
     $N=${CURRENT_$N}
   done
+ fi
 }
 
 check_systemd() {
