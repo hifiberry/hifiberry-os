@@ -85,6 +85,13 @@ if [ "$VERSION" == "0w" ]; then
  echo BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y >> $TMP
 fi
 
+# Remove some stuff from the Pi2 release"
+if [ "$VERSION" == "0w" ]; then
+ for PKG in `cat configs/remove-slowpi`; do
+  echo "$PKG=n" >> $TMP
+ done
+fi 
+
 # Workaround
 echo "BR2_JLEVEL=16" >> $TMP
 
