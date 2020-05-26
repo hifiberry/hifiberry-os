@@ -151,8 +151,12 @@ fi
 if [ "$V" -lt 20200530 ]; then
  echo "Version < 20200530, disabling alsaeq"
  cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
- echo "Reconfigure system after reboot"
- rm /newroot/etc/hifiberry.state
+ FKMS=`cat /boot/config.txt | grep vc4-fkms-v3d`
+ if [ "$FKMS" == "" ]; then 
+  echo "Adding video driver"
+  mount -o remount,rw /boot
+  echo "dtoverlay=vc4-fkms-v3d,audio=off" >> /boot/config.txt
+ fi
 fi
 
 sync
