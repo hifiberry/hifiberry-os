@@ -4,8 +4,9 @@ Wants=network-online.target
 After=network.target
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Updating timezone"
+ExecStartPre=/bin/sleep 20
 ExecStart=/bin/tzupdate
 StandardOutput=journal
 
