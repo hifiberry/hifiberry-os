@@ -1,7 +1,12 @@
 #!/bin/bash
 for i in `/opt/hifiberry/bin/audio-inputs | awk -F: '{print $1}'`; do
  USBNAME=`cat /proc/asound/card$i/id`
- USBID=`cat /proc/asound/card$i/usbid`
+ if [ -f /proc/asound/card$i/usbid ]; then
+   USBID=`cat /proc/asound/card$i/usbid`
+ else
+   continue
+ fi
+
 
  if [ "$USBID" == "0d8c:0134" -a "$USBNAME" == "Microphone" ]; then
    DEVICE="HiFiBerry Mic"
