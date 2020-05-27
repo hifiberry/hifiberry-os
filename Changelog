@@ -1,4 +1,4 @@
-202005xx:
+20200527:
 - Local user interface running on the Pi (Pi3/4 only)
 - ALSA eq disabled by default
 - Several bugfixes and stability improvements
