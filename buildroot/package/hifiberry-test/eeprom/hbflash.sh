@@ -86,25 +86,35 @@ if [ $rc != 0 ]; then
 fi
 modprobe at24
 rc=$?
+
+# Bus number is different on Pi3 and 4
+for i in 7 3; do
+  if [ -d /sys/class/i2c-adapter/i2c-$i ]; then
+    DEVID=$i
+    break
+  fi
+done
+
+
 if [ $rc != 0 ]; then
 	echo "Modprobe of at24 failed. Do an rpi-update."
 	exit $rc
 fi
 
-if [ ! -d "/sys/class/i2c-adapter/i2c-3/3-0050" ]; then
-	echo "$TYPE 0x50" > /sys/class/i2c-adapter/i2c-3/new_device
+if [ ! -d "/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050" ]; then
+	echo "$TYPE 0x50" > /sys/class/i2c-adapter/i2c-$DEVID/new_device
 fi
 
 
 if [ "$MODE" = "write" ]
  then
 	echo "Writing..."
-	dd if=$FILE of=/sys/class/i2c-adapter/i2c-3/3-0050/eeprom
+	dd if=$FILE of=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom
 	rc=$?
 elif [ "$MODE" = "read" ]
  then
 	echo "Reading..."
-	dd if=/sys/class/i2c-adapter/i2c-3/3-0050/eeprom of=$FILE
+	dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$FILE
 	rc=$?
 fi
 
