@@ -1,9 +1,11 @@
 [Unit]
 Description=Starts Psplash Boot screen
 DefaultDependencies=no
+ConditionPathExists=!/boot/nosplash
 
 [Service]
 ExecStart=/usr/bin/psplash -n
+RemainAfterExit=yes
 
 [Install]
 WantedBy=sysinit.target

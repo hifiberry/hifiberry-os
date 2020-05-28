@@ -1,0 +1,13 @@
+#!/bin/sh
+mount -o remount,rw /boot
+cat /boot/config.txt | grep -v  "dtoverlay=vc4"  > /tmp/config.txt
+
+PI4=`cat /proc/device-tree/model | grep "Pi 4"`
+if [ "$PI4" == "" ]; then 
+ # Pi 3
+ echo "dtoverlay=vc4-kms-v3d,audio=off" >> /tmp/config.txt
+else
+ # Pi 4
+ echo "dtoverlay=vc4-fkms-v3d,audio=off" >> /tmp/config.txt
+fi
+mv /tmp/config.txt /boot/config.txt

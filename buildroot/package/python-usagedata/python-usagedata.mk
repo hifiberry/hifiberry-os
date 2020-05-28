@@ -12,6 +12,7 @@ PYTHON_USAGEDATA_LICENSE_FILES = LICENSE.md
 
 define PYTHON_USAGEDATA_POST_INSTALL_TARGET_CMD
 	mkdir -p $(TARGET_DIR)/var/lib/hifiberry
+	mkdir -p $(TARGET_DIR)/opt/hifiberry/bin
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/report-usage \
 	        $(TARGET_DIR)/opt/hifiberry/bin/
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/report-activation \
@@ -27,6 +28,8 @@ endef
 PYTHON_USAGEDATA_POST_INSTALL_TARGET_HOOKS += PYTHON_USAGEDATA_POST_INSTALL_TARGET_CMD
 
 define PYTHON_USAGEDATA_INSTALL_INIT
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/timers.target.wants
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/datacollector.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/datacollector.service
 	if [ -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \

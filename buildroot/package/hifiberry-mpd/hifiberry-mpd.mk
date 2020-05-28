@@ -7,7 +7,7 @@
 # based on the original mpd package but with additional patches
 
 HIFIBERRY_MPD_VERSION_MAJOR = 0.21
-HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).21
+HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).23
 HIFIBERRY_MPD_SOURCE = mpd-$(HIFIBERRY_MPD_VERSION).tar.xz
 HIFIBERRY_MPD_SITE = http://www.musicpd.org/download/mpd/$(HIFIBERRY_MPD_VERSION_MAJOR)
 HIFIBERRY_MPD_DEPENDENCIES = host-pkgconf boost
@@ -75,7 +75,7 @@ HIFIBERRY_MPD_CONF_OPTS += -Dlibmpdclient=enabled
 HIFIBERRY_MPD_CONF_OPTS += -Dmms=disabled
 
 # disable NFS
-HIFIBERRY_MPD_CONF_OPTS += -Dnfs=disabled
+HIFIBERRY_MPD_CONF_OPTS += -Dnfs=enabled
 
 # enable smb
 HIFIBERRY_MPD_DEPENDENCIES += samba4
@@ -177,6 +177,7 @@ endef
 HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 
 define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
         ln -fs ../../../../usr/lib/systemd/system/shairport-sync.service \

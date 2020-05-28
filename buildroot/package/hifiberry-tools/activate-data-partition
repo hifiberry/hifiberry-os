@@ -1,6 +1,12 @@
 #!/bin/sh
 DEVICE=/dev/mmcblk0
 
+FSTABDATA=`cat /etc/fstab | grep /data`
+if [ "$FSTABDATA" == "" ]; then
+ echo "No filesystem defined in /etc/fstab, creating file system"
+ mkfs -t f2fs ${DEVICE}p4
+fi
+
 DATA=`mount | grep data`
 if [ "$DATA" == "" ]; then
  echo "/data not mounted, trying to mount it"
@@ -12,13 +18,13 @@ if [ "$DATA" == "" ]; then
 
  mount ${DEVICE}p4 /data
  if [ "$?" != "0" ]; then
-  echo "Could not mount /data, aborting"
+  echo "Could not mount /data, trying to create a new file system"
   exit 1
  fi
 
  echo "adding /data to fstab"
  cat /etc/fstab | grep -v ${DEVICE}p4 > /tmp/fstab
- echo "${DEVICE}p4    /data    ext4    noatime    0    2" >>/tmp/fstab
+ echo "${DEVICE}p4    /data    auto    defaults,nofail    0    2" >>/tmp/fstab
  mv /etc/fstab /etc/fstab.bak
  mv /tmp/fstab /etc/fstab
 
@@ -35,6 +41,6 @@ fi
 
 ln -s /data/library /library
 
-echi "disabling systemd service, this is a one-time job"
+echo "disabling systemd service, this is a one-time job"
 systemctl disable activate-data-partition.service
 

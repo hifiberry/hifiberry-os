@@ -1,4 +1,10 @@
-202004xx:
+202005xx:
+- Local user interface running on the Pi (Pi3/4 only)
+- ALSA eq disabled by default
+- Several bugfixes and stability improvements
+- Internal: New updater that supports ZIP archives and F2FS file systems
+
+20200424:
 - Room equalization optimizer
 - interact: rule-based actions
 - 10-band Equalizer support for Non-DSP sound cards

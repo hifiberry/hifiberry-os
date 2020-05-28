@@ -1,0 +1,29 @@
+#!/bin/bash
+cd `dirname $0`
+cd ..
+if [ -d buildroot ]; then
+ echo "Saving exiting buildroot"
+ mv buildroot buildroot.bak
+fi
+
+if [ -d buildroot-dev ]; then
+ echo "Saving buildroot-dev"
+ mv buildroot-dev buildroot-dev.bak
+fi
+
+echo "Checking out buildoot development tree"
+#git clone https://github.com/buildroot/buildroot buildroot-dev
+git clone https://git.buildroot.net/buildroot buildroot-dev
+
+echo "Checking out a known-good release"
+pushd buildroot-dev
+git checkout 497e3dff7e13d0651b1e9db7b232b13da37f0108 
+
+echo "Applying patch"
+patch -p1 < ../hifiberry-os/buildroot/buildroot-dev.patch
+popd
+
+echo "Symlinking buildroot-dev"
+ln -s buildroot-dev buildroot
+
+cp hifiberry-os/buildroot/board/raspberrypi/*.cfg buildroot/board/raspberrypi/

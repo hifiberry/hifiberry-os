@@ -1,6 +1,7 @@
 [Unit]
 Description=Roon
-After=network.target sound.target
+After=network.target sound.target configure-players.target
+Before=alsaloop.service spotify.service mpd.service shairport-sync.service dlnampris.service snapcastmpris.service
 ConditionPathExists=/etc/features/arm7
 
 [Service]

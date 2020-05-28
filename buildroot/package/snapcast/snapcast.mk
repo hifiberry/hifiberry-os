@@ -6,7 +6,7 @@
 
 SNAPCAST_VERSION = v0.17.1
 SNAPCAST_SITE = $(call github,badaix,snapcast,$(SNAPCAST_VERSION))
-SNAPCAST_DEPENDENCIES = libogg alsa-lib avahi # libstdcpp libatomic libflac libvorbisidec
+SNAPCAST_DEPENDENCIES = libogg alsa-lib avahi boost flac libvorbis
 SNAPCAST_LICENSE = GPL-3.0+
 SNAPCAST_LICENSE_FILES = LICENSE
 

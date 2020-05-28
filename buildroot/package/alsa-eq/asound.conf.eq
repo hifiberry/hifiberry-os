@@ -37,4 +37,4 @@ pcm.equal {
   type equal;
   slave.pcm "plug:softvol";
 }
-pcm.!default { type plug ; slave.pcm "equal" } # EQUAL
+pcm.!default { type plug ; slave.pcm "softvol" } # SOFTVOL

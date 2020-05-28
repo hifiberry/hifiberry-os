@@ -19,14 +19,29 @@ if [ "$PASSWORD" == "" ]; then
 fi
 
 REMOTEVERSION=`sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST cat /etc/piversion`
+REMOTESUPPORTSF2FS=`sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST ls /etc/f2fs`
+if [ "$REMOTESUPPORTSF2FS" == "/etc/f2fs" ]; then
+ REMOTESUPPORTSF2FS=1
+else
+ REMOTESUPPORTSF2FS=0
+fi
+
+# Not ready 
+REMOTESUPPORTSF2FS=0
+echo $REMOTESUPPORTSF2FS
+
 if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
 
  echo "Packaging Pi$VERSION release"
  ./create-updater $VERSION
- IMG=`ls images/ | grep updater | grep pi$VERSION | tail -1`
 
- echo "Updating $HOST with $IMG"
- sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz; 
+ if [ "$REMOTESUPPORTSF2FS" == "1" ]; then 
+  IMG=`ls images/ | grep updater | grep zip | grep pi$VERSION | tail -1`
+  sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.zip; 
+ else
+  IMG=`ls images/ | grep updater | grep tar.gz | grep pi$VERSION | tail -1`
+  sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz;
+ fi
  sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
 
 else
