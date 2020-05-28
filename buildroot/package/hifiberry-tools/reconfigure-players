@@ -6,6 +6,11 @@ SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dl
 
 FEATURES="pi"
 
+# Check that UUID exists
+if [ ! -s "/etc/uuid" ]; then
+ /usr/bin/uuidgen > /etc/uuid
+fi
+
 if [ ! -d /etc/features ]; then
  # Looks like a fresh installation or update, 
  # reconfigure everything
@@ -15,11 +20,31 @@ if [ ! -d /etc/features ]; then
  mkdir /etc/features
 fi 
 
+read_features() {
+ pushd /etc/hifiberry
+ for f in *.feature; do
+  if [ "$f" != "*" ]; then
+   F=${f/.feature/}
+   FEATURES="$FEATURES $F"
+  fi 
+ done
+ popd
+}
+
 restart_service() {
  systemctl is-active --quiet $1
  if [ "$?" == "0" ]; then
    echo "Restarting $1"
    systemctl restart $1
+ fi
+}
+
+read_fixed() {
+ if [ -f /etc/hifiberry/config.fixed ]; then
+  . /etc/hifiberry/config.fixed
+  for N in MIXER_CONTROL CARD FEATURES; do
+    $N=${CURRENT_$N}
+  done
  fi
 }
 
@@ -60,7 +85,7 @@ pi_model() {
  if [[ $modelname == *"3 Model A Plus"* ]]; then
   PIMODEL="3A+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
@@ -106,6 +131,18 @@ detect_hw () {
 
 # Find the correct ALSA volume control 
 guess_volume_control() {
+ if [ "$MIXER_CONTROL" != "" ]; then
+   echo "Using fixed mixer control $MIXER_CONTROL"
+   return
+ fi
+	
+ if [ -f /etc/hifiberry/mixer ]; then
+   MIXER_CONTROL=`cat /etc/hifiberry/mixer`
+   if [ "MIXER_CONTROL" != "" ]; then
+     return
+   fi
+ fi
+
  # DAC2 HD used "DAC"
  DAC=`amixer scontrols | grep "'DAC',"`
  if [ "$DAC" != "" ]; then
@@ -148,6 +185,11 @@ guess_volume_control() {
 
 # Guess what card is installed"
 guess_card() {
+ if [ "$CARD" != "unknown" ] && [ "$CARD" != "" ]; then
+  echo "Using fixed card $CARD with fetaures $FEATURES"
+  return
+ fi
+
  check_dsp
  hat_info
 
@@ -246,6 +288,12 @@ reset_dsp() {
 }
 
 check_dsp() {
+ if [ -f /etc/hifiberry/has_dsp ]; then
+   HAS_DSP=1
+   FEATURES="$FEATURES dsp"
+   return
+ fi
+
  # Read some data
  REG1=`dsptoolkit --timeout=20 read-reg 0xf003` # expected 00 01
  REG2=`dsptoolkit --timeout=20 read-reg 0xf402` # expected 00 01
@@ -293,6 +341,16 @@ system_name() {
  SYSNAME_NO_SPACES=`echo $SYSNAME | sed s/\ /-/g`
  SYSNAME_SED_SPACES=`echo $SYSNAME | sed 's/\ /\\\\\\ /g'` 
 }
+
+# Pi3 hasn't enough RAM for local UI
+check_pi3a() {
+  if [ "$PIMODEL" == "3A+" ]; then
+    # Pi 3A+ can't run a local UI as it doesn't have enough RAM
+    FEATURES=${FEATURES/localui/}
+    systemctl disable weston cog
+  fi
+}
+
 
 # Reconfigure SpotifyD
 reconfigure_spotify() {
@@ -400,6 +458,9 @@ reconfigure_mpd() {
 
 # Reconfigure Mopidy
 reconfigure_mopidy() {
+ if [ ! -f /etc/mopidy.conf ]; then
+  echo "modidy not installed, ignoring"
+ fi
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
   restart_service mopidy
@@ -472,6 +533,11 @@ if [ -f /etc/hifiberry.state ]; then
 . /etc/hifiberry.state
 fi
 
+if [ "$SETTINGS_LOCKED" == "yes" ]; then
+  echo "Sound card settings locked, won't re-detect"
+  exit
+fi
+
 if [ "$1" == "--restart-players" ]; then
  for SERVICE in $SERVICES; do
   restart_service $SERVICE
@@ -479,12 +545,15 @@ if [ "$1" == "--restart-players" ]; then
  exit
 fi 
 
+read_fixed
 pi_model
 detect_hw
 guess_volume_control
 guess_card
 can_record
 system_name
+read_features
+check_pi3a
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
 

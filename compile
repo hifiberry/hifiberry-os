@@ -31,18 +31,32 @@ fi
 # Remove some packages
 if [ "$2" != "" ]; then
  echo Removing $BRDIR/build/$2*  $BRDIR/build/host-$2*
- rm -rf $BRDIR/build/$2*  $BRDIR/build/host-$2*
+ rm -rf $BRDIR/build/$2*  $BRDIR/build/host-$2* $BRDIR/per-package/$2*
 fi
 
 if [ "$3" != "" ]; then
  echo Removing $BRDIR/build/$3*  $BRDIR/build/host-$3*
- rm -rf $BRDIR/build/$3*  $BRDIR/build/host-$3*
+ rm -rf $BRDIR/build/$3*  $BRDIR/build/host-$3* $BRDIR/per-package/$3*
 fi
 
 cd $BRSRCDIR
 mkdir -p $BRDIR/target/etc
 echo $VERSION > $BRDIR/target/etc/piversion
-make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
+
+
+make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot olddefconfig
+
+# Check if parallel build are supported
+PARALLEL=`cat $BRDIR/.config | grep "BR2_PER_PACKAGE_DIRECTORIES=y"`
+PARALLEL=""
+if [ "$PARALLEL" == "" ]; then
+ echo "Using standard (non package-parallel) build system"
+ make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
+else
+ JOBS=1
+ echo "Using new package-parallel build with $JOBS parallel jobs"
+ make -j$JOBS O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
+fi
 
 if [ -f $MYDIR/notify ]; then
  $MYDIR/notify finish

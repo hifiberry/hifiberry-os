@@ -3,10 +3,11 @@
 # alsa-eq
 #
 #############################################################
-ALSA_EQ_VERSION = 0.6
-ALSA_EQ_SOURCE = alsaequal-$(ALSA_EQ_VERSION).tar.bz2
-ALSA_EQ_SITE = https://thedigitalmachine.net/tools
-ALSA_EQ_DEPENDENCIES = caps
+
+ALSA_EQ_VERSION = 23f7609d63faf4f502d5fc441affba254c9bdabd
+ALSA_EQ_SITE = $(call github,hifiberry,alsaequal,$(ALSA_EQ_VERSION))
+
+ALSA_EQ_DEPENDENCIES = caps alsa-lib
 
 define ALSA_EQ_BUILD_CMDS
 	cd $(@D) && CC=$(TARGET_CC) LD=$(TARGET_CC) make

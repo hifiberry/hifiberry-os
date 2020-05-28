@@ -40,6 +40,8 @@ HIFIBERRY_BLUEZALSA_DEPENDENCIES += readline
 HIFIBERRY_BLUEZALSA_CONF_OPTS += --enable-rfcomm
 
 define HIFIBERRY_BLUEZALSA_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/opt/btspeaker
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-bluezalsa/bluealsa.service \
                 $(TARGET_DIR)/lib/systemd/system/bluealsa.service
         ln -fs ../../../../usr/lib/systemd/system/bluealsa.service \

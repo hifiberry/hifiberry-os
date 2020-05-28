@@ -18,7 +18,7 @@ echo $VERSION > $BRDIR/.piversion
 echo $VERSION > buildroot/PIVERSION
 
 if [[ "$2" == "" || "$2" == "release" ]]; then
- TEMPLATE=hifiberryos
+ TEMPLATE=hifiberryos-gui
 else
  TEMPLATE=$2
 fi
@@ -52,28 +52,48 @@ for i in BR2_PACKAGE_KVM_UNIT_TESTS BR2_PACKAGE_WF111 BR2_PACKAGE_XEN BR2_TARGET
  echo "$i=n" >> $TMP
 done
 
+# Always enable these
+for i in BR2_STRIP_strip; do
+ echo "$i=y" >> $TMP
+done
+
 if [ "$2" == "release" ]; then
  # for the releases, remove debug tools
- for i in BR2_PACKAGE_STRESS BR2_PACKAGE_STRESS_NG BR2_PACKAGE_STRACE BR2_PACKAGE_TCPDUMP; do
+ for i in `cat configs/devpackages` ; do
   echo "$i=n" >> $TMP
  done
- for i in BR2_PACKAGE_CONFIGTXT_QUIET; do
+ for i in BR2_PACKAGE_CONFIGTXT_QUIET BR2_STRIP; do
   echo "$i=y" >> $TMP
  done
 else
- # use verbose mode for development release
+ # use verbose mode for development release and larger file systems
  for i in BR2_PACKAGE_CONFIGTXT_QUIET; do
   echo "$i=n" >> $TMP
+  echo "BR2_TARGET_ROOTFS_EXT2_SIZE=\"900M\"" >> $TMP
+  echo "BR2_TARGET_ROOTFS_F2FS_SIZE=\"1000M\"" >> $TMP
  done
 fi
 
 # Roon and Spotify are not supported on the Pi Zero
 if [ "$VERSION" == "0w" ]; then
- for PKG in BR2_PACKAGE_RAAT BR2_PACKAGE_SPOTIF BR2_PACKAGE_ENABLE_ARM7; do
+ for PKG in BR2_PACKAGE_RAAT BR2_PACKAGE_SPOTIFY BR2_PACKAGE_ENABLE_ARM7; do
+   echo "$PKG=n" >> $TMP
+ done
+ for PKG in `cat configs/remove-slowpi`; do 
    echo "$PKG=n" >> $TMP
  done
  echo BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y >> $TMP
 fi
+
+# Remove some stuff from the Pi2 release"
+if [ "$VERSION" == "2" ]; then
+ for PKG in `cat configs/remove-slowpi`; do
+  echo "$PKG=n" >> $TMP
+ done
+fi 
+
+# Workaround
+echo "BR2_JLEVEL=16" >> $TMP
 
 mv $TMP $DST
 mv $DST $BRDIR/.config

@@ -1,4 +1,7 @@
 #!/bin/bash
+
+touch /newroot/etc/quiet_start
+
 V=`cat /etc/hifiberry.version`
 if [ "$V" == "" ]; then
  V=0
@@ -142,6 +145,17 @@ if [ "$V" -lt 20200420 ]; then
  if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
   echo "Using zImage from new RPI firmware"
   cp -rv /newroot/usr/lib/firmware/rpi/* /boot
+ fi
+fi
+
+if [ "$V" -lt 20200530 ]; then
+ echo "Version < 20200530, disabling alsaeq"
+ cp /newroot/etc/asound.conf.eq /newroot/etc/asound.conf
+ FKMS=`cat /boot/config.txt | grep vc4-fkms-v3d`
+ if [ "$FKMS" == "" ]; then 
+  echo "Adding video driver"
+  mount -o remount,rw /boot
+  echo "dtoverlay=vc4-fkms-v3d,audio=off" >> /boot/config.txt
  fi
 fi
 

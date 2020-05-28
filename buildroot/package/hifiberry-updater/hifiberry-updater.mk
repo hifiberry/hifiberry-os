@@ -6,6 +6,7 @@
 
 define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/var/spool/cron/crontabs
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/timers.target.wants
         echo "critical" > $(TARGET_DIR)/etc/updater.release
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/update \
                 $(TARGET_DIR)/opt/hifiberry/bin
@@ -36,6 +37,8 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm/boot/zImage $(TARGET_DIR)/usr/lib/firmware/rpi
 	echo "Installing updater"
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
+	echo "F2FS supported"
+	touch $(TARGET_DIR)/etc/f2fs
 endef
 
 define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
@@ -62,6 +65,7 @@ endif
 
 define RPI_INSTALL_OVERLAYS
         echo "Installing overlays"
+	mkdir -p $(TARGET_DIR)/usr/lib/firmware/rpi/overlays
         for ovldtb in $(@D)/boot/overlays/*.dtbo; do \
                 $(INSTALL) -D -m 0644 $${ovldtb} $(TARGET_DIR)/usr/lib/firmware/rpi/overlays/$${ovldtb##*/} || exit 1; \
         done
