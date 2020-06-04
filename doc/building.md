@@ -79,3 +79,7 @@ You will also need to have `sshpass` installed, make sure to add the host keys f
 
 Starts a release build that will build images for all supported Raspberry Pi platforms. This will definitely 
 take several hours, it should only be used when packaging a new release.
+
+# Known problems
+
+WPE_webkit might fail to build if you don't have enough RAM. In this case, reduce the number jobs to run simultaneously. If set to 0 it will use number of threads + 1, you might set this to a lower number. 
