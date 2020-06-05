@@ -16,7 +16,7 @@ Feel free to let expert users edit configuration files with settings that are ra
 ## Sound card support
 
 You extension must be able to work with all supported HiFiBerry sound cards. This means that it needs to be able to handle
-all common sample rates (44.1-192kHz) and sample foprmats (at least S11_LE, S24_LE, S32_LE)
+all common sample rates (44.1-192kHz) and sample formats (at least S11_LE, S24_LE, S32_LE)
 
 ## Additional players/services
 
