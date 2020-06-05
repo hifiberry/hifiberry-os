@@ -4,7 +4,7 @@ config BR2_PACKAGE_HIFIBERRY_TEST
 	  Tools to test the hardware of HiFiBerry boards
         depends on BR2_PACKAGE_HIFIBERRY_BASE
         select BR2_PACKAGE_DSPTOOLKIT
-        select BR2_PACKAGE_WIRINGPI
+#        select BR2_PACKAGE_WIRINGPI
         select BR2_PACKAGE_SOX
 
 choice
