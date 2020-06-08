@@ -159,6 +159,12 @@ if [ "$V" -lt 20200530 ]; then
  fi
 fi
 
+if [ "$V" -lt 20200630 ]; then
+ echo "Version < 20200630"
+ echo "changing mpd logging to systemd"
+ sed -i 's/^log_file.*/log_file "syslog"/' /newroot/etc/mpd.conf
+fi
+
 sync
 
 echo "Upgrading configuration files done"
