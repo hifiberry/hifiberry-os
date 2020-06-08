@@ -1,0 +1,9 @@
+[Unit]
+Description=Mount USB Drive on %i
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/opt/hifiberry/bin/mount-usb.sh add %i
+ExecStop=/opt/hifiberry/bin/mount-usb.sh remove %i
+
