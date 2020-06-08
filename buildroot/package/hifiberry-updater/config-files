@@ -35,3 +35,4 @@
 /etc/alsaloop.json
 /etc/asound.conf
 /var/lib/bluetooth
+/etc/smbmounts.conf

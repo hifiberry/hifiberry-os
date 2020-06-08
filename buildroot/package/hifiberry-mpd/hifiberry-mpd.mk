@@ -172,6 +172,9 @@ define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/radio/*.m3u \
                 $(TARGET_DIR)/library/playlists/
 	mkdir -p $(TARGET_DIR)/var/lib/mpd
+        # Install mount scripts
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mount-smb \
+                $(TARGET_DIR)/opt/hifiberry/bin/mount-smb
 endef
 
 HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_MPD_INSTALL_EXTRA_FILES
