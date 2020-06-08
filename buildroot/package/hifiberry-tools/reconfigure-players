@@ -106,7 +106,14 @@ pi_model() {
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
   PIVERSION=0
-  FEATURES="$FEATURES bluetooth arm7"
+  FEATURES="$FEATURES bluetooth"
+  return
+ fi
+
+ if [[ $modelname == *"Pi 2 Model B" ]]; then
+  PIMODEL="2"
+  PIVERSION=2
+  FEATURES="$FEATURES arm7"
   return
  fi
 
