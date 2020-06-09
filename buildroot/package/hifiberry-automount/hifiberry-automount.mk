@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+HIFIBERRY_AUTOMOUNT_DEPENDENCIES = systemd
+
 define HIFIBERRY_AUTOMOUNT_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-usb.sh \
            $(TARGET_DIR)/opt/hifiberry/bin/mount-usb.sh
