@@ -93,7 +93,7 @@ if [ "$VERSION" == "2" ]; then
 fi 
 
 # Workaround
-echo "BR2_JLEVEL=16" >> $TMP
+#echo "BR2_JLEVEL=16" >> $TMP
 
 # Disable parallel builds (still testing)
 echo "BR2_PER_PACKAGE_DIRECTORIES=n" >> $TMP
