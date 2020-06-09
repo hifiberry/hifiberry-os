@@ -163,6 +163,12 @@ if [ "$V" -lt 20200630 ]; then
  echo "Version < 20200630"
  echo "changing mpd logging to systemd"
  sed -i 's/^log_file.*/log_file "syslog"/' /newroot/etc/mpd.conf
+ 
+ SOCKET=`cat /newroot/etc/mpd.conf | grep bind_to_address | grep /var/run/mpd/socket`
+ if [ "$SOCKET" == "" ]; then
+   echo "Adding socket configuration to mpd"
+   echo 'bind_to_address "/var/run/mpd/socket"' >> /newroot/etc/mpd.conf
+ fi
 fi
 
 sync
