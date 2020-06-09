@@ -52,3 +52,22 @@ diff -ur buildroot-dev-unpatched/package/python-idna/python-idna.mk buildroot-de
  PYTHON_IDNA_SOURCE = idna-$(PYTHON_IDNA_VERSION).tar.gz
  PYTHON_IDNA_SITE = https://files.pythonhosted.org/packages/cb/19/57503b5de719ee45e83472f339f617b0c01ad75cba44aba1e4c97c2b0abd
  PYTHON_IDNA_LICENSE = BSD-3-Clause
+diff --git a/package/pkg-python.mk b/package/pkg-python.mk
+index 4bf762e662..73fe9954e7 100644
+--- a/package/pkg-python.mk
++++ b/package/pkg-python.mk
+@@ -20,9 +20,11 @@ 
+ #
+ ################################################################################
+ 
+-define PKG_PYTHON_SYSCONFIGDATA_NAME
+-$(basename $(notdir $(wildcard $(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/_sysconfigdata__linux_*.py)))
+-endef
++# basename does not evaluate if a file exists, so we must check to ensure
++# the _sysconfigdata__linux_*.py file exists. The "|| true" is added to return
++# an empty string if the file does not exist.
++PKG_PYTHON_SYSCONFIGDATA_PATH = $(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/_sysconfigdata__linux_*.py
++PKG_PYTHON_SYSCONFIGDATA_NAME = `{ [ -e $(PKG_PYTHON_SYSCONFIGDATA_PATH) ] && basename $(PKG_PYTHON_SYSCONFIGDATA_PATH) .py; } || true`
+ 
+ # Target distutils-based packages
+ PKG_PYTHON_DISTUTILS_ENV = \
