@@ -75,6 +75,7 @@ HIFIBERRY_MPD_CONF_OPTS += -Dlibmpdclient=enabled
 HIFIBERRY_MPD_CONF_OPTS += -Dmms=disabled
 
 # disable NFS
+HIFIBERRY_MPD_DEPENDENCIES += libnfs
 HIFIBERRY_MPD_CONF_OPTS += -Dnfs=enabled
 
 # enable smb

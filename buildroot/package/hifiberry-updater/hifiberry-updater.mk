@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+HIFIBERRY_UPDATER_DEPENDENCIES = rpi-firmware
+
 define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/var/spool/cron/crontabs
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/timers.target.wants
