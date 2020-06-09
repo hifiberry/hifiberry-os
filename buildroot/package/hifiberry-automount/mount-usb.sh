@@ -57,6 +57,9 @@ do_mount()
         echo "mpc update as ${LABEL} had been mounted"
         /bin/mpc update
     fi
+
+    # Just an echo to get a 0 return code
+    echo "mounted  ${LABEL}"
             
 }
 
