@@ -2,6 +2,7 @@
 Description=mpd
 Wants=network.target
 After=network.target sound.target
+Before=beocreate2.service
 
 [Service]
 Type=simple
