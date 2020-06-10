@@ -222,12 +222,14 @@ guess_card() {
  DACPLUSADCPRO=`aplay -l | grep DAC+ | grep ADC | grep Pro`   
  if [ "$DACPLUSADCPRO" != "" ]; then                          
    CARD="DAC+ ADC Pro"
+   FEATURES="$FEATURES analoginput"
    return                                                     
  fi                                                           
                                                               
  DACPLUSADC=`aplay -l | grep DAC+ | grep ADC`                 
  if [ "$DACPLUSADC" != "" ]; then                             
    CARD="DAC+ ADC"                                            
+   FEATURES="$FEATURES analoginput"
    return                                                     
  fi                                                           
         
@@ -310,16 +312,6 @@ check_dsp() {
    FEATURES="$FEATURES dsp"
  else
    HAS_DSP=0
- fi
-}
-
-# Check if card can record
-can_record() {
- ADC=`arecord -l | grep -i hifiberry`
- if [ "$ADC" != "" ]; then
-   CAN_RECORD=1
-   FEATURES="$FEATURES analoginput"
-   return
  fi
 }
 
@@ -475,21 +467,6 @@ reconfigure_mopidy() {
  fi
 }
 
-# Reconfigure "can_record"
-reconfigure_recording() {
- if [ ! -d /etc/hifiberry ]; then
-   mkdir -p /etc/hifiberry
- fi
- if [ "$CAN_RECORD" != "" ]; then
-   touch /etc/hifiberry/can_record
- else 
-   systemctl disable alsaloop
-   if [ -f /etc/hifiberry/can_record ]; then
-     rm /etc/hifiberry/can_record
-   fi
- fi
-}
-
 # Reconfigure Beocreate 
 reconfigure_beocreate() {
  UPDATE=0
@@ -557,7 +534,6 @@ pi_model
 detect_hw
 guess_volume_control
 guess_card
-can_record
 system_name
 read_features
 check_pi3a
