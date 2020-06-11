@@ -6,6 +6,8 @@ labels: 'feature_request'
 assignees: ''
 
 ---
+DO NOT remove the blocks below, but fill these with the requested data. Incomplete feature requests will be closed.
+You should remove this comment before posting the feature request.
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
