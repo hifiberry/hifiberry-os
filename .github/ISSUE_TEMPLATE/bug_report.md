@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+DO NOT remove the blocks below, but fill these with the requested data. Incomplete bug reports will be ignored!
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
