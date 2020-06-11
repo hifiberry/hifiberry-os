@@ -8,12 +8,16 @@ assignees: ''
 ---
 
 DO NOT remove the blocks below, but fill these with the requested data. Incomplete bug reports will be ignored!
+You should remove this comment before posting the bug report.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
 
 **HiFiBerryOS version**
 You find this on the "About" screen. It looks like Software 20YYMMDD
+
+**HiFiBerry sound card**
+Post the exact type, e.g. DAC+ Pro instead of "DAC+".
 
 **To Reproduce**
 Steps to reproduce the behavior:
