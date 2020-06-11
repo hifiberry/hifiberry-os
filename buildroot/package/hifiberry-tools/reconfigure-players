@@ -402,11 +402,6 @@ reconfigure_audiocontrol2() {
 # Reconfigure Bluetooth
 reconfigure_bluetooth() {
  BT=`echo $FEATURES | grep bluetooth`
- RESTART_BT=0
- if [ "$BT" == "" ]; then
-   systemctl disable --now btuart.service bluetooth.service bluealsa.service bluealsa-aplay.service a2dp-agent.service
-   echo " disabled Bluetooth"
- fi 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i "s/Name\ =\ .*/Name\ =\ $SYSNAME_SED_SPACES/" /etc/bluetooth/main.conf
   RESTART_BT=1
@@ -494,7 +489,7 @@ reconfigure_beocreate() {
  fi
 
  if [ "$UPDATE" == "1" ]; then
-  systemctl restart beocreate2
+  restart_service beocreate2
   echo " restarting Beocreate"
  fi
 }
@@ -597,8 +592,6 @@ echo "Reconfiguring DLNA"
 reconfigure_dlna
 echo "Reconfiguring Mopidy"
 reconfigure_mopidy
-echo "Reconfigure recording"
-reconfigure_recording
 echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
 echo "Reconfiguring Beocreate software"
