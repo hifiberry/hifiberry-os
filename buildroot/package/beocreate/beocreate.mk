@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = e23f49540cb325d8a7624793bc9ef1a82361d73b
+BEOCREATE_VERSION = 12b8706c85c9dd29a836641427517b63ba3fba6f
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
 #BEOCREATE_VERSION = ea520f8086f5639a94f81375d52492b1b66d273b
@@ -23,6 +23,9 @@ define BEOCREATE_INSTALL_TARGET_CMDS
         rm -rf $(TARGET_DIR)/opt/beocreate/etc
 	cp -rv $(@D)/beocreate_essentials $(TARGET_DIR)/opt/beocreate
 	cp -rv $(@D)/Beocreate2/etc/* $(TARGET_DIR)/etc/beocreate
+        # DSP Parameter Reader
+        mkdir -p $(TARGET_DIR)/opt/beocreate/misc/dspparamreader
+        cp -rv $(@D)/DSP\ Parameter\ Reader/* $(TARGET_DIR)/opt/beocreate/misc/dspparamreader
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/system.json \
                 $(TARGET_DIR)/etc/beocreate/system.json
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/system.json \
