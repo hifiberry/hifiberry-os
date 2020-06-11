@@ -2,6 +2,7 @@
 Description=Bluetooth hardware initialisiation
 After=bluetooth.service
 Before=bluealsa.service
+ConditionPathExists=/etc/features/bluetooth
 
 [Service]
 Type=oneshot
