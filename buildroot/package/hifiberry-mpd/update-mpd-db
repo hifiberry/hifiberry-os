@@ -1,0 +1,18 @@
+#!/bin/bash
+ME=$0
+MYPID=$$
+RUNNING=`ps -ef | grep $ME | grep -v $MYPID | grep -v grep`
+if [ "$RUNNING" != "" ]; then
+ echo $RUNNING
+ echo "already running, won't start again"
+ exit 0
+fi
+
+# run cover extractor
+python3 /usr/bin/getcovers.py /data/library/music &
+
+# update mpd
+mpc update
+mpc idle database
+# Notify user interface
+curl -X POST http://127.0.0.1/mpd/update
