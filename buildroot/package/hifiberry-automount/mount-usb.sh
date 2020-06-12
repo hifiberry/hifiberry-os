@@ -53,9 +53,8 @@ do_mount()
     fi
 
     # Rescan MPD
-    if [ -x /bin/mpc ]; then
-        echo "mpc update as ${LABEL} had been mounted"
-        /bin/mpc update
+    if [ -x /opt/hifiberry/bin/update-mpd-db ]; then
+        /opt/hifiberry/bin/update-mpd-db &
     fi
 
     # Just an echo to get a 0 return code
