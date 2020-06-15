@@ -9,14 +9,8 @@ if [ "$RUNNING" != "" ]; then
 fi
 
 # run cover extractor
-python3 /usr/bin/getcovers.py /data/library/music &
+( python3 /usr/bin/getcovers.py -x /data/library/music && curl -X POST http://127.0.0.1/mpd/update ) &
 
 # update mpd
 mpc update
-sleep 2
-UPDATING=`mpc status | grep -i updating`
-if [ "$UPDATING" == "" ]; then
-  mpc idle database
-fi
-# Notify user interface
-curl -X POST http://127.0.0.1/mpd/update
+
