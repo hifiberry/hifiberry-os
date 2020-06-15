@@ -13,6 +13,10 @@ python3 /usr/bin/getcovers.py /data/library/music &
 
 # update mpd
 mpc update
-mpc idle database
+sleep 2
+UPDATING=`mpc status | grep -i updating`
+if [ "$UPDATING" == "" ]; then
+  mpc idle database
+fi
 # Notify user interface
 curl -X POST http://127.0.0.1/mpd/update
