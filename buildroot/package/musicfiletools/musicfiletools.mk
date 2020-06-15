@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MUSICFILETOOLS_VERSION = a5c4320c381203ba459b8e65fd909f7df5be0713
+MUSICFILETOOLS_VERSION = eac68f01abb5b35ced377aabb5bf513471e69fed
 MUSICFILETOOLS_SITE = $(call github,hifiberry,musicfiletools,$(MUSICFILETOOLS_VERSION))
 MUSICFILETOOLS_SETUP_TYPE = setuptools
 MUSICFILETOOLS_LICENSE = MIT
