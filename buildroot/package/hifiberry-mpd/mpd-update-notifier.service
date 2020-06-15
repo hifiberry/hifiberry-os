@@ -1,0 +1,12 @@
+[Unit]
+Description=mpd update notifier
+Wants=mpd.service
+After=mpd.service
+
+[Service]
+Type=simple
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting MPD update notifier"
+ExecStart=/opt/hifiberry/bin/mpd-update-notifier
+
+[Install]
+WantedBy=multi-user.target
