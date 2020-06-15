@@ -14,3 +14,5 @@ sshd.service
 snapcastmpris.service
 watchdog.service
 dlnampris.service
+alsaloop.service
+
