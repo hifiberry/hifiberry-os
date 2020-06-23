@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_MUSIC_VERSION = 0510324112c477bcc349ab298d3fb2e9bb65ceae
+BEOCREATE_MUSIC_VERSION = 86003f0682b9bef47e73ed51826dd75da7444322
 BEOCREATE_MUSIC_SITE = $(call github,tuomashamalainen,beocreate-music,$(BEOCREATE_MUSIC_VERSION))
 
 define BEOCREATE_MUSIC_INSTALL_TARGET_CMDS
