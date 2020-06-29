@@ -1,4 +1,9 @@
-202005xx:
+20200629:
+- Added Music browser to handle local music libraries
+- New 96kHz DSP profiles for DAC+ DSP and DSP add-on board
+- Several other bugfixes and improvements
+
+20200527:
 - Local user interface running on the Pi (Pi3/4 only)
 - ALSA eq disabled by default
 - Several bugfixes and stability improvements

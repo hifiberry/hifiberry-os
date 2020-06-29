@@ -1,7 +1,7 @@
 [Unit]
 Description=alsaloop
 After=sound.target
-ConditionPathExists=/etc/hifiberry/can_record
+ConditionPathExists=/etc/features/analoginput
 
 [Service]
 Type=simple

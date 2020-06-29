@@ -1,5 +1,5 @@
 #!/bin/bash
-TAG=2019.08.3
+TAG=2020.05
 BRDIR=buildroot-${TAG}
 
 cd `dirname $0`

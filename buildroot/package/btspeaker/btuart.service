@@ -1,6 +1,7 @@
 [Unit]
 Description=Bluetooth hardware initialisiation
 Before=bluetooth.service
+ConditionPathExists=/etc/features/bluetooth
 
 [Service]
 Type=simple

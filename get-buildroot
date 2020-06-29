@@ -1,3 +1,3 @@
 #!/bin/sh
 cd `dirname $0`
-./get-buildroot-dev
+./get-buildroot-prod

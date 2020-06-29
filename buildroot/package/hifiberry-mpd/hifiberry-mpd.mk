@@ -75,6 +75,7 @@ HIFIBERRY_MPD_CONF_OPTS += -Dlibmpdclient=enabled
 HIFIBERRY_MPD_CONF_OPTS += -Dmms=disabled
 
 # disable NFS
+HIFIBERRY_MPD_DEPENDENCIES += libnfs
 HIFIBERRY_MPD_CONF_OPTS += -Dnfs=enabled
 
 # enable smb
@@ -168,10 +169,13 @@ define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 		$(TARGET_DIR)/etc/mpd.conf
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.conf \
 		$(TARGET_DIR)/etc/mpd.conf.default
-        # Install some sample web radio files
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/radio/*.m3u \
-                $(TARGET_DIR)/library/playlists/
 	mkdir -p $(TARGET_DIR)/var/lib/mpd
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/update-mpd-db \
+		$(TARGET_DIR)/opt/hifiberry/bin//update-mpd-db
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/update-covers \
+                $(TARGET_DIR)/opt/hifiberry/bin/update-covers
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd-update-notifier \
+                $(TARGET_DIR)/opt/hifiberry/bin/mpd-update-notifier
 endef
 
 HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_MPD_INSTALL_EXTRA_FILES
@@ -180,8 +184,12 @@ define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
-        ln -fs ../../../../usr/lib/systemd/system/shairport-sync.service \
+        ln -fs ../../../../usr/lib/systemd/system/mpd.service \
                 $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mpd.service
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd-update-notifier.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/mpd-update-notifier.service
+        ln -fs ../../../../usr/lib/systemd/system/mpd-update-notifier.service \
+                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mpd-update-notifier.service
 endef
 
 
