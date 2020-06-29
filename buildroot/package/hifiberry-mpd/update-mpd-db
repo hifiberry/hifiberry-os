@@ -8,15 +8,7 @@ if [ "$RUNNING" != "" ]; then
  exit 0
 fi
 
-# run cover extractor
-( python3 /usr/bin/getcovers.py -x /data/library/music && curl -X POST http://127.0.0.1/mpd/update ) &
-
-# If we're allows to use external metadata, retrieve covers and artist pictures
-EXTERNALMD=`cat /etc/audiocontrol2.conf | grep external_metadata | awk -F= '{print $2}' | grep 1`
-if [ "$EXTERNALMD" != "" ]; then
- echo "Looking up images ..."
- ( python3  /usr/bin/getalbums.py -c -a /data/library/music  && curl -X POST http://127.0.0.1/mpd/update ) &
-fi
+/opt/hifiberry/bin/update-covers &
 
 # update mpd
 mpc update
