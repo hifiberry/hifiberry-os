@@ -172,6 +172,8 @@ define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 	mkdir -p $(TARGET_DIR)/var/lib/mpd
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/update-mpd-db \
 		$(TARGET_DIR)/opt/hifiberry/bin//update-mpd-db
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/update-covers \
+                $(TARGET_DIR)/opt/hifiberry/bin/update-covers
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd-update-notifier \
                 $(TARGET_DIR)/opt/hifiberry/bin/mpd-update-notifier
 endef
