@@ -12,6 +12,7 @@
 
 
 ## Developer documentation
+- [Contribution guideline](../CONTRIBUTING.md)
 - [Setup development environment](setupdev.md)
 - [Build HiFiBerryOS](building.md)
 - [Design guidelines](guidelines.md)
