@@ -48,12 +48,14 @@ make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot olddefconfig
 
 # Check if parallel build are supported
 PARALLEL=`cat $BRDIR/.config | grep "BR2_PER_PACKAGE_DIRECTORIES=y"`
-PARALLEL=""
+if [ "$NOPARALLEL" != "" ]; then
+ PARALLEL=""
+fi
 if [ "$PARALLEL" == "" ]; then
  echo "Using standard (non package-parallel) build system"
  make O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
 else
- JOBS=1
+ JOBS=`cat /proc/cpuinfo  | grep ^processor | wc -l`
  echo "Using new package-parallel build with $JOBS parallel jobs"
  make -j$JOBS O=$BRDIR BR2_EXTERNAL=../hifiberry-os/buildroot
 fi

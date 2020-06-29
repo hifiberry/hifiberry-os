@@ -159,6 +159,28 @@ if [ "$V" -lt 20200530 ]; then
  fi
 fi
 
+if [ "$V" -lt 20200630 ]; then
+ echo "Version < 20200630"
+ echo "changing mpd logging to systemd"
+ cp /newroot/etc/mpd.conf /newroot/etc/mpd.conf.bak
+ sed -i 's/^log_file.*/log_file "syslog"/' /newroot/etc/mpd.conf
+ 
+ SOCK=`cat /newroot/etc/mpd.conf | grep bind_to_address | grep /var/run/mpd/socket`
+ if [ "$SOCK" == "" ]; then
+   echo "Adding socket configuration to mpd"
+   echo 'bind_to_address "/var/run/mpd/socket"' >> /newroot/etc/mpd.conf
+ fi
+
+ ACMPD=`cat /newroot/etc/audiocontrol2.conf | grep "\[mpd\]"`
+ if [ "$ACMPD" == "" ]; then
+   echo "adding mpd configuration to audiocontrol"
+   cp /newroot/etc/audiocontrol2.conf /newroot/etc/audiocontrol2.conf.bak
+   echo "" >> /newroot/etc/audiocontrol2.conf
+   echo "[mpd]" >> /newroot/etc/audiocontrol2.conf 
+   echo "musicdir=/data/library/music" >> /newroot/etc/audiocontrol2.conf
+ fi
+fi
+
 sync
 
 echo "Upgrading configuration files done"

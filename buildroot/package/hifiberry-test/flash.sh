@@ -17,7 +17,7 @@ fi
 if [ -f "/opt/hifiberry/contrib/$1.eep" ]; then 
   /opt/hifiberry/contrib/hbflash.sh -w -f=/opt/hifiberry/contrib/$1.eep -t=24c32
 else
-  echo "EEPROM file $f does not exist, aborting ..."
+  echo "EEPROM file /opt/hifiberry/contrib/$1.eep does not exist, aborting ..."
   exit 1
 fi
 

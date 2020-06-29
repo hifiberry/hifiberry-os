@@ -2,6 +2,7 @@
 Description=Bluetooth demon
 Requires=dbus.service
 After=dbus.service
+ConditionPathExists=/etc/features/bluetooth
 
 [Service]
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Bluetooth daemon"
