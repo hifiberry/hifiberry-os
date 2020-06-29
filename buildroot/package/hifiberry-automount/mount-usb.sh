@@ -28,6 +28,10 @@ do_mount()
 
     # Figure out a mount point to use
     LABEL=${ID_FS_LABEL}
+    # If there is a partition UUID, use this as it should be unique
+    if [ "${ID_FS_PARTUUID}" != "" ]; then
+        LABEL=${ID_FS_PARTUUID}
+    fi
     if [[ -z "${LABEL}" ]]; then
         LABEL=${DEVBASE}
     elif /bin/grep -q " /media/${LABEL} " /etc/mtab; then
