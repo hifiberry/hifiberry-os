@@ -7,7 +7,7 @@
 	<metadata type="profileName">DSP add-on</metadata>
 	<metadata type="profileVersion">11</metadata>
 	<metadata type="programID">dsp-addon</metadata>
-	<metadata type="modelName" modelID="dsp-addon">DSP add-on board</metadata>
+	<metadata type="modelName" modelID="dsp-addon">DSP add-on board 96kHz</metadata>
 	<metadata type="checksum">DB4848AC505FB1520A9AEE53084F92CD</metadata>
 	<metadata type="balanceRegister" storable="yes">715</metadata>
 	<metadata type="spdifTXUserDataSource" storable="yes">63135</metadata>
