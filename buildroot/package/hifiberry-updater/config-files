@@ -36,3 +36,4 @@
 /etc/asound.conf
 /var/lib/bluetooth
 /etc/smbmounts.conf
+/root/.bash_history
