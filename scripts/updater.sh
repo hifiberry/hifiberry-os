@@ -183,4 +183,16 @@ fi
 
 sync
 
+if [ "$V" -lt 20200705 ]; then
+ echo "Version < 20200705"
+ 
+ AUTOUPDATE=`cat /newroot/etc/mpd.conf | grep auto_update`
+ if [ "$AUTOUPDATE" == "" ]; then
+   echo "Adding automatic update to mpd"
+   echo 'auto_update "yes"' >> /newroot/etc/mpd.conf
+ else
+   echo $AUTOUPDATE
+ fi
+fi 
+
 echo "Upgrading configuration files done"
