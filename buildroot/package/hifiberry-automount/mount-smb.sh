@@ -14,7 +14,7 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
     fi
   fi  
   
-  mountcmd=`echo $m | awk -F, '$5=="" { $5="rw" } {print "mount -t cifs -o user=" $3 ",password=" $4 "," $5 " " $2 " /data/library/music/" $1}'`
+  mountcmd=`echo $m | awk -F\; '$5=="" { $5="rw" } {print "mount -t cifs -o user=" $3 ",password=" $4 "," $5 " " $2 " /data/library/music/" $1}'`
   echo $mountcmd
   ${mountcmd}
 done
