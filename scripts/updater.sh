@@ -183,8 +183,8 @@ fi
 
 sync
 
-if [ "$V" -lt 20200705 ]; then
- echo "Version < 20200705"
+if [ "$V" -lt 20200706 ]; then
+ echo "Version < 20200706"
  
  AUTOUPDATE=`cat /newroot/etc/mpd.conf | grep auto_update`
  if [ "$AUTOUPDATE" == "" ]; then
@@ -193,6 +193,16 @@ if [ "$V" -lt 20200705 ]; then
  else
    echo $AUTOUPDATE
  fi
+
+ STICKERS==`cat /newroot/etc/mpd.conf | grep sticker_file`
+ if [ "$STICKERS" == "" ]; then
+   echo "Adding mpd sticker database"
+   echo 'sticker_file "/library/mpd-sticker.db"' >> /newroot/etc/mpd.conf
+ else
+   echo $STICKERS
+ fi
+
+ sed -i 's/,/\;/g' /newroot/etc/smbmounts.conf
 fi 
 
 echo "Upgrading configuration files done"
