@@ -21,8 +21,8 @@ define DLNAMPRIS_INSTALL_INIT_SYSTEMD
     -mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dlnampris/dlnampris.service \
            $(TARGET_DIR)/usr/lib/systemd/system/dlnampris.service
-    ln -fs ../../../../usr/lib/systemd/system/dlnampris.service \
-           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/dlnampris.service
+#    ln -fs ../../../../usr/lib/systemd/system/dlnampris.service \
+#           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/dlnampris.service
 endef
 
 $(eval $(generic-package))
