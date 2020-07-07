@@ -1,3 +1,7 @@
+20200706:
+- re-introduced old DAC+ DSP profile
+- Several bugfixes in UI and Backend
+
 20200629:
 - Added Music browser to handle local music libraries
 - New 96kHz DSP profiles for DAC+ DSP and DSP add-on board
