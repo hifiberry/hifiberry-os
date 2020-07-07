@@ -4,4 +4,4 @@ if [ "$1" == "" ]; then
  exit 1
 fi
 cd /
-tar -xvfz $1
+tar -xvz -f $1
