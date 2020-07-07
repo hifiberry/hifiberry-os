@@ -1,7 +1,7 @@
 #!/bin/bash
 BASEDIR=/data/library/music
 for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
-  dir=`echo $m | awk -F, '{print $1}'`
+  dir=`echo $m | awk -F\; '{print $1}'`
   if [ ! -d $BASEDIR/$dir ]; then
     mkdir -p $BASEDIR/$dir
   fi
