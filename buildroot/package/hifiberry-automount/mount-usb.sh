@@ -2,6 +2,7 @@
 
 ACTION=$1
 DEVBASE=$2
+EXTRAARG=$3
 DEVICE="/dev/${DEVBASE}"
 BASEDIR=/data/library/music
 
@@ -19,7 +20,7 @@ do_mount()
     eval $(/sbin/blkid -o udev ${DEVICE} | grep -v " ")
 
     # It might have partitions, in this case, we'll use the first one
-    if [ "$ID_PART_TABLE_TYPE" != "" ]; then
+    if [ -f /dev/${DEVICE}1 ]; then
         DEVICE=${DEVICE}1
         echo $DEVICE
         eval $(/sbin/blkid -o udev $DEVICE | grep -v " ")
@@ -42,6 +43,11 @@ do_mount()
 
     /bin/mkdir -p ${MOUNT_POINT}
 
+    # workaround
+    if [ -f ${MOUNT_POINT}/noalbum ]; then
+        rm  ${MOUNT_POINT}/noalbum
+    fi
+
     # Global mount options
     OPTS="rw,relatime"
 
@@ -57,8 +63,10 @@ do_mount()
     fi
 
     # Rescan MPD
-    if [ -x /opt/hifiberry/bin/update-mpd-db ]; then
-        /opt/hifiberry/bin/update-mpd-db &
+    if [ "$EXTRAARG" != "norescan" ]; then
+	if [ -x /opt/hifiberry/bin/update-mpd-db ]; then
+        	/opt/hifiberry/bin/update-mpd-db &
+	fi
     fi
 
     # Just an echo to get a 0 return code
