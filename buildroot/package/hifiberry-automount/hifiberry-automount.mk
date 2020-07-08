@@ -15,6 +15,8 @@ define HIFIBERRY_AUTOMOUNT_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/etc/udev/rules.d/99-usbmount.rules
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-smb.sh \
                 $(TARGET_DIR)/opt/hifiberry/bin/mount-smb.sh
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-all.sh \
+                $(TARGET_DIR)/opt/hifiberry/bin/mount-all.sh
 endef
 
 $(eval $(generic-package))
