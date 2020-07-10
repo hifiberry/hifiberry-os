@@ -303,6 +303,19 @@ check_dsp() {
    return
  fi
 
+ # try using metadata
+ DETECTED=`dsptoolkit --timeout=20 get-meta detected_dsp`
+ if [ "$DETECTED" != "" ]; then
+   HAS_DSP=1
+   FEATURES="$FEATURES dsp"
+   return
+ else
+   HAS_DSP=0
+   return
+ fi
+
+ # Unused legacy code, remove in the future
+
  # Read some data
  REG1=`dsptoolkit --timeout=20 read-reg 0xf003` # expected 00 01
  REG2=`dsptoolkit --timeout=20 read-reg 0xf402` # expected 00 01
