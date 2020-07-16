@@ -24,10 +24,6 @@ define DSPTOOLKIT_INSTALL_INIT
 		$(TARGET_DIR)/etc/init.d/S90sigmatcp
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/sigmatcp.service
-        if [ -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
-          ln -fs ../../../../usr/lib/systemd/system/sigmatcp.service \
-                  $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sigmatcp.service; \
-        fi
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/dspvolume.ctl \
 		$(TARGET_DIR)/etc/dspvolume.ctl
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/create-dspvolume \

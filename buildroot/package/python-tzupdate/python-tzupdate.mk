@@ -14,10 +14,6 @@ PYTHON_TZUPDATE_LICENSE_FILES = LICENSE
 define PYTHON_TZUPDATE_INSTALL_INIT
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-tzupdate/tzupdate.service \
                $(TARGET_DIR)/usr/lib/systemd/system/tzupdate.service
-        if [ -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
-		ln -fs ../../../../usr/lib/systemd/system/tzupdate.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/tzupdate.service; \
-	fi
 endef
 
 PYTHON_TZUPDATE_POST_INSTALL_TARGET_HOOKS += PYTHON_TZUPDATE_INSTALL_INIT

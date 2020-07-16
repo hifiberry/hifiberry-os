@@ -28,21 +28,12 @@ endef
 PYTHON_USAGEDATA_POST_INSTALL_TARGET_HOOKS += PYTHON_USAGEDATA_POST_INSTALL_TARGET_CMD
 
 define PYTHON_USAGEDATA_INSTALL_INIT
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/timers.target.wants
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/datacollector.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/datacollector.service
-	if [ -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
-		ln -fs ../../../../usr/lib/systemd/system/datacollector.service \
-			$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/datacollector.service; \
-	fi
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/pushdata.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/pushdata.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/python-usagedata/pushdata.timer \
                 $(TARGET_DIR)/usr/lib/systemd/system/pushdata.timer
-        [ -d $(TARGET_DIR)/etc/systemd/system/timers.target.wants ] || mkdir $(TARGET_DIR)/etc/systemd/system/timers.target.wants
-        ln -fs ../../../../usr/lib/systemd/system/pushdata.timer \
-                $(TARGET_DIR)/etc/systemd/system/timers.target.wants/pushdata.timer
 endef
 
 PYTHON_USAGEDATA_POST_INSTALL_TARGET_HOOKS += PYTHON_USAGEDATA_INSTALL_INIT

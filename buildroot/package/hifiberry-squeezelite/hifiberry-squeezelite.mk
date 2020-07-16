@@ -30,11 +30,10 @@ define HIFIBERRY_SQUEEZELITE_INSTALL_TARGET_CMDS
 endef
 
 define HIFIBERRY_SQUEEZELITE_INSTALL_INIT_SYSTEMD
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-squeezelite/squeezelite.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/squeezelite.service
-#        ln -fs ../../../../usr/lib/systemd/system/squeezelite.service \
-#                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/squeezelite.service
+	mkdir -p $(TARGET_DIR)/lib/systemd/system-preset
+	echo "disable squeezelite.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-squeezelite.preset
 endef
 
 $(eval $(generic-package))

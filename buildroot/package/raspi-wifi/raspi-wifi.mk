@@ -27,13 +27,10 @@ define RASPI_WIFI_INSTALL_INIT_SYSV
 endef
 
 define RASPI_WIFI_INSTALL_INIT_SYSTEMD
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants	 
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/wireless.network \
 		$(TARGET_DIR)/etc/systemd/network/wireless.network
 	$(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/wpa_supplicant@wlan0.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/wpa_supplicant@wlan0.service
-	ln -fs ../../../../usr/lib/systemd/system/wpa_supplicant@wlan0.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/wpa_supplicant@wlan0.service
 	$(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/tempap-dnsmasq.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/tempap-dnsmasq.service
 	$(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raspi-wifi/tempap-hostapd.service \
