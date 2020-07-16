@@ -11,3 +11,14 @@ We don't recommend to use DSP Volume control in Roon as it is not compatible wit
 in the user interface or with any other service as you won't be able to change it via Roon if you use DSPVolume
 
 Create a file /etc/hifiberry_raat.softvol and restart the system to enable Roon DSP Volume control
+
+## Config hacks that overwrite automatic detecion
+
+### /etc/hifiberry/mixer
+
+Put the name of the mixer control to use into this file if it isn't detected correctly
+
+### /etc/hifiberry/has_dsp
+
+If the file exists, HiFiBerryOS will assume that a DSP is available even if it wasn't detected correctly.
+
