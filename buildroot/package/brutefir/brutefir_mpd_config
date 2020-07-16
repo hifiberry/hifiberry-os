@@ -1,3 +1,5 @@
+# See /opt/contrib/README.brutefir
+
 float_bits: 32;             # internal floating point precision
 sampling_rate: 44100;       # sampling rate in Hz of audio interfaces
 filter_length: 65536;       # length of filters

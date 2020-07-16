@@ -15,6 +15,8 @@ BRUTEFIR_LICENSE_FILES = LICENSE
 define BRUTEFIR_INSTALL_EXTRA_FILES
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/brutefir/brutefir_mpd_config \
 		$(TARGET_DIR)/etc/brutefir_mpd_config
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/brutefir/README.brutefir \
+		$(TARGET_DIR)/opt/contrib/README.brutefir
 endef
 
 BRUTEFIR_POST_INSTALL_TARGET_HOOKS += BRUTEFIR_INSTALL_EXTRA_FILES
