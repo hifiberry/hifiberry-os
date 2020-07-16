@@ -75,56 +75,30 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSV
 endef
 
 define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
-	if [ ! -f $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ]; then \
-		mkdir -p  $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants;  \
-	fi
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-detect.service \
                 $(TARGET_DIR)/lib/systemd/system/hifiberry-detect.service
-        ln -fs ../../../../usr/lib/systemd/system/hifiberry-detect.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry-detect.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/configure-players.service \
                 $(TARGET_DIR)/lib/systemd/system/configure-players.service
-        ln -fs ../../../../usr/lib/systemd/system/configure-players.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/configure-players.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/myip.service \
                 $(TARGET_DIR)/lib/systemd/system/myip.service
-        ln -fs ../../../../usr/lib/systemd/system/myip.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/myip.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/resize-partitions.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/resize-partitions.service
-        ln -fs ../../../../usr/lib/systemd/system/resize-partitions.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/resize-partitions.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/reboot.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/reboot.service
-        ln -fs ../../../../usr/lib/systemd/system/reboot.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/reboot.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/activate-data-partition.service
-        ln -fs ../../../../usr/lib/systemd/system/activate-data-partition.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/activate-data-partition.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/restore-volume.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/restore-volume.service
-        ln -fs ../../../../usr/lib/systemd/system/restore-volume.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/restore-volume.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/store-volume.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/store-volume.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/store-volume.timer \
                 $(TARGET_DIR)/usr/lib/systemd/system/store-volume.timer
-        [ -d $(TARGET_DIR)/etc/systemd/system/timers.target.wants ] || mkdir $(TARGET_DIR)/etc/systemd/system/timers.target.wants
-        ln -fs ../../../../usr/lib/systemd/system/store-volume.timer \
-                $(TARGET_DIR)/etc/systemd/system/timers.target.wants/store-volume.timer
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.target \
                 $(TARGET_DIR)/usr/lib/systemd/system/hifiberry.target
-        ln -fs ../../../../usr/lib/systemd/system/hifiberry.target \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry.target
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry-finish.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/hifiberry-finish.service
-        ln -fs ../../../../usr/lib/systemd/system/hifiberry-finish.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/hifiberry-finish.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/sshdconfig.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/sshdconfig.service
-        ln -fs ../../../../usr/lib/systemd/system/sshdconfig.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/sshdconfig.service
 
 	# Systemd logging to RAM
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/journald.conf \

@@ -30,15 +30,10 @@ define BTSPEAKER_INSTALL_INIT_SYSV
 endef
 
 define BTSPEAKER_INSTALL_INIT_SYSTEMD
-	-mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/btuart.service \
                 $(TARGET_DIR)/lib/systemd/system/btuart.service
-        ln -fs ../../../../etc/systemd/system/btuart.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/btuart.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/btspeaker/a2dp-agent.service \
                 $(TARGET_DIR)/lib/systemd/system/a2dp-agent.service
-        ln -fs ../../../../usr/lib/systemd/system/a2dp-agent.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/a2dp-agent.service
 endef
 
 # Overwrite original Bluez5 package to make sure it doesn't install in systemd
