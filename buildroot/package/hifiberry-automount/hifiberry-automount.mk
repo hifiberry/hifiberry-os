@@ -17,6 +17,8 @@ define HIFIBERRY_AUTOMOUNT_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin/mount-smb.sh
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-all.sh \
                 $(TARGET_DIR)/opt/hifiberry/bin/mount-all.sh
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/list-smb-servers \
+		$(TARGET_DIR)/opt/hifiberry/bin/list-smb-servers
 endef
 
 $(eval $(generic-package))
