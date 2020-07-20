@@ -1,7 +1,7 @@
 [Unit]
 Description=mpd
-Wants=network.target
-After=network.target sound.target
+Wants=network.target local-fs.target
+After=network.target sound.target local-fs.target
 Before=beocreate2.service
 
 [Service]
