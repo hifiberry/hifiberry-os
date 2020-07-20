@@ -1,9 +1,11 @@
 [Unit]
-Description=Starts Psplash Boot screen
+
+Descriptihortn=Starts Psplash Boot screen
 DefaultDependencies=no
 ConditionPathExists=!/boot/nosplash
 
 [Service]
+Type=oneshot
 ExecStart=/usr/bin/psplash -n
 RemainAfterExit=yes
 
