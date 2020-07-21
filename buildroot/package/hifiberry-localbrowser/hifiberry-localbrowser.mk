@@ -24,6 +24,9 @@ define HIFIBERRY_LOCALBROWSER_INSTALL_INIT_SYSTEMD
            $(TARGET_DIR)/usr/lib/systemd/system/cog.service
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-localbrowser/enable-vc \
 	   $(TARGET_DIR)/opt/hifiberry/bin/enable-vc
+    mkdir -p $(TARGET_DIR)/lib/systemd/system-preset
+    echo "disable weston.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-localbrowser.preset
+    echo "disable cog.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-localbrowser.preset
 endef
 
 $(eval $(generic-package))
