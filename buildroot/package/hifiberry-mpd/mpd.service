@@ -1,7 +1,7 @@
 [Unit]
 Description=mpd
-Wants=network.target
-After=network.target sound.target
+Wants=network.target local-fs.target
+After=network.target sound.target local-fs.target mount-data.service
 Before=beocreate2.service
 
 [Service]
@@ -9,6 +9,8 @@ Type=simple
 Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Mounting SMB shares"
 ExecStartPre=-/opt/hifiberry/bin/mount-smb.sh
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Mounting USB drives"
+ExecStartPre=-/opt/hifiberry/bin/mount-all.sh
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting music player daemon"
 ExecStartPre=/opt/hifiberry/bin/pause-state-file
 ExecStart=/bin/mpd --no-daemon

@@ -51,37 +51,50 @@ function detect_card {
 		return
 	fi
 
+        # DAC+ ADC Pro
+        res=`i2cget -y 1 0x4a 25 2>/dev/null`
+        if [ "$res" == "0x07" ]; then
+                echo "dacplusadcpro"
+		return
+        fi
+
 	# Digi/Digi+
 	res=`i2cget -y 1 0x3b 1 2>/dev/null`
 	if [ "$res" == "0x88" ]; then
 		echo "digi"
+		return
 	fi
 
 	# DAC Plus
 	res=`i2cget -y 1 0x4d 40 2>/dev/null`
 	if [ "$res" == "0x02" ]; then
                 echo "dacplus"
+		return
         fi
 
 	# Amp/Amp+
 	res=`i2cget -y 1 0x1b 0 2>/dev/null`
         if [ "$res" == "0x6c" ]; then
                 echo "amp"
+		return
         fi
         if [ "$res" == "0x60" ]; then
                 echo "amp"
+		return
         fi
 
 	# DAC 2 HD
 	res=`i2cget -yf 1 0x62 17 2>/dev/null`
 	if [ "$res" == "0x8c" ]; then
 		echo "dachd"
+		return
 	fi
 
         # Beocreate
         res=`i2cget -y 1 0x60 2 2>/dev/null`
         if [ "$res" == "0x03" ]; then
                 echo "beo"
+		return
         fi
 
         # Some I2C addresses might be blocked from HAT EEPROM, but hifibarry-dac is used

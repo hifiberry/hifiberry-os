@@ -1,3 +1,11 @@
+202007xx
+- add SMB servers in the UI
+- add/change artist pictures and coverart vin the UI
+- allow limiting minimal volume for non-DSP sound cards
+- support USB Bluetooth adadpters
+- improve USB/NAS stability
+- imrpove detection of sound cards
+
 20200706:
 - re-introduced old DAC+ DSP profile
 - Several bugfixes in UI and Backend
