@@ -1,5 +1,11 @@
 # HiFiBerryOS technical documentation
 
+## Hardware
+
+- [Supported 3rd party hardware](hardware.md)
+
+## Configuration/internals
+
 - [Configuration hacks](confighacks.md) (if automatic detection isn't working correctly)
 - [How we use DBUS MPRIS](mpris.md)
 - [How to implement a multiroom system](multiroom.md)
