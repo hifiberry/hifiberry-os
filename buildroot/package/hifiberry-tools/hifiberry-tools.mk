@@ -47,6 +47,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/activate-data-partition \
                 $(TARGET_DIR)/opt/hifiberry/bin
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-system \
+                $(TARGET_DIR)/opt/hifiberry/bin
     touch $(TARGET_DIR)/resize-me
     touch $(TARGET_DIR)/etc/spotifyd.conf
 
