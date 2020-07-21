@@ -64,6 +64,14 @@ check_systemd() {
  done
 }
 
+# Detect USB devices that HiFiBerryOS supports 
+usb_devices() {
+  FOUND_USBBT=`readlink /sys/bus/usb/devices/*/driver | grep btusb`
+  if [ "$FOUND_USBBT" != "" ]; then
+    FEATURES="$FEATURES bluetooth"
+  fi
+}
+
 # Detect Raspberry Pi model
 pi_model() {
  modelname=$(tr -d '\0' < /proc/device-tree/model)
@@ -539,6 +547,7 @@ fi
 
 read_fixed
 pi_model
+usb_devices
 detect_hw
 guess_volume_control
 guess_card
