@@ -8,10 +8,8 @@ Before=hifiberry.target
 [Service]
 Type=notify
 Environment=HOME=/root
-ExecStartPre=/usr/bin/sleep 2
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Beocreate server"
 ExecStart=/usr/bin/node /opt/beocreate/beo-system/beo-server.js ${BEOCREATE_ARGS}
-ExecStartPost=/usr/bin/sleep 15
 ExecStartPost=-rm /etc/quiet_start
 WorkingDirectory=/opt/beocreate/
 User=root
