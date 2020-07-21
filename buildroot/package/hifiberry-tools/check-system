@@ -1,0 +1,31 @@
+#!/bin/bash
+. /etc/hifiberry.state
+
+function check_systemd {
+ echo -n "$1: "
+ systemctl is-active $2 1>/dev/null
+ if [ $? == 0 ]; then
+   echo running
+ else
+   echo not running
+ fi
+}
+
+echo "Pi model: $CURRENT_PIMODEL"
+echo "Sound card: $CURRENT_CARD"
+echo "Sound card ID: $CURRENT_HW_SHORT"
+echo "Mixer: $CURRENT_MIXER_CONTROL"
+echo "Features: $CURRENT_FEATURES"
+
+echo -n "/data mounted: "
+M=`mount | grep " /data "`
+if [ "$M" == "" ]; then
+  echo FAIL
+else
+  echo OK
+fi 
+
+# Daemons
+for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd ; do
+ check_systemd $i $i.service
+done
