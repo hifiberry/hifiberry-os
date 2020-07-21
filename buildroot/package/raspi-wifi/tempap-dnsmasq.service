@@ -1,7 +1,8 @@
 [Unit]
 Description=Temporay AP: dnsmasq
-Wants=network.target
+Wants=network.target tempap-hostapd.service
 After=network.target tempap-hostapd.service
+ConditionPathExists=!/boot/noap
 
 [Service]
 Type=simple
