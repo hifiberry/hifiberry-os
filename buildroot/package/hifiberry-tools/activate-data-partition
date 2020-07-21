@@ -41,6 +41,10 @@ fi
 
 ln -s /data/library /library
 
+if [ ! -d /data/library/music/local ]; then
+ mkdir -p /data/library/music/local
+fi
+
 echo "disabling systemd service, this is a one-time job"
 systemctl disable activate-data-partition.service
 

@@ -64,6 +64,14 @@ check_systemd() {
  done
 }
 
+# Detect USB devices that HiFiBerryOS supports 
+usb_devices() {
+  FOUND_USBBT=`readlink /sys/bus/usb/devices/*/driver | grep btusb`
+  if [ "$FOUND_USBBT" != "" ]; then
+    FEATURES="$FEATURES bluetooth"
+  fi
+}
+
 # Detect Raspberry Pi model
 pi_model() {
  modelname=$(tr -d '\0' < /proc/device-tree/model)
@@ -303,6 +311,19 @@ check_dsp() {
    return
  fi
 
+ # try using metadata
+ DETECTED=`dsptoolkit --timeout=20 get-meta detected_dsp`
+ if [ "$DETECTED" != "" ]; then
+   HAS_DSP=1
+   FEATURES="$FEATURES dsp"
+   return
+ else
+   HAS_DSP=0
+   return
+ fi
+
+ # Unused legacy code, remove in the future
+
  # Read some data
  REG1=`dsptoolkit --timeout=20 read-reg 0xf003` # expected 00 01
  REG2=`dsptoolkit --timeout=20 read-reg 0xf402` # expected 00 01
@@ -526,6 +547,7 @@ fi
 
 read_fixed
 pi_model
+usb_devices
 detect_hw
 guess_volume_control
 guess_card

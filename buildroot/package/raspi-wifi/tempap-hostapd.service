@@ -3,6 +3,7 @@ Description=Temporary AP: hostapd
 Wants=network.target
 After=network.target temporary-ap.service
 PartOf=temporary-ap.service
+ConditionPathExists=!/boot/noap
 
 [Service]
 Type=simple

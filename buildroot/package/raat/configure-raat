@@ -53,6 +53,11 @@ elif [ "$CARD" == "Digi+" ]; then
  SIGNALTYPE="digital"
 fi
 
+# Allow user to set softvol in RAAT. This is incompatible with volume control for other services!
+if [ -f "/etc/hifiberry_raat.softvol" ]; then
+ VOLCTL='"volume": { "type": "software" },'
+fi
+
 PLAYBACKDEVICE="default"
 
 

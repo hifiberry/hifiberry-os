@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# If there is an USB BT stick, just use this, no initialisation needed
+
+FOUND_USBBT=`readlink  /sys/bus/usb/devices/*/driver  | grep btusb`
+if [ "$FOUND_USBBT" ]; then
+ echo "Using USB BT stick"
+ exit
+fi
+
 FIXCONFIG=`cat /boot/config.txt | grep "miniuart-bt"`
 if [ "$FIXCONFIG" != "" ]; then
 	mount -o remount,rw /boot

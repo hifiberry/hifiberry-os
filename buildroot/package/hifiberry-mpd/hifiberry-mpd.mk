@@ -181,15 +181,10 @@ endef
 HIFIBERRY_MPD_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 
 define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
-        ln -fs ../../../../usr/lib/systemd/system/mpd.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mpd.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd-update-notifier.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd-update-notifier.service
-        ln -fs ../../../../usr/lib/systemd/system/mpd-update-notifier.service \
-                $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mpd-update-notifier.service
 endef
 
 

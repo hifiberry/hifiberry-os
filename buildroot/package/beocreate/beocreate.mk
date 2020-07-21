@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = 4ef135d96f96f9762b9038c075da09dd2df3b7ad
+BEOCREATE_VERSION = dd34555c80cdf74cc03f1c2e230a413d67cce6ea
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
-#BEOCREATE_VERSION = adbfd728a5d180b14014642f5d70dfb4c63f6110
+#BEOCREATE_VERSION = 14ae88ed53843604f5388a179c485598865c1d64
 #BEOCREATE_SITE = $(call github,hifiberry,create,$(BEOCREATE_VERSION))
 
 BEOCREATE_DEPENDENCIES += nodejs
@@ -44,13 +44,10 @@ define BEOCREATE_INSTALL_TARGET_CMDS
 endef
 
 define BEOCREATE_INSTALL_INIT_SYSTEMD
-        -mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/override.conf \
                 $(TARGET_DIR)/etc/systemd/system/beocreate2.service.d/override.conf
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/beocreate2.service \
                 $(TARGET_DIR)/lib/systemd/system/beocreate2.service
-	ln -fs ../../../../usr/lib/systemd/system/beocreate2.service \
-           $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/beocreate2.service
 endef
 
 $(eval $(generic-package))

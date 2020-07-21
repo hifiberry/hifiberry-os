@@ -1,0 +1,8 @@
+[Unit]
+Description=Mount /data
+After=local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/opt/hifiberry/bin/mount-data.sh
