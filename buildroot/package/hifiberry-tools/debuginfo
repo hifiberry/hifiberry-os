@@ -33,6 +33,7 @@ dsptoolkit > dspprogram.xml
 # Collect some performance data
 top -b -n 5 > top.txt
 perf stat -a sleep 10
+systemd-analyze plot > systemd-init.svg
 
 cd $TMPDIR
 zip /tmp/hifiberry-debug.zip *
