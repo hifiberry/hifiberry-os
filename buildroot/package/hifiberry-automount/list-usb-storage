@@ -1,0 +1,10 @@
+#!/bin/sh
+for DEV in `grep /dev/sd /proc/mounts | awk '{print $1}'`; do
+ MOUNTPOINT=`grep ${DEV} /proc/mounts | awk '{print $2}'`
+ LABEL=`blkid $DEV -o value -s LABEL`
+ if [ "$LABEL" == "" ]; then
+   LABEL="NO LABEL"
+ fi
+ echo $DEV:$MOUNTPOINT:$LABEL
+done
+
