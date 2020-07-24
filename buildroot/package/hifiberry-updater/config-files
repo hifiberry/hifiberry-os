@@ -38,3 +38,4 @@
 /etc/smbmounts.conf
 /root/.bash_history
 /etc/hifiberry.state
+/etc/features
