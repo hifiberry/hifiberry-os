@@ -20,6 +20,9 @@ echo "Sound card ID: $CURRENT_HW_SHORT"
 echo "Mixer: $CURRENT_MIXER_CONTROL"
 echo "Features: $CURRENT_FEATURES"
 
+echo -n "Linux version: "
+uname -a
+
 echo -n "/data mounted: "
 M=`mount | grep " /data "`
 if [ "$M" == "" ]; then
@@ -44,6 +47,6 @@ done
 echo $DEV | sed s/,\$//
 
 # Daemons
-for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd ; do
+for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd mpd-mpris pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd ; do
  check_systemd $i $i.service
 done
