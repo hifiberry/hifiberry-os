@@ -6,6 +6,7 @@ DefaultDependencies=no
 ConditionPathExists=!/boot/nosplash
 
 [Service]
+Type=oneshot
 ExecStart=/usr/bin/psplash -n
 RemainAfterExit=yes
 
