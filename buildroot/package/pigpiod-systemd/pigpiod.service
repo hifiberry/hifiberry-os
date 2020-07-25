@@ -4,7 +4,7 @@ Before=audiocontrol2.service beocreate2.service
 
 [Service]
 Type=simple
-ExecStart=/bin/pigpiod -t 0 -g -x 0xFC3FFFC -d 9
+ExecStart=/bin/pigpiod -t 0 -g -x 0xFC3FFFC -d 7
 StandardOutput=journal
 Restart=always
 RestartSec=5
