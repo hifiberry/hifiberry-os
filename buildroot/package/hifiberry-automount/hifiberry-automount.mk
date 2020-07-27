@@ -24,6 +24,8 @@ define HIFIBERRY_AUTOMOUNT_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/opt/hifiberry/bin/mount-data.sh
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-data.service \
 		$(TARGET_DIR)/etc/systemd/system/mount-data.service
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/list-usb-storage \
+		$(TARGET_DIR)/opt/hifiberry/bin/list-usb-storage
 endef
 
 $(eval $(generic-package))
