@@ -1,7 +1,6 @@
 [Unit]
-Description=mpd-mpris
-Requires=mpd.service
-After=mpd.service
+Description=MPD MPRIS interface
+Wants=network.target
 
 [Service]
 Type=simple
@@ -16,3 +15,4 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+
