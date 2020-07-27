@@ -11,11 +11,17 @@ function check_systemd {
  fi
 }
 
+echo -n "HiFiBerryOS version: "
+cat /etc/hifiberry.version
+
 echo "Pi model: $CURRENT_PIMODEL"
 echo "Sound card: $CURRENT_CARD"
 echo "Sound card ID: $CURRENT_HW_SHORT"
 echo "Mixer: $CURRENT_MIXER_CONTROL"
 echo "Features: $CURRENT_FEATURES"
+
+echo -n "Linux version: "
+uname -a
 
 echo -n "/data mounted: "
 M=`mount | grep " /data "`
@@ -25,7 +31,22 @@ else
   echo OK
 fi 
 
+echo -n "BT devices: "
+DEV=""
+for INT in `hciconfig | grep hci | awk -F: '{print $1}'`; do
+ MANUFACTURER=`hciconfig -a $INT | grep "Manufacturer:" | awk -F: '{print $2}'`
+ DEV="$DEV $INT - $MANUFACTURER,"
+done 
+echo $DEV | sed s/,\$//
+
+echo -n "WiFi devices: "
+DEV=""
+for INT in `iwconfig 2>/dev/null | grep wlan | awk '{print $1}'`; do 
+ DEV="$DEV $INT,"
+done
+echo $DEV | sed s/,\$//
+
 # Daemons
-for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd ; do
+for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd mpd-mpris pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd ; do
  check_systemd $i $i.service
 done

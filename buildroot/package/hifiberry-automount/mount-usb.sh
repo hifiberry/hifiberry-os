@@ -9,6 +9,9 @@ UPPERDIR=/data/library/overlaydir
 WORKDIR=/data/library/workdir
 MUSICDIR=/data/library/music
 
+# Make sure /data is mounted
+/opt/hifiberry/bin/mount-data.sh
+
 # See if this drive is already mounted
 MOUNT_POINT=$(/bin/mount | /bin/grep ${DEVICE} | /usr/bin/awk '{ print $3 }')
 
@@ -60,10 +63,12 @@ do_mount()
 
     # Global mount options
     OPTS="rw,relatime"
+    OVERLAY=1
 
     # File system type specific mount options
     if [[ ${ID_FS_TYPE} == "vfat" ]]; then
         OPTS+=",users,gid=100,umask=000,shortname=mixed,utf8=1,flush"
+	OVERLAY=0
     fi
 
     if ! /bin/mount -o ${OPTS} ${DEVICE} ${MOUNT_POINT}; then
@@ -72,11 +77,26 @@ do_mount()
         exit 1
     fi
 
-    # Overlay mount
-    mkdir -p $UPPERDIR
-    mkdir -p $WORKDIR
-    mkdir -p ${MUSICDIR}/${LABEL}
-    mount -t overlay -o lowerdir=${MOUNT_POINT},upperdir=${UPPERDIR},workdir=${WORKDIR} overlay ${MUSICDIR}/${LABEL}
+    # Overlay mount if file system is supported
+    if [ "$OVERLAY" == "1" ]; then
+        echo "Creating overlay mount for ${MOUNT_POINT} /fstype ${ID_FS_TYPE}"
+        mkdir -p $UPPERDIR
+        mkdir -p $WORKDIR
+        mkdir -p ${MUSICDIR}/${LABEL}
+        CMD="mount -t overlay -o lowerdir=${MOUNT_POINT},upperdir=${UPPERDIR},workdir=${WORKDIR} overlay ${MUSICDIR}/${LABEL}"
+        $CMD
+        if [ $? != 0 ]; then
+            echo $CMD failed
+        fi
+    else
+        echo "Creating symlink as ${ID_FS_TYPE} does not support overlays"
+        if [ -a ${MUSICDIR}/${LABEL} ]; then
+            mv ${MUSICDIR}/${LABEL} ${MUSICDIR}/${LABEL}.bak
+        fi
+    
+        ln -s ${MOUNT_POINT} ${MUSICDIR}/${LABEL}
+    fi 
+
 
     # Rescan MPD
     if [ "$EXTRAARG" != "norescan" ]; then

@@ -12,7 +12,7 @@ in the user interface or with any other service as you won't be able to change i
 
 Create a file /etc/hifiberry_raat.softvol and restart the system to enable Roon DSP Volume control
 
-## Config hacks that overwrite automatic detecion
+## Config hacks that overwrite default HiFiBerryOS behavior
 
 ### /etc/hifiberry/mixer
 
@@ -22,3 +22,6 @@ Put the name of the mixer control to use into this file if it isn't detected cor
 
 If the file exists, HiFiBerryOS will assume that a DSP is available even if it wasn't detected correctly.
 
+### /boot/noap
+
+If this file exists, HiFiBerryOS will not start an WiFi access point - even if no network connection is detected.

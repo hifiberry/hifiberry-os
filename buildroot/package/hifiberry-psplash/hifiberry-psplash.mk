@@ -5,6 +5,7 @@
 ################################################################################
 
 HIFIBERRY_PSPLASH_SOURCE = psplash-2015f7073e98dd9562db0936a254af5ef56356cf.tar.gz
+HIFIBERRY_PSPLASH_SOURCE = psplash-0a902f7cd875ccf018456451be369f05fa55f962.tar.gz
 HIFIBERRY_PSPLASH_SITE = http://git.yoctoproject.org/cgit/cgit.cgi/psplash/snapshot
 HIFIBERRY_PSPLASH_LICENSE = GPL-2.0+
 HIFIBERRY_PSPLASH_LICENSE_FILES = COPYING
