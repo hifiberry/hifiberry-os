@@ -1,10 +1,11 @@
 [Unit]
 Description=PiGPIOd
 Before=audiocontrol2.service beocreate2.service
+ConditionPathExists=!/boot/nopigpiod
 
 [Service]
 Type=simple
-ExecStart=/bin/pigpiod -t 0 -g -x 0xFC3FFFC -d 7
+ExecStart=/opt/hifiberry/bin/start-pigpiod
 StandardOutput=journal
 Restart=always
 RestartSec=5
