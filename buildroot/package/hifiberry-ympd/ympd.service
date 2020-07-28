@@ -1,7 +1,5 @@
 [Unit]
 Description=ympd MPD web interface
-Requires=mpd.service
-After=mpd.service
 
 [Service]
 Type=simple
@@ -13,3 +11,4 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+
