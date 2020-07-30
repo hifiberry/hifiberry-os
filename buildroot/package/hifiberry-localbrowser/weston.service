@@ -41,5 +41,5 @@ User=root
 StandardInput=tty-fail
 
 [Install]
-WantedBy=multiuser.target
+WantedBy=multi-user.target
 
