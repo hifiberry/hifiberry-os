@@ -22,10 +22,20 @@ case "$1" in
 	# Program EEPROM
         PATH=$PATH:/opt/hifiberry/contrib
         export PATH
-        /opt/hifiberry/contrib/hbflash.sh -w -f=/opt/hifiberry/contrib/dac2hd.eep -t=24c32
-
-	amixer sset DAC 100%
-        play -n synth 60 sine 1000 &
+        /opt/hifiberry/contrib/hbflash.sh --writeread -f=/opt/hifiberry/contrib/dac2hd.eep -t=24c32
+        if [ "$?" != "0" ]; then
+          echo
+          echo
+          echo
+          echo "EEPROM write FAIL, data not correct"
+          echo "aborting..."
+          echo
+          echo
+          echo
+        else
+	  amixer sset DAC 100%
+          play -n synth 60 sine 1000 &
+        fi
 
 	;;
     stop)

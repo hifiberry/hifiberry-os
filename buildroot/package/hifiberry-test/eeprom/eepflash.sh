@@ -51,6 +51,9 @@ while [ "$1" != "" ]; do
 		-w | --write)
 			MODE="write"
 			;;
+                --writeread)
+			MODE="writeread"
+                        ;;
 		-t | --type)
 			if [ "$VALUE" = "24c32" ] || [ "$VALUE" = "24c64" ] || [ "$VALUE" = "24c128" ] ||
 				[ "$VALUE" = "24c256" ] || [ "$VALUE" = "24c512" ] || [ "$VALUE" = "24c1024" ]; then
@@ -158,7 +161,15 @@ elif [ "$MODE" = "read" ]
 	echo "Reading..."
 	dd if=$SYS/$BUS-00$ADDR/eeprom of=$FILE status=$DD_STATUS
 	rc=$?
+elif [ "$MODE" = "writeread" ]
+ then
+        echo "Writing..."
+        dd if=$FILE of=$SYS/$BUS-00$ADDR/eeprom status=$DD_STATUS
+        dd if=$SYS/$BUS-00$ADDR/eeprom of=/tmp/eeprom.$$ status=$DD_STATUS
+        diff $FILE /tmp/eeprom.$$
+        rc =$?
 fi
+ 
 
 echo "Closing EEPROM Device."
 echo "0x$ADDR" > $SYS/delete_device
