@@ -43,6 +43,9 @@ while [ "$1" != "" ]; do
 		-w | --write)
 			MODE="write"
 			;;
+                --writeread)
+                        MODE="writeread"
+                        ;;
 		-t | --type)
 			if [ "$VALUE" = "24c32" ] || [ "$VALUE" = "24c64" ] || [ "$VALUE" = "24c128" ] ||
 				[ "$VALUE" = "24c256" ] || [ "$VALUE" = "24c512" ] || [ "$VALUE" = "24c1024" ]; then
@@ -116,6 +119,15 @@ elif [ "$MODE" = "read" ]
 	echo "Reading..."
 	dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$FILE
 	rc=$?
+elif [ "$MODE" = "writeread" ]
+ then
+        echo "Writing..."
+        dd if=$FILE of=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom
+        dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=/tmp/eeprom.$$
+        SIZEORIG=`wc -c $FILE | awk '{print $1}'`
+        truncate -s $SIZEORIG /tmp/eeprom.$$
+        diff $FILE /tmp/eeprom.$$
+        rc=$?
 fi
 
 if [ $rc != 0 ]; then
