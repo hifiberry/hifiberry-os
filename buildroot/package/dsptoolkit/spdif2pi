@@ -1,0 +1,31 @@
+#!/bin/sh
+# This script configured the DSP to map SPDIF 
+# to the input on the Pi via the ASRC
+#
+# To use this to record audio, you need to configure
+# the hifiberry-dacplusdsp overlay
+#
+# This works independent of the DSP profile, but
+# it might disable some features if ASRC6 is used
+# for other features in the DSP profile
+#
+# Thanks to @Mikesz for the contribution
+# https://support.hifiberry.com/hc/en-us/community/posts/360008515418/comments/360001299058
+#
+# Simple recording test:
+# arecord -f cd -d 10 1.wav; sleep 1; aplay 1.wav
+#
+
+# ASRC6: Input from SPDIF
+dsptoolkit write-reg 0xF106 0x0003
+
+# ASRC6 output rate: SDATA_OUT3
+dsptoolkit write-reg 0xF146 0x0004
+
+# SOUT SOURCE20/21: ASRC6
+dsptoolkit write-reg 0xF195 0x0000
+dsptoolkit write-reg 0xF194 0x0033
+
+# SDATA_OUT3 configuration: clock slave
+dsptoolkit write-reg 0xF21C 0x6C40
+
