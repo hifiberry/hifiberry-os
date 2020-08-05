@@ -47,6 +47,6 @@ done
 echo $DEV | sed s/,\$//
 
 # Daemons
-for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd mpd-mpris pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd ; do
+for i in audiocontrol2 beocreate2 bluetooth bluealsa bluealsa-aplay dlnampris mpd mpd-mpris pigpiod raat shairport-sync sigmatcp snapcastmpris spotify squeezelite sshd ympd weston cog; do
  check_systemd $i $i.service
 done

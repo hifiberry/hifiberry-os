@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd `dirname $0`
+pwd
+TS=`date +%Y%m%d`
+for i in 0w 2 3 4; do
+  chmod u+w ../buildroot-$i/target/etc/hifiberry.version
+  echo $TS > ../buildroot-$i/target/etc/hifiberry.version
+  chmod u-w ../buildroot-$i/target/etc/hifiberry.version
+  ./compile $i
+done
