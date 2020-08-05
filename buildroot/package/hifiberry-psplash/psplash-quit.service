@@ -1,7 +1,5 @@
 [Unit]
 Description=Terminate Psplash Boot Screen
-After=psplash-start.service
-ConditionPathExists=!/boot/nosplash
 
 [Service]
 Type=oneshot

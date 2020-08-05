@@ -7,11 +7,11 @@
 define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
 	echo "HiFiBerry Test"
 	[ -d $(TARGET_DIR)/opt/hifiberry/contrib ] || mkdir -p $(TARGET_DIR)/opt/hifiberry/contrib
+        $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hbflash.sh \
+           $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dspdac.xml \
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dacadcaddon-test.xml \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/hbflash.sh \
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplusadcpro.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
@@ -46,7 +46,26 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
 
         echo "Adding drivers to config.txt"
         echo "dtoverlay=hifiberry-dacplushd" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
+
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPADDON
+        echo "Installing DSP Add-on test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdspaddon \
+                $(TARGET_DIR)/etc/init.d/S99testdspaddon
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dsp-addon-96-11.xml \
+		$(TARGET_DIR)/opt/hifiberry/contrib/dspaddon.xml
+
+        echo "Adding drivers to config.txt"
+
+	sed -i s/.*hifiberry.*//g $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "dtparam=spi=on"  >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=hifiberry-dacplus" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDAC
 	echo "Installing DAC+ DSP test script"
@@ -121,6 +140,10 @@ endef
 
 ifdef HIFIBERRY_TEST_DAC2HD
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
+endif
+
+ifdef HIFIBERRY_TEST_DSPADDON
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPADDON
 endif
 
 ifdef HIFIBERRY_TEST_AMP2
