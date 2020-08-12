@@ -1,6 +1,6 @@
 # Tested 3rd party hardware
 
-HiFiBerryOS has been tested with these 3rddddrnrty products. As hardware might change without further notification, we can't guarantee 
+HiFiBerryOS has been tested with these 3rd party products. As hardware might change without further notification, we can't guarantee 
 that it will work with a specific release of these products.
 
 ## Bluetooth
