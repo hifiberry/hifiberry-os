@@ -12,11 +12,11 @@ DSPTOOLKIT_LICENSE_FILES = LICENSE.md
 
 define DSPTOOLKIT_POST_INSTALL_TARGET_CMD
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.conf \
-	            $(TARGET_DIR)/etc/sigmatcp.conf
+				$(TARGET_DIR)/etc/sigmatcp.conf
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/dump-spdif-status.sh \
-		                    $(TARGET_DIR)/opt/hifiberry/bin/dump-spdif-status
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/spdif2pi
-				    $(TARGET_DIR)/opt/hifiberry/bin/spdif2pi
+				$(TARGET_DIR)/opt/hifiberry/bin/dump-spdif-status
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/spdif2pi \
+				$(TARGET_DIR)/opt/hifiberry/bin/spdif2pi
 endef
 
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_POST_INSTALL_TARGET_CMD
