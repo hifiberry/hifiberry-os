@@ -1,3 +1,10 @@
+202008xx:
+- Improved UI navigation for local music
+- Backup/Restore option
+- improved updater shows available updates
+- local web browser supports HTTPS now
+- various bugfixes and improvements
+
 20200727
 - add SMB servers in the UI
 - add/change artist pictures and coverart vin the UI
