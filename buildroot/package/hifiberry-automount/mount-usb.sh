@@ -90,8 +90,12 @@ do_mount()
         fi
     else
         echo "Creating symlink as ${ID_FS_TYPE} does not support overlays"
-        if [ -a ${MUSICDIR}/${LABEL} ]; then
-            mv ${MUSICDIR}/${LABEL} ${MUSICDIR}/${LABEL}.bak
+        if [ -L ${MUSICDIR}/${LABEL} ]; then
+            rm ${MUSICDIR}/${LABEL}
+        fi
+
+	if [ -a ${MUSICDIR}/${LABEL} ]; then
+            mv ${MUSICDIR}/${LABEL} /data/${LABEL}.bak
         fi
     
         ln -s ${MOUNT_POINT} ${MUSICDIR}/${LABEL}
