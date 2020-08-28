@@ -52,6 +52,19 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
         echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2PRO
+        echo "Installing DAC2Pro test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdac2pro \
+                $(TARGET_DIR)/etc/init.d/S99testdac2pro
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=hifiberry-dacplus" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPADDON
         echo "Installing DSP Add-on test script"
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdspaddon \
