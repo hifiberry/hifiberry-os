@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION = 493bafa71e4d9df9ae4609e72a448eec87129018
+BEOCREATE_VERSION = 75f3d9cd7e7335c9f146ad69b7cdd0b9aafc1095
 BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
-#BEOCREATE_VERSION = c5708c23c9649fc8e387d061ca5cea3a16588355
+#BEOCREATE_VERSION = 085b2a435d936f559da56b1d57ce5714e908df2c
 #BEOCREATE_SITE = $(call github,hifiberry,create,$(BEOCREATE_VERSION))
 
 BEOCREATE_DEPENDENCIES += nodejs
