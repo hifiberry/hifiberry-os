@@ -559,6 +559,14 @@ CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'`
 
 FEATURES=`echo $FEATURES | xargs`
 
+for i in $FEATURES; do 
+ echo $i;
+ if [ ! -f /etc/features/$i ]; then
+   echo Feature $i not yet configured
+   CURRENT_FEATURES="!"
+ fi
+done
+
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_CARD" != "$CARD" ] || \
    [ "$CURRENT_SYSNAME" != "$SYSNAME" ] || \
