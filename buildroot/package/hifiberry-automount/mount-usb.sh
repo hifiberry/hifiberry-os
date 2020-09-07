@@ -79,6 +79,10 @@ do_mount()
     # Do not support overlays (for now)
     OVERLAY=0
 
+    if [ -x /opt/hifiberry/bin/report-activation ]; then
+        /opt/hifiberry/bin/report-activation mount.${ID_FS_TYPE}
+    fi 
+
     if ! /bin/mount -o ${OPTS} ${DEVICE} ${MOUNT_POINT}; then
         # Error during mount process: cleanup mountpoint
         /bin/rmdir ${MOUNT_POINT}
