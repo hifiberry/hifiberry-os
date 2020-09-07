@@ -6,6 +6,9 @@
 
 HIFIBERRY_UPDATER_DEPENDENCIES = rpi-firmware systemd
 
+# Override RPI firmware version from buildroot
+RPI_FIRMWARE_VERSION = baec4d28b54c7f9c30aabdbc61fa0c4dedcb3e55
+
 define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/var/spool/cron/crontabs
         echo "critical" > $(TARGET_DIR)/etc/updater.release
@@ -51,16 +54,16 @@ endef
 ###
 ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
 define RPI_INSTALL_FIRMWARE
-        echo "Pi 4"
-        $(INSTALL) -D -m 0644 $(@D)/boot/start4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(TARGET_DIR)/usr/lib/firmware/rpi/start4.elf
-        $(INSTALL) -D -m 0644 $(@D)/boot/fixup4$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup4.dat
+        echo "HiFiBerry updater: adding Pi4 firmware files to /usr/lib/firmware/rpi"
+        $(INSTALL) -D -m 0644 $(@D)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start4.elf
+        $(INSTALL) -D -m 0644 $(@D)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup4.dat
 
 endef
 else
 define RPI_INSTALL_FIRMWARE
-        echo "Pi < 4"
-        $(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
-        $(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
+        echo "HiFiBerry updater: adding Pi3 firmware files to /usr/lib/firmware/rpi"
+        $(INSTALL) -D -m 0644 $(@D)/boot/start.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
+        $(INSTALL) -D -m 0644 $(@D)/boot/fixup.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
 
 endef
 endif
