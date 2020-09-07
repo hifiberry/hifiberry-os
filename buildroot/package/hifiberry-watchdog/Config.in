@@ -1,0 +1,4 @@
+config BR2_PACKAGE_HIFIBERRY_WATCHDOG
+	bool "hifiberry-watchdog"
+        help
+	   Simple watchdog daemon that will reset the system when it hangs
