@@ -17,6 +17,10 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
   mountcmd=`echo $m | awk -F\; '$5=="" { $5="rw" } {print "mount -t cifs -o user=" $3 ",password=" $4 "," $5 " " $2 " /data/library/music/" $1}'`
   echo $mountcmd
   ${mountcmd}
+
+  if [ -x /opt/hifiberry/bin/report-activation ]; then
+    /opt/h$ifiberry/bin/report-activation mount.samba
+  fi
 done
 if [ -x /opt/hifiberry/bin/update-mpd-db ]; then
  /opt/hifiberry/bin/update-mpd-db &
