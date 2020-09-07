@@ -33,8 +33,11 @@ case "$1" in
           echo
           echo
         else
-	  amixer sset DAC 100%
+	  amixer sset PCM 100%
+          i2cset -y 1 0x60 0x01 0xc0
+          i2cset -y 1 0x60 0x02 0x31
           play -n synth 60 sine 1000 &
+      
         fi
 
 	;;
