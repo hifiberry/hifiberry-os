@@ -6,9 +6,6 @@
 
 HIFIBERRY_UPDATER_DEPENDENCIES = rpi-firmware systemd
 
-# Override RPI firmware version from buildroot
-RPI_FIRMWARE_VERSION = baec4d28b54c7f9c30aabdbc61fa0c4dedcb3e55
-
 define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/var/spool/cron/crontabs
         echo "critical" > $(TARGET_DIR)/etc/updater.release
