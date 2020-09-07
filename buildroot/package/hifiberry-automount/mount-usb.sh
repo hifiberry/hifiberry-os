@@ -70,6 +70,14 @@ do_mount()
         OPTS+=",users,gid=100,umask=000,shortname=mixed,utf8=1,flush"
 	OVERLAY=0
     fi
+  
+     if [[ ${ID_FS_TYPE} == "ntfs" ]]; then
+        OPTS+=" -t ntfs-3g"
+        OVERLAY=0
+    fi
+
+    # Do not support overlays (for now)
+    OVERLAY=0
 
     if ! /bin/mount -o ${OPTS} ${DEVICE} ${MOUNT_POINT}; then
         # Error during mount process: cleanup mountpoint
@@ -90,12 +98,8 @@ do_mount()
         fi
     else
         echo "Creating symlink as ${ID_FS_TYPE} does not support overlays"
-        if [ -L ${MUSICDIR}/${LABEL} ]; then
-            rm ${MUSICDIR}/${LABEL}
-        fi
-
-	if [ -a ${MUSICDIR}/${LABEL} ]; then
-            mv ${MUSICDIR}/${LABEL} /data/${LABEL}.bak
+        if [ -a ${MUSICDIR}/${LABEL} ]; then
+            mv ${MUSICDIR}/${LABEL} ${MUSICDIR}/${LABEL}.bak
         fi
     
         ln -s ${MOUNT_POINT} ${MUSICDIR}/${LABEL}
