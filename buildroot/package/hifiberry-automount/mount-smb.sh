@@ -8,7 +8,7 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
   # Check if share is on a .local host, resolve this first
   HOST=`echo $m | awk -F\; '{print $2}' | awk -F\/ '{print $3}'`
   if [[ $HOST == *.local ]]; then 
-    IP=`avahi-resolve-host-name $HOST | awk '{print $2}'`
+    IP=`avahi-resolve-host-name -4 $HOST | awk '{print $2}'`
     if [ "$IP" != "" ]; then
       m=`echo $m | sed s/$HOST/$IP/`
     fi
