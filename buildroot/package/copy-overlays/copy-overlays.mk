@@ -1,6 +1,6 @@
 ################################################################################
 #
-# enable-vc4kms
+# copy-overlays
 #
 ################################################################################
 
@@ -14,6 +14,9 @@ define COPY_OVERLAYS_INSTALL_TARGET_CMDS
 	  	cp -v $(BUILD_DIR)/linux-custom/arch/arm/boot/dts/overlays/$$i*.dtbo $(BINARIES_DIR)/rpi-firmware/overlays; \
                 cp -v $(BUILD_DIR)/linux-custom/arch/arm/boot/dts/overlays/$$i*.dtbo $(TARGET_DIR)/usr/lib/firmware/rpi/overlays; \
         done
+        for i in $(BUILD_DIR)/linux-custom/arch/arm/boot/dts/bcm*rpi*.dtb; do \
+		cp -v $$i $(BINARIES_DIR); \
+	done
 endef
 
 $(eval $(generic-package))
