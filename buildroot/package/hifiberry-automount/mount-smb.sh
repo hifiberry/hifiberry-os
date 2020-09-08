@@ -19,7 +19,7 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
   ${mountcmd}
 
   if [ -x /opt/hifiberry/bin/report-activation ]; then
-    /opt/h$ifiberry/bin/report-activation mount.samba
+    /opt/hifiberry/bin/report-activation mount_samba
   fi
 done
 if [ -x /opt/hifiberry/bin/update-mpd-db ]; then

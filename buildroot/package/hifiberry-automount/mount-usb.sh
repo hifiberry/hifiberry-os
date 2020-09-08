@@ -80,7 +80,7 @@ do_mount()
     OVERLAY=0
 
     if [ -x /opt/hifiberry/bin/report-activation ]; then
-        /opt/hifiberry/bin/report-activation mount.${ID_FS_TYPE}
+        /opt/hifiberry/bin/report-activation mount_${ID_FS_TYPE}
     fi 
 
     if ! /bin/mount -o ${OPTS} ${DEVICE} ${MOUNT_POINT}; then
