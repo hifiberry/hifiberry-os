@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_UPDATER_DEPENDENCIES = rpi-firmware systemd
+HIFIBERRY_UPDATER_DEPENDENCIES = rpi-firmware systemd copy-overlays
 
 define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/var/spool/cron/crontabs
