@@ -72,7 +72,7 @@ touch /resize-me.2
 # Create fs in partition 4 if there is none
 fsck.f2fs -p -f ${DEVICE}p4
 RET=$?
-if [[ $RET == 8 ] || [ $RET==255 ]] ; then
+if [[ $RET == 8 || $RET==255 ]] ; then
   mkfs -t f2fs /dev/mmcblk0p4
 fi
 
