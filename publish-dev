@@ -13,4 +13,4 @@ done
 for i in images/updater*; do
  sha256sum $i
 done
-sshpass -p $PW scp images/updater* images/*.zip $HOST:dev
+sshpass -p $PW scp images/*.zip images/*.tar.gz $HOST:dev

@@ -13,6 +13,8 @@ choice
           bool "None - just copy flash tools"
     config HIFIBERRY_TEST_DAC2HD
           bool "DAC2 HD"
+    config HIFIBERRY_TEST_DAC2PRO
+          bool "DAC2 Pro"
     config HIFIBERRY_TEST_DSPADDON
           bool "DSP add-on board"
     config HIFIBERRY_TEST_AMP2
