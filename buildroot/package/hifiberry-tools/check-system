@@ -31,6 +31,13 @@ else
   echo OK
 fi 
 
+echo -n "/dev/dri/card0: "
+if [ -c /dev/dri/card0 ]; then 
+  echo OK
+else
+  echo NO
+fi
+
 echo -n "BT devices: "
 DEV=""
 for INT in `hciconfig | grep hci | awk -F: '{print $1}'`; do

@@ -1,6 +1,7 @@
 [Unit]
 Description=Mount USB Drive on %i
 Requires=mount-data.service
+After=datacollector.service
 
 [Service]
 Type=oneshot

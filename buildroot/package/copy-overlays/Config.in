@@ -1,0 +1,6 @@
+config BR2_PACKAGE_COPY_OVERLAYS
+	bool "copy overlays"
+        help
+	  "copy device tree binaries to overlays directory"
+
+

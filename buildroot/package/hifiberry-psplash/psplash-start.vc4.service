@@ -9,6 +9,7 @@ ConditionPathExists=!/boot/nosplash
 Type=oneshot
 ExecStart=/usr/bin/psplash
 RemainAfterExit=yes
+Restart=no
 
 [Install]
 WantedBy=sysinit.target

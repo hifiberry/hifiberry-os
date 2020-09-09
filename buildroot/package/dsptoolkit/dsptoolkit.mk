@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = cb752dc96e8569020038b3b61e20af914b321e49
+DSPTOOLKIT_VERSION = 4ca04e88fd4f846131bc579636994b522845cbeb
 DSPTOOLKIT_SITE = $(call github,hifiberry,hifiberry-dsp,$(DSPTOOLKIT_VERSION))
 DSPTOOLKIT_SETUP_TYPE = setuptools
 DSPTOOLKIT_LICENSE = MIT
@@ -12,11 +12,11 @@ DSPTOOLKIT_LICENSE_FILES = LICENSE.md
 
 define DSPTOOLKIT_POST_INSTALL_TARGET_CMD
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/sigmatcp.conf \
-	            $(TARGET_DIR)/etc/sigmatcp.conf
+				$(TARGET_DIR)/etc/sigmatcp.conf
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/dump-spdif-status.sh \
-		                    $(TARGET_DIR)/opt/hifiberry/bin/dump-spdif-status
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/spdif2pi
-				    $(TARGET_DIR)/opt/hifiberry/bin/spdif2pi
+				$(TARGET_DIR)/opt/hifiberry/bin/dump-spdif-status
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/spdif2pi \
+				$(TARGET_DIR)/opt/hifiberry/bin/spdif2pi
 endef
 
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_POST_INSTALL_TARGET_CMD

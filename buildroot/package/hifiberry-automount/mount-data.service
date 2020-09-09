@@ -1,6 +1,6 @@
 [Unit]
 Description=Mount /data
-After=local-fs.target
+After=local-fs.target datacollector.service
 
 [Service]
 Type=oneshot
