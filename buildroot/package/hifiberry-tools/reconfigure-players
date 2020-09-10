@@ -245,7 +245,14 @@ guess_card() {
         
  DACPRO=`aplay -l | grep DAC+ | grep Pro`
  if [ "$DACPRO" != "" ]; then
-   CARD="DAC+ Pro"
+   amixer sget Headphone 2>/dev/null >/dev/null
+   if [ $? == 0 ]; then
+     CARD="DAC2 Pro"
+     # Fix headphone volume for now
+     amixer sset Headphone 0db
+   else
+     CARD="DAC+ Pro"
+   fi
    return
  fi
 
