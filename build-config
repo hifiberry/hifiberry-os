@@ -57,6 +57,9 @@ for i in BR2_STRIP_strip; do
  echo "$i=y" >> $TMP
 done
 
+# add version
+echo COPY_OVERLAYS_PI${VERSION} = y >> $TMP
+
 if [ "$2" == "release" ]; then
  # for the releases, remove debug tools
  for i in `cat configs/devpackages` ; do
