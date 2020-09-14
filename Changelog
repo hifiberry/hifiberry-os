@@ -1,3 +1,8 @@
+202010xx:
+- Linux kernel upgrade to 5.14
+- MPD upgrade to 0.21.25
+- Squeezelite upgrade to latest version
+
 20200908:
 - bugfixes in mount scripts and web UI
 
