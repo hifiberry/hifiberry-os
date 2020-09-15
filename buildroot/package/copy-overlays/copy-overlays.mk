@@ -16,7 +16,7 @@ PIOVERLAYS = bcm2709-rpi-2-b.dtb
 endif
 
 ifdef COPY_OVERLAYS_PI3
-PIOVERLAYS = bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-3-b.dtb
+PIOVERLAYS = bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb
 endif
 
 ifdef COPY_OVERLAYS_PI4
