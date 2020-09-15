@@ -20,16 +20,26 @@ mount -o remount,rw /boot
 echo "activating $P"
 echo "root=$P rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
 mv /boot/zImage.bak /boot/zImage
+# This should not be mounted, but try it, just to make sure
 umount /newroot 2>/dev/null
+
+# mount the previous release
 if [ ! -d /oldroot ]; then
   mkdir /oldroot
 fi
 mount $P /oldroot
+
+# Copy old firmware
+echo "copying previous firmware"
+cp -rv /oldroot/usr/lib/firmware/rpi/* /boot
+
 # Disable automatic updates
+echo "disabling automatic updates"
 echo > /etc/updater.release
 umount /oldroot
 
 sync
+echo "rebooting"
 reboot
 
 
