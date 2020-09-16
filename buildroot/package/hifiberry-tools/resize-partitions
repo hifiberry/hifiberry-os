@@ -1,10 +1,12 @@
 #!/bin/bash
 
-DEVICE=/dev/mmcblk0
+# Detect the device that's used for the root file system
+DEVICEBASE=`mount | grep " / " | awk '{print $1}' | sed s/[0-9]\$//`
+DEVICE=`echo $DEVICEBASE | sed s/p\$//`
 
 if [ -f /resize-me.2 ]; then
- echo "Resizing file system on /dev/mmcblk0p2"
- resize2fs -p /dev/mmcblk0p2
+ echo "Resizing file system on ${DEVICEBASE}2"
+ resize2fs -p ${DEVICEBASE}2
  rm /resize-me.2
 fi
 
@@ -14,7 +16,7 @@ if [ ! -f /resize-me ]; then
 fi
 
 # Delete Partition 3
-if [ -b ${DEVICE}p3 ]; then
+if [ -b ${DEVICEBASE}3 ]; then
 INITIAL=1
 fdisk $DEVICE <<EOT
 d
@@ -26,7 +28,7 @@ echo p | fdisk $DEVICE
 fi
 
 # Delete Partition 2
-if [ -b ${DEVICE}p2 ]; then
+if [ -b ${DEVICE}2 ]; then
 fdisk $DEVICE <<EOT
 d
 2
@@ -64,16 +66,16 @@ EOT
 partprobe
 echo p | fdisk $DEVICE
 
-e2fsck -f -p $DEVICEp2
+e2fsck -f -p ${DEVICEBASE}2
 
 rm /resize-me
 touch /resize-me.2
 
 # Create fs in partition 4 if there is none
-fsck.f2fs -p -f ${DEVICE}p4
+fsck.f2fs -p -f ${DEVICEBASE}4
 RET=$?
 if [[ $RET == 8 || $RET==255 ]] ; then
-  mkfs -t f2fs /dev/mmcblk0p4
+  mkfs -t f2fs ${DEVICEBASE}4
 fi
 
 echo "Resized partitions" >> /tmp/reboot
