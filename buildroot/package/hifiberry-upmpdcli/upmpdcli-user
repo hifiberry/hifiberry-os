@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Check if the upmpdcli user exists, otherwise create it
+upmpdcli-user -i upmpdcli 2>/dev/null 1>/dev/null
+if [ "$?" == "0" ]; then
+ exit
+fi
+
+# User does not exist, create it
+echo "upmpdcli:x:6000:6000:upnpcli:/:/bin/bash" >> /etc/passwd
+echo "upmpdcli:*:::::::" >> /etc/shadow
+
