@@ -11,7 +11,7 @@ e.g.
 1;\\192.168.99.1\music;music;music;vers=2
 ```
 
-Id is just any unique ID you want to give to this share.
+id is just any unique ID you want to give to this share. You can leave options empty if no specific mount options are needed.
 
 After editing the file, run
 ```
