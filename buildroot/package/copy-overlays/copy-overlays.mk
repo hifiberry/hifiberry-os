@@ -23,6 +23,10 @@ ifdef COPY_OVERLAYS_PI4
 PIOVERLAYS = bcm2711-rpi-4-b.dtb
 endif
 
+ifdef COPY_OVERLAYS_PI_3AND4
+PIOVERLAYS = bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2711-rpi-4-b.dtb
+endif
+
 
 define COPY_OVERLAYS_INSTALL_TARGET_CMDS
 	# Copy overlays

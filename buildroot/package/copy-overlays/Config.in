@@ -13,4 +13,6 @@ choice
           bool "Pi 3"
     config COPY_OVERLAYS_PI4
           bool "Pi 4"
+    config COPY_OVERLAY_PI_3AND4
+	  bool "Pi 3/4"
 endchoice
