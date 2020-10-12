@@ -19,7 +19,7 @@ case "$1" in
         /opt/hifiberry/contrib/hbflash.sh -w -f=/opt/hifiberry/contrib/dacplus.eep -t=24c32
 
 	amixer sset Digital 72%
-        play -n synth sine 1000  &
+        play -n synth 60 sine 1000  &
 
 	;;
     stop)
