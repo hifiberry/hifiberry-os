@@ -118,7 +118,7 @@ pi_model() {
   return
  fi
 
- if [[ $modelname == *"Pi 2 Model B" ]]; then
+ if [[ $modelname == *"Pi 2 Model*" ]]; then
   PIMODEL="2"
   PIVERSION=2
   FEATURES="$FEATURES arm7"
