@@ -70,6 +70,7 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
         echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
@@ -83,6 +84,7 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2PRO
         echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
