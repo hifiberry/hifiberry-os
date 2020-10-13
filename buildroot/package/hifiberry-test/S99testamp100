@@ -4,6 +4,10 @@
 
 OUT=/dev/tty1
 
+# Cleanup some stuff
+rm /etc/init.d/S49ntp 2>/dev/null
+rm /etc/init.d/S90sigmatcp 2>/dev/null
+
 case "$1" in
     start)
 	i2c=`cat /boot/config.txt | grep i2c-gpio`
