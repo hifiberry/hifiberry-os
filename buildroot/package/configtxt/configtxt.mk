@@ -17,6 +17,11 @@ define CONFIGTXT_EEPROM_WORKAROUND
         echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define CONFIGTXT_ENABLE_EEPROM_I2C
+	echo "dtoverlay=i2c-gpio,i2c_gpio_sda=0,i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+
 define CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
  	echo "INstalling quiet cmdline.txt"
         $(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/configtxt/cmdline.quiet \
@@ -38,6 +43,9 @@ endif
 ifeq ($(BR2_PACKAGE_CONFIGTXT_EEPROM),y)
 CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_EEPROM_WORKAROUND
 endif
+
+# Enable EEPROM software I2C
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_ENABLE_EEPROM_I2C
 
 $(eval $(generic-package))
 
