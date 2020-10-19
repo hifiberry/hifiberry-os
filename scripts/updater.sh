@@ -205,4 +205,8 @@ if [ "$V" -lt 20200706 ]; then
  sed -i 's/,/\;/g' /newroot/etc/smbmounts.conf
 fi 
 
+if [ "$V" -lt 20200930 ]; then
+ echo "Version < 20200930"
+fi
+
 echo "Upgrading configuration files done"
