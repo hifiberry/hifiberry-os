@@ -52,8 +52,8 @@ endef
 ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
 define RPI_INSTALL_FIRMWARE
         echo "HiFiBerry updater: adding Pi4 firmware files to /usr/lib/firmware/rpi"
-        $(INSTALL) -D -m 0644 $(@D)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start4.elf
-        $(INSTALL) -D -m 0644 $(@D)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup4.dat
+        $(INSTALL) -D -m 0644 $(@D)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
+        $(INSTALL) -D -m 0644 $(@D)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
 
 endef
 else
