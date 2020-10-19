@@ -26,11 +26,7 @@ function check_i2c {
 }
 
 function check_hat {
-	if [ -f /proc/device-tree/hat/product ]; then
-		HATCARD=`cat /proc/device-tree/hat/product`
-	else
-		HATCARD=""
-	fi
+	HATCARD=`/opt/hifiberry/bin/readhat | awk -F: '{print $2}'`
 }
 
 function detect_card {
