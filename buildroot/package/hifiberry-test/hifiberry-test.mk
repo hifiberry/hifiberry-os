@@ -31,6 +31,10 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/flash.sh \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/eepdump \
+	   $(TARGET_DIR)/usr/bin/eepdump
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/eepmake \
+           $(TARGET_DIR)/usr/bin/eepmake
 endef
 
 
