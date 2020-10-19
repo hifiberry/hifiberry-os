@@ -6,7 +6,7 @@ if [ "$PORT" == "" ]; then
  PORT=22
 fi
 if [ "$PW" == "" ]; then
- echo "call with $0 hostname password"
+ echo "call with $0 hostname password [port]"
  exit 1
 fi
 
