@@ -42,7 +42,12 @@ if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
   IMG=`ls images/ | grep updater | grep tar.gz | grep pi$VERSION | tail -1`
   sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz;
  fi
- sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
+ if [ "$NOREBOOT" == "" ]; then
+  sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
+ else
+  sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update
+  echo "Not rebooting the system"
+ fi
 
 else
  echo "Raspberry Pi version do not match: local $VERSION != remote $REMOTEVERSION"
