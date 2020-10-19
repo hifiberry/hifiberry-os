@@ -1,7 +1,10 @@
 202010xx:
+- added MPD queue management
 - Linux kernel upgrade to 5.14
 - MPD upgrade to 0.21.25
 - Squeezelite upgrade to latest version
+- Updated Buildroot to 2020-08
+- Bugfix: Local UI not starting due to incorrect overlay files
 
 20200908:
 - bugfixes in mount scripts and web UI
