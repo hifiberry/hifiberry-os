@@ -40,7 +40,8 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
 	echo "Installing updater"
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
 	echo "F2FS supported"
-	touch $(TARGET_DIR)/etc/f2fs
+	touch $(TARGET_DIR)/etc/f2fs 
+
 endef
 
 define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
@@ -50,22 +51,22 @@ endef
 ### Add more functions to RPI firmware
 ###
 ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
-define RPI_INSTALL_FIRMWARE
+define HIFIBERRY_UPDATER_INSTALL_FIRMWARE
         echo "HiFiBerry updater: adding Pi4 firmware files to /usr/lib/firmware/rpi"
-        $(INSTALL) -D -m 0644 $(@D)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
-        $(INSTALL) -D -m 0644 $(@D)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
 
 endef
 else
-define RPI_INSTALL_FIRMWARE
-        echo "HiFiBerry updater: adding Pi3 firmware files to /usr/lib/firmware/rpi"
-        $(INSTALL) -D -m 0644 $(@D)/boot/start.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
-        $(INSTALL) -D -m 0644 $(@D)/boot/fixup.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
+define HIFIBERRY_UPDATER_INSTALL_FIRMWARE
+        echo "HiFiBerry updater: adding Pi1-3 firmware files to /usr/lib/firmware/rpi"
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/start.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/fixup.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
 
 endef
 endif
 
-define RPI_INSTALL_OVERLAYS
+define HIFIBERRY_UPDATER_INSTALL_ALL_OVERLAYS
         echo "Installing overlays"
 	mkdir -p $(TARGET_DIR)/usr/lib/firmware/rpi/overlays
         for ovldtb in $(@D)/boot/overlays/*.dtbo; do \
@@ -73,10 +74,10 @@ define RPI_INSTALL_OVERLAYS
         done
 endef
 
-RPI_FIRMWARE_INSTALL_TARGET_CMDS += $(RPI_INSTALL_FIRMWARE)
+HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS += $(HIFIBERRY_UPDATER_INSTALL_FIRMWARE)
 
-ifneq ($(BR2_PACKAGE_COPY_OVERLAYS),y)
-RPI_FIRMWARE_INSTALL_TARGET_CMDS += $(RPI_INSTALL_OVERLAYS)
-endif
+#ifneq ($(BR2_PACKAGE_COPY_ALL_OVERLAYS),y)
+#HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS += $(HIFIBERRY_UPDATER_INSTALL_ALL_OVERLAYS)
+#endif
 
 $(eval $(generic-package))
