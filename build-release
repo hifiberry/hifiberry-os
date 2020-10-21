@@ -22,5 +22,3 @@ echo
 # For some reason, first build sometimes fails
 ./compile $1
 ./create-image $1 $TS
-echo $TS > images/VERSION
-echo "UPDATER$1=updater-$TS-pi$1.tar.gz" >> images/listing

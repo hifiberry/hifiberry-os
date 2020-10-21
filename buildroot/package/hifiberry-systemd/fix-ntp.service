@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable DNSSEC for ntp.org
+Before=ntpd.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Fixing DNSSEC for ntp.org"
+ExecStart=/opt/hifiberry/bin/fix-ntp.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,8 +1,12 @@
 #!/bin/bash
 HOST=$1
 PW=$2
+PORT=$3
+if [ "$PORT" == "" ]; then
+ PORT=22
+fi
 if [ "$PW" == "" ]; then
- echo "call with $0 hostname password"
+ echo "call with $0 hostname password [port]"
  exit 1
 fi
 
@@ -13,4 +17,4 @@ done
 for i in images/updater*; do
  sha256sum $i
 done
-sshpass -p $PW scp images/*.zip images/*.tar.gz $HOST:dev
+sshpass -p $PW scp -P $PORT images/*.zip images/*.tar.gz $HOST:dev

@@ -1,10 +1,12 @@
 #!/bin/sh
-DEVICE=/dev/mmcblk0
+
+# Detect the device that's used for the root file system
+DEVICE=`mount | grep " / " | awk '{print $1}' | sed s/[0-9]\$//`
 
 FSTABDATA=`cat /etc/fstab | grep /data`
 if [ "$FSTABDATA" == "" ]; then
  echo "No filesystem defined in /etc/fstab, creating file system"
- mkfs -t f2fs ${DEVICE}p4
+ mkfs -t f2fs ${DEVICE}4
 fi
 
 DATA=`mount | grep data`
@@ -16,7 +18,7 @@ if [ "$DATA" == "" ]; then
   mkdir /data
  fi
 
- mount ${DEVICE}p4 /data
+ mount ${DEVICE}4 /data
  if [ "$?" != "0" ]; then
   echo "Could not mount /data, trying to create a new file system"
   exit 1
@@ -24,7 +26,7 @@ if [ "$DATA" == "" ]; then
 
  echo "adding /data to fstab"
  cat /etc/fstab | grep -v ${DEVICE}p4 > /tmp/fstab
- echo "${DEVICE}p4    /data    auto    defaults,nofail    0    2" >>/tmp/fstab
+ echo "${DEVICE}4    /data    auto    defaults,nofail    0    2" >>/tmp/fstab
  mv /etc/fstab /etc/fstab.bak
  mv /tmp/fstab /etc/fstab
 

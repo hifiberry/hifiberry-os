@@ -2,7 +2,7 @@
 
 REBOOTFILE=/tmp/reboot
 
-SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli"
 
 FEATURES="pi"
 
@@ -118,7 +118,7 @@ pi_model() {
   return
  fi
 
- if [[ $modelname == *"Pi 2 Model B" ]]; then
+ if [[ $modelname == *"Pi 2 Model*" ]]; then
   PIMODEL="2"
   PIVERSION=2
   FEATURES="$FEATURES arm7"
@@ -245,7 +245,14 @@ guess_card() {
         
  DACPRO=`aplay -l | grep DAC+ | grep Pro`
  if [ "$DACPRO" != "" ]; then
-   CARD="DAC+ Pro"
+   amixer sget Headphone 2>/dev/null >/dev/null
+   if [ $? == 0 ]; then
+     CARD="DAC2 Pro"
+     # Fix headphone volume for now
+     amixer sset Headphone 0db
+   else
+     CARD="DAC+ Pro"
+   fi
    return
  fi
 
@@ -474,10 +481,24 @@ reconfigure_mpd() {
  fi
 }
 
+# Reconfigure upmpdcli
+reconfigure_upmpdcli() {
+ if [ ! -f /etc/upmpdcli.conf ] ; then return; fi
+
+ if [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
+   # sed -i s/friendlyname.*/friendlyname\ \= \ $SYSNAME/ /etc/upmpdcli.conf
+  restart_service upmpdcli
+  echo " updated system name"
+ fi
+}
+
+
+
 # Reconfigure Mopidy
 reconfigure_mopidy() {
  if [ ! -f /etc/mopidy.conf ]; then
   echo "modidy not installed, ignoring"
+  return
  fi
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
@@ -646,6 +667,8 @@ echo "Reconfiguring Mopidy"
 reconfigure_mopidy
 echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
+echo "Reconfigure upmpdcli"
+reconfigure_upmpdcli
 echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
 

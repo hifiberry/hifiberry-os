@@ -23,6 +23,9 @@ echo "Features: $CURRENT_FEATURES"
 echo -n "Linux version: "
 uname -a
 
+echo -n "Date and time: "
+date
+
 echo -n "/data mounted: "
 M=`mount | grep " /data "`
 if [ "$M" == "" ]; then

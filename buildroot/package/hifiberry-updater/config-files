@@ -1,5 +1,4 @@
 /etc/hifiberry
-/etc/force_exclusive_audio
 /etc/hostname
 /etc/hosts
 /etc/systemname
@@ -39,3 +38,4 @@
 /root/.bash_history
 /etc/hifiberry.state
 /etc/features
+/etc/xdg/weston/weston.ini
