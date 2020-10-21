@@ -5,6 +5,10 @@
 
 case "$1" in
     start)
+        if [ -f /boot/nosigmatcp ]; then
+          echo "Not starting SigmaTCP"
+          exit
+        fi
 	printf "Starting sigmatcp: "
 	start-stop-daemon -S -q -b --exec /usr/bin/sigmatcpserver -- $OPTIONS
 	sleep 5

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# try to directly access the HAT via /sys
+if [ -f /proc/device-tree/hat/product ]; then
+ PRODUCT=$(tr -d '\0' </proc/device-tree/hat/product)
+ VENDOR=$(tr -d '\0' </proc/device-tree/hat/vendor)
+fi
+
+EEPFILE=/tmp/eeprom.eep
+TXTFILE=/tmp/eeprom.txt
+
+modprobe i2c_dev
+modprobe at24
+
+# Bus number is different on Pi3 and 4
+for i in 7 3 11; do
+  if [ -d /sys/class/i2c-adapter/i2c-$i ]; then
+    DEVID=$i
+    break
+  fi
+done
+
+if [ ! -d "/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050" ]; then
+  echo "24c32 0x50" > /sys/class/i2c-adapter/i2c-$DEVID/new_device
+fi
+
+dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$EEPFILE 2>/dev/null
+
+/usr/bin/eepdump $EEPFILE $TXTFILE >/dev/null
+
+VENDOR=`cat /tmp/eeprom.txt | grep "vendor " | awk '{print $2}' | xargs echo`
+PRODUCT=`cat /tmp/eeprom.txt | grep "product " | awk '{print $2}' | xargs echo`
+
+echo $VENDOR:$PRODUCT
