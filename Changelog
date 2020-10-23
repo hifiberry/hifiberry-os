@@ -1,4 +1,8 @@
-202010xx:
+20201022:
+- Bugfix: DNLA not working
+- Bugfix: overlay files on Pi2 missing
+
+20201020:
 - added MPD queue management
 - Linux kernel upgrade to 5.14
 - MPD upgrade to 0.21.25
