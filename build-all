@@ -2,14 +2,17 @@
 cd `dirname $0`
 TS=`date +%Y%m%d`
 for i in 2 3 4 0w; do
- if [ "$1" == "parallel" ]; then
-  ./build-release $i $TS &
+  screen -d -m ./build-release $i $TS 
   pids[${i}]=$!
+  echo "Started $i build"
+  sleep 60
  else
   ./build-release $i $TS
  fi
 done
 
+echo "Waiting for jobs to finish"
 for pid in ${pids[*]}; do
  wait $pid
 done
+echo "Done"
