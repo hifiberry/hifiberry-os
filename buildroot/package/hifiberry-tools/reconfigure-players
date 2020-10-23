@@ -2,7 +2,7 @@
 
 REBOOTFILE=/tmp/reboot
 
-SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli vollibrespot"
 
 FEATURES="pi"
 
@@ -384,6 +384,11 @@ check_pi3a() {
 
 # Reconfigure SpotifyD
 reconfigure_spotify() {
+ if [ ! -f /etc/spotifyd.conf ]; then
+  echo "spotifyd not installed, ignoring"
+  return
+ fi
+
  RESTART=0
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer\ =.*/mixer\ =\ $MIXER_CONTROL/ /etc/spotifyd.conf 
@@ -402,8 +407,44 @@ reconfigure_spotify() {
  fi
 }
 
+# Reconfigure Vollibrespot
+reconfigure_vollibrespot() {
+ if [ ! -f /etc/vollibrespot.conf ]; then
+  echo "vollibrespot not installed, ignoring"
+  return
+ fi
+
+ RESTART=0
+ if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
+  sed -i s/mixer-name\ =.*/mixer-name\ =\ \'$MIXER_CONTROL\'/ /etc/vollibrespot.conf
+  RESTART=1
+  echo " updated mixer"
+ fi
+
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+  sed -i s/device-name\ =.*/device-name\ =\ \'$SYSNAME_NO_SPACES\'/ /etc/vollibrespot.conf
+  RESTART=1
+  echo " updated system name"
+ fi
+
+ if [ "$HW" != "$CURRENT_HW" ]; then
+  sed -i s/mixer-card\ =.*/mixer-card\ =\ \'hw:$HW_SHORT\'/ /etc/vollibrespot.conf
+  RESTART=1
+  echo " updated mixer-card"
+ fi
+
+ if [ "$RESTART" == "1" ]; then
+  restart_service vollibrespot
+ fi
+}
+
 # Reconfigure Shairport-sync
 reconfigure_shairport() {
+ if [ ! -f /etc/shairport-sync.conf ]; then
+  echo "shairport-sync not installed, ignoring"
+  return
+ fi
+
  RESTART=0
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer_control_name\ =\ .*/mixer_control_name\ =\ \"$MIXER_CONTROL\"\;/ /etc/shairport-sync.conf 
@@ -458,6 +499,11 @@ reconfigure_squeezelite() {
 
 # Reconfigure dlnampris
 reconfigure_dlna() {
+ if [ ! -f /etc/dlnampris.conf ]; then
+  echo "dlna-mpris not installed, ignoring"
+  return
+ fi
+
  UPDATED=0
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
   sed -i "s/systemname\=.*/systemname=$SYSNAME_SED_SPACES/" /etc/dlnampris.conf
@@ -474,6 +520,11 @@ reconfigure_dlna() {
 
 # Reconfigure MPD
 reconfigure_mpd() {
+ if [ ! -f /etc/mpd.conf ]; then
+  echo "mpd not installed, ignoring"
+  return
+ fi
+
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer_control\ .*/mixer_control\ \ \ \"$MIXER_CONTROL\"/ /etc/mpd.conf
   restart_service mpd
@@ -653,6 +704,8 @@ echo "Reconfigure features"
 reconfigure_features
 echo "Reconfiguring Spotifyd"
 reconfigure_spotify
+echo "Reconfiguring Vollibrespot"
+reconfigure_vollibrespot
 echo "Reconfiguring Shairport-sync"
 reconfigure_shairport
 echo "Reconfiguring Bluetooth"
