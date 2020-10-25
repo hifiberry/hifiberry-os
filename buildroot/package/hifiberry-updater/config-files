@@ -39,3 +39,4 @@
 /etc/hifiberry.state
 /etc/features
 /etc/xdg/weston/weston.ini
+/etc/vollibrespot.conf
