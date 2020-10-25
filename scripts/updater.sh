@@ -209,4 +209,19 @@ if [ "$V" -lt 20200930 ]; then
  echo "Version < 20200930"
 fi
 
+if [ "$V" -l 20201030 ]; then
+ echo "Version < 20201030"
+
+ cat /newroot/etc/audiocontrol2.conf | grep -v "spotifyd=spotify" | grep -v "mpd=mpd-mpris" > /tmp/audiocontrol2.conf
+ diff /tmp/audiocontrol2.conf /newroot/etc/audiocontrol2.conf >/dev/null
+ if [ "$?" != "0" ]; then
+   echo "Removing MPD and spotify MPRIS watchdogs"
+   mv /newroot/etc/audiocontrol2.conf /newroot/etc/audiocontrol2.conf.bak
+   mv /tmp/audiocontrol2.conf /newroot/etc/audiocontrol2.conf
+ fi
+
+ echo "Making sure, players will be configured correctly"
+ rm  /newroot/etc/hifiberry.state
+
+
 echo "Upgrading configuration files done"
