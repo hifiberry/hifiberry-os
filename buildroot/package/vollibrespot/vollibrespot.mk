@@ -4,8 +4,12 @@
 #
 ################################################################################
 
-VOLLIBRESPOT_VERSION = cd963998c50e0b97d68b1f28ba4bdf21ea652735
-VOLLIBRESPOT_SITE = $(call github,ashthespy,Vollibrespot,$(VOLLIBRESPOT_VERSION))
+#
+# use the HiFiBerry clone of vollibrespot and librespot as this integrates a 
+# patch to stop other players before starting playback
+#
+VOLLIBRESPOT_VERSION = 4282b61ccdbb1abfb04fd9e9ae257e3cf6681f54
+VOLLIBRESPOT_SITE = $(call github,hifiberry,Vollibrespot,$(VOLLIBRESPOT_VERSION))
 
 VOLLIBRESPOT_LICENSE = MIT
 VOLLIBRESPOT_LICENSE_FILES = LICENSE
@@ -53,7 +57,7 @@ endef
 
 define VOLLIBRESPOT_INSTALL_INIT_SYSTEMD
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/vollibrespot/vollibrespot.service \
-                $(TARGET_DIR)/usr/lib/systemd/system/vollibrespot.service
+                $(TARGET_DIR)/usr/lib/systemd/system/spotify.service
 endef
 
 $(eval $(generic-package))
