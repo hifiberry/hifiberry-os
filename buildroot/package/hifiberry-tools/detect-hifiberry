@@ -44,6 +44,7 @@ function detect_card {
 
 	if [ "$HATCARD" == "DAC 2 HD" ]; then
 		echo "dacplushd"
+		EEPROM=0
 		return
 	fi
 
@@ -153,6 +154,12 @@ if [ "$FOUND" == "" ]; then
 		echo "Creating new config.txt" >>/var/log/hifiberry.log
 		cat $CONFIG | grep -v "hifiberry" > /tmp/config.txt 
 		echo "dtoverlay=hifiberry-$card" >> /tmp/config.txt
+		if [ "$EEPROM" == "0" ]; then
+			HAS_EEPROM=`cat /tmp/config.txt | grep "force_eeprom_read=0"`
+			if [ "$HAS_EEPROM" == "" ]; then
+				echo "force_eeprom_read=0" > /tmp/config.txt
+			fi
+		fi
 		mv /tmp/config.txt $CONFIG
 		echo "Adding $card to config.txt" >> $REBOOTFILE
 	else
