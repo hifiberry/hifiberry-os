@@ -11,7 +11,7 @@ define DISABLE_SAMBA_INSTALL_IMAGES_CMDS
 
  	echo "Removing SAMBA services"
 	for s in smb nmb winbind samba; do \
-		echo "disable $s.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-samba.preset ; \
+		echo "disable $$s.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-samba.preset ; \
 	done
 endef
 
