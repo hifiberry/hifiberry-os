@@ -28,7 +28,9 @@ dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$EEPFILE 2>/dev/nu
 
 /usr/bin/eepdump $EEPFILE $TXTFILE >/dev/null
 
-VENDOR=`cat /tmp/eeprom.txt | grep "vendor " | awk '{print $2}' | xargs echo`
-PRODUCT=`cat /tmp/eeprom.txt | grep "product " | awk '{print $2}' | xargs echo`
+VENDOR=`cat /tmp/eeprom.txt | grep "vendor " | awk -F\" '{print $2}' | xargs echo`
+PRODUCT=`cat /tmp/eeprom.txt | grep "product " | awk -F\" '{print $2}' | xargs echo`
 
 echo $VENDOR:$PRODUCT
+
+rm $TXTFILE 2>/dev/null

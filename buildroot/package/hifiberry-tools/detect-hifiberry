@@ -43,7 +43,7 @@ function detect_card {
         fi
 
 	if [ "$HATCARD" == "DAC 2 HD" ]; then
-		echo "dac2hd"
+		echo "dacplushd"
 		return
 	fi
 
@@ -82,7 +82,7 @@ function detect_card {
 	# DAC 2 HD
 	res=`i2cget -yf 1 0x62 17 2>/dev/null`
 	if [ "$res" == "0x8c" ]; then
-		echo "dachd"
+		echo "dacplushd"
 		return
 	fi
 
@@ -100,15 +100,15 @@ function detect_card {
         fi
 }
 
-FORCEEEPROM=`cat /boot/config.txt | grep force_eeprom_read`
-if [ "$FORCEEEPROM" != "" ]; then
-	echo "Detected force_eeprom_read, removing it" >> /var/log/hifiberry.log
-	mount -o remount,rw /boot
-	cat /boot/config.txt | grep -v force_eeprom_read > /tmp/config.txt
-	cp /boot/config.txt /boot/config.txt.bak
-	cp /tmp/config.txt /boot/config.txt
-	sync
-fi
+#FORCEEEPROM=`cat /boot/config.txt | grep force_eeprom_read`
+#if [ "$FORCEEEPROM" != "" ]; then
+#	echo "Detected force_eeprom_read, removing it" >> /var/log/hifiberry.log
+#	mount -o remount,rw /boot
+#	cat /boot/config.txt | grep -v force_eeprom_read > /tmp/config.txt
+#	cp /boot/config.txt /boot/config.txt.bak
+#	cp /tmp/config.txt /boot/config.txt
+#	sync
+#fi
 
 if [ "$FOUND" == "" ]; then
 	echo "No HiFiBerry card configured, try to probe using I2C" >> /var/log/hifiberry.log
