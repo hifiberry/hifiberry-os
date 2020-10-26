@@ -1,3 +1,7 @@
+202011xx:
+- replaced Spotifyd by Vollibrepsot
+- new audiocontrol backend that can deal with non-MPRIS source
+
 20201022:
 - Bugfix: DNLA not working
 - Bugfix: overlay files on Pi2 missing
