@@ -209,7 +209,7 @@ if [ "$V" -lt 20200930 ]; then
  echo "Version < 20200930"
 fi
 
-if [ "$V" -l 20201030 ]; then
+if [ "$V" -lt 20201030 ]; then
  echo "Version < 20201030"
 
  cat /newroot/etc/audiocontrol2.conf | grep -v "spotifyd=spotify" | grep -v "mpd=mpd-mpris" > /tmp/audiocontrol2.conf
