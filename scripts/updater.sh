@@ -222,6 +222,7 @@ if [ "$V" -l 20201030 ]; then
 
  echo "Making sure, players will be configured correctly"
  rm  /newroot/etc/hifiberry.state
+fi
 
 
 echo "Upgrading configuration files done"
