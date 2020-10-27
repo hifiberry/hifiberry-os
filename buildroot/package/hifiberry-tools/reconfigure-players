@@ -2,7 +2,7 @@
 
 REBOOTFILE=/tmp/reboot
 
-SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli vollibrespot"
+SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli"
 
 FEATURES="pi"
 
@@ -434,7 +434,7 @@ reconfigure_vollibrespot() {
  fi
 
  if [ "$RESTART" == "1" ]; then
-  restart_service vollibrespot
+  restart_service spotify
  fi
 }
 
