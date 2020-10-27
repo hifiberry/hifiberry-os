@@ -6,7 +6,7 @@ for i in 2 3 4 0w; do
   screen -d -m ./build-release $i $TS 
   pids[${i}]=$!
   echo "Started $i build"
-  sleep 60
+  sleep 300
  else
   ./build-release $i $TS
  fi
