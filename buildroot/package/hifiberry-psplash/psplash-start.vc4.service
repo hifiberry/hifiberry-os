@@ -4,6 +4,7 @@ Wants=dev-dri-card0.device
 After=dev-dri-card0.device
 DefaultDependencies=no
 ConditionPathExists=!/boot/nosplash
+ConditionPathExists=/dev/fb0
 
 [Service]
 Type=oneshot
