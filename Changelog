@@ -1,6 +1,10 @@
 202011xx:
 - replaced Spotifyd by Vollibrepsot
 - new audiocontrol backend that can deal with non-MPRIS source
+- improve pausing of active player
+- Bugfix: DAC2HD not detected correctly
+- Bugfix: SMB mounts working more reliably
+- lots of other small bugfixesy
 
 20201022:
 - Bugfix: DNLA not working
