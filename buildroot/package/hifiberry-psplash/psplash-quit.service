@@ -1,5 +1,7 @@
 [Unit]
 Description=Terminate Psplash Boot Screen
+ConditionPathExists=!/boot/nosplash
+ConditionPathExists=/dev/fb0
 
 [Service]
 Type=oneshot
