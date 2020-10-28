@@ -30,20 +30,20 @@ function check_hat {
 }
 
 function detect_card {
-	check_hat()
+	check_hat
 
 	if [ "$HATCARD" == "DAC+ ADC Pro" ]; then
-		echo "dacplusadcpro"
+		DETECTED="dacplusadcpro"
 		return
 	fi
 
 	if [ "$HATCARD" == "DAC+ ADC" ]; then
-                echo "dacplusadc"
+                DETECTED="dacplusadc"
                 return
         fi
 
 	if [ "$HATCARD" == "DAC 2 HD" ]; then
-		echo "dacplushd"
+		DETECTED="dacplushd"
 		EEPROM=0
 		return
 	fi
@@ -51,65 +51,56 @@ function detect_card {
         # DAC+ ADC Pro
         res=`i2cget -y 1 0x4a 25 2>/dev/null`
         if [ "$res" == "0x07" ]; then
-                echo "dacplusadcpro"
+                DETECTEDT="dacplusadcpro"
 		return
         fi
 
 	# Digi/Digi+
 	res=`i2cget -y 1 0x3b 1 2>/dev/null`
 	if [ "$res" == "0x88" ]; then
-		echo "digi"
+		DETECTED="digi"
 		return
 	fi
 
 	# DAC Plus
 	res=`i2cget -y 1 0x4d 40 2>/dev/null`
 	if [ "$res" == "0x02" ]; then
-                echo "dacplus"
+                DETECTED="dacplus"
 		return
         fi
 
 	# Amp/Amp+
 	res=`i2cget -y 1 0x1b 0 2>/dev/null`
         if [ "$res" == "0x6c" ]; then
-                echo "amp"
+                DETECTED="amp"
 		return
         fi
         if [ "$res" == "0x60" ]; then
-                echo "amp"
+                DETECTED="amp"
 		return
         fi
 
 	# DAC 2 HD
 	res=`i2cget -yf 1 0x62 17 2>/dev/null`
 	if [ "$res" == "0x8c" ]; then
-		echo "dacplushd"
+		DETECTED="dacplushd"
+		EEPROM=0
 		return
 	fi
 
         # Beocreate
         res=`i2cget -y 1 0x60 2 2>/dev/null`
         if [ "$res" == "0x03" ]; then
-                echo "beo"
+                DETECTED="beo"
 		return
         fi
 
         # Some I2C addresses might be blocked from HAT EEPROM, but hifibarry-dac is used
         res=`i2cdetect -y 1 | grep UU`
         if [ "$res" != "" ]; then
-                echo "blocked"
+                DETECTED="blocked"
         fi
 }
-
-#FORCEEEPROM=`cat /boot/config.txt | grep force_eeprom_read`
-#if [ "$FORCEEEPROM" != "" ]; then
-#	echo "Detected force_eeprom_read, removing it" >> /var/log/hifiberry.log
-#	mount -o remount,rw /boot
-#	cat /boot/config.txt | grep -v force_eeprom_read > /tmp/config.txt
-#	cp /boot/config.txt /boot/config.txt.bak
-#	cp /tmp/config.txt /boot/config.txt
-#	sync
-#fi
 
 if [ "$FOUND" == "" ]; then
 	echo "No HiFiBerry card configured, try to probe using I2C" >> /var/log/hifiberry.log
@@ -123,7 +114,8 @@ if [ "$FOUND" == "" ]; then
 
 	echo "Detecting using I2C" 
 	check_i2c
-	card=$(detect_card)
+        detect_card
+	card=$DETECTED
 
 	if [ "$card" == "beo" ]; then
 		echo "Detected Beocreate"
@@ -157,7 +149,7 @@ if [ "$FOUND" == "" ]; then
 		if [ "$EEPROM" == "0" ]; then
 			HAS_EEPROM=`cat /tmp/config.txt | grep "force_eeprom_read=0"`
 			if [ "$HAS_EEPROM" == "" ]; then
-				echo "force_eeprom_read=0" > /tmp/config.txt
+				echo "force_eeprom_read=0" >> /tmp/config.txt
 			fi
 		fi
 		mv /tmp/config.txt $CONFIG
