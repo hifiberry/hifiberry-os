@@ -36,7 +36,7 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
     SHARE=`echo $SHARE | sed s/$HOST/$IP/`
   fi
 
-  mountcmd="mount -t cifs -o user=\"$USER\",password=\"$PASSWORD\",$MOUNTOPTS $SHARE /data/library/music/$MOUNTID"
+  mountcmd="mount -t cifs -o user=$USER,password=$PASSWORD,$MOUNTOPTS $SHARE /data/library/music/$MOUNTID"
   ${mountcmd}
 
   if [ -x /opt/hifiberry/bin/report-activation ]; then
