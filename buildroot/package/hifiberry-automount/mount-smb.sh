@@ -4,7 +4,6 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
 
   # Split the line first
   readarray -d \; -t parts <<< "$m"
-  echo "There are ${#parts[*]} words in the text."
   MOUNTID=${parts[0]}
   SHARE=${parts[1]}
   USER=${parts[2]}
