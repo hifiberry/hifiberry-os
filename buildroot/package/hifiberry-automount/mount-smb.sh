@@ -29,7 +29,10 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
 
   # The try to resolve using nmblookup
   if [ "$IP" == "" ]; then
-    IP=`nmblookup $HOST|awk 'END{print $1}'`
+    nmblookup $HOST > /tmp/$$
+    if [ "$?" == "0" ]; then
+      IP=`nmblookup $HOST|awk 'END{print $1}'`
+    fi
   fi
 
   if [ "$IP" != "" ]; then
@@ -37,6 +40,7 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
   fi
 
   mountcmd="mount -t cifs -o user=$USER,password=$PASSWORD,$MOUNTOPTS $SHARE /data/library/music/$MOUNTID"
+  echo ${mountcmd}
   ${mountcmd}
 
   if [ -x /opt/hifiberry/bin/report-activation ]; then
