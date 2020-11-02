@@ -12,6 +12,7 @@ fi
 
 ./clean-images
 for i in 0w 2 3 4; do
+ ./compile $i
  ./create-image $i
 done
 for i in images/updater*; do

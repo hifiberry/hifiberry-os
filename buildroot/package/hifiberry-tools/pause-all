@@ -15,7 +15,7 @@ check_paused() {
     echo "$DATE1 $DATE2 pause-all $PLAYER" | systemd-cat
     exit 0
   fi
-  PROCESSLINE=`lsof | grep /dev/snd | grep pcmC${CARD}`
+  PROCESSLINE=`lsof /dev/snd/pcmC*D*p`
   APP=`echo $PROCESSLINE| awk '{print $1}'`
   PROCESSID=`echo $PROCESSLINE| awk '{print $2}'`
   if [ "$APP" == "$PLAYER" ]; then

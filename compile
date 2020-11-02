@@ -3,6 +3,14 @@ if [ "$BRSRCDIR" == "" ]; then
  BRSRCDIR=../buildroot
 fi
 
+# Read secrets
+if [ -f "secrets" ]; then
+ . secrets
+else
+ echo "Secrets file not found, this isn't an official HiFiBerry build"
+ echo "some components might not work as expected"
+fi
+
 cd `dirname $0`
 MYDIR=`pwd`
 TS=`date +%Y%m%d`

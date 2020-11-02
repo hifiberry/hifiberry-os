@@ -1,0 +1,20 @@
+[Unit]
+Description=Vollibrespot
+Wants=network-online.target
+After=network.target sound.target
+
+[Service]
+Type=simple
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Vollibrespot"
+ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/spotifyvol
+ExecStart=/usr/bin/vollibrespot -c /etc/vollibrespot.conf
+ExecStartPost=sleep 1
+ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/spotifyvol
+ExecStartPost=rm /tmp/spotifyvol
+
+StandardOutput=journal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

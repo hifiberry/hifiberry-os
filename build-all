@@ -3,13 +3,10 @@ cd `dirname $0`
 TS=`date +%Y%m%d`
 for i in 2 3 4 0w; do
  if [ "$1" == "parallel" ]; then
-  ./build-release $i $TS &
-  pids[${i}]=$!
+  screen -d -m ./build-release $i $TS 
+  echo "Started $i build"
+  sleep 300
  else
   ./build-release $i $TS
  fi
-done
-
-for pid in ${pids[*]}; do
- wait $pid
 done
