@@ -27,6 +27,9 @@ else
 fi
 popd
 
+echo "Copying genimage configurations"
+cp -v hifiberry-os/buildroot/board/raspberrypi/genimage*cfg $BRDIR/board/raspberrypi
+
 echo "Symlinking to buildroot"
 rm buildroot
 ln -s $BRDIR buildroot
