@@ -15,10 +15,10 @@ check_paused() {
     echo "$DATE1 $DATE2 pause-all $PLAYER" | systemd-cat
     exit 0
   fi
-  PROCESSLINE=`lsof /dev/snd/pcmC*D*p`
+  PROCESSLINE=`lsof /dev/snd/pcmC*D*p | grep -v COMMAND`
   APP=`echo $PROCESSLINE| awk '{print $1}'`
   PROCESSID=`echo $PROCESSLINE| awk '{print $2}'`
-  if [ "$APP" == "$PLAYER" ]; then
+  if [ "$PLAYER" == "$APP*" ]; then
     echo "$PLAYER ($PPID) requested pause, but is already using sound card, ignoring" | systemd-cat
     exit 0
   fi
@@ -103,11 +103,19 @@ pause_process() {
 }
 
 kill_process() {
-  pkill $APP
+  if [ "$PROCESSID" != "" ]; then
+    kill $PROCESSID
+  else 
+    pkill $APP
+  fi
   sleep 1
   PID=`pgrep $PROCESS`
   if [ "$PID" != "" ]; then
-    pkill -KILL $APP
+    if [ "$PROCESSID" != "" ]; then
+      kill -KILL $PROCESSID
+    else
+      pkill -KILL $APP
+    fi
   fi
 }
 
