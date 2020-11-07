@@ -538,6 +538,7 @@ reconfigure_upmpdcli() {
 
  if [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
   sed -i s/friendlyname.*/friendlyname\ =\ $SYSNAME/ /etc/upmpdcli.conf
+  sed -i s/url=.*.local/url=http:\\/\\/$SYSNAME_NO_SPACES.local/ /etc/upmpdcli.html
   restart_service upmpdcli
   echo " updated system name"
  fi
