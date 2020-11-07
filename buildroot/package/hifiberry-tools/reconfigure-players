@@ -537,7 +537,7 @@ reconfigure_upmpdcli() {
  if [ ! -f /etc/upmpdcli.conf ] ; then return; fi
 
  if [ "$CURRENT_SYSNAME" != "$SYSNAME" ]; then
-   # sed -i s/friendlyname.*/friendlyname\ \= \ $SYSNAME/ /etc/upmpdcli.conf
+  sed -i s/friendlyname.*/friendlyname\ =\ $SYSNAME/ /etc/upmpdcli.conf
   restart_service upmpdcli
   echo " updated system name"
  fi
