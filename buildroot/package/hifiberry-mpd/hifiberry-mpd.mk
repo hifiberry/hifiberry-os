@@ -71,8 +71,9 @@ HIFIBERRY_MPD_CONF_OPTS += -Dlame=enabled
 HIFIBERRY_MPD_DEPENDENCIES += libmpdclient
 HIFIBERRY_MPD_CONF_OPTS += -Dlibmpdclient=enabled
 
-# disable libmms
-HIFIBERRY_MPD_CONF_OPTS += -Dmms=disabled
+# enable libmms
+MPD_DEPENDENCIES += libmms
+HIFIBERRY_MPD_CONF_OPTS += -Dmms=enabled
 
 # disable NFS
 HIFIBERRY_MPD_DEPENDENCIES += libnfs
