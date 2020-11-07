@@ -9,7 +9,7 @@ if [ "$URL" == "" ]; then
 fi
 
 # Start mpd if it isn't yet running
-systemctl start mpd mpd-mpris
+systemctl start mpd
 
 STATIONNAME=$2
 if [ "$STATIONNAME" != "" ]; then
