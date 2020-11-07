@@ -40,3 +40,4 @@
 /etc/features
 /etc/xdg/weston/weston.ini
 /etc/vollibrespot.conf
+/etc/upmpdcli.conf
