@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if the upmpdcli user exists, otherwise create it
-upmpdcli-user -i upmpdcli 2>/dev/null 1>/dev/null
+id upmpdcli 2>/dev/null 1>/dev/null
 if [ "$?" == "0" ]; then
  exit
 fi
