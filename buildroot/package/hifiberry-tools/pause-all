@@ -18,7 +18,7 @@ check_paused() {
   PROCESSLINE=`lsof /dev/snd/pcmC*D*p | grep -v COMMAND`
   APP=`echo $PROCESSLINE| awk '{print $1}'`
   PROCESSID=`echo $PROCESSLINE| awk '{print $2}'`
-  if [ "$PLAYER" == "$APP*" ]; then
+  if [[ "$PLAYER" == "$APP*" ]]; then
     echo "$PLAYER ($PPID) requested pause, but is already using sound card, ignoring" | systemd-cat
     exit 0
   fi
