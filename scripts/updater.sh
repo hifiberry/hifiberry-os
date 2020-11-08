@@ -224,7 +224,7 @@ if [ "$V" -lt 20201030 ]; then
  rm  /newroot/etc/hifiberry.state
 fi
 
-if [ "$V" -l 20201130 ]; then
+if [ "$V" -lt 20201130 ]; then
  echo "Making sure, players will be configured correctly"
  rm  /newroot/etc/hifiberry.state
 fi
