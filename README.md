@@ -65,6 +65,13 @@ HiFiBerryOS is based on buildroot. This means, you can't easily install addition
 
 The UI also uses a plugin concept. Plugins are called extensions. Have a look at the [Beocreate documentation](https://github.com/bang-olufsen/create/tree/master/Documentation)
 
+## How it works / technical documentation
+
+You can find technical documentation in [the repository's doc folder](doc/)
+
+## Building a disk image
+[The documentation for building images from source can be found here](/doc/building.md)
+
 ## Contributions
 We're looking forward to your contributions. Depending on functionality and code quality, we will decide if a contribution will be included in the base system or will be provided as a user-contributed module that users need to install by themselve.
 
