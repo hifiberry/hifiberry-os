@@ -1,0 +1,9 @@
+    <deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
+    <friendlyName>@FRIENDLYNAME@</friendlyName>
+    <manufacturer>HiFiBerry</manufacturer>
+    <manufacturerURL>https://www.hifiberry.com</manufacturerURL>
+    <modelDescription>HiFiBerryOS</modelDescription>
+    <modelName>HiFiBerryOS</modelName>
+    <modelNumber>1</modelNumber>
+    <modelURL>https://www.hifiberry.com/os</modelURL>
+    <serialNumber>@UPMPDCLIVERSION@</serialNumber>
