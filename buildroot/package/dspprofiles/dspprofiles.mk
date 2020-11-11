@@ -11,8 +11,8 @@ define DSPPROFILES_INSTALL_TARGET_CMDS
 
      $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-96-11.xml \
 		$(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-96-11.xml
-     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-10.xml \
-                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-10.xml
+     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-11.xml \
+                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-11.xml
      $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dsp-addon-96-12.xml \
 		$(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dsp-addon-96-12.xml
 
