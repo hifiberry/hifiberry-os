@@ -10,7 +10,7 @@ Type=simple
 Environment=HOME=/root
 ExecStartPre=-mkdir /var/run/mpd
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Mounting SMB shares"
-ExecStartPre=-/opt/hifiberry/bin/mount-smb.sh
+ExecStartPre=-/opt/hifiberry/bin/mount-smb.sh 
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Mounting USB drives"
 ExecStartPre=-/opt/hifiberry/bin/mount-all.sh
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting music player daemon"

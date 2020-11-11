@@ -11,5 +11,5 @@ fi
 /opt/hifiberry/bin/update-covers &
 
 # update mpd
-mpc update
+# mpc update
 
