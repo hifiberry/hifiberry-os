@@ -47,6 +47,8 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
     /opt/hifiberry/bin/report-activation mount_samba
   fi
 done
-if [ -x /opt/hifiberry/bin/update-mpd-db ]; then
- /opt/hifiberry/bin/update-mpd-db &
+if [ "$1" != "--no-update" ]; then 
+  if [ -x /opt/hifiberry/bin/update-mpd-db ]; then
+    /opt/hifiberry/bin/update-mpd-db &
+  fi
 fi
