@@ -125,3 +125,82 @@ diff -ru a/package/libupnp/libupnp.mk b/package/libupnp/libupnp.mk
 +LIBUPNP_AUTORECONF = YES
 
  $(eval $(autotools-package))
+--- a/package/libnpupnp/libnpupnp.hash	2020-11-13 10:24:48.092748882 +0000
++++ b/package/libnpupnp/libnpupnp.hash	2020-11-13 10:26:16.717208199 +0000
+@@ -1,5 +1,6 @@
+ # Hash from: http://www.lesbonscomptes.com/upmpdcli/downloads/libnpupnp-4.0.11.tar.gz.sha256
+ sha256  15b73a5197e649afe44dd15002be131b4b0e20a2b2e9b7ea4a2000b9644fefae  libnpupnp-4.0.11.tar.gz
++sha256  020c9c025902950e423316418eecb82ff4e70e4e63c80df6509a10b8bf34dadb  libnpupnp-4.0.13.tar.gz
+ 
+ # Hash for license file:
+ sha256  c8b99423cad48bb44e2cf52a496361404290865eac259a82da6d1e4331ececb3  COPYING
+--- a/package/libnpupnp/libnpupnp.mkbak	2020-11-13 10:21:00.071577928 +0000
++++ b/package/libnpupnp/libnpupnp.mk	2020-11-13 10:21:11.943638427 +0000
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-LIBNPUPNP_VERSION = 4.0.11
++LIBNPUPNP_VERSION = 4.0.13
+ LIBNPUPNP_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
+ LIBNPUPNP_LICENSE = BSD-3-Clause
+ LIBNPUPNP_LICENSE_FILES = COPYING
+--- a/package/libupnpp/libupnpp.hash	2020-11-13 12:40:16.793173076 +0000
++++ b/package/libupnpp/libupnpp.hash	2020-11-13 12:44:09.206475351 +0000
+@@ -1,5 +1,6 @@
+ # Hash from: http://www.lesbonscomptes.com/upmpdcli/downloads/libupnpp-0.19.4.tar.gz.sha256
+ sha256  29d1d07d44c8f79573e64e093ad8f0f883b11ef9eb3642a67aa703c1dde60576  libupnpp-0.19.4.tar.gz
++sha256  f6e1016c1d3c9b0e065f2c72a86bb9538b2c6d8862ae010d97ba571f903622e2  libupnpp-b6ad3f1ce9fbc15364504f02ae2f3239a18af93b.tar.gz
+ 
+ # Hash for license file:
+ sha256  00a89b0d18aacd4114decf79122db87bf35bddaf2bc50e383c9c9f4c263390b2  COPYING
+--- a/package/libupnpp/libupnpp.mk	2020-11-13 12:39:59.249074373 +0000
++++ b/package/libupnpp/libupnpp.mk	2020-11-13 12:43:07.178128637 +0000
+@@ -4,11 +4,16 @@
+ #
+ ################################################################################
+ 
+-LIBUPNPP_VERSION = 0.19.4
+-LIBUPNPP_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
++#LIBUPNPP_VERSION = 0.19.4
++#LIBUPNPP_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
+ LIBUPNPP_LICENSE = LGPL-2.1+
+ LIBUPNPP_LICENSE_FILES = COPYING
+ LIBUPNPP_INSTALL_STAGING = YES
+ LIBUPNPP_DEPENDENCIES = host-pkgconf expat libcurl libnpupnp
+ 
++LIBUPNPP_VERSION = b6ad3f1ce9fbc15364504f02ae2f3239a18af93b
++LIBUPNPP_SITE = https://framagit.org/medoc92/libupnpp
++LIBUPNPP_SITE_METHOD = git
++LIBUPNPP_AUTORECONF = YES
++
+ $(eval $(autotools-package))
+--- a/package/upmpdcli/upmpdcli.hash	2020-11-13 10:29:13.126127550 +0000
++++ b/package/upmpdcli/upmpdcli.hash	2020-11-13 12:39:06.512777272 +0000
+@@ -1,5 +1,7 @@
+ # From http://www.lesbonscomptes.com/upmpdcli/downloads/upmpdcli-1.4.14.tar.gz.sha256:
+ sha256  e3d90dedee6a942acc049324ca81b7f008d217d386a3e2590a2ca5670cc9df05  upmpdcli-1.4.14.tar.gz
++sha256  0247c1d20069636eb72f3e11b4962cfc3acad0cce7c4815642c5896e9a236026  upmpdcli-master.tar.gz
++sha256  ec570f345feeca4d8b2004150f3f2c46682170970387d8f8e6bbf4ea9af3faf5  upmpdcli-da758110f5f523fa2a313eec5e9a2878319ca60b.tar.gz
+ 
+ # Hash for license file:
+ sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  COPYING
+--- a/package/upmpdcli/upmpdcli.mk	2020-11-13 10:29:01.558067088 +0000
++++ b/package/upmpdcli/upmpdcli.mk	2020-11-13 12:37:49.688343258 +0000
+@@ -4,8 +4,14 @@
+ #
+ ################################################################################
+ 
+-UPMPDCLI_VERSION = 1.4.14
+-UPMPDCLI_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
++#UPMPDCLI_VERSION = 1.4.14
++#UPMPDCLI_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
++
++UPMPDCLI_VERSION = da758110f5f523fa2a313eec5e9a2878319ca60b
++UPMPDCLI_SITE=https://framagit.org/medoc92/upmpdcli
++UPMPDCLI_SITE_METHOD=git
++UPMPDCLI_AUTORECONF = YES
++
+ UPMPDCLI_LICENSE = LGPL-2.1+
+ UPMPDCLI_LICENSE_FILES = COPYING
+ UPMPDCLI_DEPENDENCIES = host-pkgconf libmpdclient libupnpp libmicrohttpd jsoncpp
