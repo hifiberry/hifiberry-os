@@ -189,6 +189,7 @@ define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd-update-notifier.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd-update-notifier.service
+	echo "disable mpd.socket" >> $(TARGET_DIR)/lib/systemd/system-preset/99-mpdsocket.preset ; \
 endef
 
 
