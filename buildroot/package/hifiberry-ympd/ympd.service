@@ -8,6 +8,7 @@ ExecStart=/usr/bin/ympd -w "[::]:9000"
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

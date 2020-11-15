@@ -11,7 +11,7 @@ ExecStart=/bin/upmpdcli -c /etc/upmpdcli.conf
 StandardOutput=journal
 Restart=always
 RestartSec=20
-TimeoutStopSec=2
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

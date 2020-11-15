@@ -13,6 +13,7 @@ ExecStartPre=/bin/sleep 3
 ExecStart=/bin/shairport-sync
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

@@ -7,6 +7,7 @@ ConditionPathExists=/dev/fb0
 Type=oneshot
 ExecStart=/usr/bin/psplash-write QUIT
 TimeoutSec=20
+TimeoutStopSec=2
 
 [Install]
 WantedBy=multi-user.target

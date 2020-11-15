@@ -16,6 +16,7 @@ ExecStartPre=-/opt/hifiberry/bin/mount-all.sh
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting music player daemon"
 ExecStartPre=/opt/hifiberry/bin/pause-state-file
 ExecStart=/bin/mpd --no-daemon
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

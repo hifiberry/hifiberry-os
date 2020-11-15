@@ -16,8 +16,7 @@ ExecStart=/opt/hifiberry/bin/spotify-start
 ExecStartPost=sleep 1
 ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/spotifyvol
 ExecStartPost=rm /tmp/spotifyvol
-
-
+TimeoutStopSec=10
 StandardOutput=journal
 Restart=always
 RestartSec=5

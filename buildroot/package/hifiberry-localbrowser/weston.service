@@ -26,6 +26,8 @@ ExecStart=/usr/bin/weston --backend=drm-backend.so --modules=systemd-notify.so
 TimeoutStartSec=60
 WatchdogSec=20
 
+TimeoutStopSec=10
+
 # A virtual terminal is needed.
 TTYPath=/dev/tty7
 TTYReset=yes

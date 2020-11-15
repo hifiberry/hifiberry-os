@@ -13,6 +13,7 @@ ExecStart=/opt/raat/raat_app /etc/hifiberry_raat.conf
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

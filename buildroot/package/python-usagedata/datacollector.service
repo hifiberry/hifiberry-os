@@ -12,6 +12,7 @@ ExecStart=/bin/python3 -m usagecollector.server
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target
