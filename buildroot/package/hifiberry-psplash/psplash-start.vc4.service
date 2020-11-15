@@ -11,6 +11,7 @@ Type=oneshot
 ExecStart=/usr/bin/psplash
 RemainAfterExit=yes
 Restart=no
+TimeoutStopSec=2
 
 [Install]
 WantedBy=sysinit.target

@@ -9,6 +9,7 @@ ConditionPathExists=!/boot/noap
 Type=simple
 ExecStart=/sbin/hostapd /etc/tempap-hostapd.conf
 StandardOutput=journal
+TimeoutStopSec=10
 
 [Install]
 WantedBy=temporary-ap.service

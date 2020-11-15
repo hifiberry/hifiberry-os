@@ -7,6 +7,7 @@ ConditionPathExists=/etc/features/bluetooth
 [Service]
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Bluetooth daemon"
 ExecStart=/usr/libexec/bluetooth/bluetoothd -f /etc/bluetooth/main.conf -P sap,hostname
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

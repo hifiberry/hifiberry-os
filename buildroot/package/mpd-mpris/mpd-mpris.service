@@ -12,6 +12,7 @@ ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting MPD control interface"
 ExecStart=/usr/bin/mpd-mpris -no-instance
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target
