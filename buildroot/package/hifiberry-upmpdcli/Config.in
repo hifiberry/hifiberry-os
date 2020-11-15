@@ -2,3 +2,4 @@ config BR2_PACKAGE_HIFIBERRY_UPMPDCLI
 	bool "hifiberry-upmpdcli"
 	help
 	  UPnP (DLNA) media renderer based on mpd
+	select BR2_PACKAGE_LIBOPENSSL_BIN

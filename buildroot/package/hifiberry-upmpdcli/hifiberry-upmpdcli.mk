@@ -17,6 +17,8 @@ define HIFIBERRY_UPMPDCLI_INSTALL_TARGET_CMDS
 	    $(TARGET_DIR)/opt/hifiberry/bin/upmpdcli-user
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-upmpdcli/upmpdcli.service \
            $(TARGET_DIR)/usr/lib/systemd/system/upmpdcli.service
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-upmpdcli/openhome-room \
+           $(TARGET_DIR)/opt/hifiberry/bin/openhome-room
 
     # Not yet ready for production
     echo "disable upmpdcli.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-upmpdcli.preset 
