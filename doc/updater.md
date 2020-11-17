@@ -21,3 +21,5 @@ The upgrade process is as follows:
 - extract kernel to /boot
 - adapt cmdline.txt to use the new root partition
 - reboot
+
+The updater scripts are part of the [hifiberry-updater](https://github.com/hifiberry/hifiberry-os/tree/master/buildroot/package/hifiberry-updater) package.
