@@ -32,6 +32,11 @@ function check_hat {
 function detect_card {
 	check_hat
 
+	if [ "$HATCARD" == "Amp100" ]; then
+                DETECTED="amp100"
+                return
+        fi
+
 	if [ "$HATCARD" == "DAC+ ADC Pro" ]; then
 		DETECTED="dacplusadcpro"
 		return
