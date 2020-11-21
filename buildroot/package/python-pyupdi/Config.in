@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYUPDI
+	bool "python-pyupdi"
+	help
+	  An UPDI programming library
+
+	  https://github.com/mraardvark/pyupdi
+	select BR2_PACKAGE_PYTHON_PYSERIAL
+	select BR2_PACKAGE_PYTHON_INTELHEX
+#	select BR2_PACKAGE_PYTHON_PYLINT
