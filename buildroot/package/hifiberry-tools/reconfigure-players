@@ -559,6 +559,15 @@ reconfigure_mopidy() {
  fi
 }
 
+# Reconfigure RAAT
+reconfigure_raat() {
+ if [ -f /etc/hifiberry_raat.conf ]; then
+  echo "RAAT not installed, ignoring"
+ fi
+ /opt/raat/configure-raat
+}
+
+
 # Reconfigure Beocreate 
 reconfigure_beocreate() {
  UPDATE=0
@@ -723,6 +732,8 @@ echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
 echo "Reconfigure upmpdcli"
 reconfigure_upmpdcli
+echo "Reconfigure RAAT"
+reconfigure_raat
 echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
 
