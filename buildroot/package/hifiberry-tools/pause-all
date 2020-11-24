@@ -53,7 +53,7 @@ pause_bluetooth() {
 }
 
 pause_raat() {
-  pkill -USR1 raat_app
+  pkill -USR1 $PROCESSID
   # unfortunately it takes 5s until RAAT stops using the sound card
   ## therefore, we're restarting the service
   pkill raat_app 
@@ -75,7 +75,7 @@ pause_squeezelite() {
 }
 
 pause_gmediarender() {
- pkill -USR1 raat_app dlna-mpris
+ pkill -USR1 $PROCESSID
 }
 
 
@@ -97,7 +97,8 @@ pause_process() {
       pause_gmediarender
       ;;
     *)
-      echo "don't know how to pause $APP"
+      echo "don't know how to pause $APP, trying USR1"
+      kill -USR1 $PROCESSID
       ;;
   esac
 }
