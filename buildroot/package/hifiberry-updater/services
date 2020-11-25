@@ -17,4 +17,4 @@ dlnampris.service
 alsaloop.service
 weston.service
 cog.service
-
+spdifclockgen.service
