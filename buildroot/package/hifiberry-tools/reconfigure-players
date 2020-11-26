@@ -158,6 +158,16 @@ guess_volume_control() {
    fi
  fi
 
+ # If a DSP module was detected, check for DSP volume
+ # control first
+ if [[ $CARD == *"DSP"* ]]; then
+   dsptoolkit --timeout=20 get-volume 2 >/dev/null >/dev/null
+   if [ $? == 0 ]; then
+     MIXER_CONTROL=DSPVolume
+     return
+   fi
+ fi
+
  # DAC2 HD used "DAC"
  DAC=`amixer scontrols | grep "'DAC',"`
  if [ "$DAC" != "" ]; then
