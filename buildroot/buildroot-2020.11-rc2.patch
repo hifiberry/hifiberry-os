@@ -48,54 +48,6 @@ diff -ru buildroot-dev/package/python-pycairo/python-pycairo.mk br-dev-april/pac
  sha256  0596505f529677906fed30e6c3c1d2387a5d287f668a719484e2f9d8a3059176  rpi-firmware-5574077183389cd4c65077ba18b59144ed6ccd6d.tar.gz
  sha256  c7283ff51f863d93a275c66e3b4cb08021a5dd4d8c1e7acc47d872fbe52d3d6b  boot/LICENCE.broadcom
 +sha256  dcea78fcd14e0a0cb9f3b7eba42baf17566e141c3188f348017271d64edacaa3  rpi-firmware-baec4d28b54c7f9c30aabdbc61fa0c4dedcb3e55.tar.gz
-diff --git a/package/wpewebkit/0002-WebProcess-InjectedBundle-fix-compile-without-video-.patch b/package/wpewebkit/0002-WebProcess-InjectedBundle-fix-compile-without-video-.patch
-new file mode 100644
-index 0000000000..e684c4e3e7
---- /dev/null
-+++ b/package/wpewebkit/0002-WebProcess-InjectedBundle-fix-compile-without-video-.patch
-@@ -0,0 +1,42 @@ 
-+From 1ca7dea56db25969844699bc82fe7c78cb3d2eda Mon Sep 17 00:00:00 2001
-+From: Peter Seiderer <ps.report@gmx.net>
-+Date: Tue, 10 Nov 2020 23:06:45 +0100
-+Subject: [PATCH] WebProcess/InjectedBundle: fix compile without video support
-+MIME-Version: 1.0
-+Content-Type: text/plain; charset=UTF-8
-+Content-Transfer-Encoding: 8bit
-+
-+Fixes:
-+
-+  .../wpewebkit-2.30.2/Source/WebKit/WebProcess/InjectedBundle/InjectedBundle.cpp:242:30: error: class WebCore::Settings has no member named setGenericCueAPIEnabled; did you mean setBeaconAPIEnabled?
-+               page->settings().setGenericCueAPIEnabled(enabled);
-+                                ^~~~~~~~~~~~~~~~~~~~~~~
-+                                setBeaconAPIEnabled
-+
-+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
-+---
-+ Source/WebKit/WebProcess/InjectedBundle/InjectedBundle.cpp | 2 ++
-+ 1 file changed, 2 insertions(+)
-+
-+diff --git a/Source/WebKit/WebProcess/InjectedBundle/InjectedBundle.cpp b/Source/WebKit/WebProcess/InjectedBundle/InjectedBundle.cpp
-+index 61326f2e..d7776997 100644
-+--- a/Source/WebKit/WebProcess/InjectedBundle/InjectedBundle.cpp
-++++ b/Source/WebKit/WebProcess/InjectedBundle/InjectedBundle.cpp
-+@@ -236,12 +236,14 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
-+         RuntimeEnabledFeatures::sharedFeatures().setWebRTCMDNSICECandidatesEnabled(enabled);
-+ #endif
-+ 
-++#if ENABLE(VIDEO)
-+     if (preference == "WebKitGenericCueAPIEnabled") {
-+         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::genericCueAPIEnabledKey(), enabled);
-+         for (auto* page : pages)
-+             page->settings().setGenericCueAPIEnabled(enabled);
-+         return;
-+     }
-++#endif
-+ 
-+ #if ENABLE(GPU_PROCESS)
-+     if (preference == "WebKitUseGPUProcessForMedia" || preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {
-+-- 
-+2.29.2
-+
 diff -ru a/package/libupnp/libupnp.hash b/package/libupnp/libupnp.hash
 --- a/package/libupnp/libupnp.hash      2020-11-11 09:35:08.697520747 +0000
 +++ b/package/libupnp/libupnp.hash      2020-11-11 09:34:31.681369109 +0000
