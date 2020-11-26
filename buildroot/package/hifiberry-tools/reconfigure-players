@@ -544,8 +544,6 @@ reconfigure_upmpdcli() {
  fi
 }
 
-
-
 # Reconfigure Mopidy
 reconfigure_mopidy() {
  if [ ! -f /etc/mopidy.conf ]; then
@@ -642,8 +640,8 @@ read_fixed
 pi_model
 usb_devices
 detect_hw
-guess_volume_control
 guess_card
+guess_volume_control
 system_name
 read_features
 check_pi3a
