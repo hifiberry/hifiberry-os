@@ -158,6 +158,16 @@ guess_volume_control() {
    fi
  fi
 
+ # If a DSP module was detected, check for DSP volume
+ # control first
+ if [[ $CARD == *"DSP"* ]]; then
+   dsptoolkit --timeout=20 get-volume 2 >/dev/null >/dev/null
+   if [ $? == 0 ]; then
+     MIXER_CONTROL=DSPVolume
+     return
+   fi
+ fi
+
  # DAC2 HD used "DAC"
  DAC=`amixer scontrols | grep "'DAC',"`
  if [ "$DAC" != "" ]; then
@@ -306,13 +316,6 @@ guess_card() {
  CARD="DAC+ Zero/Light/MiniAmp"
 }
 
-reset_dsp() {
- gpio mode 0 out
- gpio write 0 0
- gpio write 0 1
- gpio mode 0 in
-}
-
 check_dsp() {
  if [ -f /etc/hifiberry/has_dsp ]; then
    HAS_DSP=1
@@ -326,21 +329,6 @@ check_dsp() {
    HAS_DSP=1
    FEATURES="$FEATURES dsp"
    return
- else
-   HAS_DSP=0
- fi
-
- # Should now work without the extra stuff below
- return
-  
- # reset DSP, read some data
- dsptoolkit write-reg 0xf890 0
- dsptoolkit write-reg 0xf890 1
- REG1=`dsptoolkit --timeout=10 read-reg 0xf000` # expected != 00 00
- REG3=`dsptoolkit --timeout=10 read-reg 0xc000` # expected 00 00
- if [ "$REG1" != "00 00" ] && [ "$REG2" == "00 00" ]; then
-   HAS_DSP=1
-   FEATURES="$FEATURES dsp"
  else
    HAS_DSP=0
  fi
@@ -544,8 +532,6 @@ reconfigure_upmpdcli() {
  fi
 }
 
-
-
 # Reconfigure Mopidy
 reconfigure_mopidy() {
  if [ ! -f /etc/mopidy.conf ]; then
@@ -642,8 +628,8 @@ read_fixed
 pi_model
 usb_devices
 detect_hw
-guess_volume_control
 guess_card
+guess_volume_control
 system_name
 read_features
 check_pi3a
