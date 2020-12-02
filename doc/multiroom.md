@@ -13,6 +13,13 @@ This is the defacto open source standard for multiroom audio. Logitech media ser
 for multiroom audio from the beginning. If you're ok that the user interface looks a bit old-fashioned
 and the configuration (especially with plugins) can be a bit challenging, have a look at this.
 
+## Snapcast
+
+Snapcast is an open-source multiroom client-server audio player, where all clients are time synchronized with the server 
+to play perfectly synced audio. It's not a standalone player, but an extension that turns your existing audio player 
+into a Sonos-like multiroom solution. You can find the official repository at 
+[github.com/badaix/snapcast](https://github.com/badaix/snapcast).
+
 ## Roon
 
 This is the "luxury" multiroom solutions. While Roon, isn't cheap, the sound quality is great and
