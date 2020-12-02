@@ -12,6 +12,7 @@ ExecStart=/usr/bin/python3 /opt/lmsmpris/lmsmpris.py
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

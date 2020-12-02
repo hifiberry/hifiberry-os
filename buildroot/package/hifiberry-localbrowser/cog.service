@@ -12,7 +12,7 @@ ExecStart=cog --webprocess-failure=restart -P fdo http://localhost:80/#now-playi
 StandardOutput=journal
 Restart=always
 RestartSec=20
-TimeoutStopSec=2
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

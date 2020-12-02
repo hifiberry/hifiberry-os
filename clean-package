@@ -1,0 +1,2 @@
+#!/bin/bash
+rm -rf ../buildroot-*/build/$1* ../buildroot-*/build/host-$1*

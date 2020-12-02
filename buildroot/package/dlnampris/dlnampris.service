@@ -13,6 +13,7 @@ ExecStart=/usr/bin/python3 /opt/dlnampris/dlnampris.py
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

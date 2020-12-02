@@ -11,6 +11,7 @@ ExecStartPre=sleep 2
 ExecStart=/opt/btspeaker/bluealsa-aplay-start
 RestartSec=5  
 Restart=always
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target
