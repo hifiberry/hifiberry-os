@@ -18,21 +18,22 @@ The user interface is based on the [Bang & Olufsen Beocreate project](https://gi
 
 At the moment, the following services are supported:
 
-- Spotify (using Spotifyd) - requires a paid Spotify subscription
-- Airplay (using shairport)
-- Squeezebox (using squeezelite)
-- Bluetooth A2DP sind (using BlueZ 5)
+- Spotify (using [a fork of Spotifyd](https://github.com/hifiberry/spotifyd)) - requires a paid Spotify subscription
+- Airplay (using [shairport](https://github.com/mikebrady/shairport-sync))
+- Squeezebox (using [squeezelite](https://github.com/ralph-irving/squeezelite))
+- Bluetooth A2DP sink (using [BlueZ 5](http://www.bluez.org/))
 - Roon - requires a Roon subscription
-- MPD
-- Snapcast (experimental)
-- analogue input on DAC+ ADC (using alsaloop)
+- [MPD](https://github.com/MusicPlayerDaemon/MPD)
+- Snapcast (experimental, using [Snapcast](https://github.com/badaix/snapcast) and [SnapcastMPRIS](https://github.com/hifiberry/snapcastmpris))
+- Analogue input on DAC+ ADC with input detection (using [a custom alsaloop implementation](https://github.com/hifiberry/alsaloop/))
+- Webradio (experimental)
 
 ## Tools 
 
 Additional tools that are available:
 
-- sox
-- HiFiBerry dsptoolkit
+- [sox](http://sox.sourceforge.net/)
+- [HiFiBerry dsptoolkit](https://github.com/hifiberry/hifiberry-dsp)
 
 Note that there is no direct support for local music archives (e.g. MP3 files on a NAS) yet. If you have a local
 music collection, you need to use an additional music server to stream music to HiFiBerryOS, e.g.
@@ -63,6 +64,13 @@ HiFiBerryOS is based on buildroot. This means, you can't easily install addition
 ### Adding UI components
 
 The UI also uses a plugin concept. Plugins are called extensions. Have a look at the [Beocreate documentation](https://github.com/bang-olufsen/create/tree/master/Documentation)
+
+## How it works / technical documentation
+
+You can find technical documentation in [the repository's doc folder](doc/)
+
+## Building a disk image
+[The documentation for building images from source can be found here](/doc/building.md)
 
 ## Contributions
 We're looking forward to your contributions. Depending on functionality and code quality, we will decide if a contribution will be included in the base system or will be provided as a user-contributed module that users need to install by themselve.
