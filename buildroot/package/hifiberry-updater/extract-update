@@ -147,6 +147,11 @@ sync
 echo "unmounting $INACTIVE..."
 umount $INACTIVE
 fsck.ext2 -p -f -v $INACTIVE
+RES=$?
+if [ "$RES" != "0" ] && [ "$RES" != "1" ]; then
+ echo "could file system is corrupted, not switching to new version..."
+ exit
+fi
 
 if [ "$1" == "--simulate" ]; then
  echo "not switching to new version..."

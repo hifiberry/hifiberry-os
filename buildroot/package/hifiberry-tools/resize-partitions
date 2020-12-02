@@ -15,45 +15,59 @@ if [ ! -f /resize-me ]; then
  exit
 fi
 
-# Delete Partition 3
-if [ -b ${DEVICEBASE}3 ]; then
-INITIAL=1
+# Delete Partitions
+for N in 2 3 4; do 
+if [ -b ${DEVICEBASE}$N ]; then
 fdisk $DEVICE <<EOT
 d
-3
+$N
 w
 EOT
 partprobe
 echo p | fdisk $DEVICE
+fi
+done
+
+# Find the last sector of partition 1
+P0=`echo "p"  | fdisk /dev/mmcblk0  | grep "p1 " | awk '{print $4}'`
+
+# Size of partition 2 and 3 depends on SD card size
+# on a 16GB+ card, we'll use two 4GB system partitions
+SIZE=$(lsblk -bno SIZE /dev/mmcblk0 | head -1)
+P1=$((P0+1))
+P2=$((P0+3000000))
+P3=$((P0+3000001))
+P4=$((P0+6000000))
+if [ $SIZE -gt 15000000000 ]; then
+  P1=$((P0+1))
+  P2=$((P0+8000000))
+  P3=$((P0+8000001))
+  P4=$((P0+16000000))
 fi
 
-# Delete Partition 2
-if [ -b ${DEVICE}2 ]; then
-fdisk $DEVICE <<EOT
-d
-2
-w
-EOT
-partprobe
-echo p | fdisk $DEVICE
-fi
+echo "New partitions:"
+echo "p2: $P1 .. $P2"
+echo "p2: $P3 .. $P4"
+sleep 4
 
 # Create partitions 2 and 3
 fdisk $DEVICE <<EOT
 n
 p
 2
-65537
-3065536
+$P1
+$P2
 n
 p
 3
-3065537
-6065536
+$P3
+$P4
 w
 EOT
 partprobe
 echo p | fdisk $DEVICE
+
+sleep 10
 
 # Create partition 4
 fdisk $DEVICE <<EOT

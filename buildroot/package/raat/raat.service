@@ -8,11 +8,12 @@ ConditionPathExists=/etc/features/arm7
 Type=simple
 Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Roon"
-ExecStartPre=/opt/raat/configure-raat
+#ExecStartPre=/opt/raat/configure-raat
 ExecStart=/opt/raat/raat_app /etc/hifiberry_raat.conf
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

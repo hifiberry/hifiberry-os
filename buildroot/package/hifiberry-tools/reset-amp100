@@ -1,0 +1,13 @@
+#!/bin/bash
+# Reset Amp100
+echo 17 >/sys/class/gpio/export
+echo 4  >/sys/class/gpio/export
+echo out >/sys/class/gpio/gpio17/direction
+echo out >/sys/class/gpio/gpio4/direction
+# Mute
+echo 1 >/sys/class/gpio/gpio4/value
+# Reset
+echo 0 >/sys/class/gpio/gpio17/value
+echo 1 >/sys/class/gpio/gpio17/value
+# Unmute
+echo 0 >/sys/class/gpio/gpio4/value

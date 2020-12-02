@@ -12,6 +12,7 @@ ExecStart=/usr/bin/python3 /opt/alsaloop/alsaloopmpris.py
 Restart=always
 RestartSec=30
 ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

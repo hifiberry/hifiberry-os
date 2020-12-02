@@ -9,6 +9,13 @@ if  [ "$HOST" == "" ]; then
  exit 1
 fi 
 
+IP=`avahi-resolve -4 --name $HOST.local | awk '{print $2}'`
+if [ "$IP" != "" ]; then
+ HOST=$IP
+fi
+
+
+
 PORT=$3
 if [ "$PORT" == "" ]; then
  PORT=22

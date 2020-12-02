@@ -6,8 +6,11 @@
 
 # based on the original mpd package but with additional patches
 
-HIFIBERRY_MPD_VERSION_MAJOR = 0.21
-HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).25
+HIFIBERRY_MPD_VERSION_MAJOR = 0.22
+HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).2
+
+#HIFIBERRY_MPD_VERSION_MAJOR = 0.21
+#HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).25
 HIFIBERRY_MPD_SOURCE = mpd-$(HIFIBERRY_MPD_VERSION).tar.xz
 HIFIBERRY_MPD_SITE = http://www.musicpd.org/download/mpd/$(HIFIBERRY_MPD_VERSION_MAJOR)
 HIFIBERRY_MPD_DEPENDENCIES = host-pkgconf boost
@@ -71,8 +74,9 @@ HIFIBERRY_MPD_CONF_OPTS += -Dlame=enabled
 HIFIBERRY_MPD_DEPENDENCIES += libmpdclient
 HIFIBERRY_MPD_CONF_OPTS += -Dlibmpdclient=enabled
 
-# disable libmms
-HIFIBERRY_MPD_CONF_OPTS += -Dmms=disabled
+# enable libmms
+MPD_DEPENDENCIES += libmms
+HIFIBERRY_MPD_CONF_OPTS += -Dmms=enabled
 
 # disable NFS
 HIFIBERRY_MPD_DEPENDENCIES += libnfs
@@ -185,6 +189,7 @@ define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/mpd-update-notifier.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd-update-notifier.service
+	echo "disable mpd.socket" >> $(TARGET_DIR)/lib/systemd/system-preset/99-mpdsocket.preset 
 endef
 
 

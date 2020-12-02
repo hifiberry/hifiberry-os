@@ -3,7 +3,7 @@
 # On the Pi Zero, volume controls won't show up before playing something :(
 SOFTVOL=`amixer | grep Softvol`
 if [ "$SOFTVOL" == "" ]; then
- play -n synth 1 sine 1
+ play -n trim 0 0.1
 fi
 
 FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
@@ -31,6 +31,12 @@ function check_hat {
 
 function detect_card {
 	check_hat
+
+	if [ "$HATCARD" == "Amp100" ]; then
+                DETECTED="amp100,automute"
+		EEPROM=0
+                return
+        fi
 
 	if [ "$HATCARD" == "DAC+ ADC Pro" ]; then
 		DETECTED="dacplusadcpro"

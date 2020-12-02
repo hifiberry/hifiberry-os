@@ -13,6 +13,7 @@ ExecStart=/usr/bin/python3 /opt/audiocontrol2/audiocontrol2.py ${AUDIOCONTROL2_A
 StandardOutput=journal
 Restart=always
 RestartSec=5
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

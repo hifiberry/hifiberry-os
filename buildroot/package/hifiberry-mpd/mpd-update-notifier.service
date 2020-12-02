@@ -7,6 +7,7 @@ After=mpd.service
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting MPD update notifier"
 ExecStart=/opt/hifiberry/bin/mpd-update-notifier
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

@@ -26,6 +26,7 @@ config BR2_PACKAGE_HIFIBERRY_MPD
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_WAVPACK
 	select BR2_PACKAGE_LIBNFS
+	select BR2_PACKAGE_LIBMMS
 
 comment "HiFiBerry mpd package can't be used together with buildroot mpd version, disable this first!"
         depends on BR2_PACKAGE_MPD

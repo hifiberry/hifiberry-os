@@ -1,4 +1,13 @@
-202011xx:
+20201201:
+- added OpenHome player
+- added Amp100 driver
+- Improved Snapcast player (thanks to https://github.com/Bertware)
+- Security: Secure DLNA against Callstranger (CVE-2020-12695)
+- update MPD to 0.22
+- upgrade buildroot to 2020.11
+- improve pausing of services when other player starts playback
+
+20201101:
 - replaced Spotifyd by Vollibrepsot
 - new audiocontrol backend that can deal with non-MPRIS source
 - improve pausing of active player

@@ -1,0 +1,15 @@
+[Unit]
+Description=SPDIF clock generator
+Wants=network-online.target sound.target
+After=network.target sound.target sigmatcp.service raat.service mpd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/spdifclockgen
+StandardOutput=journal
+Restart=always
+RestartSec=10
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

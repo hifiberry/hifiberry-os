@@ -8,6 +8,7 @@ ConditionPathExists=/etc/features/bluetooth
 ExecStart=/opt/btspeaker/a2dp-agent.py
 RestartSec=5
 Restart=always
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target

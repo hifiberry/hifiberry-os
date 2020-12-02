@@ -1,0 +1,10 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../buildroot
+for bak in `find . -name *bak`; do
+ patched=${bak/bak/}
+ if [ -f $patched ]; then
+   echo $patched $bak
+   diff -ru $bak $patched 
+ fi
+done
