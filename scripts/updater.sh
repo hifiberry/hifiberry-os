@@ -201,7 +201,7 @@ if [ "$V" -lt 20200706 ]; then
  else
    echo $STICKERS
  fi
-
+G
  sed -i 's/,/\;/g' /newroot/etc/smbmounts.conf
 fi 
 
@@ -224,9 +224,12 @@ if [ "$V" -lt 20201030 ]; then
  rm  /newroot/etc/hifiberry.state
 fi
 
-if [ "$V" -lt 20201130 ]; then
+if [ "$V" -lt 20201210 ]; then
  echo "Making sure, players will be configured correctly"
- rm  /newroot/etc/hifiberry.state
+ rm  /newroot/etc/hifiberry.state$
+
+ echo "Removing mpd watchdog from audiocontrol
+ sed s/^mpd=mpd-mpris$//g /newroot/etc/audiocontrol2.conf
 fi
 
 echo "Upgrading configuration files done"
