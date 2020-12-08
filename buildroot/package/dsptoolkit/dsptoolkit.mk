@@ -32,7 +32,7 @@ define DSPTOOLKIT_INSTALL_INIT
 		$(TARGET_DIR)/opt/hifiberry/bin/create-dspvolume
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/spdifclockgen.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/spdifclockgen.service
-	echo "disable spdifclockgen.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-spdifclockgen.preset
+#	echo "disable spdifclockgen.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-spdifclockgen.preset
 endef
 
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_INSTALL_INIT
