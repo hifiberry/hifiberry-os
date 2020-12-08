@@ -336,15 +336,7 @@ check_dsp() {
 
 # Get HAT information
 hat_info() {
- if [ -f /proc/device-tree/hat/product ]; then 
-  VENDOR=`tr -d '\0' < /proc/device-tree/hat/vendor`
-  PRODUCT=`tr -d '\0' < /proc/device-tree/hat/product`
-  HATINFO="${VENDOR} ${PRODUCT}"
- else
-  VENDOR=""
-  PRODUCT=""
-  HATINFO=""
- fi
+ HATINFO=`/opt/hifiberry/bin/readhat | sed s/:/\ /`
 }
 
 # Calculate system names
