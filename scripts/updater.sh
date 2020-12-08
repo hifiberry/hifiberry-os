@@ -228,7 +228,7 @@ if [ "$V" -lt 20201210 ]; then
  echo "Making sure, players will be configured correctly"
  rm  /newroot/etc/hifiberry.state$
 
- echo "Removing mpd watchdog from audiocontrol
+ echo "Removing mpd watchdog from audiocontrol"
  sed s/^mpd=mpd-mpris$//g /newroot/etc/audiocontrol2.conf
 fi
 
