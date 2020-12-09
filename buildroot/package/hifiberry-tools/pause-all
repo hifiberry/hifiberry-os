@@ -136,7 +136,9 @@ fi
 # Try to control the player directly, this might not work
 # for all players
 pause_process
+sleep 0.5
 check_paused
+echo "$DATE1 pause-all, pause_process done, but playback still active"  | systemd-cat
 
 # Use API to pause
 curl -X post http://localhost:81/api/player/pause ; echo
@@ -144,9 +146,9 @@ for i in 1 1 1 1 1 ; do
  sleep $i
  check_paused
 done
+echo "$DATE1 pause-all, pause via API done, but playback still active"  | systemd-cat
 
 # Still in use
-echo "$APP still using the sound card killing it" | systemd-cat
 kill_process
 
 # Now it should REALLY be available
