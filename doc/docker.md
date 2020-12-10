@@ -2,7 +2,7 @@
 
 ## Preface
 
-Starting with the Januray 2021 release, HiFiBerryOS comes with Docker that allows you to add 3rd party software. While Docker is a way to build light-weight containers, it will still add load to the system and the SD card.
+Starting with the January 2021 release, HiFiBerryOS comes with Docker that allows you to add 3rd party software. While Docker is a way to build light-weight containers, it will still add load to the system and the SD card.
 Depending on the containers that you're using, write requests to the SD card can increase dramatically. This might reduce the lifespan of your SD card. 
 
 ## Hardware
