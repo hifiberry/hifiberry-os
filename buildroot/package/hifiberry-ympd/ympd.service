@@ -4,7 +4,7 @@ Description=ympd MPD web interface
 [Service]
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting MPD web interface"
-ExecStart=/usr/bin/ympd -w "[::]:9000"
+ExecStart=/usr/bin/ympd -w "[::]:9999"
 StandardOutput=journal
 Restart=always
 RestartSec=5
