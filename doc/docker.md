@@ -63,6 +63,7 @@ services:
 ## Test
 
 ```cd /data/docker/lms
-docker-compose up```
+docker-compose up
+```
 
 Now test if everything is working as expected. 
