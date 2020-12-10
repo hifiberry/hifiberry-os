@@ -67,3 +67,20 @@ docker-compose up
 ```
 
 Now test if everything is working as expected. 
+
+## Start
+
+You can now either reboot the system or just run the container start script:
+```
+/opt/hifiberry/bin/start-containers
+```
+
+## Check
+
+If your container was set up correctly, it should be listed as running:
+```
+# docker container list
+CONTAINER ID        IMAGE                              COMMAND             CREATED             STATUS              PORTS
+                        NAMES
+05301ad1f93c        lmscommunity/logitechmediaserver   "start-container"   2 minutes ago       Up 2 minutes        0.0.0.0:3483->3483/tcp, 0.0.0.0:9000->9000/tcp, 0.0.0.0:9090->9090/tcp, 0.0.0.0:3483->3483/udp   lms
+```
