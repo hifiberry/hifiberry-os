@@ -7,7 +7,7 @@
         <metadata type="programID">dacdsp-universal</metadata>
         <metadata type="modelName" modelID="hifiberry-dacdsp">DAC+ DSP</metadata>
 	<metadata type="checksum">7B03B17AD5B6B1A0E0DACB29BF31F024</metadata>
-	<metadata type="balanceRegister" storable="yes">4734</metadata>
+	<metadata type="balanceRegister" storable="yes">731</metadata>
 	<metadata type="spdifTXUserDataSource" storable="yes">63135</metadata>
 	<metadata type="spdifTXUserDataL0" storable="yes">63135</metadata>
 	<metadata type="spdifTXUserDataL1" storable="yes">63168</metadata>
@@ -17,37 +17,40 @@
 	<metadata type="spdifTXUserDataL5" storable="yes">63172</metadata>
 	<metadata type="spdifTXUserDataR0" storable="yes">63173</metadata>
 	<metadata type="spdifTXUserDataR1" storable="yes">63185</metadata>
-	<metadata type="sensitivitySPDIFRegister">43</metadata>
-	<metadata type="enableSPDIFRegister" storable="yes">4738</metadata>
-	<metadata type="readSPDIFOnRegister">46</metadata>
-	<metadata type="customFilterRegisterBankLeft" storable="yes">273/80</metadata>
-	<metadata type="customFilterRegisterBankRight" storable="yes">193/80</metadata>
-	<metadata type="toneControlRightRegisters" storable="yes">53/70</metadata>
-	<metadata type="toneControlLeftRegisters" storable="yes">123/70</metadata>
-	<metadata type="channelSelectDRegister" channels="left,right,mono,side" multiplier="1" storable="yes">4747</metadata>
-	<metadata type="channelSelectCRegister" channels="left,right,mono,side" multiplier="1" storable="yes">4746</metadata>
-	<metadata type="channelSelectBRegister" channels="left,right,mono,side" multiplier="1" storable="yes">4744</metadata>
-	<metadata type="channelSelectARegister" channels="left,right,mono,side" multiplier="1" storable="yes">4745</metadata>
-	<metadata type="invertDRegister" storable="yes">4751</metadata>
-	<metadata type="invertCRegister" storable="yes">4750</metadata>
-	<metadata type="invertBRegister" storable="yes">4749</metadata>
-	<metadata type="invertARegister" storable="yes">4748</metadata>
-	<metadata type="IIR_D" storable="yes">609/80</metadata>
-	<metadata type="IIR_C" storable="yes">529/80</metadata>
-	<metadata type="IIR_B" storable="yes">449/80</metadata>
-	<metadata type="IIR_A" storable="yes">369/80</metadata>
-	<metadata type="levelsARegister" storable="yes">693</metadata>
-	<metadata type="levelsBRegister" storable="yes">690</metadata>
-	<metadata type="levelsCRegister" storable="yes">696</metadata>
-	<metadata type="levelsDRegister" storable="yes">699</metadata>
-	<metadata type="volumeControlRegister" storable="yes">51</metadata>
-	<metadata type="volumeLimitRegister">32</metadata>
-	<metadata type="volumeLimitPiRegister" storable="yes">32</metadata>
-	<metadata type="delayARegister" maxDelay="2000" storable="yes">704</metadata>
-	<metadata type="delayDRegister" maxDelay="2000" storable="yes">701</metadata>
-	<metadata type="delayCRegister" maxDelay="2000" storable="yes">703</metadata>
-	<metadata type="delayBRegister" maxDelay="2000" storable="yes">702</metadata>
-	<metadata type="volumeLimitSPDIFRegister" storable="yes">39</metadata>
+	<metadata type="muteRegister">4748</metadata>
+	<metadata type="muteInvertRegister" storable="yes">4757</metadata>
+	<metadata type="enableSPDIFTransmitterRegister">4749</metadata>
+	<metadata type="sensitivitySPDIFRegister">51</metadata>
+	<metadata type="enableSPDIFRegister" storable="yes">4752</metadata>
+	<metadata type="readSPDIFOnRegister">54</metadata>
+	<metadata type="customFilterRegisterBankLeft" storable="yes">284/80</metadata>
+	<metadata type="customFilterRegisterBankRight" storable="yes">204/80</metadata>
+	<metadata type="toneControlRightRegisters" storable="yes">64/70</metadata>
+	<metadata type="toneControlLeftRegisters" storable="yes">134/70</metadata>
+	<metadata type="channelSelectDRegister" channels="left,right,mono,side" multiplier="1" storable="yes">4764</metadata>
+	<metadata type="channelSelectCRegister" channels="left,right,mono,side" multiplier="1" storable="yes">4763</metadata>
+	<metadata type="channelSelectBRegister" channels="left,right,mono,side" multiplier="1" storable="yes">4761</metadata>
+	<metadata type="channelSelectARegister" channels="left,right,mono,side" multiplier="1" storable="yes">4762</metadata>
+	<metadata type="invertDRegister" storable="yes">4768</metadata>
+	<metadata type="invertCRegister" storable="yes">4767</metadata>
+	<metadata type="invertBRegister" storable="yes">4766</metadata>
+	<metadata type="invertARegister" storable="yes">4765</metadata>
+	<metadata type="IIR_D" storable="yes">620/80</metadata>
+	<metadata type="IIR_C" storable="yes">540/80</metadata>
+	<metadata type="IIR_B" storable="yes">460/80</metadata>
+	<metadata type="IIR_A" storable="yes">380/80</metadata>
+	<metadata type="levelsARegister" storable="yes">704</metadata>
+	<metadata type="levelsBRegister" storable="yes">701</metadata>
+	<metadata type="levelsCRegister" storable="yes">707</metadata>
+	<metadata type="levelsDRegister" storable="yes">710</metadata>
+	<metadata type="volumeControlRegister" storable="yes">61</metadata>
+	<metadata type="volumeLimitRegister">28</metadata>
+	<metadata type="volumeLimitPiRegister" storable="yes">28</metadata>
+	<metadata type="delayARegister" maxDelay="2000" storable="yes">715</metadata>
+	<metadata type="delayDRegister" maxDelay="2000" storable="yes">712</metadata>
+	<metadata type="delayCRegister" maxDelay="2000" storable="yes">714</metadata>
+	<metadata type="delayBRegister" maxDelay="2000" storable="yes">713</metadata>
+	<metadata type="volumeLimitSPDIFRegister" storable="yes">31</metadata>
   </beometa>
   <dateTime>2020-12-10T13:56:57.1202917Z</dateTime>
   <version>4.5.0.1779</version>
