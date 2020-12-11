@@ -44,13 +44,13 @@
 	<metadata type="levelsCRegister" storable="yes">707</metadata>
 	<metadata type="levelsDRegister" storable="yes">710</metadata>
 	<metadata type="volumeControlRegister" storable="yes">61</metadata>
-	<metadata type="volumeLimitRegister">28</metadata>
-	<metadata type="volumeLimitPiRegister" storable="yes">28</metadata>
+	<metadata type="volumeLimitRegister">27</metadata>
+	<metadata type="volumeLimitPiRegister" storable="yes">27</metadata>
 	<metadata type="delayARegister" maxDelay="2000" storable="yes">715</metadata>
 	<metadata type="delayDRegister" maxDelay="2000" storable="yes">712</metadata>
 	<metadata type="delayCRegister" maxDelay="2000" storable="yes">714</metadata>
 	<metadata type="delayBRegister" maxDelay="2000" storable="yes">713</metadata>
-	<metadata type="volumeLimitSPDIFRegister" storable="yes">31</metadata>
+	<metadata type="volumeLimitSPDIFRegister" storable="yes">30</metadata>
   </beometa>
   <dateTime>2020-12-10T13:56:57.1202917Z</dateTime>
   <version>4.5.0.1779</version>
