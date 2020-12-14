@@ -1,3 +1,11 @@
+20201213:
+- updated Bluetooth player
+- improvements for Amp100/DSP combination
+- fixed in DAC+ DSP and DSP add-on DSP profiles
+- improved docker container configuration
+- stability improvements
+
+
 20201201:
 - added OpenHome player
 - added Amp100 driver

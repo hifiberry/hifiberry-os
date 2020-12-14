@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SNAPCASTMPRIS_VERSION = 0f0620b6fa6b6dd907022a43019c741e87856c09
+SNAPCASTMPRIS_VERSION = 00614cfa80ff34c9a3dcebc05093f5cd3a27ddc9
 SNAPCASTMPRIS_SITE = $(call github,hifiberry,snapcastmpris,$(SNAPCASTMPRIS_VERSION))
 
 define SNAPCASTMPRIS_BUILD_CMDS
