@@ -56,7 +56,8 @@ pause_raat() {
   pkill -USR1 $PROCESSID
   # unfortunately it takes 5s until RAAT stops using the sound card
   ## therefore, we're restarting the service
-  pkill raat_app 
+  # pkill raat_app 
+  sleep 6
 }
 
 pause_spotify() {
@@ -80,6 +81,7 @@ pause_gmediarender() {
 
 
 pause_process() {
+  echo "$APP"
   case $APP in
     mpd)
       pause_mpd
@@ -97,8 +99,7 @@ pause_process() {
       pause_gmediarender
       ;;
     *)
-      echo "don't know how to pause $APP, trying USR1"
-      kill -USR1 $PROCESSID
+      echo "don't know how to pause $APP"
       ;;
   esac
 }
@@ -122,8 +123,20 @@ kill_process() {
 
 # What's the new player?
 if [ -x /opt/hifiberry/bin/report-activation ]; then
- /opt/hifiberry/bin/report-activation "playercontrol_player_$PLAYER"
+  /opt/hifiberry/bin/report-activation "playercontrol_player_$PLAYER"
 fi
+
+# Map process names to audiocontrols internal service name as we want to make
+# sure a player doesn't pause itself
+ACNAME=$PLAYER
+case $PLAYER in
+  vollibrespot)
+    ACNAME=spotify
+    ;;
+  raat_app)
+    ACNAME=raat
+    ;;
+esac
 
 # Check if something is playing at all
 check_paused
@@ -137,16 +150,17 @@ fi
 # for all players
 pause_process
 check_paused
+echo "$DATE1 pause-all, pause_process done, but playback still active"  | systemd-cat
 
 # Use API to pause
-curl -X post http://localhost:81/api/player/pause ; echo
+curl -X post http://localhost:81/api/player/pause/$ACNAME ; echo
 for i in 1 1 1 1 1 ; do 
  sleep $i
  check_paused
 done
+echo "$DATE1 pause-all, pause via API done, but playback still active"  | systemd-cat
 
 # Still in use
-echo "$APP still using the sound card killing it" | systemd-cat
 kill_process
 
 # Now it should REALLY be available

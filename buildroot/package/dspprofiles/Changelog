@@ -1,0 +1,4 @@
+20201210: DAC+ DSP v12
+- fixed SPDIF input detection
+- exchanged L/R on analog out
+- fixed SPDIF output flags 
