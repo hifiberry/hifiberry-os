@@ -7,7 +7,7 @@ Depending on the containers that you're using, write requests to the SD card can
 
 ## Hardware
 
-We recommend a Pi4 and at least a 32GB SD card. It is best to use a large SD card 
+We recommend a Pi4 and at least a 32GB SD card. It is best to use a large SD card. Also a Pi4 with more than 1GB RAM might make sense - depending on the software you plan to add.
 
 ## Preparations
 
