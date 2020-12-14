@@ -43,13 +43,13 @@
 	<metadata type="levelsCRegister" storable="yes">696</metadata>
 	<metadata type="levelsDRegister" storable="yes">699</metadata>
 	<metadata type="volumeControlRegister" storable="yes">51</metadata>
-	<metadata type="volumeLimitRegister">32</metadata>
-	<metadata type="volumeLimitPiRegister" storable="yes">32</metadata>
+	<metadata type="volumeLimitRegister">31</metadata>
+	<metadata type="volumeLimitPiRegister" storable="yes">31</metadata>
 	<metadata type="delayARegister" maxDelay="2000" storable="yes">704</metadata>
 	<metadata type="delayDRegister" maxDelay="2000" storable="yes">701</metadata>
 	<metadata type="delayCRegister" maxDelay="2000" storable="yes">703</metadata>
 	<metadata type="delayBRegister" maxDelay="2000" storable="yes">702</metadata>
-	<metadata type="volumeLimitSPDIFRegister" storable="yes">39</metadata>
+	<metadata type="volumeLimitSPDIFRegister" storable="yes">38</metadata>
   </beometa>
   <page modetype="Mode 0">
     <action instr="writeXbytes" len="4" addr="62464" AddrIncr="0" ParamName="IC 1.HIBERNATE" DspName="IC 1">00 01</action>

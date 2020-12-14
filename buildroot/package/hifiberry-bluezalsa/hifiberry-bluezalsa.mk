@@ -5,10 +5,10 @@
 ################################################################################
 
 HIFIBERRY_BLUEZALSA_VERSION = 2.1.0
-HIFIBERRY_BLUEZALSA_SITE = $(call github,Arkq,bluez-alsa,v$(HIFIBERRY_BLUEZALSA_VERSION))
-HIFIBERRY_BLUEZALSA_VERSION = 01fc155f2200d457f19c11692994e58e606b6433
-#HIFIBERRY_BLUEZALSA_VERSION = c9021d932ae9464b6cdc4ca5ac240a6b8ada6e36
-HIFIBERRY_BLUEZALSA_SITE = $(call github,joerg-krause,bluez-alsa,$(HIFIBERRY_BLUEZALSA_VERSION))
+#HIFIBERRY_BLUEZALSA_SITE = $(call github,Arkq,bluez-alsa,v$(HIFIBERRY_BLUEZALSA_VERSION))
+# Use the patched version with ALSA volume control
+HIFIBERRY_BLUEZALSA_SITE = $(call github,hifiberry,bluez-alsa,$(HIFIBERRY_BLUEZALSA_VERSION))
+HIFIBERRY_BLUEZALSA_VERSION = 5ef22c7debbff8b6d7b3a5327dfd81a2f7f3b45a
 HIFIBERRY_BLUEZALSA_LICENSE = MIT
 HIFIBERRY_BLUEZALSA_LICENSE_FILES = LICENSE
 HIFIBERRY_BLUEZALSA_DEPENDENCIES = alsa-lib bluez5_utils libglib2 sbc host-pkgconf
