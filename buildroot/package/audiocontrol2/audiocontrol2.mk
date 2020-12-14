@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AUDIOCONTROL2_VERSION = 4f8e78af01fd899247734f78e6438de2fd49d144
+AUDIOCONTROL2_VERSION = 9e2fdb6fed18bf0e83258da81171f79e7cc6c617
 AUDIOCONTROL2_SITE = $(call github,hifiberry,audiocontrol2,$(AUDIOCONTROL2_VERSION))
 
 AUDIOCONTROL2_DEPENDENCIES = python3

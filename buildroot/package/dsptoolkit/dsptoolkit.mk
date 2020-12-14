@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DSPTOOLKIT_VERSION = 04eea557fb92cc5f81454e765ce87da9def919ca
+DSPTOOLKIT_VERSION = 4c013ab83b6977e3212d99512dc78f28594b0e06
 DSPTOOLKIT_SITE = $(call github,hifiberry,hifiberry-dsp,$(DSPTOOLKIT_VERSION))
 DSPTOOLKIT_SETUP_TYPE = setuptools
 DSPTOOLKIT_LICENSE = MIT
@@ -32,7 +32,7 @@ define DSPTOOLKIT_INSTALL_INIT
 		$(TARGET_DIR)/opt/hifiberry/bin/create-dspvolume
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dsptoolkit/spdifclockgen.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/spdifclockgen.service
-	echo "disable spdifclockgen.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-spdifclockgen.preset
+#	echo "disable spdifclockgen.service" >> $(TARGET_DIR)/lib/systemd/system-preset/99-spdifclockgen.preset
 endef
 
 DSPTOOLKIT_POST_INSTALL_TARGET_HOOKS += DSPTOOLKIT_INSTALL_INIT
