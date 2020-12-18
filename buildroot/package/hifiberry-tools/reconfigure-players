@@ -222,7 +222,7 @@ guess_card() {
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Amp100 + DSP Module"
      DSPTYPE="DSP add-on"
-     FEATURES="$FEATURES spdifnoclock"
+     FEATURES="$FEATURES spdifnoclock toslink"
    else
      CARD="Amp100"
    fi
@@ -270,6 +270,7 @@ guess_card() {
  DACDSP=`aplay -l | grep DAC+DSP`
  if [ "$DACDSP" != "" ]; then
    CARD="DAC+ DSP"
+   FEATURES="$FEATURES toslink"
    return
  fi
 
@@ -303,7 +304,7 @@ guess_card() {
  if [ "$CLKGEN" == "0x03" ]; then
     CARD="Beocreate 4-Channel Amplifier"
     if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
-      FEATURES="$FEATURES dsp"
+      FEATURES="$FEATURES dsp toslink"
     fi
     return
  fi
