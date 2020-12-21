@@ -27,7 +27,7 @@ if [ "$CHECKSUM" == "" ]; then
  exit 1
 fi
 
-MATCHINGPROFILE=`grep -l $CHECKSUM /opt/beocreate/beo-dsp-programs/*.xml`
+MATCHINGPROFILE=`grep -l $CHECKSUM /opt/beocreate/beo-dsp-programs/*.xml | tail -1`
 if [ -f $MATCHINGPROFILE ]; then
  echo "Will use $MATCHINGPROFILE"
  cp $MATCHINGPROFILE /var/lib/hifiberry/dspprogram.xml
