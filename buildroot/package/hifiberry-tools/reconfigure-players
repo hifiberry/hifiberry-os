@@ -311,6 +311,7 @@ guess_card() {
 
  if [ "$HAS_DSP" == "1" ]; then
     CARD="DAC+ DSP"
+    FEATURES="$FEATURES toslink"
     return
  fi
 
