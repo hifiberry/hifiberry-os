@@ -35,15 +35,6 @@ Additional tools that are available:
 - [sox](http://sox.sourceforge.net/)
 - [HiFiBerry dsptoolkit](https://github.com/hifiberry/hifiberry-dsp)
 
-Note that there is no direct support for local music archives (e.g. MP3 files on a NAS) yet. If you have a local
-music collection, you need to use an additional music server to stream music to HiFiBerryOS, e.g.
-
-- Roon 
-- Logitech Media Server
-- iTunes
-
-You might also configure the included music player daemon, but you have to do this from command line. A simple MPD UI names ympd is running on HTTP port 9000.
-
 ## Integrations and additional functionalities
 
 There are several ways to add functionalities to HiFiBerryOS or integrate it into other systems.
