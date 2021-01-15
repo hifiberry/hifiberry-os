@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HIFIBERRY_POWERCONTROLLER
+	bool "hifiberry-powercontroller"
+        help
+	  Support for the HiFiBerry power controller
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+	select BR2_PACKAGE_I2C_TOOLS
