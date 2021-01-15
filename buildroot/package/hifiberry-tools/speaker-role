@@ -23,6 +23,11 @@ elif [ "$1" == "right" ]; then
  ttable11=1
  ttable01=0
  ttable10=1
+elif [ "$1" == "swap" ]; then
+ ttable00=0
+ ttable11=0
+ ttable01=1
+ ttable10=1
 fi
 
 if [ "$2" != "" ]; then
