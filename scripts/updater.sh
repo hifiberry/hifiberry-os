@@ -232,4 +232,10 @@ if [ "$V" -lt 20201231 ]; then
  sed s/^mpd=mpd-mpris$//g /newroot/etc/audiocontrol2.conf
 fi
 
+if [ "$V" -lt 20210130 ]; then
+ echo "Making sure, players will be configured correctly"
+ rm  /newroot/etc/hifiberry.state
+fi
+
+
 echo "Upgrading configuration files done"
