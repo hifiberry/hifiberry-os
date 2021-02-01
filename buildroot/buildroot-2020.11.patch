@@ -209,7 +209,7 @@ diff -ru a/package/libupnp/libupnp.mk b/package/libupnp/libupnp.mk
  # Hash from: http://www.lesbonscomptes.com/upmpdcli/downloads/libupnpp-0.19.4.tar.gz.sha256
  sha256  29d1d07d44c8f79573e64e093ad8f0f883b11ef9eb3642a67aa703c1dde60576  libupnpp-0.19.4.tar.gz
 -sha256  f6e1016c1d3c9b0e065f2c72a86bb9538b2c6d8862ae010d97ba571f903622e2  libupnpp-b6ad3f1ce9fbc15364504f02ae2f3239a18af93b.tar.gz
-+sha256  5c75eb5d2336baec27be2342b4d53086cdd4f56a7756398a055028cb4a1eb00e  libupnpp-0.20.0.tar.gz
++sha256  48c2cc7b5a3eef55f4dddda88d8676ed11f7e88f1d6680c8458512067a0e0a11  libupnpp-0.20.2.tar.gz
  
  # Hash for license file:
  sha256  00a89b0d18aacd4114decf79122db87bf35bddaf2bc50e383c9c9f4c263390b2  COPYING
@@ -222,7 +222,7 @@ diff -ru a/package/libupnp/libupnp.mk b/package/libupnp/libupnp.mk
  
 -#LIBUPNPP_VERSION = 0.19.4
 -#LIBUPNPP_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
-+LIBUPNPP_VERSION = 0.20.0
++LIBUPNPP_VERSION = 0.20.2
 +LIBUPNPP_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
  LIBUPNPP_LICENSE = LGPL-2.1+
  LIBUPNPP_LICENSE_FILES = COPYING
@@ -243,7 +243,7 @@ diff -ru a/package/libupnp/libupnp.mk b/package/libupnp/libupnp.mk
  sha256  e3d90dedee6a942acc049324ca81b7f008d217d386a3e2590a2ca5670cc9df05  upmpdcli-1.4.14.tar.gz
 -sha256  0247c1d20069636eb72f3e11b4962cfc3acad0cce7c4815642c5896e9a236026  upmpdcli-master.tar.gz
 -sha256  ec570f345feeca4d8b2004150f3f2c46682170970387d8f8e6bbf4ea9af3faf5  upmpdcli-da758110f5f523fa2a313eec5e9a2878319ca60b.tar.gz
-+sha256  c971ed29cf00ebe70b6461f30ec4b9d58e0acaf52c6fd452876678bb6fe53009  upmpdcli-1.5.0.tar.gz
++sha256  802a2ab795841fbb9bfff5fd7951881022f5414ed893a1db704801b999e658a8  upmpdcli-1.5.8.tar.gz
  
  # Hash for license file:
  sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  COPYING
@@ -261,7 +261,7 @@ diff -ru a/package/libupnp/libupnp.mk b/package/libupnp/libupnp.mk
 -UPMPDCLI_SITE=https://framagit.org/medoc92/upmpdcli
 -UPMPDCLI_SITE_METHOD=git
 -UPMPDCLI_AUTORECONF = YES
-+UPMPDCLI_VERSION = 1.5.0
++UPMPDCLI_VERSION = 1.5.8
 +UPMPDCLI_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
  
  UPMPDCLI_LICENSE = LGPL-2.1+
