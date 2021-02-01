@@ -20,6 +20,7 @@ fi
 
 cd `dirname $0`
 MYDIR=`pwd`
+mkdir -p images
 echo Copying $BRDIR/images/sdcard.img to images/hifiberryos-$TS-pi$VERSION.img
 cp $BRDIR/images/sdcard.img images/hifiberryos-$TS-pi$VERSION.img
 ./fix-fs images/hifiberryos-$TS-pi$VERSION.img
