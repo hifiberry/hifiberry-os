@@ -3,8 +3,8 @@
 In previous HiFiBerryOS releases, it was possible to use a graphic equalizer with HiFiBerry sound cards that did not have DSP capabilities. 
 This feature was removed with first release in 2021. 
 
-You might think we did this to just sell more hardware. That's partly true. As we're not making any money with HiFiBerryOS and the development 
-costs are quite significant, we need to sell hardware to finance this. However, that was not the main reason. There are two more important 
+You might think we did this to just sell more hardware. No. As we're not making any money with HiFiBerryOS and the development 
+costs are quite significant, we need to sell hardware to finance this. However, that was not the reason for this decision. There are two more important 
 points that lead to this decision:
 
 1. Compatibility: Some backends do not work well with ALSAeq, e.g. Spotify.
