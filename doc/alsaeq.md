@@ -16,7 +16,7 @@ However, we did not remove the code. The functionality is still integrated. We s
 If you still want to experiment with it, you can enable it in the frontend as follows:
 
 * Login via SSH
-* touch /etc/hifiberry/alsaeq.feature
+* touch /etc/hifiberry/alsa-eq.feature
 * /opt/hifiberry/bin/reconfigure-players
 
 Do not send any bug reports if you have this enabled! 
