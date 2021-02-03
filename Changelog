@@ -1,10 +1,16 @@
+20210203:
+- Allow to exchange L/R channels on non-DSP boards
+- Bugfix: optical input on some DSP models not available
+- Bugfix: Prev/Next button not working
+- Improve volume control for cards with the DSP add-on
+- Other small bugfixes and improvements
+
 20201213:
 - updated Bluetooth player
 - improvements for Amp100/DSP combination
 - fixed in DAC+ DSP and DSP add-on DSP profiles
 - improved docker container configuration
 - stability improvements
-
 
 20201201:
 - added OpenHome player
