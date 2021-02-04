@@ -26,4 +26,4 @@ root=/dev/sda2 rootwait console=tty5 systemd.show_status=1
 
 ## Boot
 
-As of today, the system will still hang at some point in the boot process. As this is a feature with a lower priority for us, it might take some time until this will be working.
+As of today, the system will still hang at some point in the boot process. This might be caused by bugs in the scripts that handle the disk resizing. As this is a feature with a lower priority for us, it might take some time until this will be working.
