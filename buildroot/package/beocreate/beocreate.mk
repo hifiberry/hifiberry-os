@@ -48,6 +48,11 @@ define BEOCREATE_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/etc/systemd/system/beocreate2.service.d/override.conf
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/beocreate2.service \
                 $(TARGET_DIR)/lib/systemd/system/beocreate2.service
+
+	ifeq ($(VERSION),"0w")
+		$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/pi-zero-override.conf \
+			$(TARGET_DIR)/etc/systemd/system/beocreate2.service.d/pi-zero-override.conf
+	endif
 endef
 
 $(eval $(generic-package))
