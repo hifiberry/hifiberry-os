@@ -27,8 +27,10 @@ else
 
   /usr/bin/eepdump $EEPFILE $TXTFILE >/dev/null
 
-  VENDOR=`cat /tmp/eeprom.txt | grep "vendor " | awk -F\" '{print $2}' | xargs echo`
-  PRODUCT=`cat /tmp/eeprom.txt | grep "product " | awk -F\" '{print $2}' | xargs echo`
+  if [ -f $TXTFILE ]; then 
+    VENDOR=`cat $TXTFILE | grep "vendor " | awk -F\" '{print $2}' | xargs echo`
+    PRODUCT=`cat $TXTFILE | grep "product " | awk -F\" '{print $2}' | xargs echo`
+  fi
 fi
 
 echo $VENDOR:$PRODUCT

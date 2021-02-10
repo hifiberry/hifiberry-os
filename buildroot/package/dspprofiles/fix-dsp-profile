@@ -1,0 +1,38 @@
+#!/bin/bash
+# Fix potential problems with DSP programs not loaded correctly
+
+if [ "$1" != "force" ]; then
+ DETECTED=`dsptoolkit --timeout=20 get-meta detected_dsp`
+else
+ DETECTED="yes"
+fi
+
+# no DSP, exit
+if [ "$DETECTED" == "" ]; then
+ exit 0
+fi
+
+# Check if DSP program is ok
+OK=`dsptoolkit get-xml | grep "ROM"`
+
+if [ "$OK" != "" ]; then
+ exit 0
+fi
+
+echo "DSP found, but no profile known, trying to fix"
+
+CHECKSUM=`dsptoolkit get-checksum`
+if [ "$CHECKSUM" == "" ]; then
+ echo "Couldn't get checksum, something is very wrong here."
+ exit 1
+fi
+
+MATCHINGPROFILE=`grep -l $CHECKSUM /opt/beocreate/beo-dsp-programs/*.xml | tail -1`
+if [ -f $MATCHINGPROFILE ]; then
+ echo "Will use $MATCHINGPROFILE"
+ cp $MATCHINGPROFILE /var/lib/hifiberry/dspprogram.xml
+ systemctl restart sigmatcp
+else
+ echo "No matching profile found"
+ exit 1
+fi
