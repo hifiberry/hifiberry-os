@@ -224,12 +224,18 @@ if [ "$V" -lt 20201030 ]; then
  rm  /newroot/etc/hifiberry.state
 fi
 
-if [ "$V" -lt 20201210 ]; then
+if [ "$V" -lt 20201231 ]; then
  echo "Making sure, players will be configured correctly"
- rm  /newroot/etc/hifiberry.state$
+ rm  /newroot/etc/hifiberry.state
 
  echo "Removing mpd watchdog from audiocontrol"
  sed s/^mpd=mpd-mpris$//g /newroot/etc/audiocontrol2.conf
 fi
+
+if [ "$V" -lt 20210130 ]; then
+ echo "Making sure, players will be configured correctly"
+ rm  /newroot/etc/hifiberry.state
+fi
+
 
 echo "Upgrading configuration files done"

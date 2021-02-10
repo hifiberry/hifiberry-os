@@ -223,6 +223,7 @@ guess_card() {
      CARD="Amp100 + DSP Module"
      DSPTYPE="DSP add-on"
      FEATURES="$FEATURES spdifnoclock toslink"
+     SECONDARY_MIXER_CONTROL="Digital"
    else
      CARD="Amp100"
    fi
@@ -234,6 +235,7 @@ guess_card() {
    if [ "$HAS_DSP" == "1" ]; then
      CARD="DAC2 HD + DSP Module"
      DSPTYPE="DSP add-on"
+     SECONDARY_MIXER_CONTROL="DAC"
    else
      CARD="DAC2 HD"
    fi
@@ -256,13 +258,19 @@ guess_card() {
         
  DACPRO=`aplay -l | grep DAC+ | grep Pro`
  if [ "$DACPRO" != "" ]; then
-   amixer sget Headphone 2>/dev/null >/dev/null
-   if [ $? == 0 ]; then
-     CARD="DAC2 Pro"
-     # Fix headphone volume for now
-     amixer sset Headphone 0db
+   if [ "$HAS_DSP" == "1" ]; then
+     CARD="DAC2 Pro + DSP Module"
+     DSPTYPE="DSP add-on"
+     SECONDARY_MIXER_CONTROL="Digital"
    else
-     CARD="DAC+ Pro"
+     amixer sget Headphone 2>/dev/null >/dev/null
+     if [ $? == 0 ]; then
+       CARD="DAC2 Pro"
+       # Fix headphone volume for now
+       amixer sset Headphone 0db
+     else
+       CARD="DAC+ Pro"
+     fi
    fi
    return
  fi
@@ -311,6 +319,7 @@ guess_card() {
 
  if [ "$HAS_DSP" == "1" ]; then
     CARD="DAC+ DSP"
+    FEATURES="$FEATURES toslink"
     return
  fi
 
@@ -330,9 +339,15 @@ check_dsp() {
  if [ "$DETECTED" != "" ]; then
    HAS_DSP=1
    FEATURES="$FEATURES dsp"
-   return
  else
    HAS_DSP=0
+ fi
+
+ # If a DSP was detected, make sure, it knows the profile
+ if [ "$HAS_DSP" == "1" ]; then
+   if [ -x /opt/hifiberry/bin/fix-dsp-profile ]; then
+     /opt/hifiberry/bin/fix-dsp-profile force
+   fi
  fi
 }
 
@@ -362,7 +377,6 @@ check_pi3a() {
     systemctl disable weston cog
   fi
 }
-
 
 # Reconfigure SpotifyD
 reconfigure_spotify() {
@@ -633,7 +647,6 @@ CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'`
 FEATURES=`echo $FEATURES | xargs`
 
 for i in $FEATURES; do 
- echo $i;
  if [ ! -f /etc/features/$i ]; then
    echo Feature $i not yet configured
    CURRENT_FEATURES="!"
@@ -646,7 +659,12 @@ if [ "$HAS_DSP" == "1" ]; then
  fi
 fi
 
-echo $DSPTYPE $HAS_DSP
+if [ "$SECONDARY_MIXER_CONTROL" != "" ] && \
+   [ "$SECONDARY_MIXER_CONTROL" != "$MIXER_CONTROL" ]; then
+ echo "Detected secondary mixer control $SECONDARY_MIXER_CONTROL, setting to 100%"
+ amixer sset $SECONDARY_MIXER_CONTROL 100%
+fi
+
 
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_CARD" != "$CARD" ] || \
