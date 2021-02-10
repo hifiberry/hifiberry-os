@@ -49,6 +49,13 @@ Creates a HiFiBerryOS configuration for the given Raspberry Pi platform, e.g.
 
 Starts the configuration interface. Here you can add/remove packages or change other parameters.
 
+## secrets
+
+If you rely on components that have secrets, create a file named `secrets` based on the [template](../secrets.template).
+These components rely on secrets:
+* spotify
+
+
 ## compile
 
 Compiles a full HiFiBerryOS version. When building from scratch, this can take a long time (2 hours even on an up-to-date PC).
