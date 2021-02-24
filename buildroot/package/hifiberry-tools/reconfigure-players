@@ -218,6 +218,18 @@ guess_card() {
  check_dsp
  hat_info
 
+ if [ "$HATINFO" == "HiFiBerry Digi2 Pro" ]; then
+  if [ "$HAS_DSP" == "1" ]; then
+     CARD="Digi2 Pro + DSP Module"
+     DSPTYPE="DSP add-on"
+     FEATURES="$FEATURES spdifnoclock toslink"
+     SECONDARY_MIXER_CONTROL="Softvol"
+   else
+     CARD="Digi2 Pro"
+   fi
+   return
+ fi
+
  if [ "$HATINFO" == "HiFiBerry Amp100" ]; then
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Amp100 + DSP Module"

@@ -31,9 +31,7 @@ choice
            bool "DAC+ ADC"
     config HIFIBERRY_TEST_DACADCPRO
            bool "DAC+ ADC Pro"
-    config HIFIBERRY_TEST_DSPDACADC
-          bool "DAC+ DSP DAC/ADC addon"
-    config HIFIBERRY_TEST_USB
-          bool "USB I2S board"
+    config HIFIBERRY_TEST_DIGI2PRO
+           bool "Digi2 Pro"
 endchoice
 

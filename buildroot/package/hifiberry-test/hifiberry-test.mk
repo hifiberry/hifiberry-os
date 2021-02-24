@@ -11,8 +11,6 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dspdac.xml \
            $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dacadcaddon-test.xml \
-           $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp100.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplusadcpro.eep \
@@ -26,6 +24,8 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dac2hd.eep \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dac2pro.eep \
+           $(TARGET_DIR)/opt/hifiberry/contrib
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digi2pro.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dtoverlay \
            $(TARGET_DIR)/opt/hifiberry/contrib
@@ -89,6 +89,20 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2PRO
         echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2PRO
+        echo "Installing Digi2 Pro test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdigi2pro \
+                $(TARGET_DIR)/etc/init.d/S99testdigi2pro
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=hifiberry-digi-pro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
@@ -206,10 +220,6 @@ ifdef HIFIBERRY_TEST_DSPDAC
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDAC
 endif
 
-ifdef HIFIBERRY_TEST_DSPDACADC
-HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDACADC
-endif
-
 ifdef HIFIBERRY_TEST_DACADC
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADC
 endif
@@ -218,8 +228,8 @@ ifdef HIFIBERRY_TEST_DACADCPRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPRO
 endif
 
-ifdef HIFIBERRY_TEST_USB
-HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_USB
+ifdef HIFIBERRY_TEST_DIGI2PRO
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2PRO
 endif
 
 $(eval $(generic-package))
