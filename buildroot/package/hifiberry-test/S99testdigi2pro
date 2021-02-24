@@ -1,0 +1,51 @@
+#! /bin/sh
+
+# Write EEPROM to Digi2Pro and play a test tone
+
+OUT=/dev/tty1
+
+# Cleanup some stuff
+rm /etc/init.d/S49ntp 2>/dev/null
+rm /etc/init.d/S90sigmatcp 2>/dev/null
+# rm /etc/init.d/S40network 2>/dev/null
+# rm /etc/init.d/S50sshd 2>/dev/null
+
+case "$1" in
+    start)
+	i2c=`cat /boot/config.txt | grep i2c-gpio`
+        if [ "$i2c" == "" ]; then
+           echo "dtoverlay=i2c-gpio" >> /boot/config.txt
+	   echo "dtparam=i2c_gpio_sda=0" >> /boot/config.txt
+	   echo "dtparam=i2c_gpio_scl=1" >> /boot/config.txt
+        fi
+
+	# Program EEPROM
+        PATH=$PATH:/opt/hifiberry/contrib
+        export PATH
+        /opt/hifiberry/contrib/hbflash.sh --writeread -f=/opt/hifiberry/contrib/digi2pro.eep -t=24c32
+        if [ "$?" != "0" ]; then
+          echo
+          echo
+          echo
+          echo "EEPROM write FAIL, data not correct"
+          echo "aborting..."
+          echo
+          echo
+          echo
+        else
+          play -n synth 60 sine 1000 &
+        fi
+
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
