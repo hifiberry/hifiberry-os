@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$1" == "" ]; then 
-	TAG=2020.11
+	TAG=2021.02-rc2
 else
 	TAG=$1
 fi
