@@ -11,6 +11,8 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dspdac.xml \
            $(TARGET_DIR)/opt/hifiberry/contrib
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/4output.xml \
+	   $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp100.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplusadcpro.eep \
@@ -131,6 +133,16 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDAC
 	echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_KADDSP
+        echo "Installing KAD DSP test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testkaddsp \
+                $(TARGET_DIR)/etc/init.d/S99testkaddsp
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=hifiberry-dac" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACRTC
         echo "Installing DAC+ RTC test script"
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdacrtc \
@@ -140,16 +152,6 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACRTC
         echo "dtoverlay=hifiberry-dac" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtoverlay=i2c-rtc,ds1307" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_arm=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
-endef
-
-define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DSPDACADC
-        echo "Installing DAC+ DSP DAC/ADC test script"
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdacdspadc \
-                $(TARGET_DIR)/etc/init.d/S99testdacdspadc
-
-        echo "Adding drivers to config.txt"
-        echo "dtoverlay=hifiberry-dac" >> $(BINARIES_DIR)/rpi-firmware/config.txt
-        echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADC
@@ -176,20 +178,31 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPRO
         echo "dtoverlay=hifiberry-dacplusadcpro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
-
-define HIFIBERRY_TEST_INSTALL_INIT_SYSV_USB
-        echo "Installing USB2I2S test script"
-        mkdir -p $(TARGET_DIR)/opt/hifiberry/bin
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testusb \
-                $(TARGET_DIR)/etc/init.d/S99testusb
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/spi_flash \
-                $(TARGET_DIR)/opt/hifiberry/bin/
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hbfw_usb2i2s_100.bin \
-		$(TARGET_DIR)/opt/hifiberry/bin/
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPROXLR
+        echo "Installing DAC+ ADC Stage+XLR test script"
+        mkdir -p $(TARGET_DIR)/boot/overlays/
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdacadcproxlr \
+                $(TARGET_DIR)/etc/init.d/S99testdacadcproxlr
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hifiberry-dacplusadcpro.dtbo \
+                $(TARGET_DIR)/boot/overlays/
 
         echo "Adding drivers to config.txt"
-        echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=hifiberry-dacplusadcpro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
+
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_POWERCONTROLLER
+        echo "Installing Power controller flasher"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testpowercontroller \
+                $(TARGET_DIR)/etc/init.d/S99testpowercontroller
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/pc-firmware-2.hex \
+		$(TARGET_DIR)/opt/hifiberry/contrib/firmware.hex
+        echo "Adding drivers to config.txt"
+	echo "# Enable I2C and serial" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "dtparam=i2c=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "enable_uart=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "dtoverlay=disable-bt" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 
 
 ifdef HIFIBERRY_TEST_AMP2
@@ -228,8 +241,20 @@ ifdef HIFIBERRY_TEST_DACADCPRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPRO
 endif
 
+ifdef HIFIBERRY_TEST_DACADCPROXLR
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPROXLR
+endif
+
 ifdef HIFIBERRY_TEST_DIGI2PRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2PRO
+endif
+
+ifdef HIFIBERRY_TEST_KADDSP
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_KADDSP
+endif
+
+ifdef HIFIBERRY_TEST_POWERCONTROLLER
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_POWERCONTROLLER
 endif
 
 $(eval $(generic-package))

@@ -1,0 +1,98 @@
+#! /bin/sh
+
+# Write profile to DSP DAC and play a test tone
+
+OUT=/dev/tty1
+
+case "$1" in
+    start)
+	if [ -f /etc/init.d/S90sigmatcp ]; then
+           mv /etc/init.d/S90sigmatcp /etc/init.d/noS90sigmatcp
+	fi
+	if [ ! -f /boot/overlays/hifiberry-dacplusadcpro.dtbo ]; then
+	   cp /opt/hifiberry/contrib/hifiberry-dacplusadcpro.dtbo  /boot/overlays/
+	   reboot
+	fi 
+
+	i2c=`cat /boot/config.txt | grep i2c-gpio`
+        if [ "$i2c" == "" ]; then
+           echo "dtoverlay=i2c-gpio" >> /boot/config.txt
+	   echo "dtparam=i2c_gpio_sda=0" >> /boot/config.txt
+	   echo "dtparam=i2c_gpio_scl=1" >> /boot/config.txt
+        fi
+
+	fail=0
+
+	# Disable Mic bias
+	amixer set "ADC Mic Bias" "Mic Bias off"
+
+        # Test noise
+        arecord -r 48000 -d 4 -c 2 -f S32_LE /tmp/start.wav 2>/dev/null
+	if [ "$?" != "0" ]; then
+            echo "Could not record anything"
+            fail=1
+        fi 
+        arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
+        RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`
+        NOISE=`echo $RMS \* 1000000 / 1 | bc`
+        if [ $NOISE -gt 100 ]; then
+           echo Problem - too much noise: $NOISE > $OUT
+           fail=1
+        else
+           echo Noise ok: $NOISE > $OUT
+        fi
+
+        # Test sine wave
+        if [ ! -f /opt/hifiberry/contrib/sine1k.wav ]; then
+            sox -n -r 48000 -c 2 /opt/hifiberry/contrib/sine1k.wav synth 5 sine 1000
+        fi
+        aplay /opt/hifiberry/contrib/sine1k.wav 2>/dev/null &
+        arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
+        RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`
+        SIGNAL=`echo $RMS \* 1000000 / 1 | bc`
+        if [ $SIGNAL -lt 400000 ]; then
+            echo Problem: signal too low: $SIGNAL > $OUT
+            fail=1
+        else
+            echo Signal ok: $SIGNAL > $OUT
+        fi
+
+	if [ $SIGNAL -gt 850000 ]; then
+            echo Problem: signal too high: $SIGNAL > $OUT
+            fail=1
+        else
+            echo Signal ok: $SIGNAL > $OUT
+        fi
+
+	# Program EEPROM
+        PATH=$PATH:/opt/hifiberry/contrib
+        export PATH
+        /opt/hifiberry/contrib/hbflash.sh -w -f=/opt/hifiberry/contrib/dacplusadcpro.eep -t=24c32
+
+        if [ "$fail" == "0" ]; then
+                echo '  ___ | | __' > $OUT
+                echo ' / _ \| |/ /' > $OUT
+                echo '| (_) |   <'  > $OUT
+                echo ' \___/|_|\_\' > $OUT
+        else
+                echo '    ___       _ _     _ _ _ ' > $OUT
+                echo '   / __)     (_) |   | | | |' > $OUT
+                echo ' _| |__ _____ _| |   | | | |' > $OUT
+                echo '(_   __|____ | | |   |_|_|_|' > $OUT
+                echo '  | |  / ___ | | |    _ _ _ ' > $OUT
+                echo '  |_|  \_____|_|\_)  |_|_|_|' > $OUT
+        fi
+
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+

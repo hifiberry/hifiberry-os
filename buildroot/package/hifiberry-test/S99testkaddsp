@@ -1,0 +1,30 @@
+#! /bin/sh
+
+# Write simple test profile to KAD DSP and play test tone
+
+OUT=/dev/tty1
+
+case "$1" in
+    start)
+	echo "Reseting DSP"  > $OUT
+	gpio mode 0 out
+	gpio write 0 0
+	gpio write 0 1
+	echo "Programming DSP profile" > $OUT
+	dsptoolkit install-profile /opt/hifiberry/contrib/4output.xml > $OUT
+	echo "Playing test tone" > $OUT
+	play -n synth 120 sine 1000 > $OUT
+	echo "Done" > $OUT
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
