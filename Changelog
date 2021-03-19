@@ -1,3 +1,7 @@
+202103xx:
+- Screen saver feature for local browser by @tysonnorris
+- Bugfix: #nowplaying started correctly in local browser
+
 20210203:
 - Allow to exchange L/R channels on non-DSP boards
 - Bugfix: optical input on some DSP models not available
