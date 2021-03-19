@@ -39,7 +39,7 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/store-volume
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/restore-volume \
            $(TARGET_DIR)/opt/hifiberry/bin/restore-volume
-     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/speaker-role \
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/speaker-role \
 	   $(TARGET_DIR)/opt/hifiberry/bin/speaker-role
     $(INSTALL) -D -m 0600 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/hifiberry.conf.sample \
            $(TARGET_DIR)/etc/hifiberry.conf.sample
@@ -61,6 +61,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/enable-mdns \
                 $(TARGET_DIR)/opt/hifiberry/bin
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/snd_soc_core_disable_pm.conf \
+		$(TARGET_DIR)/etc/modules-load.d/snd_soc_core_disable_pm.conf
     touch $(TARGET_DIR)/resize-me
     touch $(TARGET_DIR)/etc/spotifyd.conf
 
