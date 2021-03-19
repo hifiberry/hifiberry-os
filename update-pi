@@ -35,13 +35,13 @@ fi
 
 # Not ready 
 REMOTESUPPORTSF2FS=0
-echo $REMOTESUPPORTSF2FS
 
 if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
 
  echo "Packaging Pi$VERSION release"
  ./create-updater $VERSION
 
+ echo "Copying software to $HOST"
  if [ "$REMOTESUPPORTSF2FS" == "1" ]; then 
   IMG=`ls images/ | grep updater | grep zip | grep pi$VERSION | tail -1`
   sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.zip; 
@@ -49,6 +49,8 @@ if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
   IMG=`ls images/ | grep updater | grep tar.gz | grep pi$VERSION | tail -1`
   sshpass -p "$PASSWORD" scp -P $PORT images/$IMG root@$HOST:/data/updater.tar.gz;
  fi
+
+ echo "Extracting software on $HOST"
  if [ "$NOREBOOT" == "" ]; then
   sshpass -p "$PASSWORD" ssh -p $PORT root@$HOST /opt/hifiberry/bin/extract-update --reboot
  else
