@@ -1,4 +1,4 @@
-/arch/arm/boot/dts/overlays/README	2020-12-13 23:54:37.000000000 +0000
+--- a/arch/arm/boot/dts/overlays/README	2020-12-13 23:54:37.000000000 +0000
 +++ b/arch/arm/boot/dts/overlays/README	2020-12-13 23:56:26.564292332 +0000
 @@ -1034,6 +1034,29 @@
                                  master for bit clock and frame clock.
