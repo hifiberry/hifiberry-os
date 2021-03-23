@@ -1,0 +1,11 @@
+--- a/sound/soc/soc-core.c        2021-03-23 07:53:06.461226984 +0000
++++ b/sound/soc/soc-core.c        2021-03-23 07:53:55.974044815 +0000
+@@ -69,7 +69,7 @@
+  * It can be used to eliminate pops between different playback streams, e.g.
+  * between two audio tracks.
+  */
+-static int pmdown_time = 5000;
++static int pmdown_time = -1;
+ module_param(pmdown_time, int, 0);
+ MODULE_PARM_DESC(pmdown_time, "DAPM stream powerdown time (msecs)");
+
