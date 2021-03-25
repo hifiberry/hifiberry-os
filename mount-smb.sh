@@ -1,6 +1,7 @@
 #!/bin/bash
 BASEDIR=/data/library/music
 while read -r line; do
+  # Split the line first
   readarray -d \; -t parts <<< "$line"
   MOUNTID=${parts[0]}
   SHARE=${parts[1]}
@@ -20,28 +21,12 @@ while read -r line; do
     MOUNTOPTS="rw"
   fi
 
-  if [ ! -d $BASEDIR/$MOUNTID ]; then
-    mkdir -p $BASEDIR/$MOUNTID
-  fi
-  # Check if share is on a .local host, resolve this first
-  HOST=`echo $m | awk -F\; '{print $2}' | awk -F\/ '{print $3}'`
-  if [[ $HOST == *.local ]]; then
-    IP=`avahi-resolve-host-name -4 $HOST | awk '{print $2}'`
+  if [ ! -d '$BASEDIR/$MOUNTID' ]; then
+    mkdir -p '$BASEDIR/$MOUNTID'
   fi
 
-  # The try to resolve using nmblookup
-  if [ "$IP" == "" ]; then
-    nmblookup $HOST > /tmp/$$
-    if [ "$?" == "0" ]; then
-      IP=`nmblookup $HOST|awk 'END{print $1}'`
-    fi
-  fi
-
-  if [ "$IP" != "" ]; then
-    SHARE=`echo $SHARE | sed s/$HOST/$IP/`
-  fi
-
-  mountcmd="mount -t cifs -o user=$USER,password=$PASSWORD,$MOUNTOPTS $SHARE /data/library/music/$MOUNTID"
+  # Removed local resolving as it leads to SHARE beeing empty if not resolvable
+  mountcmd="mount.cifs '$SHARE' '/data/library/music/$MOUNTID' -o user=$USER,password=$PASSWORD,$MOUNTOPTS"
   echo ${mountcmd}
   ${mountcmd}
 
