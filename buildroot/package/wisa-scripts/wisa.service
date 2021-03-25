@@ -1,5 +1,6 @@
 [Unit]
 Description=WISA init
+ConditionPathExists=/opt/wisa/etc/room.cfg
 
 [Service]
 Type=oneshot

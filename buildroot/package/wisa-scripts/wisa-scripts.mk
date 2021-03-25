@@ -23,7 +23,7 @@ define WISA_SCRIPTS_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/wisa-scripts/conf/stereo.cfg \
 		$(TARGET_DIR)/opt/wisa/etc/stereo.cfg.example
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/wisa-scripts/conf/stereo.cfg \
-                $(TARGET_DIR)/opt/wisa/etc/room.cfg
+                $(TARGET_DIR)/opt/wisa/etc/room.cfg.example
 endef
 
 
