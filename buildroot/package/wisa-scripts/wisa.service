@@ -1,0 +1,10 @@
+[Unit]
+Description=WISA init
+
+[Service]
+Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting WiSA"
+ExecStart=/opt/wisa/bin/system_startup.py
+
+[Install]
+WantedBy=multi-user.target
