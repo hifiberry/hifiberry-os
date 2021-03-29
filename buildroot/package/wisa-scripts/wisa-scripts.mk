@@ -17,6 +17,8 @@ define WISA_SCRIPTS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/wisa/bin/system_shutdown.py
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/wisa-scripts/tx_start.py \
                 $(TARGET_DIR)/opt/wisa/bin/tx_start.py
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/wisa-scripts/ra \
+		$(TARGET_DIR)/opt/wisa/bin/tx_start.py
 
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/wisa-scripts/conf/mono.cfg \
 		$(TARGET_DIR)/opt/wisa/etc/mono.cfg.example
