@@ -1,4 +1,5 @@
 #!/bin/bash
+
 BASEDIR=/data/library/music
 SMB_MOUNT=/etc/smbmounts.conf
 SMB_PATCH=/tmp/smbmounts_patch
