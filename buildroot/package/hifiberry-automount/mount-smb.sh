@@ -4,7 +4,6 @@ BASEDIR=/data/library/music
 SMB_MOUNT=/etc/smbmounts.conf
 SMB_PATCH=/tmp/smbmounts_patch
 
-echo "Patching ${SMB_MOUNT}"
 # Fix for Beocreate: not using proper EOF and handling shares with spaces beeing incorrectly translated to MOUNTID
 if test -f "${SMB_PATCH}"; then
   rm ${SMB_PATCH}
