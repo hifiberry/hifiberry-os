@@ -1,4 +1,5 @@
-202103xx:
+202104xx:
+- Added support for HiFiBerry power controller
 - Screen saver feature for local browser by @tysonnorris
 - disabled ASOC power management
 - Bugfix: #nowplaying started correctly in local browser
