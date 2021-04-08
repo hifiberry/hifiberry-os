@@ -235,6 +235,16 @@ fi
 if [ "$V" -lt 20210130 ]; then
  echo "Making sure, players will be configured correctly"
  rm  /newroot/etc/hifiberry.state
+
+ # Amp100?
+ AMP=`/opt/hifiberry/bin/readhat | grep -i "amp100"`
+ if [ "$AMP" != "" ]; then
+   # echo Configuring correct driver for Amp100
+   cat /boot/config.txt | grep -v "dtoverlay=hifiberry" > /tmp/config.txt
+   mount -o remount,rw /boot
+   mv /boot/config.txt /boot/config.bak
+   mv /tmp/config.txt /boot/config.txt
+ fi
 fi
 
 
