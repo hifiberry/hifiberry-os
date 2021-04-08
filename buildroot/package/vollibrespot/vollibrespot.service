@@ -2,6 +2,7 @@
 Description=Vollibrespot
 Wants=network-online.target
 After=network.target sound.target
+ConditionPathExists=!/custom/service/spotify.disable
 
 [Service]
 Type=simple
