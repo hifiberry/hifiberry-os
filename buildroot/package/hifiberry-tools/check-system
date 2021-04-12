@@ -20,6 +20,15 @@ echo "Sound card ID: $CURRENT_HW_SHORT"
 echo "Mixer: $CURRENT_MIXER_CONTROL"
 echo "Features: $CURRENT_FEATURES"
 
+echo -n "Power controller: "
+LSB=`i2cget -y 1 0x77 0xfd`
+MSB=`i2cget -y 1 0x77 0xfe`
+PCVERSION="$MSB/$LSB"
+if [ "$PCVERSION" == "/" ]; then
+ PCVERSION="not detected"
+fi
+echo $PCVERSION
+
 echo -n "Linux version: "
 uname -a
 

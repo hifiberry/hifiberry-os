@@ -1,3 +1,10 @@
+202104xx:
+- Added support for HiFiBerry power controller
+- Screen saver feature for local browser by @tysonnorris
+- disabled ASOC power management
+- Bugfix: #nowplaying started correctly in local browser
+- WISA integration (for OEMs only)
+
 20210203:
 - Allow to exchange L/R channels on non-DSP boards
 - Bugfix: optical input on some DSP models not available

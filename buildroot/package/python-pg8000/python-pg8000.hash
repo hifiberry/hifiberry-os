@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/pg8000/json
+md5  02717024dd6b44385aecae564c81b426  pg8000-1.16.0.tar.gz
+sha256  a80dd7267ed438e6ae9500d7034244c459a06f89d0d37bc37026a868e36e0979  pg8000-1.16.0.tar.gz
+# Locally computed sha256 checksums
+sha256  6a37ae31a45126635939f5c083e98d48ea5cffe5613b62db64cd5dcb0a25e677  LICENSE

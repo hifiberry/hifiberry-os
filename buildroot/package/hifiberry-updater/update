@@ -31,25 +31,28 @@ fi
 for i in "$@"; do
  case $i in
     --reboot)
-    MODE=REBOOT
-    ;;
+    	MODE=REBOOT
+    	;;
     --simulate)
-    MODE=SIMULATE
-    ;;
+    	MODE=SIMULATE
+    	;;
     --check)
-    MODE=CHECK
-    ;;
+    	MODE=CHECK
+    	;;
     --force)
-    FORCE=1
-    ;;
+    	FORCE=1
+    	;;
     --latest)
-    RELEASE=latest
-    ;;
+    	RELEASE=latest
+    	;;
     --experimental)
-    RELEASE=experimental
-    ;;
+    	RELEASE=experimental
+    	;;
     --stable)
-    RELEASE=stable
+    	RELEASE=stable
+	;;
+    *)
+	RELEASE=$1
  esac
 done
 

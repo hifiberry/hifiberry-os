@@ -1,2 +1,2 @@
 #!/bin/sh
-i2cset -y 1 $1 $2
+i2cset -y 1 0x77 $1 $2
