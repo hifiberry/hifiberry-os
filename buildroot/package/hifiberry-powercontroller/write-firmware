@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Make sure, serial port is configured correctly
+/opt/hifiberry/bin/enable-updi
+
+# Flash firmware
+pyupdi -c /dev/ttyAMA0 -d mega808 -f /opt/hifiberry/powercontroller/firmware-r*.hex
+
+

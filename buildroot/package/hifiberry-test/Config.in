@@ -4,8 +4,8 @@ config BR2_PACKAGE_HIFIBERRY_TEST
 	  Tools to test the hardware of HiFiBerry boards
         depends on BR2_PACKAGE_HIFIBERRY_BASE
         select BR2_PACKAGE_DSPTOOLKIT
-#        select BR2_PACKAGE_WIRINGPI
         select BR2_PACKAGE_SOX
+	select BR2_PACKAGE_PYTHON_PYUPDI
 
 choice
     prompt "Card to test"
@@ -27,13 +27,17 @@ choice
           bool "DAC+ DSP"
     config HIFIBERRY_TEST_BEOCREATE
            bool "Beocreate 4 channel amplifier"
+    config HIFIBERRY_TEST_KADDSP
+           bool "KAD DSP"
     config HIFIBERRY_TEST_DACADC
            bool "DAC+ ADC"
     config HIFIBERRY_TEST_DACADCPRO
            bool "DAC+ ADC Pro"
-    config HIFIBERRY_TEST_DSPDACADC
-          bool "DAC+ DSP DAC/ADC addon"
-    config HIFIBERRY_TEST_USB
-          bool "USB I2S board"
+    config HIFIBERRY_TEST_DACADCPROXLR
+           bool "DAC+ ADC Stage + XLR I/O"
+    config HIFIBERRY_TEST_DIGI2PRO
+           bool "Digi2 Pro"
+    config HIFIBERRY_TEST_POWERCONTROLLER
+           bool "Power controller"
 endchoice
 

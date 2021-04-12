@@ -2,6 +2,7 @@
 Description=BlueALSA
 Requires=a2dp-agent.service
 After=a2dp-agent.service
+ConditionPathExists=!/custom/service/bluetooth.disable
 
 [Service]
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting bluealsa"

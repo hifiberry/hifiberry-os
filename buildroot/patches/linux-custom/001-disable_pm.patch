@@ -1,0 +1,160 @@
+--- a/arch/arm/boot/dts/overlays/README	2020-12-13 23:54:37.000000000 +0000
++++ b/arch/arm/boot/dts/overlays/README	2020-12-13 23:56:26.564292332 +0000
+@@ -1034,6 +1034,29 @@
+                                 master for bit clock and frame clock.
+         leds_off                If set to 'true' the onboard indicator LEDs
+                                 are switched off at all times.
++        no_sby                  Prevent the pcm512x codec from entering standby.
++                                The RQST bit will not be set if this param
++                                is used, which would typically happen
++                                immediately after the ALSA device is closed.
++                                (When the RQST bit is set, the DAC will be
++                                forced into a system standby mode, which is also
++                                the mode the system enters in the case of clock
++                                errors. In this mode, most subsystems will be
++                                powered down but the charge pump and digital
++                                power supply.)
++        no_pdn                  Prevent the pcm512x codec from powering down.
++                                The RQPD bit will not be set if this param
++                                is used, which would typically happen 5s
++                                after the ALSA device is closed.
++                                (When the RQPD bit is set, the DAC will be
++                                forced into powerdown mode, in which the power
++                                consumption would be minimum as the charge pump
++                                is also powered down. However, it will take
++                                longer to restart from this mode. This mode has
++                                higher precedence than the standby mode, that
++                                is, setting this bit along with the RQST bit for
++                                standby mode will result in the DAC going into
++                                powerdown mode.)
+ 
+ 
+ Name:   hifiberry-dacplusadc
+--- a/arch/arm/boot/dts/overlays/hifiberry-dacplus-overlay.dts	2020-12-13 23:57:40.992946370 +0000
++++ b/arch/arm/boot/dts/overlays/hifiberry-dacplus-overlay.dts	2020-12-13 23:59:40.820826635 +0000
+@@ -29,7 +29,7 @@
+ 			#size-cells = <0>;
+ 			status = "okay";
+ 
+-			pcm5122@4d {
++			dacplus_codec: pcm5122@4d {
+ 				#sound-dai-cells = <0>;
+ 				compatible = "ti,pcm5122";
+ 				reg = <0x4d>;
+@@ -61,5 +61,7 @@
+ 			<&hifiberry_dacplus>,"hifiberry,24db_digital_gain?";
+ 		slave = <&hifiberry_dacplus>,"hifiberry-dacplus,slave?";
+ 		leds_off = <&hifiberry_dacplus>,"hifiberry-dacplus,leds_off?";
++		no_pdn = <&dacplus_codec>,"pcm512x,disable-pwrdown";
++		no_sby = <&dacplus_codec>,"pcm512x,disable-standby";
+ 	};
+ };
+--- a/sound/soc/codecs/pcm512x.c	2020-12-14 00:01:55.158506253 +0000
++++ b/sound/soc/codecs/pcm512x.c	2020-12-14 00:17:01.713641276 +0000
+@@ -48,6 +48,8 @@ struct pcm512x_priv {
+ 	int mute;
+ 	struct mutex mutex;
+ 	unsigned int bclk_ratio;
++	bool disable_pwrdown;
++	bool disable_standby;
+ };
+ 
+ /*
+@@ -669,6 +671,9 @@ static int pcm512x_set_bias_level(struct
+ 	struct pcm512x_priv *pcm512x = dev_get_drvdata(component->dev);
+ 	int ret;
+ 
++	if (pcm512x->disable_standby)
++		return 0;
++
+ 	switch (level) {
+ 	case SND_SOC_BIAS_ON:
+ 	case SND_SOC_BIAS_PREPARE:
+@@ -1563,6 +1568,14 @@ int pcm512x_probe(struct device *dev, st
+ 		goto err;
+ 	}
+ 
++	ret = regmap_update_bits(regmap, PCM512x_MUTE,
++				 PCM512x_RQML | PCM512x_RQMR,
++				 PCM512x_RQML | PCM512x_RQMR);
++	if (ret != 0) {
++		dev_err(dev, "%s: failed to mute device: %d\n", __func__, ret);
++		goto err;
++	}
++
+ 	pcm512x->sclk = devm_clk_get(dev, NULL);
+ 	if (PTR_ERR(pcm512x->sclk) == -EPROBE_DEFER) {
+ 		ret = -EPROBE_DEFER;
+@@ -1576,19 +1589,6 @@ int pcm512x_probe(struct device *dev, st
+ 		}
+ 	}
+ 
+-	/* Default to standby mode */
+-	ret = regmap_update_bits(pcm512x->regmap, PCM512x_POWER,
+-				 PCM512x_RQST, PCM512x_RQST);
+-	if (ret != 0) {
+-		dev_err(dev, "Failed to request standby: %d\n",
+-			ret);
+-		goto err_clk;
+-	}
+-
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-	pm_runtime_idle(dev);
+-
+ #ifdef CONFIG_OF
+ 	if (dev->of_node) {
+ 		const struct device_node *np = dev->of_node;
+@@ -1623,9 +1623,31 @@ int pcm512x_probe(struct device *dev, st
+ 			ret = -EINVAL;
+ 			goto err_clk;
+ 		}
++		pcm512x->disable_pwrdown = of_property_read_bool(np,
++						"pcm512x,disable-pwrdown");
++		pcm512x->disable_standby = of_property_read_bool(np,
++						"pcm512x,disable-standby");
+ 	}
+ #endif
+ 
++	if (!pcm512x->disable_standby) {
++		/* Default to standby mode */
++		ret = regmap_update_bits(pcm512x->regmap, PCM512x_POWER,
++					 PCM512x_RQST, PCM512x_RQST);
++		if (ret != 0) {
++			dev_err(dev, "Failed to request standby: %d\n", ret);
++			goto err_clk;
++		}
++	} else
++		dev_info(dev, "%s: RQST standby is disabled\n", __func__);
++
++	if (!pcm512x->disable_pwrdown) {
++		pm_runtime_set_active(dev);
++		pm_runtime_enable(dev);
++		pm_runtime_idle(dev);
++	} else
++		dev_info(dev, "%s: RQPD powerdown is disabled\n", __func__);
++
+ 	ret = devm_snd_soc_register_component(dev, &pcm512x_component_driver,
+ 				    &pcm512x_dai, 1);
+ 	if (ret != 0) {
+@@ -1636,7 +1658,8 @@ int pcm512x_probe(struct device *dev, st
+ 	return 0;
+ 
+ err_pm:
+-	pm_runtime_disable(dev);
++	if (!pcm512x->disable_pwrdown)
++		pm_runtime_disable(dev);
+ err_clk:
+ 	if (!IS_ERR(pcm512x->sclk))
+ 		clk_disable_unprepare(pcm512x->sclk);
+@@ -1651,7 +1674,8 @@ void pcm512x_remove(struct device *dev)
+ {
+ 	struct pcm512x_priv *pcm512x = dev_get_drvdata(dev);
+ 
+-	pm_runtime_disable(dev);
++	if (!pcm512x->disable_pwrdown)
++		pm_runtime_disable(dev);
+ 	if (!IS_ERR(pcm512x->sclk))
+ 		clk_disable_unprepare(pcm512x->sclk);
+ 	regulator_bulk_disable(ARRAY_SIZE(pcm512x->supplies),
+
