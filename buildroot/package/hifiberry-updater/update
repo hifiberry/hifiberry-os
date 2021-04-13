@@ -22,7 +22,9 @@ fi
 # experimental: development release, not recommended for normal
 #               users, might break things
 
-if [ -f /etc/updater.release ]; then
+if [ -f /custom/updater.release ]; then
+ RELEASE=`cat /custom/updater.release`
+elif [ -f /etc/updater.release ]; then
  RELEASE=`cat /etc/updater.release`
 else
  RELEASE=critical
