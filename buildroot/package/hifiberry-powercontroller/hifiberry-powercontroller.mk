@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PC_VERSION=r3
+PC_VERSION=r5
 PC_BINARY=powercontrol.ino_atmega808_16000000L.hex
 PC_DOWNLOAD=https://github.com/hifiberry/powercontroller/releases/download/$(PC_VERSION)/$(PC_BINARY)
 
