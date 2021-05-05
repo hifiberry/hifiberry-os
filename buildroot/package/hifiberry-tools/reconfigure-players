@@ -222,7 +222,7 @@ guess_card() {
  check_dsp
  hat_info
 
- PCINTPIN=2 # By default use RX pin for interrupts of the power controller
+ INTPIN=2 # By default use RX pin for interrupts of the power controller
 
  if [ "$HATINFO" == "HiFiBerry Digi2 Pro" ]; then
   if [ "$HAS_DSP" == "1" ]; then
@@ -329,7 +329,7 @@ guess_card() {
  CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
  if [ "$CLKGEN" == "0x03" ]; then
     CARD="Beocreate 4-Channel Amplifier"
-    PCINTPIN=1
+    INTPIN=1
     if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
       FEATURES="$FEATURES dsp toslink"
     fi
