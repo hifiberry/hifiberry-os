@@ -1,5 +1,6 @@
-202104xx:
+20210520:
 - Remap interrupt pin for power controller (requires update of power controller firmware)
+- audiocontrol improvements
 - Revert changes in SMB mount to fix problems with SMB mounts introduced
   in 20210408
 
