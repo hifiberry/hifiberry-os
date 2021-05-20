@@ -370,6 +370,9 @@ check_dsp() {
  fi
 }
 
+check_genuine() {
+}
+
 # Get HAT information
 hat_info() {
  HATINFO=`/opt/hifiberry/bin/readhat | sed s/:/\ /`
@@ -672,6 +675,7 @@ guess_volume_control
 system_name
 read_features
 check_pi3a
+check_genuine
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
 
