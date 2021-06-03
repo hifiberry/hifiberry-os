@@ -257,6 +257,9 @@ if [ "$V" -lt 20210530 ]; then
 intpin=2
 EOT
   fi
+
+  echo "Removing /etc/hifiberry.state to trigger re-configuration"
+  rm /newroot/etc/hifiberry.state
 fi
 
 echo "Upgrading configuration files done"
