@@ -25,7 +25,7 @@ read_features() {
    if [ -d $dir ]; then 
      pushd $dir
      for f in *.feature; do
-       if [ "$f" != "*" ]; then
+       if [ "$f" != "*.feature" ]; then
          F=${f/.feature/}
          FEATURES="$FEATURES $F"
        fi 
@@ -371,6 +371,7 @@ check_dsp() {
 }
 
 check_genuine() {
+ /bin/true 
 }
 
 # Get HAT information
@@ -588,7 +589,7 @@ reconfigure_mopidy() {
 
 # Reconfigure RAAT
 reconfigure_raat() {
- if [ ! -f /etc/hifiberry_raat.conf ]; then
+ if [ ! -d /opt/raat ]; then
   echo "RAAT not installed, ignoring"
   return
  fi
