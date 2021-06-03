@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd `dirname $0`
+
+for i in 0w 2 3 4; do
+  ./compile $i $1 $2 
+done 
