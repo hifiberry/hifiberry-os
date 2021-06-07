@@ -4,6 +4,9 @@
 /opt/hifiberry/bin/enable-updi
 
 # Flash firmware
+i2cset -y -f 1 0x77 0x0e 0 # disable interrupt pin for programming
+systemctl stop audiocontrol2
 pyupdi -c /dev/ttyAMA0 -d mega808 -f /opt/hifiberry/powercontroller/firmware-r*.hex
+systemctl start audiocontrol2
 
 

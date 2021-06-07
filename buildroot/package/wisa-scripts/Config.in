@@ -1,5 +1,0 @@
-config BR2_PACKAGE_WISA_SCRIPTS
-	bool "WISA scripts (startup etc.)"
-        help
-	  Installs the necessary WiSA control scripts
-        depends on BR2_PACKAGE_PYTHON_WISA

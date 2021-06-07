@@ -247,5 +247,19 @@ if [ "$V" -lt 20210130 ]; then
  fi
 fi
 
+if [ "$V" -lt 20210530 ]; then
+  grep "powercontroller.Powercontroller" /newroot/etc/audiocontrol2.conf >/dev/null
+  if [ "$?" != 0 ]; then
+    echo "Adding power controller configuration"
+    cat >>/newroot/etc/audiocontrol2.conf <<EOT
+
+[controller:ac2.plugins.control.powercontroller.Powercontroller]
+intpin=2
+EOT
+  fi
+
+  echo "Removing /etc/hifiberry.state to trigger re-configuration"
+  rm /newroot/etc/hifiberry.state
+fi
 
 echo "Upgrading configuration files done"

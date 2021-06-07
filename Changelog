@@ -1,4 +1,11 @@
-202104xx:
+20210531:
+- Remap interrupt pin for power controller (requires update of power controller firmware)
+- audiocontrol improvements
+- Revert changes in SMB mount to fix problems with SMB mounts introduced
+  in 20210408
+- several other bugfixes
+
+20210408:
 - Added support for HiFiBerry power controller
 - Screen saver feature for local browser by @tysonnorris
 - disabled ASOC power management

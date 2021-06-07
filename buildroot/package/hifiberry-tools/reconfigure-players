@@ -21,14 +21,18 @@ if [ ! -d /etc/features ]; then
 fi 
 
 read_features() {
- pushd /etc/hifiberry
- for f in *.feature; do
-  if [ "$f" != "*" ]; then
-   F=${f/.feature/}
-   FEATURES="$FEATURES $F"
-  fi 
+ for dir in /etc/hifiberry /custom/hifiberry; do
+   if [ -d $dir ]; then 
+     pushd $dir
+     for f in *.feature; do
+       if [ "$f" != "*.feature" ]; then
+         F=${f/.feature/}
+         FEATURES="$FEATURES $F"
+       fi 
+     done
+   popd
+   fi
  done
- popd
 }
 
 restart_service() {
@@ -218,6 +222,8 @@ guess_card() {
  check_dsp
  hat_info
 
+ INTPIN=2 # By default use RX pin for interrupts of the power controller
+
  if [ "$HATINFO" == "HiFiBerry Digi2 Pro" ]; then
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Digi2 Pro + DSP Module"
@@ -323,6 +329,7 @@ guess_card() {
  CLKGEN=`i2cget -y 1 0x60 2 2>/dev/null`
  if [ "$CLKGEN" == "0x03" ]; then
     CARD="Beocreate 4-Channel Amplifier"
+    INTPIN=1
     if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
       FEATURES="$FEATURES dsp toslink"
     fi
@@ -361,6 +368,10 @@ check_dsp() {
      /opt/hifiberry/bin/fix-dsp-profile force
    fi
  fi
+}
+
+check_genuine() {
+ /bin/true 
 }
 
 # Get HAT information
@@ -471,10 +482,21 @@ reconfigure_shairport() {
 
 # Reconfigure AudioControl2
 reconfigure_audiocontrol2() {
+ RESTART=0
  if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
   sed -i s/mixer_control.*=.*/mixer_control=$MIXER_CONTROL/ /etc/audiocontrol2.conf
-  restart_service audiocontrol2
+  RESTART=1
   echo " updated mixer"
+ fi
+
+ if [ "$CURRENT_INTPIN" != "$INTPIN" ]; then
+  sed -i s/intpin=.*/intpin=$INTPIN/ /etc/audiocontrol2.conf
+  echo " updated interrupt pin"
+  RESTART=1
+ fi
+
+ if [ "$RESTART" == "1" ]; then
+  restart_service audiocontrol2
  fi
 }
 
@@ -567,8 +589,9 @@ reconfigure_mopidy() {
 
 # Reconfigure RAAT
 reconfigure_raat() {
- if [ -f /etc/hifiberry_raat.conf ]; then
+ if [ ! -d /opt/raat ]; then
   echo "RAAT not installed, ignoring"
+  return
  fi
  /opt/raat/configure-raat
 }
@@ -653,6 +676,7 @@ guess_volume_control
 system_name
 read_features
 check_pi3a
+check_genuine
 
 CARD_SED_SPACES=`echo $CARD | sed 's/\ /\\\\\\ /g' | sed 's/\//\\\\\\//g'` 
 
@@ -687,6 +711,7 @@ if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
    [ "$CURRENT_HW" != "$HW" ] || \
    [ "$CURRENT_FEATURES" != "$FEATURES" ] || \
    [ "$CURRENT_DSPTYPE" != "$DSPTYPE" ] || \
+   [ "$CURRENT_INTPIN" != "$INTPIN" ] || \
    [ 1 != 1 ]; then
  echo "Sound card settings have been changed, reconfiguring..."
 else
@@ -699,6 +724,7 @@ echo " Players: $PLAYERS (was $CURRENT_PLAYERS)"
 echo " Raspberry Pi model: $PIMODEL"
 echo " System name: $SYSNAME (was $CURRENT_SYSNAME)"
 echo " Sound card: $CARD (was $CURRENT_CARD)"
+echo " Interrupt pin for power controller: $INTPIN (was $CURRENT_INTPIN)"
 echo " DSP type: $DSPTYPE (was $CURRENT_DSPTYPE)"
 echo " HW device: $HW (was $CURRENT_HW)"
 echo " ALSA mixer control: $MIXER_CONTROL (was $CURRENT_MIXER_CONTROL)"
@@ -718,6 +744,7 @@ echo "CURRENT_PLAYERS=\"$PLAYERS\"" >> /etc/hifiberry.state
 echo "CURRENT_HATINFO=\"$HATINFO\"" >> /etc/hifiberry.state
 echo "CURRENT_FEATURES=\"$FEATURES\"" >> /etc/hifiberry.state
 echo "CURRENT_DSPTYPE=\"$DSPTYPE\"" >> /etc/hifiberry.state
+echo "CURRENT_INTPIN=\"$INTPIN\"" >> /etc/hifiberry.state
 echo "PIVERSION=$PIVERSION" >> /etc/hifiberry.state
 
 echo "Reconfigure features"
