@@ -1,0 +1,19 @@
+[Unit]
+Description=Shairport-sync
+Wants=network.target
+Requires=avahi-daemon.service
+After=network.target sound.target avahi-daemon.service
+
+[Service]
+Type=simple
+Environment=HOME=/root
+# Avahi daemon needs some time until fully ready
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting shairport-sync"
+ExecStartPre=/bin/sleep 3
+ExecStart=/bin/shairport-sync
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

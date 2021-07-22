@@ -6,12 +6,12 @@
 
 #HIFIBERRY_SHAIRPORT_VERSION = 3.3.5
 # Bugfix for incorrect artist names
-HIFIBERRY_SHAIRPORT_VERSION = 4fc161cf0c4d0bbf500b5887da5704a600d7ab5e
+HIFIBERRY_SHAIRPORT_VERSION = 2184f1b744cbd9acf854808ac7584b88773742ba
 HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SHAIRPORT_VERSION))
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
 HIFIBERRY_SHAIRPORT_LICENSE_FILES = LICENSES
-HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi
+HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi nqptp
 
 # git clone, no configure
 HIFIBERRY_SHAIRPORT_AUTORECONF = YES
@@ -44,6 +44,11 @@ HIFIBERRY_SHAIRPORT_DEPENDENCIES += libsoxr
 HIFIBERRY_SHAIRPORT_CONF_OPTS += --with-soxr
 endif
 
+ifeq ($(BR2_PACKAGE_HIFIBERRY_SHAIRPORT_AIRPLAY2),y)
+HIFIBERRY_SHAIRPORT_DEPENDENCIES += libplist
+HIFIBERRY_SHAIRPORT_CONF_OPTS += --with-airplay-2
+endif
+
 define HIFIBERRY_SHAIRPORT_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 0755 $(@D)/shairport-sync \
                 $(TARGET_DIR)/usr/bin/shairport-sync
@@ -64,5 +69,13 @@ define HIFIBERRY_SHAIRPORT_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-shairport/shairport-sync.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/shairport-sync.service
 endef
+
+# This is a hack as shairport-sync is looking for nqptp libraries in ../nqptp
+define HIFIBERRY_SHAIRPORT_PROVIDE_NQPTP
+	echo "Creating nqptp symlink"
+	ln -s $(BUILD_DIR)/nqptp-* $(BUILD_DIR)/nqptp
+endef
+
+HIFIBERRY_SHAIRPORT_PRE_BUILD_HOOKS += HIFIBERRY_SHAIRPORT_PROVIDE_NQPTP
 
 $(eval $(autotools-package))
