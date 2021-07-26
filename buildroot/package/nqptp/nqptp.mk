@@ -5,7 +5,7 @@
 ################################################################################
 
 NQPTP_VERSION = 2ffa47e018c9d68a7817148fc42c6074e0b00823
-NQPTP_SITE = $(call github,hifiberry,nqptp,$(NQPTP_VERSION))
+NQPTP_SITE = $(call github,mikebrady,nqptp,$(NQPTP_VERSION))
 
 # git clone, no configure
 NQPTP_AUTORECONF = YES

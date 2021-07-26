@@ -28,7 +28,7 @@ config BR2_PACKAGE_HIFIBERRY_SHAIRPORT_LIBSOXR
           interpolation to be done much more smoothly and subtly.
 
 config BR2_PACKAGE_HIFIBERRY_SHAIRPORT_AIRPLAY2
-	bool "Airplay 2 support (very experimental)
+	bool "Airplay 2 support (very experimental)"
 	depends on BR2_PACKAGE_HIFIBERRY_SHAIRPORT
 	select BR2_PACKAGE_LIBPLIST
 	select BR2_PACKAGE_NQPTP
@@ -41,4 +41,3 @@ comment "shairport-sync needs a toolchain w/ C++, NPTL"
 
 comment "HiFiBerry shairport package can't be used together with buildroot shairport version, disable this first!"
         depends on BR2_PACKAGE_SHAIRPORT_SYNC
-
