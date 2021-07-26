@@ -11,7 +11,7 @@ HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SH
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
 HIFIBERRY_SHAIRPORT_LICENSE_FILES = LICENSES
-HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi nqptp
+HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi 
 
 # git clone, no configure
 HIFIBERRY_SHAIRPORT_AUTORECONF = YES
@@ -45,7 +45,7 @@ HIFIBERRY_SHAIRPORT_CONF_OPTS += --with-soxr
 endif
 
 ifeq ($(BR2_PACKAGE_HIFIBERRY_SHAIRPORT_AIRPLAY2),y)
-HIFIBERRY_SHAIRPORT_DEPENDENCIES += libplist
+HIFIBERRY_SHAIRPORT_DEPENDENCIES += libplist nqptp
 HIFIBERRY_SHAIRPORT_CONF_OPTS += --with-airplay-2
 endif
 
