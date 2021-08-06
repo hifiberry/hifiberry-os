@@ -14,8 +14,6 @@ config BR2_PACKAGE_HIFIBERRY_SHAIRPORT
         select BR2_PACKAGE_OPENSSL if !BR2_PACKAGE_MBEDTLS
         select BR2_PACKAGE_POPT
 
-if BR2_PACKAGE_SHAIRPORT_SYNC
-
 config BR2_PACKAGE_HIFIBERRY_SHAIRPORT_LIBSOXR
         bool "libsoxr support"
 	depends on BR2_PACKAGE_HIFIBERRY_SHAIRPORT
@@ -29,7 +27,13 @@ config BR2_PACKAGE_HIFIBERRY_SHAIRPORT_LIBSOXR
           can be heard in some circumstances. Libsoxr allows this
           interpolation to be done much more smoothly and subtly.
 
-endif
+config BR2_PACKAGE_HIFIBERRY_SHAIRPORT_AIRPLAY2
+	bool "Airplay 2 support (very experimental)"
+	depends on BR2_PACKAGE_HIFIBERRY_SHAIRPORT
+	select BR2_PACKAGE_LIBPLIST
+	select BR2_PACKAGE_NQPTP
+	help
+	  Enable experimental support for Airplay 2
 
 comment "shairport-sync needs a toolchain w/ C++, NPTL"
         depends on BR2_USE_MMU

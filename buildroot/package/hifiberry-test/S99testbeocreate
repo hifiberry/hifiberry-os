@@ -1,0 +1,46 @@
+#! /bin/sh
+
+# Write profile to DSP DAC and play a test tone
+
+OUT=/dev/tty1
+
+case "$1" in
+    start)
+	echo "Programming DSP profile" > $OUT
+	dsptoolkit install-profile /opt/hifiberry/contrib/beo.xml > $OUT
+	echo "Testing EEPROM programming" > $OUT
+	dsptoolkit check-eeprom > $OUT
+
+	echo "Programming HAT eeprom"
+        PATH=$PATH:/opt/hifiberry/contrib
+        export PATH
+        /opt/hifiberry/contrib/hbflash.sh --writeread -f=/opt/hifiberry/contrib/beocreate2.eep -t=24c32
+        if [ "$?" != "0" ]; then
+          echo
+          echo
+          echo
+          echo "EEPROM write FAIL, data not correct"
+          echo
+          echo
+          echo
+	else
+	  echo "HAT EEPROM ok"
+        fi
+
+
+	echo "Playing test tone" > $OUT
+	play -n synth 30 sine 1000 > $OUT
+	echo "Done" > $OUT
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+
