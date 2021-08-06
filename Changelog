@@ -1,3 +1,12 @@
+202107xx:
+- New Shairport version with Airplay2 support
+- New BT player with improved volume control support
+- Updated snapcast player
+- Updated squeezelite
+- Linux kernel upgraded to 5.10
+- Bugfix: Incorrect detection of clocks on DAC+ Pro and DAC2 Pro
+- Bugfix: Some actions for Interact missingy
+
 20210531:
 - Remap interrupt pin for power controller (requires update of power controller firmware)
 - audiocontrol improvements

@@ -3,7 +3,6 @@ Description=Shairport-sync
 Wants=network.target
 Requires=avahi-daemon.service
 After=network.target sound.target avahi-daemon.service
-Wants=nqptp.service
 
 [Service]
 Type=simple
