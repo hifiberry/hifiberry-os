@@ -1,4 +1,7 @@
-202107xx:
+202109xx:
+- Implemented MUTE support for LG SoundSync (by @qerub)
+
+20210804:
 - New Shairport version with Airplay2 support
 - New BT player with improved volume control support
 - Updated snapcast player
