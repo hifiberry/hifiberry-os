@@ -8,24 +8,30 @@ DATE1=`date +%Y%m%d-%H%M%S`
 PLAYER=$1
 CALLINGPID=$PPID
 
+if [ "$PLAYER" == "" ]; then
+ PLAYER="unknown_caller"
+fi
+
 check_paused() {
   STATUS=`cat /proc/asound/card${CARD}/pcm0p/sub0/hw_params`
   if [ "$STATUS" == "closed" ]; then
     DATE2=`date +%Y%m%d-%H%M%S`
-    echo "$DATE1 $DATE2 pause-all $PLAYER" | systemd-cat
+    echo "pause-all $PLAYER ($PPID): $DATE1 $DATE2 $PLAYER - closed" | systemd-cat -p info
     exit 0
   fi
   PROCESSLINE=`lsof /dev/snd/pcmC*D*p | grep -v COMMAND`
   APP=`echo $PROCESSLINE| awk '{print $1}'`
   PROCESSID=`echo $PROCESSLINE| awk '{print $2}'`
   if [[ "$PLAYER" == "$APP*" ]]; then
-    echo "$PLAYER ($PPID) requested pause, but is already using sound card, ignoring" | systemd-cat
+    echo "pause-all $PLAYER ($PPID): requested pause, but is already using sound card, ignoring" | systemd-cat -p info
     exit 0
   fi
   if [ "$PROCESSID" == "$PPID" ]; then
-    echo "$PLAYER ($PPID) requested pause, but is already using sound card, ignoring" | systemd-cat
+    echo "pause-all $PLAYER ($PPID): requested pause, but is already using sound card, ignoring" | systemd-cat -p info
     exit 0
   fi
+
+ echo "pause-all $PLAYER ($PPID): process $PROCESSID still using the sound card" | systemd-cat -p info
 }
 
 pause_alsaloop() {
