@@ -31,7 +31,7 @@ check_paused() {
     exit 0
   fi
 
- echo "pause-all $PLAYER ($PPID): process $PROCESSID still using the sound card" | systemd-cat -p info
+ echo "pause-all $PLAYER ($PPID): process $PROCESSID/$APP still using the sound card" | systemd-cat -p info
 }
 
 pause_alsaloop() {
