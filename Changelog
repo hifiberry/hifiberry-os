@@ -1,5 +1,10 @@
 202109xx:
 - Implemented MUTE support for LG SoundSync (by @qerub)
+- Updated mpd to latest version
+- Bugfix: Bluetooth volume control
+- Bugfix: Pause players before starting room acoustics mesaurements
+- Bugfix: Disable TOSLink input on Digi2 Pro
+- Bugfix: power controller interrupt on Pi4
 
 20210804:
 - New Shairport version with Airplay2 support
