@@ -228,7 +228,6 @@ guess_card() {
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Digi2 Pro + DSP Module"
      DSPTYPE="DSP add-on"
-     FEATURES="$FEATURES spdifnoclock toslink"
      SECONDARY_MIXER_CONTROL="Softvol"
    else
      CARD="Digi2 Pro"
