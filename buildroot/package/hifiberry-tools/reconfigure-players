@@ -244,6 +244,7 @@ guess_card() {
    else
      CARD="Amp100"
    fi
+   INTPIN=3
    return
  fi
 
