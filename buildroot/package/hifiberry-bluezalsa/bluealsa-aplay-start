@@ -1,4 +1,4 @@
 #!/bin/sh
 . /etc/hifiberry.state
-/usr/bin/bluealsa-aplay --pcm-buffer-time=250000 00:00:00:00:00:00 --mixer-name=$CURRENT_MIXER_CONTROL
+/usr/bin/bluealsa-aplay --pcm-buffer-time=20000 --pcm-period-time=10000 00:00:00:00:00:00 --mixer-name=$CURRENT_MIXER_CONTROL
 
