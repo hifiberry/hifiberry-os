@@ -6,7 +6,7 @@ ConditionPathExists=!/custom/service/bluetooth.disable
 
 [Service]
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting bluealsa"
-ExecStart=/usr/bin/bluealsa -i hci0 -p a2dp-sink --a2dp-volume
+ExecStart=/usr/bin/bluealsa -i hci0 -p a2dp-sink
 RestartSec=5
 Restart=always
 TimeoutStopSec=10
