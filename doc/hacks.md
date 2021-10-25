@@ -12,6 +12,24 @@ in the user interface or with any other service as you won't be able to change i
 
 Create a file /etc/hifiberry_raat.softvol and restart the system to enable Roon DSP Volume control
 
+## Fix sound card
+
+We have seen some reports, that some sound cards are not detected correctly in the UI. This mostly happens with DSP sound cards. We're working on inprovements, but
+if you still see this happening, there's a workaround.
+
+Create a file /etc/hifiberry/config.fixed and add the following line:
+
+DAC+ DSP:
+```
+CARD="DAC+ DSP"
+```
+
+Beocreate 4-channel amplifier:
+```
+CARD="Beocreate 4-Channel Amplifier"
+```
+
+
 ## Config hacks that overwrite default HiFiBerryOS behavior
 
 ### /etc/hifiberry/mixer
