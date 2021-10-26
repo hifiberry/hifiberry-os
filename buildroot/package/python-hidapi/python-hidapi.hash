@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/hidapi/json
+md5  ec194c704a687567ef1ca3b5adc8dcf4  hidapi-0.10.1.tar.gz
+sha256  a1170b18050bc57fae3840a51084e8252fd319c0fc6043d68c8501deb0e25846  hidapi-0.10.1.tar.gz
+# Locally computed sha256 checksums
+sha256  276c1c27bbaa34fd62f4e92ad7cf9f7f8f193c0440c9da86c389de0dae192f47  LICENSE.txt

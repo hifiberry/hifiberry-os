@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_HIDAPI
+	bool "python-hidapi"
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	help
+	  A Cython interface to the hidapi from
+	  https://github.com/libusb/hidapi.
+
+	  https://github.com/trezor/cython-hidapi

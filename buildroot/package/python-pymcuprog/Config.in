@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_PYMCUPROG
+	bool "python-pymcuprog"
+	help
+	  Python utility for programming various Microchip MCU devices
+
+	  https://github.com/microchip-pic-avr-tools/pymcuprog
+
+	select BR2_PACKAGE_PYTHON_PYEDBGLIB
+	select BR2_PACKAGE_PYTHON_APPDIRS
+	select BR2_PACKAGE_PYTHON_CYTHON
