@@ -1,4 +1,5 @@
-202109xx:
+202110xx:
+- Improve detection of DAC+ DSP and Beocreate 4-channel amplifier
 - Implemented MUTE support for LG SoundSync (by @qerub)
 - Updated mpd to latest version
 - Bugfix: Bluetooth volume control
