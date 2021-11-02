@@ -12,6 +12,11 @@ if [ "$PIVERSION" == "" ]; then
  PIVERSION=`cat /etc/raspberrypi.version`
 fi
 
+# Map 0 to 0w
+if [ "$PIVERSION" == "0" ]; then
+ PIVERSION=0w
+fi
+
 #
 # There are different release tags available:
 #
