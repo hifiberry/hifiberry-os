@@ -45,3 +45,4 @@
 /etc/hifiberry_raat.conf
 /custom
 /opt/wisa/etc/room.cfg
+/etc/modprobe.d/snd_soc_core_disable_pm.conf
