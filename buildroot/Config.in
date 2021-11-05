@@ -1,5 +1,6 @@
 comment "Base packages"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-base/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-users/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-tools/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-updater/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/copy-overlays/Config.in"
