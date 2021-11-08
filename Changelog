@@ -1,7 +1,8 @@
-202110xx:
+20211105:
 - Improve detection of DAC+ DSP and Beocreate 4-channel amplifier
 - Implemented MUTE support for LG SoundSync (by @qerub)
 - Updated mpd to latest version
+- Updated shairport-sync to latest release
 - Security patch: Limit file uploads to allowed directories
 - Bugfix: Bluetooth volume control (still not working correctöly on Android)
 - Bugfix: Pause players before starting room acoustics mesaurements
