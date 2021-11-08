@@ -262,4 +262,7 @@ EOT
   rm /newroot/etc/hifiberry.state
 fi
 
-echo "Upgrading configuration files done"
+if [ "$V" -lt 20211105 ]; then
+ echo "Fixing shairport-sync configuration"
+ sed -i s/wait_for_completion.*$/wait_for_completion\ =\ \"yes\"/g /newroot/etc/shairport-sync.conf
+fi

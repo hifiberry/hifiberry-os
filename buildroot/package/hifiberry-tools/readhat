@@ -24,12 +24,18 @@ else
   fi
 
   dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$EEPFILE 2>/dev/null
-
+  
   /usr/bin/eepdump $EEPFILE $TXTFILE >/dev/null
-
   if [ -f $TXTFILE ]; then 
     VENDOR=`cat $TXTFILE | grep "vendor " | awk -F\" '{print $2}' | xargs echo`
     PRODUCT=`cat $TXTFILE | grep "product " | awk -F\" '{print $2}' | xargs echo`
+
+    if [ "$VENDOR" == "" ]; then
+      VENDOR="no vendor"
+    fi
+    if [ "$PRODUCT" == "" ]; then
+      PRODUCT="no product"
+    fi
   fi
 fi
 
