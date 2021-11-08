@@ -228,7 +228,6 @@ guess_card() {
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Digi2 Pro + DSP Module"
      DSPTYPE="DSP add-on"
-     FEATURES="$FEATURES spdifnoclock toslink"
      SECONDARY_MIXER_CONTROL="Softvol"
    else
      CARD="Digi2 Pro"
@@ -245,6 +244,7 @@ guess_card() {
    else
      CARD="Amp100"
    fi
+   INTPIN=3
    return
  fi
 
@@ -336,6 +336,27 @@ guess_card() {
     return
  fi
 
+ if [ "$HATINFO" == "no vendor no product" ]; then
+   if [ "$HAS_DSP" == "1" ]; then
+     # A card with an empty HAT EEPROM and a DSP is probably a Beocreate
+     CARD="Beocreate 4-Channel Amplifier"
+     INTPIN=1
+     if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
+       FEATURES="$FEATURES dsp toslink"
+     fi
+     return
+   fi 
+ fi
+
+ if [ "$HATINFO" == "HiFiBerry Beocreate 4CA" ]; then
+    CARD="Beocreate 4-Channel Amplifier"
+    INTPIN=1
+    if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
+      FEATURES="$FEATURES dsp toslink"
+    fi
+    return
+ fi
+
  if [ "$HAS_DSP" == "1" ]; then
     CARD="DAC+ DSP"
     FEATURES="$FEATURES toslink"
@@ -360,6 +381,17 @@ check_dsp() {
    FEATURES="$FEATURES dsp"
  else
    HAS_DSP=0
+ fi
+
+ if [ "$HAS_DSP" == "0" ]; then
+   # DSP detection sometimes does not work correctly, try to read data from
+   # the DSP
+   MEM=`dsptoolkit --timeout=4 read-hex 0x01 | awk '{print $1 $2 $3 $4}'`
+   if [ "$MEM" != "00000000" ] && [ "$MEM" != "FFFFFFFF" ]; then
+     echo 1 $MEM 2
+     HAS_DSP=1
+     FEATURES="$FEATURES dsp"
+   fi
  fi
 
  # If a DSP was detected, make sure, it knows the profile

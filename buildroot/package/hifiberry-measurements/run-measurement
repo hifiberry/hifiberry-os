@@ -2,6 +2,9 @@
 
 . /etc/hifiberry.state CURRENT_HW_SHORT
 
+# Make sure no other process is using the sound card
+/opt/hifiberry/bin/pause-all
+
 MIC=`/opt/hifiberry/bin/audio-inputs | grep -i usb | awk -F: '{print $1}'`
 if [ "$MIC" == "" ]; then
  MIC=`/opt/hifiberry/bin/audio-inputs | awk -F: '{print $1}'`
