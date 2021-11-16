@@ -46,11 +46,11 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-alsaloop/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/btspeaker/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/mpris-proxy/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/snapcast/Config.in"
-source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/snapcastmpris/Config.in
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/snapcastmpris/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/vollibrespot/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/webradio/Config.in"
 
-comment "Backend applications
+comment "Backend applications"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-docker/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/brutefir/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsptoolkit/Config.in"
