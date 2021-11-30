@@ -1,0 +1,10 @@
+[Unit]
+Description=Run an autostart script
+After=hifiberry.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/autostart.sh
+
+[Install]
+WantedBy=multi-user.target
