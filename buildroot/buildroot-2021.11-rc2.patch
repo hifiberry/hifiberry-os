@@ -1,0 +1,117 @@
+diff -ur b/package/libplist/libplist.mk a/package/libplist/libplist.mk
+--- a/package/libplist/libplist.mk	2021-07-22 07:24:21.600452216 +0000
++++ b/package/libplist/libplist.mk	2021-07-22 07:23:51.256155689 +0000
+@@ -16,4 +16,10 @@
+ # is not packaged in Buildroot at all.
+ LIBPLIST_CONF_OPTS = --without-cython
+ 
++define LIBPLIST_POST_INSTALL_STAGING
++	cp $(STAGING_DIR)/usr/lib/pkgconfig/libplist-2.0.pc $(STAGING_DIR)/usr/lib/pkgconfig/libplist.pc
++endef
++
++LIBPLIST_POST_INSTALL_STAGING_HOOKS += LIBPLIST_POST_INSTALL_STAGING
++
+ $(eval $(autotools-package))
+diff --git a/package/samba4/0003-Fix-unistd.h-include.patch b/package/samba4/0003-Fix-unistd.h-include.patch
+deleted file mode 100644
+index f01b899a18..0000000000
+--- a/package/samba4/0003-Fix-unistd.h-include.patch
++++ /dev/null
+@@ -1,38 +0,0 @@ 
+-From 85c33f89df8607ace0707e1360ff0f79f3e8f5f3 Mon Sep 17 00:00:00 2001
+-From: Andy Walsh <andy.walsh44+github@gmail.com>
+-Date: Wed, 6 Nov 2019 19:28:30 +0100
+-Subject: [PATCH] Fix unistd.h include
+-
+-Fixes build error
+-
+-source4/heimdal/lib/asn1/asn1_err.c:47:23: error: 'link' redeclared as different kind of symbol
+- static struct et_list link = { 0, 0 };
+-
+-Downloaded from
+-https://github.com/Andy2244/openwrt-extra/blob/samba-4.10/samba4/patches/006-samba-4-10-musl_rm_unistd_incl.patch
+-
+-Upstream bug report: https://bugzilla.samba.org/show_bug.cgi?id=13856
+-
+-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+----
+- lib/replace/replace.h | 4 ----
+- 1 file changed, 4 deletions(-)
+-
+-diff --git a/lib/replace/replace.h b/lib/replace/replace.h
+-index 1658465866e..e6768c4ae51 100644
+---- a/lib/replace/replace.h
+-+++ b/lib/replace/replace.h
+-@@ -168,10 +168,6 @@
+- #include <bsd/unistd.h>
+- #endif
+- 
+--#ifdef HAVE_UNISTD_H
+--#include <unistd.h>
+--#endif
+--
+- #ifdef HAVE_STRING_H
+- #include <string.h>
+- #endif
+--- 
+-2.20.1
+-
+diff --git a/package/samba4/0004-ldap_message_test.c-include-stdint.h-before-cmoka.h.patch b/package/samba4/0003-ldap_message_test.c-include-stdint.h-before-cmoka.h.patch
+similarity index 100%
+rename from package/samba4/0004-ldap_message_test.c-include-stdint.h-before-cmoka.h.patch
+rename to package/samba4/0003-ldap_message_test.c-include-stdint.h-before-cmoka.h.patch
+diff --git a/package/samba4/0005-dcesrv_core-fix-build.patch b/package/samba4/0004-dcesrv_core-fix-build.patch
+similarity index 100%
+rename from package/samba4/0005-dcesrv_core-fix-build.patch
+rename to package/samba4/0004-dcesrv_core-fix-build.patch
+diff --git a/package/heimdal/heimdal.mk b/package/heimdal/heimdal.mk
+index 9a1a68f046..ce509c7afa 100644
+--- a/package/heimdal/heimdal.mk
++++ b/package/heimdal/heimdal.mk
+@@ -28,19 +28,26 @@  HOST_HEIMDAL_CONF_OPTS = \
+ 	--disable-ndbm-db \
+ 	--disable-heimdal-documentation
+ 
+-HOST_HEIMDAL_CONF_ENV = MAKEINFO=true
++# Don't use compile_et from e2fsprogs as it raises a build failure with samba4
++HOST_HEIMDAL_CONF_ENV = ac_cv_prog_COMPILE_ET=no MAKEINFO=true
+ HEIMDAL_LICENSE = BSD-3-Clause
+ HEIMDAL_LICENSE_FILES = LICENSE
+ HEIMDAL_CPE_ID_VENDOR = heimdal_project
+ 
++# We need compile_et for samba4
++define HOST_HEIMDAL_INSTALL_COMPILE_ET
++	$(INSTALL) -m 0755 $(@D)/lib/com_err/compile_et \
++		$(HOST_DIR)/bin/compile_et
++endef
++
+ # We need asn1_compile in the PATH for samba4
+ define HOST_HEIMDAL_MAKE_SYMLINK
+ 	ln -sf $(HOST_DIR)/libexec/heimdal/asn1_compile \
+ 		$(HOST_DIR)/bin/asn1_compile
+-	ln -sf $(HOST_DIR)/bin/compile_et \
+-		$(HOST_DIR)/libexec/heimdal/compile_et
+ endef
+ 
+-HOST_HEIMDAL_POST_INSTALL_HOOKS += HOST_HEIMDAL_MAKE_SYMLINK
++HOST_HEIMDAL_POST_INSTALL_HOOKS += \
++	HOST_HEIMDAL_INSTALL_COMPILE_ET \
++	HOST_HEIMDAL_MAKE_SYMLINK
+ 
+ $(eval $(host-autotools-package))
+diff --git a/package/e2fsprogs/e2fsprogs.mk b/package/e2fsprogs/e2fsprogs.mk
+index ca891066a2..76215e8c34 100644
+--- a/package/e2fsprogs/e2fsprogs.mk
++++ b/package/e2fsprogs/e2fsprogs.mk
+@@ -90,5 +90,11 @@  define HOST_E2FSPROGS_INSTALL_CMDS
+ 	$(HOST_MAKE_ENV) $(MAKE1) -C $(@D) install install-libs
+ endef
+ 
++# Remove compile_et which raises a build failure with samba4
++define HOST_E2FSPROGS_REMOVE_COMPILE_ET
++	$(RM) $(HOST_DIR)/bin/compile_et
++endef
++HOST_E2FSPROGS_POST_INSTALL_HOOKS += HOST_E2FSPROGS_REMOVE_COMPILE_ET
++
+ $(eval $(autotools-package))
+ $(eval $(host-autotools-package))
