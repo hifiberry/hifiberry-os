@@ -156,7 +156,7 @@ fi
 # for all players
 pause_process
 check_paused
-echo ""pause-all $PLAYER ($PPID): $DATE1 pause_process done, but playback still active"  | systemd-cat
+echo "pause-all $PLAYER ($PPID): $DATE1 pause_process done, but playback still active"  | systemd-cat
 
 # Use API to pause
 curl -X post http://localhost:81/api/player/pause/$ACNAME ; echo
