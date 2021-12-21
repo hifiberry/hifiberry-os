@@ -33,6 +33,10 @@ buildroot software.
 
 When building HiFiBerryOS, you should change to the HiFiBerryOS directory first.
 
+### get-buildroot
+
+git clones into the right location a version of buildroot known to work for the checked out version of HiFiBerryOS.
+
 ### clean
  
 Cleans up the buildroot folder. When using this, you have to rebuild the whole system. This can take a long time. 
