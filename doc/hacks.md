@@ -43,3 +43,11 @@ If the file exists, HiFiBerryOS will assume that a DSP is available even if it w
 ### /boot/noap
 
 If this file exists, HiFiBerryOS will not start an WiFi access point - even if no network connection is detected.
+
+## Enable features
+
+Featuers will be automatically enabled based on the sound card. In case of bugs, you can enable features using so-called feature files. Just create an empty file in /etc/hifiberry:
+
+### /etc/hifiberry/toslink.feature
+
+Enable TOSLInk input on DSP sound cards
