@@ -140,7 +140,7 @@ HIFIBERRY_MPD_CONF_OPTS += -Dsqlite=enabled
 HIFIBERRY_MPD_CONF_OPTS += -Dtcp=true
 
 # disable TIDAL (not working at all)
-HIFIBERRY_MPD_CONF_OPTS += -Dtidal=disabled
+#HIFIBERRY_MPD_CONF_OPTS += -Dtidal=disabled
 
 # disable tremor
 HIFIBERRY_MPD_CONF_OPTS += -Dtremor=disabled
