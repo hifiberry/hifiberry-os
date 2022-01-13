@@ -1,7 +1,8 @@
 #!/bin/bash
 if [ "$1" == "" ]; then 
 	TAG=2021.05
-        TAG=2021.11-rc2
+#        TAG=2021.11-rc2
+#	TAG=2021.08.2
 else
 	TAG=$1
 fi
