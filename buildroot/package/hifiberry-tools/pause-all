@@ -164,7 +164,7 @@ for i in 1 1 1 1 1 ; do
  sleep $i
  check_paused
 done
-echo ""pause-all $PLAYER ($PPID): $DATE1 pause via API done, but playback still active"  | systemd-cat
+echo "pause-all $PLAYER ($PPID): $DATE1 pause via API done, but playback still active"  | systemd-cat
 
 # Still in use
 kill_process
