@@ -1,3 +1,8 @@
+20220114:
+- Bugfix: pause-all
+- Bugfix: Start scripts terminate if no power controller is available
+- Bugfix: Start squeezelite after network is onliney
+
 20211105:
 - Improve detection of DAC+ DSP and Beocreate 4-channel amplifier
 - Implemented MUTE support for LG SoundSync (by @qerub)
