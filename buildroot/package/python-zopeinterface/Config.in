@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_ZOPEINTERFACE
+	bool "python-zopeinterface"
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	help
+	  Interfaces for Python.
+
+	  https://github.com/zopefoundation/zope.interface

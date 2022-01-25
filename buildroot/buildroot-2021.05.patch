@@ -12,3 +12,150 @@ diff -ur b/package/libplist/libplist.mk a/package/libplist/libplist.mk
 +LIBPLIST_POST_INSTALL_STAGING_HOOKS += LIBPLIST_POST_INSTALL_STAGING
 +
  $(eval $(autotools-package))
+diff --git a/package/libev/libev.mk b/package/libev/libev.mk
+index 38b0530f62..9f3c19d46c 100644
+--- a/package/libev/libev.mk
++++ b/package/libev/libev.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-LIBEV_VERSION = 4.27
++LIBEV_VERSION = 4.33
+ LIBEV_SITE = http://dist.schmorp.de/libev/Attic
+ LIBEV_INSTALL_STAGING = YES
+ LIBEV_LICENSE = BSD-2-Clause or GPL-2.0+
+--- a/package/libev/libev.hash
++++ b/package/libev/libev.hash
+@@ -1,3 +1,4 @@
+ # Locally calculated
+ sha256 2d5526fc8da4f072dd5c73e18fbb1666f5ef8ed78b73bba12e195cfdd810344e  libev-4.27.tar.gz
++sha256 507eb7b8d1015fbec5b935f34ebed15bf346bed04a11ab82b8eee848c4205aea  libev-4.33.tar.gz
+ sha256 c4dd1a5bc38b041a320b93c5d6c08f5c41a63f2ce718ee16cfcb757fad448199  LICENSE
+--- a/package/python-greenlet/python-greenlet.hash	2021-12-09 07:23:45.140327960 +0100
++++ b/package/python-greenlet/python-greenlet.hash	2021-12-01 09:31:31.773942524 +0100
+@@ -1,6 +1,6 @@
+ # md5, sha256 from https://pypi.org/pypi/greenlet/json
+-md5  9aebea08f7beb6b87143d0588578c984  greenlet-0.4.16.tar.gz
+-sha256  6e06eac722676797e8fce4adb8ad3dc57a1bb3adfb0dd3fdf8306c055a38456c  greenlet-0.4.16.tar.gz
++md5  f424fbd9afeed575dd2ba5f0ac66e30b  greenlet-1.1.2.tar.gz
++sha256  e30f5ea4ae2346e62cedde8794a56858a67b878dd79f7df76a0767e356b1744a  greenlet-1.1.2.tar.gz
+ # Locally computed sha256 checksums
+-sha256  bbde55d5456a1e912633ed3f66d1dbd9504e3e3dce4f4c2015043cdcbc56e697  LICENSE
++sha256  769831d6e5dfaf2c20802faccff1fafb4c2025dd8f6253dfa47fcad59d4d0979  LICENSE
+ sha256  e5ff3c23c110e494cd7d736c10fd96d462457bafeca310840db6527298c7d46b  LICENSE.PSF
+--- a/package/python-greenlet/python-greenlet.mk	2021-12-09 07:23:45.140327960 +0100
++++ b/package/python-greenlet/python-greenlet.mk	2021-12-01 09:31:31.773942524 +0100
+@@ -4,10 +4,10 @@
+ #
+ ################################################################################
+ 
+-PYTHON_GREENLET_VERSION = 0.4.16
++PYTHON_GREENLET_VERSION = 1.1.2
+ PYTHON_GREENLET_SOURCE = greenlet-$(PYTHON_GREENLET_VERSION).tar.gz
+-PYTHON_GREENLET_SITE = https://files.pythonhosted.org/packages/20/5e/b989a19f4597b825f44125345cd8a8574216fae7fafe69e2cb1238ebd18a
+-PYTHON_GREENLET_SETUP_TYPE = distutils
++PYTHON_GREENLET_SITE = https://files.pythonhosted.org/packages/0c/10/754e21b5bea89d0e73f99d60c83754df7cc64db74f47d98ab187669ce341
++PYTHON_GREENLET_SETUP_TYPE = setuptools
+ PYTHON_GREENLET_LICENSE = MIT, PSF-2.0
+ PYTHON_GREENLET_LICENSE_FILES = LICENSE LICENSE.PSF
+
+diff --git a/package/python-socketio/ b/package/python-socketio/
+--- a/package/python-socketio/Config.in	2021-12-09 11:28:12.991629995 +0100
++++ b/package/python-socketio/Config.in	2021-12-01 09:31:31.793942424 +0100
+@@ -1,6 +1,7 @@
+ config BR2_PACKAGE_PYTHON_SOCKETIO
+ 	bool "python-socketio"
+-	select BR2_PACKAGE_PYTHON_SIX # runtime
++	depends on BR2_PACKAGE_PYTHON3
++	select BR2_PACKAGE_PYTHON_BIDICT # runtime
+ 	select BR2_PACKAGE_PYTHON_ENGINEIO # runtime
+ 	help
+ 	  Socket.IO server.
+--- a/package/python-socketio/python-socketio.hash	2021-12-09 11:28:12.991629995 +0100
++++ b/package/python-socketio/python-socketio.hash	2021-12-01 09:31:31.793942424 +0100
+@@ -1,5 +1,5 @@
+ # md5, sha256 from https://pypi.org/pypi/python-socketio/json
+-md5	86cd47dddea1785ce7a6c72f55c93fe7  python-socketio-4.3.1.tar.gz
+-sha256	506b2cf7a520b40ea0b3f25e1272eff8de134dce6f471c1f6bc0de8c90fe8c57  python-socketio-4.3.1.tar.gz
++md5  0507825ca4bd6527cbaed81ec5767bfe  python-socketio-5.4.0.tar.gz
++sha256  ca807c9e1f168e96dea412d64dd834fb47c470d27fd83da0504aa4b248ba2544  python-socketio-5.4.0.tar.gz
+ # Locally computed sha256 checksums
+-sha256	c9e97d3dbc1fbbcdb4f7808b282cd646db887aff4f5313fe6bbe8d4c31405a9c  LICENSE
++sha256  c9e97d3dbc1fbbcdb4f7808b282cd646db887aff4f5313fe6bbe8d4c31405a9c  LICENSE
+--- a/package/python-socketio/python-socketio.mk	2021-12-09 11:28:12.991629995 +0100
++++ b/package/python-socketio/python-socketio.mk	2021-12-01 09:31:31.793942424 +0100
+@@ -4,20 +4,10 @@
+ #
+ ################################################################################
+ 
+-PYTHON_SOCKETIO_VERSION = 4.3.1
+-PYTHON_SOCKETIO_SITE = https://files.pythonhosted.org/packages/36/87/e9128a4da04df991fbdb01f44dc4d6dd8f6c03bfd4d1f42dcd6779fd975a
++PYTHON_SOCKETIO_VERSION = 5.4.0
++PYTHON_SOCKETIO_SITE = https://files.pythonhosted.org/packages/72/70/9b992f4b8adfcbf0724c079c18629d83f20b36fb0eb64d4fdf874054becf
+ PYTHON_SOCKETIO_SETUP_TYPE = setuptools
+ PYTHON_SOCKETIO_LICENSE = MIT
+ PYTHON_SOCKETIO_LICENSE_FILES = LICENSE
+ 
+-ifeq ($(BR2_PACKAGE_PYTHON),y)
+-# only needed/valid for python 3.x
+-define PYTHON_SOCKETIO_RM_PY3_FILES
+-	rm -f $(TARGET_DIR)/usr/lib/python*/site-packages/socketio/asgi.py \
+-		$(TARGET_DIR)/usr/lib/python*/site-packages/socketio/asyncio_*.py
+-endef
+-
+-PYTHON_SOCKETIO_POST_INSTALL_TARGET_HOOKS += PYTHON_SOCKETIO_RM_PY3_FILES
+-endif
+-
+ $(eval $(python-package))
+
+diff --git a/package/python-engineio/ b/package/python-engineio/
+--- a/package/python-engineio/Config.in	2021-12-09 11:49:18.637357040 +0100
++++ b/package/python-engineio/Config.in	2021-12-01 09:31:31.773942524 +0100
+@@ -1,8 +1,7 @@
+ config BR2_PACKAGE_PYTHON_ENGINEIO
+ 	bool "python-engineio"
+-	select BR2_PACKAGE_PYTHON_SIX # runtime
+-	select BR2_PACKAGE_PYTHON_ZLIB if BR2_PACKAGE_PYTHON
+-	select BR2_PACKAGE_PYTHON3_ZLIB if BR2_PACKAGE_PYTHON3
++	depends on BR2_PACKAGE_PYTHON3
++	select BR2_PACKAGE_PYTHON3_ZLIB
+ 	help
+ 	  Engine.IO server.
+
+--- a/package/python-engineio/python-engineio.hash	2021-12-09 11:49:18.637357040 +0100
++++ b/package/python-engineio/python-engineio.hash	2021-12-01 09:31:31.773942524 +0100
+@@ -1,5 +1,5 @@
+ # md5, sha256 from https://pypi.org/pypi/python-engineio/json
+-md5  e6ea8b3f2f32eeeb02014c46092f2adb  python-engineio-3.12.1.tar.gz
+-sha256  2481732d93646998f7372ef0ecf003af7817b82720b881db173c3d50b4887916  python-engineio-3.12.1.tar.gz
++md5  d2bc7184d64e9d5a692bfad29ff73dea  python-engineio-4.2.1.tar.gz
++sha256  d510329b6d8ed5662547862f58bc73659ae62defa66b66d745ba021de112fa62  python-engineio-4.2.1.tar.gz
+ # Locally computed sha256 checksums
+ sha256  c9e97d3dbc1fbbcdb4f7808b282cd646db887aff4f5313fe6bbe8d4c31405a9c  LICENSE
+--- a/package/python-engineio/python-engineio.mk	2021-12-09 11:49:18.637357040 +0100
++++ b/package/python-engineio/python-engineio.mk	2021-12-01 09:31:31.773942524 +0100
+@@ -4,21 +4,11 @@
+ #
+ ################################################################################
+ 
+-PYTHON_ENGINEIO_VERSION = 3.12.1
+-PYTHON_ENGINEIO_SITE = https://files.pythonhosted.org/packages/71/5d/620b75396ce993001cbccc80dd786ab09a16a8e3f6c4878ad05f051064d6
++PYTHON_ENGINEIO_VERSION = 4.2.1
++PYTHON_ENGINEIO_SITE = https://files.pythonhosted.org/packages/74/1e/33e402011bb2fe33ab12762e5a66d66df1d47302a23e9c5e8310e11b1403
+ PYTHON_ENGINEIO_SETUP_TYPE = setuptools
+ PYTHON_ENGINEIO_LICENSE = MIT
+ PYTHON_ENGINEIO_LICENSE_FILES = LICENSE
+ PYTHON_ENGINEIO_CPE_ID_VENDOR = python-engineio_project
+ 
+-ifeq ($(BR2_PACKAGE_PYTHON),y)
+-# only needed/valid for python 3.x
+-define PYTHON_ENGINEIO_RM_PY3_FILES
+-	rm -rf $(TARGET_DIR)/usr/lib/python*/site-packages/engineio/async_drivers \
+-		$(TARGET_DIR)/usr/lib/python*/site-packages/engineio/asyncio_*.py
+-endef
+-
+-PYTHON_ENGINEIO_POST_INSTALL_TARGET_HOOKS += PYTHON_ENGINEIO_RM_PY3_FILES
+-endif
+-
+ $(eval $(python-package))

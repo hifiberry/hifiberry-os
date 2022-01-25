@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_GEVENT
+	bool "python-gevent"
+	select BR2_PACKAGE_PYTHON_CFFI # runtime
+	select BR2_PACKAGE_PYTHON_GREENLET # runtime
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	select BR2_PACKAGE_PYTHON_ZOPEEVENT # runtime
+	select BR2_PACKAGE_PYTHON_ZOPEINTERFACE # runtime
+	help
+	  Coroutine-based network library.
+
+	  http://www.gevent.org/
