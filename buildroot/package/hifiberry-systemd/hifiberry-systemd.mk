@@ -13,6 +13,10 @@ define HIFIBERRY_SYSTEMD_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/lib/systemd/system/fix-ntp.service
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-systemd/fix-ntp.sh \
                 $(TARGET_DIR)/opt/hifiberry/bin/fix-ntp.sh
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-systemd/autostart.service \
+                $(TARGET_DIR)/lib/systemd/system/autostart.service
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-systemd/autostart.sh \
+                $(TARGET_DIR)/opt/hifiberry/bin/autostart.sh
 endef
 
 $(eval $(generic-package))
