@@ -8,7 +8,8 @@
 # use the HiFiBerry clone of vollibrespot and librespot as this integrates a 
 # patch to stop other players before starting playback
 #
-VOLLIBRESPOT_VERSION = 4282b61ccdbb1abfb04fd9e9ae257e3cf6681f54
+#VOLLIBRESPOT_VERSION = 4282b61ccdbb1abfb04fd9e9ae257e3cf6681f54
+VOLLIBRESPOT_VERSION = 5d0aa600d4af3d808a51e56df2bc6d7ee953a494
 VOLLIBRESPOT_SITE = $(call github,hifiberry,Vollibrespot,$(VOLLIBRESPOT_VERSION))
 
 VOLLIBRESPOT_LICENSE = MIT
@@ -16,7 +17,7 @@ VOLLIBRESPOT_LICENSE_FILES = LICENSE
 VOLLIBRESPOT_INSTALL_TARGET = YES
 VOLLIBRESPOT_INSTALL_STAGING = YES
 
-VOLLIBRESPOT_DEPENDENCIES = host-rustc
+VOLLIBRESPOT_DEPENDENCIES = host-rustc host-pkgconf
 
 VOLLIBRESPOT_CARGO_ENV = \
     PKG_CONFIG_ALLOW_CROSS=1 \
@@ -27,9 +28,14 @@ VOLLIBRESPOT_CARGO_ENV = \
     CLIENT_ID=$(SPOTIFY_CLIENT_ID)
     
 VOLLIBRESPOT_CARGO_OPTS = \
-    --target=${RUSTC_TARGET_NAME} \
+    --target=$(RUSTC_TARGET_NAME) \
     --manifest-path=$(@D)/Cargo.toml \
     --no-default-features
+
+RUSTC_ARCH = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ARCH))
+RUSTC_ABI = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ABI))
+RUSTC_TARGET_NAME = armv7-unknown-linux-$(LIBC)$(RUSTC_ABI)
+
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 VOLLIBRESPOT_CARGO_MODE = debug 
