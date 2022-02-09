@@ -8,7 +8,6 @@
 # use the HiFiBerry clone of vollibrespot and librespot as this integrates a 
 # patch to stop other players before starting playback
 #
-#VOLLIBRESPOT_VERSION = 4282b61ccdbb1abfb04fd9e9ae257e3cf6681f54
 VOLLIBRESPOT_VERSION = 5d0aa600d4af3d808a51e56df2bc6d7ee953a494
 VOLLIBRESPOT_SITE = $(call github,hifiberry,Vollibrespot,$(VOLLIBRESPOT_VERSION))
 
