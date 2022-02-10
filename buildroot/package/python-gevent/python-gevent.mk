@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-PYTHON_GEVENT_FILE = gevent-1.4.0-cp37-cp37m-linux_armv7l.whl
-PYTHON_GEVENT_EXTRA_DOWNLOADS=https://www.piwheels.org/simple/gevent/$(PYTHON_GEVENT_FILE)
+PYTHON_GEVENT_VERSION = 21.12.0
+PYTHON_GEVENT_SOURCE = gevent-$(PYTHON_GEVENT_VERSION).tar.gz
+PYTHON_GEVENT_SITE = https://files.pythonhosted.org/packages/c8/18/631398e45c109987f2d8e57f3adda161cc5ff2bd8738ca830c3a2dd41a85
+PYTHON_GEVENT_SETUP_TYPE = setuptools
+PYTHON_GEVENT_LICENSE = MIT
+PYTHON_GEVENT_LICENSE_FILES = LICENSE deps/c-ares/LICENSE.md deps/libev/LICENSE deps/libuv/LICENSE
+PYTHON_GEVENT_ENV = GEVENTSETUP_EMBED=0
+PYTHON_GEVENT_DEPENDENCIES = libevdev libev libuv c-ares
 
-
-define PYTHON_GEVENT_INSTALL_TARGET_CMDS
-        mkdir -p $(TARGET_DIR)/usr/lib/python3.7/site-packages
-	cd $(TARGET_DIR)/usr/lib/python3.7/site-packages ; \
-          unzip -x -o $(PYTHON_GEVENT_DL_DIR)/$(PYTHON_GEVENT_FILE)
-endef
-
-$(eval $(generic-package))
+$(eval $(python-package))
