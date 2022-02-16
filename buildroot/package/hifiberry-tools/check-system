@@ -14,7 +14,11 @@ function check_systemd {
 echo -n "HiFiBerryOS version: "
 cat /etc/hifiberry.version
 
-echo "Pi model: $CURRENT_PIMODEL"
+echo "Pi type: $CURRENT_PIMODEL"
+echo -n "Pi model: $MODEL"
+cat /proc/device-tree/model
+echo ""
+
 echo "Sound card: $CURRENT_CARD"
 echo "Sound card ID: $CURRENT_HW_SHORT"
 echo "Mixer: $CURRENT_MIXER_CONTROL"
