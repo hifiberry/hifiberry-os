@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_SHAIRPORT_VERSION = 55c111cabb0920bf5799e35ff4d03c589e9f8c4c
+HIFIBERRY_SHAIRPORT_VERSION = b622c179bffab7ba09819be534c8e2108a2300f2
 HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SHAIRPORT_VERSION))
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
@@ -71,6 +71,7 @@ endef
 # This is a hack as shairport-sync is looking for nqptp libraries in ../nqptp
 define HIFIBERRY_SHAIRPORT_PROVIDE_NQPTP
 	echo "Creating nqptp symlink"
+        -rm $(BUILD_DIR)/nqptp
 	ln -s $(BUILD_DIR)/nqptp-* $(BUILD_DIR)/nqptp
 endef
 

@@ -1,3 +1,9 @@
+20220221:
+- Update to buildroot 2021.11
+- Updated shairport-sync
+- Added packages to support WebSocket API implementation
+- Bugfix: Set host name on MDNS when it changes
+
 20220114:
 - Bugfix: pause-all
 - Bugfix: Start scripts terminate if no power controller is available
