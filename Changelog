@@ -1,4 +1,4 @@
-202202xx:
+20220221:
 - Update to buildroot 2021.11
 - Updated shairport-sync
 - Added packages to support WebSocket API implementation
