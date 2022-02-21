@@ -669,6 +669,15 @@ reconfigure_beocreate() {
  fi
 }
 
+# Reconfigure avahi
+reconfigure_avahid() {
+ # System name
+ if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
+   avahi-set-host-name $SYSNAME_NO_SPACES
+ fi
+}
+
+
 # Reconfigure features
 reconfigure_features() {
  # Update features in /etc/features
@@ -805,6 +814,8 @@ echo "Reconfigure RAAT"
 reconfigure_raat
 echo "Reconfiguring Beocreate software"
 reconfigure_beocreate
+echo "Reconfiguring avahi"
+reconfigure_avahi
 
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE
