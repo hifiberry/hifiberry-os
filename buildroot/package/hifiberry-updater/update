@@ -74,8 +74,11 @@ fi
 VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d piversion=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$CURRENT_HATINFO" -m 10 $UPDATEURL/update-system`
 if [ "$?" != 0 ]; then
  echo "Couldn't get release information from $UPDATEURL/update-system, aborting..."
+ sleep 60
  exit 1
 fi
+
+sleep 5
 
 if [ "$VERSION" == "" ]; then
  VERSION=$MYVERSION
