@@ -6,6 +6,13 @@ if [ $? != 0 ]; then
  CHANGED=1
 fi
 
+grep "dtoverlay=uart0" /tmp/config.txt >/dev/null
+if [ $? != 0 ]; then
+ echo "dtoverlay=uart0" >> /tmp/config.txt
+ CHANGED=1
+fi
+
+
 grep "dtoverlay=disable-bt" /tmp/config.txt >/dev/null
 if [ $? != 0 ]; then
  echo "dtoverlay=disable-bt" >> /tmp/config.txt
