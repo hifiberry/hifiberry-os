@@ -8,7 +8,7 @@ HIFIBERRY_UPDATER_DEPENDENCIES = rpi-firmware systemd copy-overlays
 
 define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/var/spool/cron/crontabs
-        echo "critical" > $(TARGET_DIR)/etc/updater.release
+        echo > $(TARGET_DIR)/etc/updater.release
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/update \
                 $(TARGET_DIR)/opt/hifiberry/bin
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/extract-update \
