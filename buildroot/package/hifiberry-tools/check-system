@@ -19,6 +19,9 @@ echo -n "Pi model: $MODEL"
 cat /proc/device-tree/model
 echo ""
 
+echo -n "Compatibility: "
+/opt/hifiberry/bin/check-compatibility
+
 echo "Sound card: $CURRENT_CARD"
 echo "Sound card ID: $CURRENT_HW_SHORT"
 echo "Mixer: $CURRENT_MIXER_CONTROL"
