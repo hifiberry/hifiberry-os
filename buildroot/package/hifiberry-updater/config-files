@@ -46,3 +46,4 @@
 /custom
 /opt/wisa/etc/room.cfg
 /etc/modprobe.d/snd_soc_core_disable_pm.conf
+/etc/rc_keymaps/keymap.toml
