@@ -1,8 +1,11 @@
-20220221:
+20220222:
+- Add compatibility checks
+- Update kernel to 5.10.95
 - Update to buildroot 2021.11
 - Updated shairport-sync
-- Added packages to support WebSocket API implementation
+- audiocontrol2 websocket API by @schnabel 
 - Bugfix: Set host name on MDNS when it changes
+- Bugfix: Shiaport-sync/nqptp
 
 20220114:
 - Bugfix: pause-all
