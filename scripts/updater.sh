@@ -267,4 +267,9 @@ if [ "$V" -lt 20220230 ]; then
  sed -i s/wait_for_completion.*$/wait_for_completion\ =\ \"yes\"/g /newroot/etc/shairport-sync.conf
 fi
 
+if [ "$V" -lt 20220230 ]; then
+ echo "Removing existing BT pairing date"
+ rm -rf /newroot/var/lib/bluetooth/*
+fi
+
 
