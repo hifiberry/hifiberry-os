@@ -1,7 +1,7 @@
 [Unit]
 Description=BlueALSA
-Requires=a2dp-agent.service
-After=a2dp-agent.service
+Requires=btagent.service
+After=btagent.service
 ConditionPathExists=!/custom/service/bluetooth.disable
 
 [Service]
