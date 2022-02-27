@@ -1,13 +1,13 @@
 #!/bin/bash
 cd `dirname $0`
 TS=`date +%Y%m%d`
-NICE=2
+NICE=10
 for i in 2 3 4 0w; do
  if [ "$1" == "parallel" ]; then
-  screen -d -m nice $NICE ./build-release $i $TS 
+  screen -d -m nice -n $NICE ./build-release $i $TS 
   echo "Started $i build with nice level $NICE"
-  NICE=$((NICE+1))
-  sleep 300
+  NICE=$((NICE-1))
+  sleep 60
  else
   ./build-release $i $TS
  fi
