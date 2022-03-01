@@ -47,8 +47,15 @@ fi
 
 # This line is necessary to sort out the flow control pins
 stty -F /dev/ttyAMA0 115200 raw -echo
-/usr/bin/hciattach -n /dev/ttyAMA0 bcm43xx 3000000 flow - $BDADDR
-if [ "$?" != "0" ]; then
+if [ -x /usr/bin/hciattach ]; then
+	/usr/bin/hciattach -n /dev/ttyAMA0 bcm43xx 3000000 flow - $BDADDR
+	RC=$?
+else
+	/usr/bin/btattach -B /dev/ttyAMA0 -P bcm -S 115200 -N
+fi
+
+
+if [ "$RC" != "0" ]; then
 	echo "Failed"
 	/opt/hifiberry/bin/bootmsg "Attaching Bluetooth interface"
 fi
