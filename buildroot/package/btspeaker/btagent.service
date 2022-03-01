@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth Auth Agent
+After=bluetooth.service
+PartOf=bluetooth.service
+
+[Service]
+Type=simple
+ExecStart=/opt/btspeaker/btagent.sh
+
+[Install]
+WantedBy=bluetooth.target
+
