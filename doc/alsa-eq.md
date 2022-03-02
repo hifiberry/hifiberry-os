@@ -19,4 +19,4 @@ If you still want to experiment with it, you can enable it in the frontend as fo
 * touch /etc/hifiberry/alsa-eq.feature
 * /opt/hifiberry/bin/reconfigure-players
 
-Do not send any bug reports if you have this enabled! 
+Do not send any bug reports if you have this enabled! Also note that it might simply stop working in a future release. There will be no work on this anymore and we will simply remove it if there are any problems with it.

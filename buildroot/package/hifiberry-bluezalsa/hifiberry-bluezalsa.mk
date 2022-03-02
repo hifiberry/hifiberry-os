@@ -4,9 +4,11 @@
 #
 ################################################################################
 
-#HIFIBERRY_BLUEZALSA_VERSION = 2.1.0
-HIFIBERRY_BLUEZALSA_SITE = $(call github,Arkq,bluez-alsa,$(HIFIBERRY_BLUEZALSA_VERSION))
-HIFIBERRY_BLUEZALSA_VERSION = 1bd6d0439916d80636d616617297bdd75e3e0512
+#HIFIBERRY_BLUEZALSA_VERSION = v3.1.0
+#HIFIBERRY_BLUEZALSA_SITE = $(call github,Arkq,bluez-alsa,$(HIFIBERRY_BLUEZALSA_VERSION))
+#HIFIBERRY_BLUEZALSA_VERSION = 6509c47c27219a08a64373239469e6f7a5549303
+HIFIBERRY_BLUEZALSA_SITE = $(call github,hifiberry,bluez-alsa,$(HIFIBERRY_BLUEZALSA_VERSION))
+HIFIBERRY_BLUEZALSA_VERSION = 7457e68ce3357e4b62636e52abcb7a168c3c4ed6
 HIFIBERRY_BLUEZALSA_LICENSE = MIT
 HIFIBERRY_BLUEZALSA_LICENSE_FILES = LICENSE
 HIFIBERRY_BLUEZALSA_DEPENDENCIES = alsa-lib bluez5_utils libglib2 sbc host-pkgconf
@@ -25,7 +27,11 @@ HIFIBERRY_BLUEZALSA_CONF_OPTS = \
 	--disable-debug-time \
 	--with-alsaplugindir=/usr/lib/alsa-lib \
 	--with-alsaconfdir=/usr/share/alsa \
-	--disable-payloadcheck
+	--disable-payloadcheck \
+	--disable-msbc \
+	--enable-aac \
+	--enable-mp3lame \
+	--enable-openaptx \
 
 # Enable AAC
 HIFIBERRY_BLUEZALSA_DEPENDENCIES += fdk-aac

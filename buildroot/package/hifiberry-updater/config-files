@@ -3,6 +3,7 @@
 /etc/hosts
 /etc/systemname
 /etc/bluetooth/main.conf
+/etc/bluetooth/pin.conf
 /etc/shairport-sync.conf
 /etc/uuid
 /etc/mpd.conf
