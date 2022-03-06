@@ -10,7 +10,6 @@ define CONFIGTXT_INSTALL_TARGET_CMDS
         echo "# Enable I2C and SPI" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "dtparam=i2c=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
-	echo "dtoverlay=gpio-ir,gpio_pin=16" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 define CONFIGTXT_EEPROM_WORKAROUND

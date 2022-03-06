@@ -1,6 +1,6 @@
 # Using an IR remote
 
-You can control your HiFiBerryOS speakers using any remote. You can change volume or skip and pause songs from any input.
+You can control your HiFiBerryOS speakers using any remote. You can change volume or skip and pause songs from any input. This works by mapping the buttons on your remote to keypresses on a virtual keyboard.
 
 ## What you need
 
@@ -12,25 +12,25 @@ You can control your HiFiBerryOS speakers using any remote. You can change volum
 
 1. Look up the datasheet of your IR receiver to get the correct pins. There are usually 3 pins, GND, VCC and OUT. The order of these can change between models so make sure you have the correct pin layout or else you will destroy the receiver.
 
-2. The default data pin for IR is GPIO16 on the Raspberry. If you can't use this pin you can use a different pin on your Pi, but remember to change the config file (explained later). Connect GND to a ground pin on your board, VCC to 5V or 3.3V (depending on your receiver) and OUT to GPIO16.
+2. Look at the datasheet of your board and choose a free GPIO pin on the Raspberry. Connect GND to a ground pin on your board, VCC to 5V or 3.3V (depending on your receiver) and OUT to your choosen GPIO pin.
 
 3. Double check that the pins are connected correctly and turn on your Raspberry Pi.
 
 ## Software configuration
 
-### Different GPIO pin
+### Enable GPIO-IR
 
-If you used a different pin than GPIO16 you need to change the config file. Else you can skip these steps.
+To enable support for IR remotes, you need to looad the gpio-ir driver.
 
-1. Turn off your Pi and remove the sd card
+1. Log in top your Pi via SSH
 
-2. Plug in the sd card into your pc. You should see only one partition.
+2. Run `mount -o remount,rw /boot` to mount the boot partition as writeable
 
-3. Open `config.txt` using a text editor and find the following line `dtoverlay=gpio-ir,gpio_pin=16`
+3. Open `/boot/config.txt` using a text editor and add line `dtoverlay=gpio-ir,gpio_pin=16` at the end of the file
 
 4. Change `gpio_pin=16` to whatever pin you used.
 
-5. Save the file, add the sd card to your Pi and boot.
+5. Save the file and reboot.
 
 ### Generating a keymap for your remote
 
