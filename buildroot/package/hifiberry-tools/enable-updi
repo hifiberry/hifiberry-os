@@ -22,7 +22,7 @@ fi
 if [ "$CHANGED" != "" ]; then
  mount -o remount,rw /boot
  cp /tmp/config.txt /boot/config.txt
- echo "Rebooing in 5 seconds"
+ echo "Rebooting in 5 seconds"
  sleep 5
  sync
  reboot
