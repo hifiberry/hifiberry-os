@@ -186,6 +186,13 @@ guess_volume_control() {
    return
  fi
 
+ # Amp3 uses "A.Mstr Vol"
+ MSTRVOL=`amixer scontrols | grep A.Mstr Vol`
+ if [ "$MSTRVOL" != "" ]; then
+   MIXER_CONTROL="A.Mstr Vol"
+   return
+ fi
+
  # Amp+ uses "Master"
  # however, as shairport-sync doen't work with this, we'll use softvol
  MASTER=`amixer scontrols | grep Master`
@@ -243,6 +250,18 @@ guess_card() {
      SECONDARY_MIXER_CONTROL="Digital"
    else
      CARD="Amp100"
+   fi
+   INTPIN=3
+   return
+ fi
+
+ if [ "$HATINFO" == "HiFiBerry Amp3" ]; then
+  if [ "$HAS_DSP" == "1" ]; then
+     CARD="Amp3 + DSP Module"
+     DSPTYPE="DSP add-on"
+     SECONDARY_MIXER_CONTROL="Digital"
+   else
+     CARD="Amp3"
    fi
    INTPIN=3
    return
