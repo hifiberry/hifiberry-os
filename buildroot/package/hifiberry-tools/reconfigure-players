@@ -187,7 +187,7 @@ guess_volume_control() {
  fi
 
  # Amp3 uses "A.Mstr Vol"
- MSTRVOL=`amixer scontrols | grep A.Mstr Vol`
+ MSTRVOL=`amixer scontrols | grep "A.Mstr Vol"`
  if [ "$MSTRVOL" != "" ]; then
    MIXER_CONTROL="A.Mstr Vol"
    return
@@ -625,19 +625,6 @@ reconfigure_upmpdcli() {
  fi
 }
 
-# Reconfigure Mopidy
-reconfigure_mopidy() {
- if [ ! -f /etc/mopidy.conf ]; then
-  echo "modidy not installed, ignoring"
-  return
- fi
- if [ "$MIXER_CONTROL" != "$CURRENT_MIXER_CONTROL" ]; then
-  sed -i "/#ALSAMIXER/ N; s/#ALSAMIXER\ncontrol.*/#ALSAMIXER\ncontrol=$MIXER_CONTROL/g" /etc/mopidy.conf
-  restart_service mopidy
-  echo " updated mixer"
- fi
-}
-
 # Reconfigure RAAT
 reconfigure_raat() {
  if [ ! -d /opt/raat ]; then
@@ -689,7 +676,7 @@ reconfigure_beocreate() {
 }
 
 # Reconfigure avahi
-reconfigure_avahid() {
+reconfigure_avahi() {
  # System name
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
    avahi-set-host-name $SYSNAME_NO_SPACES
@@ -823,8 +810,6 @@ echo "Reconfiguring MPD"
 reconfigure_mpd
 echo "Reconfiguring DLNA"
 reconfigure_dlna
-echo "Reconfiguring Mopidy"
-reconfigure_mopidy
 echo "Reconfigure AudioControl2"
 reconfigure_audiocontrol2
 echo "Reconfigure upmpdcli"
