@@ -1,0 +1,8 @@
+[[protocols]]
+name = "rc6_0"
+protocol = "rc6"
+variant = "rc6_0"
+[protocols.scancodes]
+0x0d = "KEY_MUTE"
+0x10 = "KEY_VOLUMEUP"
+0x11 = "KEY_VOLUMEDOWN"
