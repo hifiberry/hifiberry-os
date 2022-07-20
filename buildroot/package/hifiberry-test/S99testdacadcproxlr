@@ -26,32 +26,41 @@ case "$1" in
 	# Disable Mic bias
 	amixer set "ADC Mic Bias" "Mic Bias off"
 
+	rm /tmp/out.log
+
         # Test noise
         arecord -r 48000 -d 4 -c 2 -f S32_LE /tmp/start.wav 2>/dev/null
 	if [ "$?" != "0" ]; then
             echo "Could not record anything"
             fail=1
         fi 
-        arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
+        arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>>/tmp/out.log
         RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`
         NOISE=`echo $RMS \* 1000000 / 1 | bc`
-        if [ $NOISE -gt 100 ]; then
+        if [ $NOISE -gt 1000 ]; then
            echo Problem - too much noise: $NOISE > $OUT
            fail=1
         else
            echo Noise ok: $NOISE > $OUT
         fi
+        rm /tmp/input.wav
 
         # Test sine wave
         if [ ! -f /opt/hifiberry/contrib/sine1k.wav ]; then
             sox -n -r 48000 -c 2 /opt/hifiberry/contrib/sine1k.wav synth 5 sine 1000
+            if [ "$?" != "0" ]; then
+              echo "Could not create test sine wave" > $OUT
+            fi
         fi
-        aplay /opt/hifiberry/contrib/sine1k.wav 2>/dev/null &
-        arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
+        aplay /opt/hifiberry/contrib/sine1k.wav 2>>/tmp/out.log &
+        arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>>/tmp/out.log
         RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`
         SIGNAL=`echo $RMS \* 1000000 / 1 | bc`
-        if [ $SIGNAL -lt 400000 ]; then
+        if [ $SIGNAL -lt 500000 ]; then
             echo Problem: signal too low: $SIGNAL > $OUT
+            if [ $SIGNAL -gt 300000 ]; then
+              echo Only one channel might be working correctly > $OUT
+            fi
             fail=1
         else
             echo Signal ok: $SIGNAL > $OUT
@@ -60,8 +69,6 @@ case "$1" in
 	if [ $SIGNAL -gt 850000 ]; then
             echo Problem: signal too high: $SIGNAL > $OUT
             fail=1
-        else
-            echo Signal ok: $SIGNAL > $OUT
         fi
 
 	# Program EEPROM
@@ -81,6 +88,8 @@ case "$1" in
                 echo '(_   __|____ | | |   |_|_|_|' > $OUT
                 echo '  | |  / ___ | | |    _ _ _ ' > $OUT
                 echo '  |_|  \_____|_|\_)  |_|_|_|' > $OUT
+                echo '' >> $OUT
+                cat /tmp/out.log >$OUT
         fi
 
 	;;
