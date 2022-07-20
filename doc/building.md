@@ -33,6 +33,10 @@ buildroot software.
 
 When building HiFiBerryOS, you should change to the HiFiBerryOS directory first.
 
+### get-buildroot
+
+git clones into the right location a version of buildroot known to work for the checked out version of HiFiBerryOS.
+
 ### clean
  
 Cleans up the buildroot folder. When using this, you have to rebuild the whole system. This can take a long time. 
@@ -48,6 +52,13 @@ Creates a HiFiBerryOS configuration for the given Raspberry Pi platform, e.g.
 ## config
 
 Starts the configuration interface. Here you can add/remove packages or change other parameters.
+
+## secrets
+
+If you rely on components that have secrets, create a file named `secrets` based on the [template](../secrets.template).
+These components rely on secrets:
+* spotify
+
 
 ## compile
 
