@@ -216,6 +216,8 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPROXLR
                 $(TARGET_DIR)/etc/init.d/S99testdacadcproxlr
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hifiberry-dacplusadcpro.dtbo \
                 $(TARGET_DIR)/boot/overlays/
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/sine1k.wav \
+                $(TARGET_DIR)/opt/hifiberry/contrib/sine1k.wav
 
         echo "Adding drivers to config.txt"
         echo "dtoverlay=hifiberry-dacplusadcpro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
