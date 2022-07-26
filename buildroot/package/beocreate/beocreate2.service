@@ -15,9 +15,6 @@ WorkingDirectory=/opt/beocreate/
 User=root
 Restart=on-failure
 RestartSec=10s
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=beocreate2
 TimeoutStopSec=10
 
 [Install]
