@@ -1,0 +1,19 @@
+#!/bin/bash
+
+IP=$2
+HOST=$1
+if [ "$HOST" == "" ]; then
+ echo "start with $0 hostname ip"
+ exit 1
+fi
+
+[[ $IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && MATCH=1
+if [ "$MATCH" != "1" ]; then
+ echo "start with $0 hostname ip"
+ exit 1
+fi
+
+cat /etc/hosts | grep -v ^$IP > /tmp/hosts
+echo "$IP $HOST" >> /tmp/hosts
+mv /tmp/hosts /etc/hosts
+
