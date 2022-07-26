@@ -13,6 +13,12 @@ if [ "$MATCH" != "1" ]; then
  exit 1
 fi
 
+grep "$IP $HOST" /etc/hosts >/dev/null
+if [ "$?" == "0" ]; then
+ # entry already exists
+ exit 0
+fi 
+
 cat /etc/hosts | grep -v ^$IP > /tmp/hosts
 echo "$IP $HOST" >> /tmp/hosts
 mv /tmp/hosts /etc/hosts
