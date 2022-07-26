@@ -22,5 +22,5 @@ date > buildtime.$1
 ./compile $1
 # For some reason, first build sometimes fails
 ./compile $1
-./create-image $1 $TS
+#./create-image $1 $TS
 date >> buildtime.$1
