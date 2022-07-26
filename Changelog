@@ -1,3 +1,10 @@
+20220726:
+- Update to kernel 5.15.56
+- Update shairport-sync
+- Add infrared receiver support by @blockbasti
+- Fix broken interactions
+- Workaround for broken Spotify AP
+
 20220222:
 - Add compatibility checks
 - Update kernel to 5.10.95
