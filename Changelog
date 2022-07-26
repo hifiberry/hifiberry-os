@@ -4,6 +4,7 @@
 - Add infrared receiver support by @blockbasti
 - Fix broken interactions
 - Workaround for broken Spotify AP
+- Add AMP3 support
 
 20220222:
 - Add compatibility checks
