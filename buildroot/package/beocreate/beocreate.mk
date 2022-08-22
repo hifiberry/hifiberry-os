@@ -7,7 +7,7 @@
 #BEOCREATE_VERSION = 80d5ab3d0de0869e3724b1e5c8df6eb31e93984e
 #BEOCREATE_SITE = $(call github,bang-olufsen,create,$(BEOCREATE_VERSION))
 
-BEOCREATE_VERSION = d72c8c5cbdb3f831932ed5b7223fa35146494c9e
+BEOCREATE_VERSION = 5a1cbd8efc7fad13a07c25d4b92a03ddcc96ae18
 BEOCREATE_SITE = $(call github,hifiberry,create,$(BEOCREATE_VERSION))
 
 BEOCREATE_DEPENDENCIES += nodejs
@@ -38,9 +38,8 @@ define BEOCREATE_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/etc/beocreate/sound.json
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sound.json \
                 $(TARGET_DIR)/etc/beocreate/sound.json.orig
-	# Temporary fix
-	#$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sound-index.js.fixed \
-	#	$(TARGET_DIR)/opt/beocreate/beo-extensions/sound/index.js
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/git-update-beocreate \
+		$(TARGET_DIR)/opt/hifiberry/bin
 endef
 
 define BEOCREATE_INSTALL_INIT_SYSTEMD

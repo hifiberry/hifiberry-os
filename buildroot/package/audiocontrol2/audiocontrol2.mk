@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AUDIOCONTROL2_VERSION = 7c61016f056a062c8531286b76d02dd63fcf5b4a
+AUDIOCONTROL2_VERSION = a30b890d3fbc33289669ede4b231cacbfa3a7b4a
 AUDIOCONTROL2_SITE = $(call github,hifiberry,audiocontrol2,$(AUDIOCONTROL2_VERSION))
 
 AUDIOCONTROL2_DEPENDENCIES = python3
@@ -21,6 +21,8 @@ define AUDIOCONTROL2_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/etc/audiocontrol2.conf.orig
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/privacy.html \
 		$(TARGET_DIR)/opt/audiocontrol2/privacy.html
+	$(INSTALL)  -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/git-update-audiocontrol \
+		$(TARGET_DIR)/opt/hifiberry/bin
 endef
 
 define AUDIOCONTROL2_INSTALL_INIT_SYSTEMD
