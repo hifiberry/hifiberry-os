@@ -1,7 +1,7 @@
 #!/bin/sh
 . /etc/hifiberry.state
 
-ARGS="-o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -V $CURRENT_MIXER_CONTROL -a 10240:10240:24_3:0 -C 1 -r 192000"
+ARGS="-o default -M HiFiBerry -N /var/squeezelite/squeezelite.name -a 10240:10240:24_3:0 -C 1 -r 192000"
 
 if [ -f /etc/squeezelite.json ]; then
  SERVER=`jq .server.value /etc/squeezelite.json | sed s/\"//g` 2>/dev/null
@@ -10,5 +10,5 @@ if [ -f /etc/squeezelite.json ]; then
  fi
 fi
 
-/bin/squeezelite $ARGS
+/bin/squeezelite $ARGS -V "$CURRENT_MIXER_CONTROL"
 
