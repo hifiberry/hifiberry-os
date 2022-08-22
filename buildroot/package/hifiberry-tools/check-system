@@ -21,9 +21,15 @@ echo ""
 
 echo -n "Compatibility: "
 /opt/hifiberry/bin/check-compatibility
+APLAY=`aplay -l | grep card | head -1`
+C1=`echo $APLAY | awk -F, '{print $1}'`
+C2=`echo $APLAY | awk -F, '{print $2}'`
 
 echo "Sound card: $CURRENT_CARD"
 echo "Sound card ID: $CURRENT_HW_SHORT"
+echo "aplay 1: $C1"
+echo "aplay 2: $C2"
+
 echo "Mixer: $CURRENT_MIXER_CONTROL"
 echo "Features: $CURRENT_FEATURES"
 
@@ -41,6 +47,12 @@ uname -a
 
 echo -n "Date and time: "
 date
+
+echo -n "eth0: "
+ifconfig eth0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'
+
+echo-n "wlan0: "
+ifconfig wlan0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'
 
 echo -n "/data mounted: "
 M=`mount | grep " /data "`
