@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_SHAIRPORT_VERSION = ead5da5a55434563c58d569f5e5c3c0e9d9ade92
+HIFIBERRY_SHAIRPORT_VERSION = cf5f3ddd8516aed5ba4dfd0dfd214e59f8936e7e
 HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SHAIRPORT_VERSION))
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
