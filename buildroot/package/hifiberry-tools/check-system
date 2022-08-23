@@ -22,8 +22,8 @@ echo ""
 echo -n "Compatibility: "
 /opt/hifiberry/bin/check-compatibility
 APLAY=`aplay -l | grep card | head -1`
-C1=`echo $APLAY | awk -F, '{print $1}'`
-C2=`echo $APLAY | awk -F, '{print $2}'`
+C1=`echo $APLAY | awk -F, '{print $1}' | sed s/://g`
+C2=`echo $APLAY | awk -F, '{print $2}' | sed s/://g`
 
 echo "Sound card: $CURRENT_CARD"
 echo "Sound card ID: $CURRENT_HW_SHORT"
