@@ -22,7 +22,7 @@ define AUDIOCONTROL2_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/privacy.html \
 		$(TARGET_DIR)/opt/audiocontrol2/privacy.html
 	$(INSTALL)  -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/audiocontrol2/git-update-audiocontrol \
-		$(TARGET_DIR)/opt/hifiberry/bin
+		$(TARGET_DIR)/opt/hifiberry/bin/git-update-audiocontrol
 endef
 
 define AUDIOCONTROL2_INSTALL_INIT_SYSTEMD
