@@ -48,11 +48,15 @@ uname -a
 echo -n "Date and time: "
 date
 
-echo -n "eth0: "
-ifconfig eth0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'
+ETH0=`ifconfig eth0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
+if [ "$ETH0" != "" ]; then
+ echo "eth0: $ETH0"
+fi
 
-echo-n "wlan0: "
-ifconfig wlan0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'
+WLAN0=`ifconfig wlan0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
+if [ "$WLAN0" != "" ]; then
+ echo "eth0: $WLAN0"
+fi
 
 echo -n "/data mounted: "
 M=`mount | grep " /data "`
