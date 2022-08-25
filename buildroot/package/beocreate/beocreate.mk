@@ -39,7 +39,7 @@ define BEOCREATE_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/sound.json \
                 $(TARGET_DIR)/etc/beocreate/sound.json.orig
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/beocreate/git-update-beocreate \
-		$(TARGET_DIR)/opt/hifiberry/bin
+		$(TARGET_DIR)/opt/hifiberry/bin/git-update-beocreate
 endef
 
 define BEOCREATE_INSTALL_INIT_SYSTEMD
