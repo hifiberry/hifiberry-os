@@ -1,3 +1,9 @@
+202208xx:
+- Integrate latest Amp3 driver
+- Improve system information
+- Bugfix: squeezelite and Bluetooth with Amp3 not working
+- Bugfix: power controller crashed audiocontrol
+
 20220726:
 - Update to kernel 5.15.56
 - Update shairport-sync
