@@ -10,7 +10,7 @@ define DSPPROFILES_INSTALL_TARGET_CMDS
      -mkdir -p $(TARGET_DIR)/opt/hifiberry/bin
    
      $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/fix-dsp-profile \
-	        $(TARGET_DIR)/opt/hifiberry/bin
+	        $(TARGET_DIR)/opt/hifiberry/bin/
 
      $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-96-11.xml \
 		$(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-96-11.xml
