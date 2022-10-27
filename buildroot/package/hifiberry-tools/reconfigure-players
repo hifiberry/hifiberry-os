@@ -352,7 +352,7 @@ guess_card() {
     if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
       FEATURES="$FEATURES dsp"
     fi
-    FEATURES=$FEATURES toslink"
+    FEATURES="$FEATURES toslink"
     return
  fi
 
@@ -373,7 +373,10 @@ guess_card() {
     CARD="Beocreate 4-Channel Amplifier"
     INTPIN=1
     if  [ "${FEATURES/dsp/}" == "$FEATURES" ]; then
-      FEATURES="$FEATURES dsp toslink"
+      FEATURES="$FEATURES dsp"
+    fi
+    if  [ "${FEATURES/toslink/}" == "$FEATURES" ]; then
+      FEATURES="$FEATURES toslink"
     fi
     return
  fi
