@@ -1,7 +1,9 @@
-20221026:
+20221028:
 - Upgrade Linux kernel
 - Bugfix in DSP detection on the Beocreate 4 channel amplifier
 - Updated shairport-sync to latest version with improved Airplay 2 support
+- Bugfix in reconfigure-players
+- Update Raat
 
 20220826:
 - Integrate latest Amp3 driver
