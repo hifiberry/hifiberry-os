@@ -9,7 +9,7 @@ ConditionPathExists=!/custom/service/roon.disable
 Type=simple
 Environment=HOME=/root
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Roon"
-#ExecStartPre=/opt/raat/configure-raat
+ExecStartPre=-/opt/hifiberry/bin/pause-all raat
 ExecStart=/opt/raat/raat_app /etc/hifiberry_raat.conf
 StandardOutput=journal
 Restart=always
