@@ -23,14 +23,14 @@ fi
 read_features() {
  for dir in /etc/hifiberry /custom/hifiberry; do
    if [ -d $dir ]; then 
-     pushd $dir
+     pushd $dir >/dev/null
      for f in *.feature; do
        if [ "$f" != "*.feature" ]; then
          F=${f/.feature/}
          FEATURES="$FEATURES $F"
        fi 
      done
-   popd
+   popd >/dev/null
    fi
  done
 }
@@ -259,7 +259,7 @@ guess_card() {
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Amp3 + DSP Module"
      DSPTYPE="DSP add-on"
-     SECONDARY_MIXER_CONTROL="Digital"
+     SECONDARY_MIXER_CONTROL="A.Mstr Vol"
    else
      CARD="Amp3"
    fi
@@ -748,10 +748,21 @@ if [ "$HAS_DSP" == "1" ]; then
  fi
 fi
 
+# if there is a hardware mixer, use this instead of DSP
+if [ "$MIXER_CONTROL" == "DSPVolume" ]; then
+ if [ "$SECONDARY_MIXER_CONTROL" != "" ] && \
+    [ "$SECONDARY_MIXER_CONTROL" != "Softvol" ]; then
+      TMP="$MIXER_CONTROL"
+      MIXER_CONTROL="$SECONDARY_MIXER_CONTROL"
+      SECONDARY_MIXER_CONTROL="$TMP"
+ fi
+fi
+
+# Set secondary mixer control to 100%
 if [ "$SECONDARY_MIXER_CONTROL" != "" ] && \
    [ "$SECONDARY_MIXER_CONTROL" != "$MIXER_CONTROL" ]; then
  echo "Detected secondary mixer control $SECONDARY_MIXER_CONTROL, setting to 100%"
- amixer sset $SECONDARY_MIXER_CONTROL 100%
+ amixer sset "$SECONDARY_MIXER_CONTROL" 100%
 fi
 
 
@@ -781,6 +792,7 @@ echo " Interrupt pin for power controller: $INTPIN (was $CURRENT_INTPIN)"
 echo " DSP type: $DSPTYPE (was $CURRENT_DSPTYPE)"
 echo " HW device: $HW (was $CURRENT_HW)"
 echo " ALSA mixer control: $MIXER_CONTROL (was $CURRENT_MIXER_CONTROL)"
+echo " Secondary mixer control: $SECONDARY_MIXER_CONTROL (was $CURRENT_SECONDARY_MIXER_CONTROL)"
 echo " Recording: $CAN_RECORD (was $CURRENT_CAN_RECORD)"
 echo " Vendor/product ${HATINFO} (was ${CURRENT_HATINFO})"
 echo " Features: ${FEATURES} (was ${CURRENT_FEATURES})"
@@ -789,6 +801,7 @@ echo
 echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
 echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
+echo "CURRENT_SECONDARY_MIXER_CONTROL=\"$SECONDARY_MIXER_CONTROL\"" >> /etc/hifiberry.state
 echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
 echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
 echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state
