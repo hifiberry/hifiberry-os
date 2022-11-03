@@ -53,6 +53,12 @@ function detect_card {
 		EEPROM=0
 		return
 	fi
+
+	if [ "$HATCARD" == "Digi2 Pro" ]; then
+        	DETECTED="digi-pro"
+        	EEPROM=0
+        	return
+	fi
   
         if [ "$HATCARD" == "Amp3" ]; then
                 DETECTED="amp3"
