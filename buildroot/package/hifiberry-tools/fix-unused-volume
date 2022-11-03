@@ -1,0 +1,7 @@
+#!/bin/sh
+. /etc/hifiberry.state
+for MIXER in Softvol DSPVolume; do
+  if [ "$CURRENT_MIXER_CONTROL" != "$MIXER" ]; then
+    amixer sset "$MIXER" 100%
+  fi
+done

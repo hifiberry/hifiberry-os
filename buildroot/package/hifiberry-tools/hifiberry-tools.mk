@@ -25,7 +25,7 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/bin/myurl
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/debuginfo \
            $(TARGET_DIR)/opt/hifiberry/bin/debuginfo
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/alsa-mode \
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/alsa-mode \ 
            $(TARGET_DIR)/opt/hifiberry/bin/alsa-mode
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/sshdconfig \
            $(TARGET_DIR)/opt/hifiberry/bin/sshdconfig
@@ -67,6 +67,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/set-host-ip \
                 $(TARGET_DIR)/opt/hifiberry/bin
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/fix-unused-volume \
+		$(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/snd_soc_core_disable_pm.conf \
 		$(TARGET_DIR)/etc/modprobe.d/snd_soc_core_disable_pm.conf
     touch $(TARGET_DIR)/resize-me
