@@ -5,5 +5,5 @@ After=sound.target
 
 [Service]
 Type=oneshot
+ExecStart=-/opt/hifiberry/bin/fix-unused-volume
 ExecStart=/opt/hifiberry/bin/store-volume
-
