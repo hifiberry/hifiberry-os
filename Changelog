@@ -1,3 +1,7 @@
+20221104:
+- improve Digi2 Pro detection
+- imporve volume control of Amp3/DSP add-on 
+
 20221028:
 - Upgrade Linux kernel
 - Bugfix in DSP detection on the Beocreate 4 channel amplifier
