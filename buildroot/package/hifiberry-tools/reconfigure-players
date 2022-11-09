@@ -1,10 +1,9 @@
 #!/bin/bash
 
 REBOOTFILE=/tmp/reboot
-
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli"
-
 FEATURES="pi"
+SET_VOLUMERANGE=""
 
 # Check that UUID exists
 if [ ! -s "/etc/uuid" ]; then
@@ -23,14 +22,15 @@ fi
 read_features() {
  for dir in /etc/hifiberry /custom/hifiberry; do
    if [ -d $dir ]; then 
-     pushd $dir
+     pushd $dir >/dev/null
      for f in *.feature; do
        if [ "$f" != "*.feature" ]; then
          F=${f/.feature/}
          FEATURES="$FEATURES $F"
+         eval "FEATURE_$F=1"
        fi 
      done
-   popd
+   popd >/dev/null
    fi
  done
 }
@@ -259,9 +259,15 @@ guess_card() {
   if [ "$HAS_DSP" == "1" ]; then
      CARD="Amp3 + DSP Module"
      DSPTYPE="DSP add-on"
-     SECONDARY_MIXER_CONTROL="Digital"
+     SECONDARY_MIXER_CONTROL="A.Mstr Vol"
    else
      CARD="Amp3"
+     FEATURE_prefer_dsp_volume=0
+   fi
+   if [ "$FEATURE_prefer_dsp_volume" != "1" ]; then
+     SET_VOLUMERANGE="[50,100]"
+   else
+     SET_VOLUMERANGE="[0,100]"
    fi
    INTPIN=3
    return
@@ -448,7 +454,7 @@ system_name() {
  SYSNAME_SED_SPACES=`echo $SYSNAME | sed 's/\ /\\\\\\ /g'` 
 }
 
-# Pi3 hasn't enough RAM for local UI
+# Pi3 A+ hasn't enough RAM for local UI
 check_pi3a() {
   if [ "$PIMODEL" == "3A+" ]; then
     # Pi 3A+ can't run a local UI as it doesn't have enough RAM
@@ -674,6 +680,12 @@ reconfigure_beocreate() {
   fi 
  fi
 
+ # Only change volume range if mixer control has been changed
+ if [ "$SET_VOLUMERANGE" != "" -a "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ]; then
+  /bin/node /opt/beocreate/beo-system/configure.js sound volumeControlRange "$SET_VOLUMERANGE"
+  UPDATE=1
+ fi
+
  if [ "$UPDATE" == "1" ]; then
   restart_service beocreate2
   echo " restarting Beocreate"
@@ -720,13 +732,13 @@ if [ "$1" == "--restart-players" ]; then
 fi 
 
 read_fixed
+read_features
 pi_model
 usb_devices
 detect_hw
 guess_card
 guess_volume_control
 system_name
-read_features
 check_pi3a
 check_genuine
 
@@ -748,11 +760,19 @@ if [ "$HAS_DSP" == "1" ]; then
  fi
 fi
 
-if [ "$SECONDARY_MIXER_CONTROL" != "" ] && \
-   [ "$SECONDARY_MIXER_CONTROL" != "$MIXER_CONTROL" ]; then
- echo "Detected secondary mixer control $SECONDARY_MIXER_CONTROL, setting to 100%"
- amixer sset $SECONDARY_MIXER_CONTROL 100%
+# if there is a hardware mixer, we might use this instead of DSP
+if [ "$MIXER_CONTROL" == "DSPVolume" -a "$FEATURE_prefer_dsp_volume" != "1" ]; then
+ if [ "$SECONDARY_MIXER_CONTROL" != "" ] && \
+    [ "$SECONDARY_MIXER_CONTROL" != "Softvol" ]; then
+      TMP="$MIXER_CONTROL"
+      MIXER_CONTROL="$SECONDARY_MIXER_CONTROL"
+      SECONDARY_MIXER_CONTROL="$TMP"
+ fi
 fi
+
+# Set unused mixer controls to 100%
+rm /tmp/fix-volume.done
+/opt/hifiberry/bin/fix-unused-volume
 
 
 if [ "$CURRENT_MIXER_CONTROL" != "$MIXER_CONTROL" ] || \
@@ -781,6 +801,7 @@ echo " Interrupt pin for power controller: $INTPIN (was $CURRENT_INTPIN)"
 echo " DSP type: $DSPTYPE (was $CURRENT_DSPTYPE)"
 echo " HW device: $HW (was $CURRENT_HW)"
 echo " ALSA mixer control: $MIXER_CONTROL (was $CURRENT_MIXER_CONTROL)"
+echo " Secondary mixer control: $SECONDARY_MIXER_CONTROL (was $CURRENT_SECONDARY_MIXER_CONTROL)"
 echo " Recording: $CAN_RECORD (was $CURRENT_CAN_RECORD)"
 echo " Vendor/product ${HATINFO} (was ${CURRENT_HATINFO})"
 echo " Features: ${FEATURES} (was ${CURRENT_FEATURES})"
@@ -789,6 +810,7 @@ echo
 echo "Saving settings to /etc/hifiberry.state"
 echo "CURRENT_PIMODEL=$PIMODEL" > /etc/hifiberry.state
 echo "CURRENT_MIXER_CONTROL=\"$MIXER_CONTROL\"" >> /etc/hifiberry.state
+echo "CURRENT_SECONDARY_MIXER_CONTROL=\"$SECONDARY_MIXER_CONTROL\"" >> /etc/hifiberry.state
 echo "CURRENT_CARD=\"$CARD\"" >> /etc/hifiberry.state
 echo "CURRENT_HW=\"$HW\"" >> /etc/hifiberry.state
 echo "CURRENT_HW_SHORT=$HW_SHORT" >> /etc/hifiberry.state

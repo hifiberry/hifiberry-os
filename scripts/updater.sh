@@ -272,4 +272,9 @@ if [ "$V" -lt 20220230 ]; then
  rm -rf /newroot/var/lib/bluetooth/*
 fi
 
+if [ "$V" -lt 20221101 ]; then
+ echo "Removing sound configurations"
+ rm -rf /newroot/etc/hifiberry.state
+fi
+
 
