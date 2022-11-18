@@ -1,3 +1,6 @@
+20221115:
+- Fix a bug in range of the Amp3 volume control
+
 20221109:
 - improve Digi2 Pro detection
 - improve volume control of Amp3/DSP add-on 
