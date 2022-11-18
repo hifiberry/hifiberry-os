@@ -1,3 +1,7 @@
+20221118:
+- Fix a bug in range of the Amp3 volume control
+- Change DSP addon DSP profile to 1MHz SPI programming clocky
+
 20221109:
 - improve Digi2 Pro detection
 - improve volume control of Amp3/DSP add-on 

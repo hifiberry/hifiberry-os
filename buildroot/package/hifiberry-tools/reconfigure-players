@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Supported features
+# usehwvolume:  use the hardware volume control instead of DSP volume control if both controls are available
+# bluetooth: hardware supports bluetooth
+# pi3orlater: Pi3 or Pi4
+# arm7: arm7 or higher CPU generation
+# spdifnoclock: card has an SPDIF input, but requires Pi clock generation
+# toslink: card has a TOSLink input
+# analoginput: card has an analog input
+# digi: card is a digital sound card
+# dsp: DSP available
+# localui: Local UI web browser supported
+
 REBOOTFILE=/tmp/reboot
 SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dlnampris mopidy upmpdcli"
 FEATURES="pi"
@@ -262,9 +274,9 @@ guess_card() {
      SECONDARY_MIXER_CONTROL="A.Mstr Vol"
    else
      CARD="Amp3"
-     FEATURE_prefer_dsp_volume=0
+     FEATURE_usehwvolume=1
    fi
-   if [ "$FEATURE_prefer_dsp_volume" != "1" ]; then
+   if [ "$FEATURE_usehwvolume" == "1" ]; then
      SET_VOLUMERANGE="[50,100]"
    else
      SET_VOLUMERANGE="[0,100]"
@@ -761,7 +773,7 @@ if [ "$HAS_DSP" == "1" ]; then
 fi
 
 # if there is a hardware mixer, we might use this instead of DSP
-if [ "$MIXER_CONTROL" == "DSPVolume" -a "$FEATURE_prefer_dsp_volume" != "1" ]; then
+if [ "$MIXER_CONTROL" == "DSPVolume" -a "$FEATURE_usehwvolume" == "1" ]; then
  if [ "$SECONDARY_MIXER_CONTROL" != "" ] && \
     [ "$SECONDARY_MIXER_CONTROL" != "Softvol" ]; then
       TMP="$MIXER_CONTROL"
