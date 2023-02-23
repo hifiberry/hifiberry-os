@@ -1,3 +1,6 @@
+20230223:
+- DAC+ DSP profile v13 that is compatible with the latest DAC+ DSP hardware
+
 20221118:
 - Fix a bug in range of the Amp3 volume control
 - Change DSP addon DSP profile to 1MHz SPI programming clocky
