@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <ROM IC="ADAU1451" IC_Address="1" Address_byte_length="2">
 	<beometa>
-		<metadata type="samplerate">48000</metadata>
+		<metadata type="sampleRate">48000</metadata>
 		<metadata type="profileName">Beocreate Universal</metadata>
 		<metadata type="profileVersion">10</metadata>
 		<metadata type="programID">beocreate-universal</metadata>
