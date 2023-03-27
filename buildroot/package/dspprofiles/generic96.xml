@@ -3,7 +3,7 @@
 	<beometa>
                 <metadata type="profileName">Generic 96kHz</metadata>
                 <metadata type="profileVersion">20191121</metadata>
-                <metadata type="samplerate">96000</metadata>
+                <metadata type="sampleRate">96000</metadata>
                 <metadata type="checksum">AEE5921C33D71C02C9D14679496B20B3</metadata>
 		<metadata type="volumeLimitPiRegister">4680</metadata>
 		<metadata type="volumeLimitSPDIFRegister">4682</metadata>

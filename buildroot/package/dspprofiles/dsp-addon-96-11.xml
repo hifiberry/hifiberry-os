@@ -3,7 +3,7 @@
   <dateTime>2020-06-24T10:16:32.9132938Z</dateTime>
 
 <beometa>
-	<metadata type="samplerate">96000</metadata>
+	<metadata type="sampleRate">96000</metadata>
 	<metadata type="profileName">DSP add-on</metadata>
 	<metadata type="profileVersion">11</metadata>
 	<metadata type="programID">dsp-addon</metadata>

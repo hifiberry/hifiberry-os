@@ -32,7 +32,7 @@
 		<metadata type="delay2">634</metadata>
 		<metadata type="delay3">635</metadata>
 		<metadata type="delay4">636</metadata>
-		<metadata type="samplerate">192000</metadata>
+		<metadata type="sampleRate">192000</metadata>
 		<metadata type="customFilterRegisterBankLeft">132/80</metadata>
 		<metadata type="customFilterRegisterBankRight">52/80</metadata>
 		<metadata type="toneControlLeftRegisters">212/50</metadata>
