@@ -24,7 +24,7 @@ to the output.
 
 ## Bluetooth
 
-This module enables HiFiBerryOS to act as a Bluetooth speaker. It uses BlueZ and BlueALSA to implement bluethooth functionalities. MPRIS is implemented using mpris-proxy
+This module enables HiFiBerryOS to act as a Bluetooth speaker. It uses BlueZ and BlueALSA to implement bluetooth functionalities. MPRIS is implemented using mpris-proxy
 
 ## MPD
 
