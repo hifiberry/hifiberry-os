@@ -126,6 +126,13 @@ pi_model() {
   FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
+ 
+ f [[ $modelname == *"Compute Module 4"* ]]; then
+  PIMODEL="4"
+  PIVERSION=4
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  return
+ fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
