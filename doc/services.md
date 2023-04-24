@@ -6,25 +6,25 @@ The following services are currently supported on HiFiBerryOS:
 * Analog input on DAC+ ADC
 * Bluetooth
 * mpd
-* Roon (not on Raspberry Pi Zero)
-* Spotify (not on Raspberry Pi Zero)
-* Squeezebox (not on Raspberry Pi Zero)
+* Roon (not on the Raspberry Pi Zero)
+* Spotify (not on the Raspberry Pi Zero)
+* Squeezebox (not on the Raspberry Pi Zero)
 * Snapcast (not on the Raspberry Pi Zero)
 
 
 ## Airplay 1
 
-Shairport-sync implements support for the older Airplay 1 protocol. This is still supported today. Airplay 2 that offers 
+Shairport-sync implements support for the older Airplay 1 protocol. This is still supported til today. Airplay 2 offers 
 some additional features is not supported.
 
 ## Analog input
 
-alsaloop is used to enable input from analoge input of the DAC+ ADC cards. It just uses alsaloop to copy data from the input
+alsaloop is used to enable input from a analoge input of the DAC+ ADC cards. It just uses alsaloop to copy data from the input
 to the output.
 
 ## Bluetooth
 
-This module enables HiFiBerryOS to act as a Bluetooth speaker. It uses BlueZ and BlueALSA to implement this. MPRIS is implemented my mpris-proxy
+This module enables HiFiBerryOS to act as a Bluetooth speaker. It uses BlueZ and BlueALSA to implement bluetooth functionalities. MPRIS is implemented using mpris-proxy
 
 ## MPD
 
@@ -45,7 +45,7 @@ Squeezelite implements the Logitech Squeezebox protocol enabling the system to c
 
 ## Snapcast
 
-A snapcast player is included. This is still experimental.
+A snapcast player is included, but is still experimental.
 
 # Systemd services and config files
 
