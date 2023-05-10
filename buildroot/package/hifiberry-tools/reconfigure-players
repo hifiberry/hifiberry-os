@@ -126,11 +126,25 @@ pi_model() {
   FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
+ 
+ if [[ $modelname == *"Compute Module 4"* ]]; then
+  PIMODEL="4"
+  PIVERSION=4
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  return
+ fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
   PIVERSION=0
   FEATURES="$FEATURES bluetooth"
+  return
+ fi
+ 
+ if [[ $modelname == *"Pi Zero 2"* ]]; then
+  PIMODEL="02w"
+  PIVERSION=3
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
@@ -515,7 +529,7 @@ reconfigure_vollibrespot() {
  fi
 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
-  sed -i s/device-name\ =.*/device-name\ =\ \'$SYSNAME_NO_SPACES\'/ /etc/vollibrespot.conf
+  sed -i s/device-name\ =.*/device-name\ =\ \'$SYSNAME\'/ /etc/vollibrespot.conf
   RESTART=1
   echo " updated system name"
  fi
@@ -545,7 +559,7 @@ reconfigure_shairport() {
   echo " updated mixer"
  fi
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
-  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
+  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME\"\;/ /etc/shairport-sync.conf  
   RESTART=1
   echo " updated system name"
  fi
