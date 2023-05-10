@@ -29,12 +29,11 @@ VOLLIBRESPOT_CARGO_ENV = \
 VOLLIBRESPOT_CARGO_OPTS = \
     --target=$(RUSTC_TARGET_NAME) \
     --manifest-path=$(@D)/Cargo.toml \
-    --no-default-features
+    --no-default-features 
 
 RUSTC_ARCH = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ARCH))
 RUSTC_ABI = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ABI))
 RUSTC_TARGET_NAME = armv7-unknown-linux-$(LIBC)$(RUSTC_ABI)
-
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 VOLLIBRESPOT_CARGO_MODE = debug 
@@ -46,6 +45,7 @@ VOLLIBRESPOT_CARGO_OPTS += --${VOLLIBRESPOT_CARGO_MODE} #--features ${VOLLIBRESP
 
 define VOLLIBRESPOT_BUILD_CMDS
     echo $(SPOTIFY_CLIENT_ID)
+    RUSTFLAGS="-C linker=$(TARGET_CC)" \
     $(TARGET_MAKE_ENV) $(VOLLIBRESPOT_CARGO_ENV) CLIENT_ID=$(SPOTIFY_CLIENT_ID) \
             cargo build $(VOLLIBRESPOT_CARGO_OPTS)
 endef
