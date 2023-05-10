@@ -29,6 +29,8 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digi2pro.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digi2standard.eep \
+           $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/beocreate2.eep \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
         $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dtoverlay \
@@ -117,6 +119,20 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2PRO
 
         echo "Adding drivers to config.txt"
         echo "dtoverlay=hifiberry-digi-pro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2STANDARD
+        echo "Installing Digi2 Standard test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdigi2standard \
+                $(TARGET_DIR)/etc/init.d/S99testdigi2standard
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=hifiberry-digi" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
