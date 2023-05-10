@@ -19,6 +19,10 @@ echo -n "Pi model: $MODEL"
 cat /proc/device-tree/model
 echo ""
 
+echo -n "CPU temperature: "
+awk '{c=$1/1000; printf "%.1f°C %.1f°F\n", c, c*1.8+32}' /sys/class/thermal/thermal_zone0/temp
+echo ""
+
 echo -n "Compatibility: "
 /opt/hifiberry/bin/check-compatibility
 APLAY=`aplay -l | grep card | head -1`
