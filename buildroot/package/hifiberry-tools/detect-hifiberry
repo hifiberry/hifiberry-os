@@ -82,7 +82,7 @@ function detect_card {
 
 	# DAC Plus
 	res=`i2cget -y 1 0x4d 40 2>/dev/null`
-	if [ "$res" == "0x02" ] || [ "$res" == "0x03" ]; then
+	if [ "$res" == "0x02" ]; then
                 DETECTED="dacplus"
 		return
         fi
