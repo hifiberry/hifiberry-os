@@ -40,7 +40,8 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/eepdump \
 	   $(TARGET_DIR)/usr/bin/eepdump
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/eepmake \
-           $(TARGET_DIR)/usr/bin/eepmake
+  	   $(TARGET_DIR)/usr/bin/eepmake
+	echo "kernel=zImage" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 
@@ -296,6 +297,10 @@ endif
 
 ifdef HIFIBERRY_TEST_DIGI2PRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2PRO
+endif
+
+ifdef HIFIBERRY_TEST_DIGI2STANDARD
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2STANDARD
 endif
 
 ifdef HIFIBERRY_TEST_KADDSP

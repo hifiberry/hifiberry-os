@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_GEVENT_VERSION = 21.12.0
+PYTHON_GEVENT_VERSION = 22.10.2
 PYTHON_GEVENT_SOURCE = gevent-$(PYTHON_GEVENT_VERSION).tar.gz
-PYTHON_GEVENT_SITE = https://files.pythonhosted.org/packages/c8/18/631398e45c109987f2d8e57f3adda161cc5ff2bd8738ca830c3a2dd41a85
+PYTHON_GEVENT_SITE = https://files.pythonhosted.org/packages/9f/4a/e9e57cb9495f0c7943b1d5965c4bdd0d78bc4a433a7c96ee034b16c01520
 PYTHON_GEVENT_SETUP_TYPE = setuptools
 PYTHON_GEVENT_LICENSE = MIT
 PYTHON_GEVENT_LICENSE_FILES = LICENSE deps/c-ares/LICENSE.md deps/libev/LICENSE deps/libuv/LICENSE
