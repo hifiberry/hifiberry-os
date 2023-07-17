@@ -21,6 +21,13 @@ define CONFIGTXT_ENABLE_EEPROM_I2C
 	echo "dtoverlay=i2c-gpio,i2c_gpio_sda=0,i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define CONFIGTXT_BASE
+#	echo "start_file=start4.elf" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+#	echo "fixup_file=fixup4.dat" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "kernel=zImage" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+
 
 define CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
  	echo "INstalling quiet cmdline.txt"
@@ -33,6 +40,8 @@ define CONFIGTXT_VERBOSE_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/configtxt/cmdline.verbose \
                 $(BINARIES_DIR)/rpi-firmware/cmdline.txt
 endef
+
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_BASE
 
 ifeq ($(BR2_PACKAGE_CONFIGTXT_QUIET),y)
 CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
