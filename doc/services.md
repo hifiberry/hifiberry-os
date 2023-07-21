@@ -2,7 +2,7 @@
 
 The following services are currently supported on HiFiBerryOS:
 
-* Airplay 1
+* Airplay 2
 * Analog input on DAC+ ADC
 * Bluetooth
 * mpd
@@ -12,10 +12,9 @@ The following services are currently supported on HiFiBerryOS:
 * Snapcast (not on the Raspberry Pi Zero)
 
 
-## Airplay 1
+## Airplay 2
 
-Shairport-sync implements support for the older Airplay 1 protocol. This is still supported til today. Airplay 2 offers 
-some additional features is not supported.
+Shairport-sync implements support for the newer Airplay 2 protocol.
 
 ## Analog input
 
