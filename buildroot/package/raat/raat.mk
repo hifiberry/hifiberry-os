@@ -5,9 +5,9 @@
 ################################################################################
 
 define RAAT_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raat/raat_app \
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raat/raat_app.$(BR2_ARCH) \
                 $(TARGET_DIR)/opt/raat/raat_app
-        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raat/raatool \
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raat/raatool.$(BR2_ARCH) \
                 $(TARGET_DIR)/opt/raat/raatool
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/raat/configure-raat \
                 $(TARGET_DIR)/opt/raat/configure-raat

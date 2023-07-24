@@ -472,6 +472,10 @@ system_name() {
  if [ -f /etc/systemname ]; then
    SYSNAME=`cat /etc/systemname`
  else
+   SYSNAME=""
+ fi
+
+ if [ "$SYSNAME" == "" ]; then 
    SYSNAME=HiFiBerry
    echo $SYSNAME > /etc/systemname
  fi

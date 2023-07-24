@@ -31,9 +31,9 @@ VOLLIBRESPOT_CARGO_OPTS = \
     --manifest-path=$(@D)/Cargo.toml \
     --no-default-features 
 
-RUSTC_ARCH = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ARCH))
-RUSTC_ABI = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ABI))
-RUSTC_TARGET_NAME = armv7-unknown-linux-$(LIBC)$(RUSTC_ABI)
+#RUSTC_ARCH = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ARCH))
+#RUSTC_ABI = $(call qstrip,$(BR2_PACKAGE_HOST_RUSTC_ABI))
+#RUSTC_TARGET_NAME = armv7-unknown-linux-$(LIBC)$(RUSTC_ABI)
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 VOLLIBRESPOT_CARGO_MODE = debug 
@@ -50,7 +50,6 @@ define VOLLIBRESPOT_BUILD_CMDS
             cargo build $(VOLLIBRESPOT_CARGO_OPTS)
 endef
 
-#target/armv7-unknown-linux-gnueabihf/release/librespot
 define VOLLIBRESPOT_INSTALL_TARGET_CMDS
     $(INSTALL) -D \
             $(@D)/target/$(RUSTC_TARGET_NAME)/$(VOLLIBRESPOT_CARGO_MODE)/vollibrespot \

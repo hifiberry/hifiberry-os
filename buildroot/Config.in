@@ -1,3 +1,7 @@
+comment "HiFiBerryOS"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-all/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/piversion/Config.in"
+
 comment "Base packages"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-base/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-users/Config.in"
@@ -13,6 +17,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-watchdog/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/disable-samba/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-arm7/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/pigpiod-systemd/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hattools/Config.in"
 
 comment "Players"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/lmsmpris/Config.in"
@@ -70,7 +75,9 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/beocreate-music/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/dsp-promo/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-vc4kms/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-psplash/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-weston/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-localbrowser/Config.in"
+
 
 
 comment "Libraries"

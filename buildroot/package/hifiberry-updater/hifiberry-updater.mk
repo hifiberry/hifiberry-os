@@ -35,17 +35,24 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/usr/lib/systemd/system/updater.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/updater.timer \
 	        $(TARGET_DIR)/usr/lib/systemd/system/updater.timer
-	echo "Installing kernel"
-        $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm/boot/zImage $(TARGET_DIR)/usr/lib/firmware/rpi
 	echo "Installing updater"
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
-	echo "F2FS supported"
-	touch $(TARGET_DIR)/etc/f2fs 
 
 endef
 
-define HIFIBERRY_UPDATER_INSTALL_INIT_SYSTEMD
+ifeq ($(BR2_aarch64),y)
+define HIFIBERRY_UPDATER_INSTALL_KERNEL
+     	echo "Installing 64bit kernel"
+   	$(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm64/boot/Image.gz $(TARGET_DIR)/usr/lib/firmware/rpi/zImage
+
 endef
+else
+define HIFIBERRY_UPDATER_INSTALL_KERNEL
+        echo "Installing 32bit kernel"
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm/boot/zImage $(TARGET_DIR)/usr/lib/firmware/rpi
+
+endef
+endif
 
 ### 
 ### Add more functions to RPI firmware
@@ -68,6 +75,7 @@ endif
 
 define HIFIBERRY_UPDATER_INSTALL_ALL_OVERLAYS
         echo "Installing overlays"
+	sleep 10
 	mkdir -p $(TARGET_DIR)/usr/lib/firmware/rpi/overlays
         for ovldtb in $(@D)/boot/overlays/*.dtbo; do \
                 $(INSTALL) -D -m 0644 $${ovldtb} $(TARGET_DIR)/usr/lib/firmware/rpi/overlays/$${ovldtb##*/} || exit 1; \
@@ -75,9 +83,6 @@ define HIFIBERRY_UPDATER_INSTALL_ALL_OVERLAYS
 endef
 
 HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS += $(HIFIBERRY_UPDATER_INSTALL_FIRMWARE)
-
-#ifneq ($(BR2_PACKAGE_COPY_ALL_OVERLAYS),y)
-#HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS += $(HIFIBERRY_UPDATER_INSTALL_ALL_OVERLAYS)
-#endif
+HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS += $(HIFIBERRY_UPDATER_INSTALL_KERNEL)
 
 $(eval $(generic-package))
