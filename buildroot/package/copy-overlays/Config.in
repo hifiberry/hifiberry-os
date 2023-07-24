@@ -3,16 +3,4 @@ config BR2_PACKAGE_COPY_OVERLAYS
         help
 	  "copy device tree binaries to overlays directory"
 
-choice
-    prompt "Pi version"
-    config COPY_OVERLAYS_PI0w
-          bool "Pi 0w"
-    config COPY_OVERLAYS_PI2
-          bool "Pi 2"
-    config COPY_OVERLAYS_PI3
-          bool "Pi 3"
-    config COPY_OVERLAYS_PI4
-          bool "Pi 4"
-    config COPY_OVERLAY_PI_3AND4
-	  bool "Pi 3/4"
-endchoice
+	select BR2_PACKAGE_PIVERSION

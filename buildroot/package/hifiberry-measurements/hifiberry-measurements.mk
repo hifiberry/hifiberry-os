@@ -6,11 +6,17 @@
 
 HIFIBERRY_MEASUREMENTS_DEPENDENCIES += alsa-lib
 
+ifeq ($(BR2_aarch64),y)
+define CCOPTS
+endef
+else
+endif
+
 define HIFIBERRY_MEASUREMENTS_BUILD_CMDS
     cd $(@D); \
       pwd; \
       cp $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-measurements/analyze/* .; \
-      $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) LDFLAGS=-lm CFLAGS="-mtune=cortex-a7 -mfpu=neon -mfloat-abi=hard -marm -O3 -Wall" all 
+      $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) LDFLAGS=-lm CFLAGS="-O3 -Wall" all 
 endef
 
 define HIFIBERRY_MEASUREMENTS_INSTALL_TARGET_CMDS

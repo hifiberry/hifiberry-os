@@ -10,7 +10,7 @@ PC_DOWNLOAD=https://github.com/hifiberry/powercontroller/releases/download/$(PC_
 
 define HIFIBERRY_POWERCONTROLLER_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-powercontroller/pc-write \
-                $(TARGET_DIR)/opt/hifiberry/bin
+                $(TARGET_DIR)/opt/hifiberry/bin/pc-write
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-powercontroller/write-firmware \
                 $(TARGET_DIR)/opt/hifiberry/powercontroller/write-firmware
     curl -L $(PC_DOWNLOAD) --output $(TARGET_DIR)/opt/hifiberry/powercontroller/firmware-$(PC_VERSION).hex
@@ -18,11 +18,11 @@ endef
 
 define HIFIBERRY_POWERCONTROLLER_INSTALL_INIT_SYSTEMD
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-powercontroller/pc-startup.service \
-                $(TARGET_DIR)/lib/systemd/system
+                $(TARGET_DIR)/lib/systemd/system/pc-startup.service
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-powercontroller/pc-startup-finish.service \
-                $(TARGET_DIR)/lib/systemd/system
+                $(TARGET_DIR)/lib/systemd/system/pc-startup-finish.service
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-powercontroller/pc-shutdown.service \
-		$(TARGET_DIR)/lib/systemd/system
+		$(TARGET_DIR)/lib/systemd/system/pc-shutdown.service
 endef
 
 $(eval $(generic-package))

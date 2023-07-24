@@ -24,7 +24,7 @@ endef
 define CONFIGTXT_BASE
 #	echo "start_file=start4.elf" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 #	echo "fixup_file=fixup4.dat" >> $(BINARIES_DIR)/rpi-firmware/config.txt
-	echo "kernel=zImage" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "kernel=Image" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 

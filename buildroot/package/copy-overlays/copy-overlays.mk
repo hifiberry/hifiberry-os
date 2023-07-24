@@ -7,26 +7,21 @@
 
 COPY_OVERLAYS_DEPENDENCIES = rpi-firmware linux
 
-ifdef COPY_OVERLAYS_PI0w
+ifdef HIFIBERRY_PIVERSION_0w
 PIOVERLAYS = bcm2708-rpi-zero-w.dtb
 endif
 
-ifdef COPY_OVERLAYS_PI2
+ifdef HIFIBERRY_PIVERSION_2
 PIOVERLAYS = bcm2709-rpi-2-b.dtb
 endif
 
-ifdef COPY_OVERLAYS_PI3
+ifdef HIFIBERRY_PIVERSION_3
 PIOVERLAYS = bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb
 endif
 
-ifdef COPY_OVERLAYS_PI4
+ifdef HIFIBERRY_PIVERSION_4
 PIOVERLAYS = bcm2711-rpi-4-b.dtb
 endif
-
-ifdef COPY_OVERLAYS_PI_3AND4
-PIOVERLAYS = bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2711-rpi-4-b.dtb
-endif
-
 
 define COPY_OVERLAYS_INSTALL_TARGET_CMDS
 	# Copy overlays
