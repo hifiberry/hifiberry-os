@@ -38,6 +38,13 @@ popd
 #echo "Copying genimage configurations"
 #cp -v hifiberry-os/buildroot/board/raspberrypi/genimage*cfg $BRDIR/board/raspberrypi
 
+echo "Fixing genimage configurations"
+for i in $BRDIR/board/raspberrypi/genimage*cfg; do
+	mv $i $i.bak
+	# Resize FAT partition to 100M as we want to store backup files there
+	cat $i.bak | sed s/32M/128M/g > $i
+done
+
 echo "Symlinking to buildroot"
 rm buildroot
 ln -s $BRDIR buildroot
