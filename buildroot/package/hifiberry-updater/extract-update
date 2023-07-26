@@ -59,24 +59,29 @@ if [ -f /newroot/resize-me ]; then
 fi
 VERSION=`cat /newroot/etc/hifiberry.version`
 
+KERNELNAME=zImage
+if [ $VERSION -gt 20230723 ]; then
+  KERNELNAME=Image
+fi
+
 echo "extracting new kernel..."
-if [ -f /newroot/usr/lib/firmware/rpi/zImage ]; then
- echo "Using zImage from new RPI firmware"
- cp /boot/zImage /boot/zImage.bak
+if [ -f /newroot/usr/lib/firmware/rpi/$KERNELIMAGE ]; then
+ echo "Using $KERNALIMAGE from new RPI firmware"
+ cp /boot/$KERNELIMAGE /boot/$KERNELIMAGE.bak
  cp -rv /newroot/usr/lib/firmware/rpi/* /boot
 else
  cd /tmp
  if [ "$ISTAR" == "1" ]; then
-  gunzip -c $UPDATER | tar xf - zImage updater.sh updater2.sh
+  gunzip -c $UPDATER | tar xf - $KERNELIMAGE updater.sh updater2.sh
  else
-   unzip $UPDATER  zImage updater.sh updater2.sh
+   unzip $UPDATER  $KERNELIMAGE updater.sh updater2.sh
  fi
- if [ ! -f zImage ]; then
+ if [ ! -f $KERNELIMAGE ]; then
   echo "Could not find new kernel, aborting ..."
   exit 1
  else
-  cp /boot/zImage /boot/zImage.bak
-  mv zImage /boot/zImage 2>/dev/null
+  cp /boot/$KERNELIMAGE /boot/$KERNELIMAGE.bak
+  mv $KERNELIMAGE /boot/$KERNELIMAGE 2>/dev/null
  fi
 fi
 echo "migrating SSH host keys..."
@@ -159,7 +164,11 @@ if [ "$1" == "--simulate" ]; then
 fi
 
 echo "switching root file system to inactive partition..."
-echo "root=$INACTIVE rootwait console=tty5 systemd.show_status=0 quiet splash" > /boot/cmdline.txt
+echo "was:     " `cat /boot/cmdline.txt`
+QUOTED_INACTIVE=$(sed 's/[\/&]/\\&/g; s/$/\\/' <<< "$INACTIVE")
+CMDLINE=`cat /boot/cmdline.txt | sed "s/root\=[a-zA-Z0-9\/]*/root=$QUOTED_INACTIVE /"`
+echo "becomes: " $CMDLINE
+echo "$CMDLINE" > /boot/cmdline.txt
 
 if [ "$1" == "--reboot" ]; then
  echo "removing updater..."

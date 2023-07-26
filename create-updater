@@ -22,13 +22,13 @@ cd `dirname $0`
 MYDIR=`pwd`
 TMPDIR=/tmp/$$
 mkdir $TMPDIR
-cp $BRDIR/images/zImage $BRDIR/images/rootfs.* $TMPDIR
+cp $BRDIR/images/*Image $BRDIR/images/rootfs.* $TMPDIR
 pushd $TMPDIR
 ls $TMPDIR
 pwd
 ls
 cp $MYDIR/scripts/updater.sh .
-tar cvfz $MYDIR/images/updater-$TS-pi$VERSION.tar.gz updater.sh zImage rootfs.ext2
-zip $MYDIR/images/updater-$TS-pi$VERSION.zip updater.sh zImage rootfs.ext2
+tar cvfz $MYDIR/images/updater-$TS-pi$VERSION.tar.gz updater.sh *Image rootfs.ext2
+zip $MYDIR/images/updater-$TS-pi$VERSION.zip updater.sh *Image rootfs.ext2
 popd
 rm -rf $TMPDIR
