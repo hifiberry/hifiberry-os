@@ -1,6 +1,7 @@
 [Unit]
 Description=HiFiBerry startup
-Before=systemd-journald.service
+Before=basic.target
+After=local-fs.target sysinit.target
 
 [Service]
 Type=oneshot
@@ -9,7 +10,6 @@ ExecStartPre=-/opt/hifiberry/bin/pc-write 1 1    # Pulsing LED
 ExecStartPre=-/opt/hifiberry/bin/pc-write 2 0    # R
 ExecStartPre=-/opt/hifiberry/bin/pc-write 3 0x70 # G
 ExecStart=-/opt/hifiberry/bin/pc-write 4 0       # B
-StandardOutput=journal
 
 [Install]
 WantedBy=multi-user.target

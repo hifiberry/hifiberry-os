@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/appdirs/json
-md5  44c679904082a2133f5566c8a0d3ab42  appdirs-1.4.3.tar.gz
-sha256  9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92  appdirs-1.4.3.tar.gz
-# Locally computed sha256 checksums
-sha256  36ddb4d0a745a93ab203203d7190814b1b89727d254caff48c7a7afbbd47000b  LICENSE.txt

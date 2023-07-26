@@ -1,3 +1,5 @@
 #!/bin/sh
 CARDID=`aplay -l | grep hifiberry | awk '{print $2}' | sed s/://`
-/sbin/alsactl -f /etc/dspvolume.ctl restore $CARDID
+echo Configuring DSPVolume on card $CARDID
+/sbin/alsactl -f /etc/dspvolume.ctl restore $CARDID 2>/dev/null
+echo "done"

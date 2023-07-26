@@ -39,6 +39,8 @@ choice
            bool "DAC+ ADC Stage + XLR I/O"
     config HIFIBERRY_TEST_DIGI2PRO
            bool "Digi2 Pro"
+    config HIFIBERRY_TEST_DIGI2STANDARD
+           bool "Digi2 Standard"
     config HIFIBERRY_TEST_POWERCONTROLLER
            bool "Power controller"
 endchoice
