@@ -3,6 +3,7 @@ config BR2_PACKAGE_HIFIBERRY_UPDATER
         help
 	  "Update tools for HiFiBerryOS"
 	depends on BR2_PACKAGE_RPI_FIRMWARE
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
 	select BR2_PACKAGE_E2FSPROGS
 	select BR2_PACKAGE_E2FSPROGS_RESIZE2FS
 	select BR2_PACKAGE_LIBCURL

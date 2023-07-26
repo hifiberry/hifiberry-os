@@ -1,6 +1,6 @@
 [Unit]
 Description=HiFiBerry startup
-After=hifiberry.target
+After=hifiberry.target pc-startup.service
 
 [Service]
 Type=oneshot
