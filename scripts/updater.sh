@@ -277,4 +277,28 @@ if [ "$V" -lt 20221101 ]; then
  rm -rf /newroot/etc/hifiberry.state
 fi
 
+# Fix kernel
+if [ -f /boot/zImage ]; then
+ sed -i 's/kernel=.*/kernel=zImage/g' /boot/config.txt
+elif [ -f /boot/Image ]; then
+ sed -i 's/kernel=.*/kernel=Image/g' /boot/config.txt
+fi
+
+if [ "$V" -lt 20230801 ]; then
+ echo "Adding 64bit kernel settings"
+cat <<EOF >>/boot/config.txt
+[pi4]
+arm_64bit=1
+
+[pi3]
+arm_64bit=1
+
+[pi02]
+arm_64bit=1
+
+[pi3]
+arm_64bit=1
+EOF
+fi
+
 
