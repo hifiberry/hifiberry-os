@@ -59,14 +59,14 @@ if [ -f /newroot/resize-me ]; then
 fi
 VERSION=`cat /newroot/etc/hifiberry.version`
 
-KERNELNAME=zImage
-if [ $VERSION -gt 20230723 ]; then
-  KERNELNAME=Image
+KERNELIMAGE=zImage
+if [ -f /newroot/usr/lib/firmware/rpi/Image ]; then
+  KERNELIMAGE=Image
 fi
 
 echo "extracting new kernel..."
 if [ -f /newroot/usr/lib/firmware/rpi/$KERNELIMAGE ]; then
- echo "Using $KERNALIMAGE from new RPI firmware"
+ echo "Using $KERNELIMAGE from new RPI firmware"
  cp /boot/$KERNELIMAGE /boot/$KERNELIMAGE.bak
  cp -rv /newroot/usr/lib/firmware/rpi/* /boot
 else
@@ -135,6 +135,8 @@ done
 echo "looking for update script..."
 if [ -f /newroot/tmp/updater.sh ]; then
  cp /newroot/tmp/updater.sh /tmp/updater.sh
+elif [ -f /newroot/updater.sh ]; then
+ cp /newroot/updater.sh /tmp/updater.sh
 fi
 cd /tmp
 if [ ! -f updater.sh ]; then
