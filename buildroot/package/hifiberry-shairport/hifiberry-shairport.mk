@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-HIFIBERRY_SHAIRPORT_VERSION = a30c260ec575e6d76d35b72db1343c149ea0772d
+HIFIBERRY_SHAIRPORT_VERSION = b56d55151890ff846a667b50d15e9e6b562144d2
 HIFIBERRY_SHAIRPORT_SITE = $(call github,mikebrady,shairport-sync,$(HIFIBERRY_SHAIRPORT_VERSION))
 
 HIFIBERRY_SHAIRPORT_LICENSE = MIT, BSD-3-Clause
 HIFIBERRY_SHAIRPORT_LICENSE_FILES = LICENSES
-HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi 
+HIFIBERRY_SHAIRPORT_DEPENDENCIES = alsa-lib libconfig libdaemon popt host-pkgconf avahi
 
 # git clone, no configure
 HIFIBERRY_SHAIRPORT_AUTORECONF = YES
@@ -20,7 +20,7 @@ HIFIBERRY_SHAIRPORT_CONF_OPTS = --with-alsa \
         --with-stdout \
         --with-avahi \
         --with-mpris-interface \
-        --with-mpris-test-client 
+        --with-mpris-test-client
 
 HIFIBERRY_SHAIRPORT_CONF_ENV += LIBS="$(HIFIBERRY_SHAIRPORT_CONF_LIBS)"
 
