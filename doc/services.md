@@ -2,7 +2,7 @@
 
 The following services are currently supported on HiFiBerryOS:
 
-* Airplay 1
+* Airplay 1 and 2
 * Analog input on DAC+ ADC
 * Bluetooth
 * mpd
@@ -12,10 +12,9 @@ The following services are currently supported on HiFiBerryOS:
 * Snapcast (not on the Raspberry Pi Zero)
 
 
-## Airplay 1
+## Airplay 1 and 2
 
-Shairport-sync implements support for the older Airplay 1 protocol. This is still supported til today. Airplay 2 offers 
-some additional features is not supported.
+Shairport-sync implements support for Airplay 1 and 2.
 
 ## Analog input
 
@@ -37,11 +36,11 @@ Roon is a high-end music player. It uses a proprietary protocol. Therefore, the 
 
 ## Spotifyd
 
-Spotifyd implements a Spotify connect receiver. 
+Spotifyd implements a Spotify connect receiver.
 
 ## Squeezelite
 
-Squeezelite implements the Logitech Squeezebox protocol enabling the system to connect to a Logitech Media Server. MPRIS support is implemented separataly by lms-mpris. 
+Squeezelite implements the Logitech Squeezebox protocol enabling the system to connect to a Logitech Media Server. MPRIS support is implemented separataly by lms-mpris.
 
 ## Snapcast
 
