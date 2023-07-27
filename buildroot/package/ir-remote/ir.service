@@ -1,6 +1,7 @@
 [Unit]
 Description=Setup ir-keytable
 After=hifiberry.target
+ConditionPathExists=/etc/features/ir
 
 [Service]
 Type=oneshot
