@@ -1,0 +1,12 @@
+diff -u br/fs/common.mk br/common/fs.mk
+--- br/fs/common.mk      2023-07-27 13:35:33.680105048 +0000
++++ br/fs/common.mk        2023-07-27 13:35:43.960195125 +0000
+@@ -187,7 +187,6 @@
+        $$(foreach hook,$$(ROOTFS_$(2)_PRE_GEN_HOOKS),\
+                $$(call PRINTF,$$($$(hook))) >> $$(FAKEROOT_SCRIPT)$$(sep))
+        echo "find $$(TARGET_DIR)/run/ -mindepth 1 -prune -print0 | xargs -0r rm -rf --" >> $$(FAKEROOT_SCRIPT)
+-       echo "find $$(TARGET_DIR)/tmp/ -mindepth 1 -prune -print0 | xargs -0r rm -rf --" >> $$(FAKEROOT_SCRIPT)
+        $$(call PRINTF,$$(ROOTFS_REPRODUCIBLE)) >> $$(FAKEROOT_SCRIPT)
+        $$(call PRINTF,$$(ROOTFS_SELINUX)) >> $$(FAKEROOT_SCRIPT)
+        $$(call PRINTF,$$(ROOTFS_$(2)_CMD)) >> $$(FAKEROOT_SCRIPT)
+
