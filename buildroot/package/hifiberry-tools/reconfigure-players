@@ -17,6 +17,11 @@ SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dl
 FEATURES="pi"
 SET_VOLUMERANGE=""
 
+# If there's a fix-config-script, run it, there might be some updates necessary after an update
+if [ -f /opt/hifiberry/bin/after-update ]; then
+ /opt/hifiberry/bin/after-update
+fi
+
 # Check that UUID exists
 if [ ! -s "/etc/uuid" ]; then
  /usr/bin/uuidgen > /etc/uuid

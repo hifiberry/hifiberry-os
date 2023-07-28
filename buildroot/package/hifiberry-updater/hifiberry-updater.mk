@@ -35,6 +35,8 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/usr/lib/systemd/system/updater.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/updater.timer \
 	        $(TARGET_DIR)/usr/lib/systemd/system/updater.timer
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/after-update \
+                $(TARGET_DIR)/opt/hifiberry/bin
 	echo "Installing updater"
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/updater.sh
