@@ -8,8 +8,8 @@ Signed-off-by: HiFiBerry <info@hifiberry.com>
  		}
  	}
  
-+	FormatDebug(alsa_output_domain, "Stopping other processed using ALSA");
-+        system("/opt/hifiberry/bin/pause-all mpd");	
++	FmtDebug(alsa_output_domain, "Stopping other processed using ALSA");
++       system("/opt/hifiberry/bin/pause-all mpd");	
 +
  	int err = snd_pcm_open(&pcm, GetDevice(),
  			       SND_PCM_STREAM_PLAYBACK, mode);
