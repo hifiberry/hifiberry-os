@@ -4,7 +4,10 @@
 # in that case we would then create a new config.txt and trigger a reboot.
 # after reboot we might be lucky, or do another loop.....
 # Fix: be more patient: wait 2 secs
-sleep 2
+FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
+if [ -z "$FOUND" ]; then
+  sleep 2
+fi
 
 # On the Pi Zero, volume controls won't show up before playing something :(
 SOFTVOL=`amixer | grep Softvol`
