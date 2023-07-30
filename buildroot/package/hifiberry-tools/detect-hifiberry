@@ -6,6 +6,11 @@ if [ "$SOFTVOL" == "" ]; then
  play -n trim 0 0.1
 fi
 
+# sometimes the alsa device is LATE and aplay deliver a empty result.
+# in that case we would create a new config.txt and trigger a reboot...
+# Fix: be more patient: wait 2 secs
+sleep 2
+
 FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
 CONFIG=/boot/config.txt
 REBOOTFILE=/tmp/reboot
