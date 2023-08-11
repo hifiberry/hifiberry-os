@@ -66,6 +66,12 @@ function detect_card {
                 return
         fi
 
+	if [ "$HATCARD" == "Amp4" ]; then
+                DETECTED="amp4"
+                EEPROM=0
+                return
+        fi
+
         # DAC+ ADC Pro
         res=`i2cget -y 1 0x4a 25 2>/dev/null`
         if [ "$res" == "0x07" ]; then
