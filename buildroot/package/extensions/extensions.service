@@ -1,0 +1,13 @@
+[Unit]
+Description=Start containers
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting extensions"
+ExecStart=/opt/hifiberry/bin/extensions startup
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
+
