@@ -2,7 +2,7 @@
 cd `dirname $0`
 TS=`date +%Y%m%d`
 NICE=10
-for i in 2 3 4 0w; do
+for i in 2 3 4 0 02; do
  if [ "$1" == "parallel" ]; then
   screen -d -m nice -n $NICE ./build-release $i $TS 
   echo "Started $i build with nice level $NICE"
