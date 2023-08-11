@@ -1,0 +1,7 @@
+config BR2_PACKAGE_EXTENSIONS
+	bool "extensions"
+	help
+	  A simple framework to add extensions to HiFiBerryOS
+
+	select BR2_PACKAGE_GIT
+
