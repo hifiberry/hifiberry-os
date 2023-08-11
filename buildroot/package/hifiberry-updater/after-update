@@ -10,6 +10,14 @@ if [ "$IFNAMEEXISTS" == "" ]; then
   CHANGED=1
 fi
 
+# ntp user
+USEREXISTS=`cat /etc/passwd | grep ntp`
+if [ "$USEREXISTS" == "" ]; then
+  addgroup -S ntp
+  adduser -G ntp -h / -H -S -D ntp -g "NTP server"
+  CHANGED=1
+fi 
+ 
 # Script should run only once
 mv $0 $0.done
 
