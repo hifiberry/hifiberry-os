@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+HIFIBERRY_TEST_DEPENDENCIES += dsptoolkit
+
 define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
 	echo "HiFiBerry Test"
 	[ -d $(TARGET_DIR)/opt/hifiberry/contrib ] || mkdir -p $(TARGET_DIR)/opt/hifiberry/contrib
@@ -33,15 +35,12 @@ define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
            $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/beocreate2.eep \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dtoverlay \
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp4.eep \
+           $(TARGET_DIR)/opt/hifiberry/contrib
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp4pro.eep \
            $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/flash.sh \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/eepdump \
-	   $(TARGET_DIR)/usr/bin/eepdump
-	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/eepmake \
-  	   $(TARGET_DIR)/usr/bin/eepmake
-	echo "kernel=zImage" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 
@@ -57,6 +56,35 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP2
         echo "dtoverlay=hifiberry-dacplus" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
+
+
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP4
+        echo "Installing Amp4 test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testamp4 \
+                $(TARGET_DIR)/etc/init.d/S99testamp4
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=hifiberry-amp4" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
+
+define HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP4PRO
+        echo "Installing Amp4 test script"
+        $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testamp4pro \
+                $(TARGET_DIR)/etc/init.d/S99testamp4pro
+
+        echo "Adding drivers to config.txt"
+        echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=hifiberry-amp4" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 
 define HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP100
         echo "Installing Amp100 test script"
@@ -253,22 +281,40 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_POWERCONTROLLER
 	echo "dtoverlay=disable-bt" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define HIFIBERRY_TEST_REMOVEDSPTOOLKIT
+	if [ -f $(TARGET_DIR)/etc/init.d/*sigmatcp* ]; then rm $(TARGET_DIR)/etc/init.d/*sigmatcp*; fi
+endef
+
 
 
 ifdef HIFIBERRY_TEST_AMP2
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP2
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_AMP100
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP100
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
+endif
+
+ifdef HIFIBERRY_TEST_AMP4
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP4
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
+endif
+
+ifdef HIFIBERRY_TEST_AMP4PRO
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP4PRO
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DAC2HD
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2HD
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DAC2PRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2PRO
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DSPADDON
@@ -277,6 +323,7 @@ endif
 
 ifdef HIFIBERRY_TEST_DACRTC
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACRTC
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DSPDAC
@@ -285,22 +332,27 @@ endif
 
 ifdef HIFIBERRY_TEST_DACADC
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADC
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DACADCPRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPRO
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DACADCPROXLR
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DACADCPROXLR
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DIGI2PRO
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2PRO
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_DIGI2STANDARD
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_DIGI2STANDARD
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 ifdef HIFIBERRY_TEST_KADDSP
@@ -313,6 +365,7 @@ endif
 
 ifdef HIFIBERRY_TEST_POWERCONTROLLER
 HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_INSTALL_INIT_SYSV_POWERCONTROLLER
+HIFIBERRY_TEST_POST_INSTALL_TARGET_HOOKS += HIFIBERRY_TEST_REMOVEDSPTOOLKIT
 endif
 
 $(eval $(generic-package))

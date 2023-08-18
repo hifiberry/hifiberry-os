@@ -10,3 +10,5 @@ eepmake dac2pro.txt dac2pro.eep /boot/overlays/hifiberry-dacplus.dtbo
 eepmake digi2pro.txt digi2pro.eep /boot/overlays/hifiberry-digi-pro.dtbo
 eepmake beocreate2.txt beocreate2.eep /boot/overlays/hifiberry-dac.dtbo
 eepmake digi2standard.txt digi2standard.eep
+eepmake amp4.txt amp4.eep
+eepmake amp4pro.txt amp4pro.eep

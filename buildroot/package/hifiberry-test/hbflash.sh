@@ -91,7 +91,7 @@ modprobe at24
 rc=$?
 
 # Bus number is different on Pi3 and 4
-for i in 7 3 11; do
+for i in 7 3 11 0; do
   if [ -d /sys/class/i2c-adapter/i2c-$i ]; then
     DEVID=$i
     break
