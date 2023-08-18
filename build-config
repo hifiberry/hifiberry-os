@@ -1,6 +1,12 @@
 #!/bin/bash
 
 cd `dirname $0`
+MYNAME=`basename $0`
+
+if [ "$MYNAME" == "build-test-config" ]; then
+	echo "Creating config for test image"
+	TEST=1
+fi
 
 if [ "$1" == "" ]; then
  	VERSION=`cat .piversion`
@@ -49,6 +55,11 @@ echo "BR2_PACKAGE_HIFIBERRY_ALL=y" >> $BRDIR/.config
 
 if [ "$UI" == "1" ]; then
 	echo "BR2_PACKAGE_HIFIBERRY_LOCALBROWSER=y" >> $BRDIR/.config
+fi
+
+if [ "$TEST" == "1" ]; then
+	echo "Changing to test config"
+	cat configs/override-test.conf >> $BRDIR/.config
 fi
 
 # Update version
