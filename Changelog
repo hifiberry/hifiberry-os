@@ -1,5 +1,5 @@
 Unreleased:
-- Updated [shairport-sync](https://github.com/mikebrady/shairport-sync) to version 4.2 ([release notes](https://github.com/mikebrady/shairport-sync/releases/tag/4.2)) and as required [nqptp](https://github.com/mikebrady/nqptp) to version 1.2.1 ([release notes](https://github.com/mikebrady/nqptp/releases/tag/1.2.1))
+- Security: Updated [shairport-sync](https://github.com/mikebrady/shairport-sync) to version 4.3.1 ([release notes](https://github.com/mikebrady/shairport-sync/releases/tag/4.2)) and as required [nqptp](https://github.com/mikebrady/nqptp) to version 1.2.4 ([release notes](https://github.com/mikebrady/nqptp/releases/tag/1.2.4)). This important update fixes a crashing bug whereby a maliciously-crafted message to the control port could crash the shairport nqptp daemon.
 
 20230404:
 - Fix several DSP bugs
