@@ -16,7 +16,13 @@ if [ "$USEREXISTS" == "" ]; then
   addgroup -S ntp
   adduser -G ntp -h / -H -S -D ntp -g "NTP server"
   CHANGED=1
-fi 
+fi
+
+# Re-link installed extensions
+if [ -f /opt/hifiberry/bin/extensions ]; then
+  /opt/hifiberry/bin/extensions link
+  systemctl enable --now extensions
+fi
  
 # Script should run only once
 mv $0 $0.done
