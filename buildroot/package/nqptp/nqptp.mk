@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NQPTP_VERSION = 57fc7ac20ffd7a04ea5fbed6417e4c658bb7eb68
+NQPTP_VERSION = 591f425d9da69f1c4e09f3ad09611b758937b3e5
 NQPTP_SITE = $(call github,mikebrady,nqptp,$(NQPTP_VERSION))
 
 # git clone, no configure
