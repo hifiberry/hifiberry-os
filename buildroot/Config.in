@@ -87,7 +87,7 @@ comment "Libraries"
 
 comment "Python modules"
 #source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-appdirs/Config.in"
-source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-blinker/Config.in"
+#source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-blinker/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-bottle-websocket/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-bs4/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-cachetools/Config.in"
