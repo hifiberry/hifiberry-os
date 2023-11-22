@@ -1,0 +1,10 @@
+--- 1/Makefile.am.orig	2023-11-22 14:21:26.172398842 +0000
++++ 2/Makefile.am	2023-11-22 14:21:36.124439196 +0000
+@@ -20,7 +20,6 @@
+ install-exec-hook:
+ if BUILD_FOR_LINUX
+ # NQPTP runs as user/group nqptp/nqptp on Linux and uses setcap to access ports 319 and 320
+-	setcap 'cap_net_bind_service=+ep' $(bindir)/nqptp
+ # no installer for System V
+ if INSTALL_SYSTEMD_STARTUP
+ 	getent group nqptp &>/dev/null || groupadd -r nqptp &>/dev/null
