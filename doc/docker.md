@@ -25,6 +25,7 @@ If your docker container requires persistent data, store this in the same direct
 
 - Remember that docker containers are stateless. Don't expect data in a container to persist. Always store data that needs to be persistant in /data/docker/\<appname\>
 - Minimize writes to the SD card
+- Add 0.0.0.0: to the exposed ports to avoid a bug that prevents the containers from starting.
 
 ## Example
 
@@ -53,10 +54,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     ports:
-      - 9000:9000/tcp
-      - 9090:9090/tcp
-      - 3483:3483/tcp
-      - 3483:3483/udp
+      - 0.0.0.0:9000:9000/tcp
+      - 0.0.0.0:9090:9090/tcp
+      - 0.0.0.0:3483:3483/tcp
+      - 0.0.0.0:3483:3483/udp
     restart: always
 ```
 
