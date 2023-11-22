@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_WHEEL
-	bool "python-wheel"
-	help
-	  Tool for Python wheels
-
-	  http://pythonhosted.org/wheel/
