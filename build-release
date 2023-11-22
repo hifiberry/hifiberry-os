@@ -17,7 +17,7 @@ echo Buildung for Raspberry Pi $1
 echo ============================
 echo
 date > buildtime.$1
-./build-config $1 release
+./build-config $1 
 ./clean $1
 ./compile $1
 # For some reason, first build sometimes fails

@@ -6,14 +6,14 @@
 
 # based on the original mpd package but with additional patches
 
-HIFIBERRY_MPD_VERSION_MAJOR = 0.22
-HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).11
+HIFIBERRY_MPD_VERSION_MAJOR = 0.23
+HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).13
 
 #HIFIBERRY_MPD_VERSION_MAJOR = 0.21
 #HIFIBERRY_MPD_VERSION = $(HIFIBERRY_MPD_VERSION_MAJOR).25
 HIFIBERRY_MPD_SOURCE = mpd-$(HIFIBERRY_MPD_VERSION).tar.xz
 HIFIBERRY_MPD_SITE = http://www.musicpd.org/download/mpd/$(HIFIBERRY_MPD_VERSION_MAJOR)
-HIFIBERRY_MPD_DEPENDENCIES = host-pkgconf boost
+HIFIBERRY_MPD_DEPENDENCIES = host-pkgconf boost fmt
 HIFIBERRY_MPD_LICENSE = GPL-2.0+
 HIFIBERRY_MPD_LICENSE_FILES = COPYING
 
@@ -152,7 +152,7 @@ HIFIBERRY_MPD_CONF_OPTS += -Dtwolame=disabled
 HIFIBERRY_MPD_DEPENDENCIES += \
 	expat \
 	$(if $(BR2_PACKAGE_LIBUPNP),libupnp,libupnp18)
-HIFIBERRY_MPD_CONF_OPTS += -Dupnp=enabled
+HIFIBERRY_MPD_CONF_OPTS += -Dupnp=auto
 
 # enable vorbis
 HIFIBERRY_MPD_DEPENDENCIES += libvorbis
@@ -161,6 +161,9 @@ HIFIBERRY_MPD_CONF_OPTS += -Dvorbis=enabled -Dvorbisenc=enabled
 # enable wavpack
 HIFIBERRY_MPD_DEPENDENCIES += wavpack
 HIFIBERRY_MPD_CONF_OPTS += -Dwavpack=enabled
+
+# Disable chromaprint (we don't yet have a package for this
+HIFIBERRY_MPD_CONF_OPTS += -Dchromaprint=disabled
 
 define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 	mkdir -p $(TARGET_DIR)/library
@@ -191,6 +194,5 @@ define HIFIBERRY_MPD_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/mpd-update-notifier.service
 	echo "disable mpd.socket" >> $(TARGET_DIR)/lib/systemd/system-preset/99-mpdsocket.preset 
 endef
-
 
 $(eval $(meson-package))

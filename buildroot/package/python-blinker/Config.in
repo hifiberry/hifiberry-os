@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_BLINKER
-	bool "python-blinker"
-	help
-	  Fast, simple object-to-object and broadcast signaling.
-
-	  http://pythonhosted.org/blinker/

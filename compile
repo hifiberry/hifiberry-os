@@ -23,7 +23,7 @@ else
  VERSION=$1
 fi
 
-KNOWNVERSION=`echo "2 3 4 0w" | grep $VERSION`
+KNOWNVERSION=`echo "2 3 4 0 02" | grep $VERSION`
 if [ "$KNOWNVERSION" == "" ]; then
  echo "Unsupported version $VERSION, aborting"
  exit 1

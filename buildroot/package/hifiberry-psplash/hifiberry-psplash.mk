@@ -19,6 +19,9 @@ define HIFIBERRY_PSPLASH_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/psplash-quit.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/psplash-quit.service
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+
+	$(INSTALL) -D -m 644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-psplash/fb0.rules \
+		$(TARGET_DIR)/etc/udev/rules.d/fb0.rules
 endef
 
 ifeq ($(BR2_PACKAGE_ENABLE_VC4KMS),y)

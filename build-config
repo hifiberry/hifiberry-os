@@ -1,12 +1,18 @@
 #!/bin/bash
 
 cd `dirname $0`
+MYNAME=`basename $0`
+
+if [ "$MYNAME" == "build-test-config" ]; then
+	echo "Creating config for test image"
+	TEST=1
+fi
 
 if [ "$1" == "" ]; then
- VERSION=`cat .piversion`
- echo No version given, assuming Pi$VERSION
+ 	VERSION=`cat .piversion`
+ 	echo No version given, assuming Pi$VERSION
 else
- VERSION=$1
+ 	VERSION=$1
 fi
 
 echo $VERSION > .piversion
@@ -17,92 +23,44 @@ echo "Building in $BRDIR"
 echo $VERSION > $BRDIR/.piversion
 echo $VERSION > buildroot/PIVERSION
 
-if [[ "$2" == "" || "$2" == "release" ]]; then
- TEMPLATE=hifiberryos-gui
+if [ "$VERSION" == "4" ]; then
+	CFG="raspberrypi4_64_defconfig"
+	UI=1
+elif [ "$VERSION" == "3" ]; then
+	CFG="raspberrypi3_64_defconfig"
+	UI=1
+elif [ "$VERSION" == "2" ]; then
+        CFG="raspberrypi2_defconfig"
+        UI=0
+elif [ "$VERSION" == "02" ]; then
+        CFG="raspberrypizero2w_defconfig"
+        UI=0
+elif [ "$VERSION" == "0" ]; then
+        CFG="raspberrypi0_defconfig"
+        UI=0
 else
- TEMPLATE=$2
-fi
-SRC=configs/$TEMPLATE
-#SRC=configs/hifiberryos-gui
-TMP=./tmpfile.$$
-DST=./config.$$
-PLATFORM=configs/config$VERSION
-
-if [ ! -f $PLATFORM ]; then
- echo Platform default configuration $PLATFORM not found. You need to create one using make xxxx_defconfig in buildroot
- exit 1
+	echo "Pi version $1 not supported"
+	exit 1
 fi
 
-if [ ! -f $SRC ]; then
- echo "template $SRC does not exist, aborting..."
- exit 1
-fi
-cp $SRC $TMP
+pushd ../buildroot
+make $CFG
+popd
 
+mv ../buildroot/.config $BRDIR/.config
+cat configs/override.conf >> $BRDIR/.config
+echo "BR2_PACKAGE_PIVERSION_$VERSION=y" >> $BRDIR/.config
+# use full package set
+echo "BR2_PACKAGE_HIFIBERRY_ALL=y" >> $BRDIR/.config
 
-# These settings differ at at different Pi types
-for i in BR2_ARCH_NEEDS_GCC_AT_LEAST_4_8 BR2_ARCH_NEEDS_GCC_AT_LEAST_4_9 BR2_ARCH_NEEDS_GCC_AT_LEAST_5 BR2_GCC_TARGET_CPU BR2_GCC_TARGET_FPU BR2_cortex_a53 BR2_cortex_a72 BR2_DEFCONFIG BR2_ROOTFS_POST_BUILD_SCRIPT BR2_ROOTFS_POST_IMAGE_SCRIPT BR2_LINUX_KERNEL_DEFCONFIG BR2_LINUX_KERNEL_INTREE_DTS_NAME BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4 BR2_ARM_CPU_HAS_NEON BR2_ARM_CPU_HAS_VFPV3 BR2_ARM_CPU_HAS_VFPV4 BR2_ARM_CPU_HAS_FP_ARMV8 BR2_ARM_CPU_HAS_THUMB BR2_ARM_CPU_ARMV6 BR2_arm1176jzf_s BR2_ARM_FPU_VFPV2 BR2_ARM_FPU_VFPV3 BR2_ARM_FPU_VFPV3D16 BR2_ARM_FPU_VFPV4 BR2_ARM_FPU_VFPV4D16 BR2_ARM_FPU_NEON BR2_ARM_FPU_FP_ARMV8 BR2_ARM_FPU_NEON_FP_ARMV8 BR2_SYSTEM_DHCP BR2_PACKAGE_BAYER2RGB_NEON BR2_PACKAGE_JPEG_SIMD_SUPPORT BR2_PACKAGE_NE10 BR2_PACKAGE_OPENBLAS BR2_PACKAGE_OPENBLAS_DEFAULT_TARGET BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4 BR2_ARM_INSTRUCTIONS_THUMB2 BR2_ARM_ENABLE_VFP BR2_ARM_CPU_ARMV7A BR2_cortex_a7 COPY_OVERLAYS_PI; do
-  cat $TMP | grep  -v $i > $DST
-  cat $PLATFORM | grep $i >> $DST
-  mv $DST $TMP
-done
-
-# Always disable these
-for i in BR2_PACKAGE_KVM_UNIT_TESTS BR2_PACKAGE_WF111 BR2_PACKAGE_XEN BR2_TARGET_TS4800_MBRBOOT BR2_PACKAGE_VALGRIND; do
- echo "$i=n" >> $TMP
-done
-
-# Always enable these
-for i in BR2_STRIP_strip; do
- echo "$i=y" >> $TMP
-done
-
-# add version
-echo COPY_OVERLAYS_PI${VERSION}=y >> $TMP
-
-if [ "$2" == "release" ]; then
- # for the releases, remove debug tools
- for i in `cat configs/devpackages` ; do
-  echo "$i=n" >> $TMP
- done
- for i in BR2_PACKAGE_CONFIGTXT_QUIET BR2_STRIP; do
-  echo "$i=y" >> $TMP
- done
-else
- # use verbose mode for development release and larger file systems
- for i in BR2_PACKAGE_CONFIGTXT_QUIET; do
-  echo "$i=n" >> $TMP
-  echo "BR2_TARGET_ROOTFS_EXT2_SIZE=\"900M\"" >> $TMP
-  echo "BR2_TARGET_ROOTFS_F2FS_SIZE=\"1300M\"" >> $TMP
- done
+if [ "$UI" == "1" ]; then
+	echo "BR2_PACKAGE_HIFIBERRY_LOCALBROWSER=y" >> $BRDIR/.config
 fi
 
-# Roon and Spotify are not supported on the Pi Zero
-if [ "$VERSION" == "0w" ]; then
- for PKG in BR2_PACKAGE_RAAT BR2_PACKAGE_SPOTIFY BR2_PACKAGE_ENABLE_ARM7 BR2_PACKAGE_VOLLIBRESPOT; do
-   echo "$PKG=n" >> $TMP
- done
- for PKG in `cat configs/remove-slowpi`; do 
-   echo "$PKG=n" >> $TMP
- done
- echo BR2_PACKAGE_HIFIBERRY_TOOLS_AUDIO_LITE=y >> $TMP
+if [ "$TEST" == "1" ]; then
+	echo "Changing to test config"
+	cat configs/override-test.conf >> $BRDIR/.config
 fi
-
-# Remove some stuff from the Pi2 release"
-if [ "$VERSION" == "2" ]; then
- for PKG in `cat configs/remove-slowpi`; do
-  echo "$PKG=n" >> $TMP
- done
-fi 
-
-# Workaround
-#echo "BR2_JLEVEL=16" >> $TMP
-
-# Disable parallel builds (still testing)
-echo "BR2_PER_PACKAGE_DIRECTORIES=n" >> $TMP
-
-mv $TMP $DST
-mv $DST $BRDIR/.config
 
 # Update version
 TS=`date +%Y%m%d`

@@ -2,10 +2,17 @@ config BR2_PACKAGE_HIFIBERRY_TEST
 	bool "hifiberry-test"
 	help
 	  Tools to test the hardware of HiFiBerry boards
-        depends on BR2_PACKAGE_HIFIBERRY_BASE
+        select BR2_PACKAGE_HIFIBERRY_BASE
         select BR2_PACKAGE_DSPTOOLKIT
         select BR2_PACKAGE_SOX
 	select BR2_PACKAGE_PYTHON_PYUPDI
+	select BR2_PACKAGE_COPY_OVERLAYS
+	select BR2_PACKAGE_CONFIGTXT
+	select BR2_PACKAGE_OPENSSH
+	select BR2_PACKAGE_OPENSSH_CLIENT
+	select BR2_PACKAGE_OPENSSH_SERVER
+	select BR2_PACKAGE_OPENSSH_KEY_UTILS
+	select BR2_PACKAGE_OPENSSH_SANDBOX
 
 choice
     prompt "Card to test"
@@ -15,6 +22,10 @@ choice
           bool "Amp2"
     config HIFIBERRY_TEST_AMP100
           bool "Amp 100"
+    config HIFIBERRY_TEST_AMP4
+          bool "Amp4"
+    config HIFIBERRY_TEST_AMP4PRO
+          bool "Amp4Pro"
     config HIFIBERRY_TEST_DAC2HD
           bool "DAC2 HD"
     config HIFIBERRY_TEST_DAC2PRO
@@ -39,6 +50,8 @@ choice
            bool "DAC+ ADC Stage + XLR I/O"
     config HIFIBERRY_TEST_DIGI2PRO
            bool "Digi2 Pro"
+    config HIFIBERRY_TEST_DIGI2STANDARD
+           bool "Digi2 Standard"
     config HIFIBERRY_TEST_POWERCONTROLLER
            bool "Power controller"
 endchoice

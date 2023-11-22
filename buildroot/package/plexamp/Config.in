@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PLEXAMP
+	bool "plexamp"
+	help
+	  PlexAmp is a headless audio player that acts as a player
+	  for a Plex Media Server
+
+	depends on BR2_PACKAGE_BEOCREATE

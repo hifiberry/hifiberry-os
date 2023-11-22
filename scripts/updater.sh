@@ -273,8 +273,39 @@ if [ "$V" -lt 20220230 ]; then
 fi
 
 if [ "$V" -lt 20221101 ]; then
- echo "Removing sound configurations"
- rm -rf /newroot/etc/hifiberry.state
+  echo "Removing sound configurations"
+  rm -rf /newroot/etc/hifiberry.state
 fi
 
+# Fix kernel
+if [ -f /boot/zImage ]; then
+  sed -i 's/kernel=.*/kernel=zImage/g' /boot/config.txt
+elif [ -f /boot/Image ]; then
+  sed -i 's/kernel=.*/kernel=Image/g' /boot/config.txt
+fi
+
+# August 2023 release
+if [ "$V" -lt 20230801 ]; then
+  echo "Adding 64bit kernel settings"
+cat <<EOF >>/boot/config.txt
+[pi4]
+arm_64bit=1
+
+[pi3]
+arm_64bit=1
+
+[pi02]
+arm_64bit=1
+
+[pi3]
+arm_64bit=1
+EOF
+
+  IFNAMEEXISTS=`cat /boot/config.txt | grep "net.ifnames=0"`
+  if [ "$IFNAMEEXISTS" == "" ]; then
+    echo "Enabling old-style network interface naming"
+    sed -i "s/\$/\ net.ifnames=0/g" /boot/cmdline.txt
+  fi
+
+fi
 

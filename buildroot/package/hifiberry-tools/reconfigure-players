@@ -17,6 +17,11 @@ SERVICES="spotify raat mpd shairport-sync squeezelite bluealsa-aplay alsaloop dl
 FEATURES="pi"
 SET_VOLUMERANGE=""
 
+# If there's a fix-config-script, run it, there might be some updates necessary after an update
+if [ -f /opt/hifiberry/bin/after-update ]; then
+ /opt/hifiberry/bin/after-update
+fi
+
 # Check that UUID exists
 if [ ! -s "/etc/uuid" ]; then
  /usr/bin/uuidgen > /etc/uuid
@@ -126,11 +131,25 @@ pi_model() {
   FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
+ 
+ if [[ $modelname == *"Compute Module 4"* ]]; then
+  PIMODEL="4"
+  PIVERSION=4
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  return
+ fi
 
  if [[ $modelname == *"Pi Zero W"* ]]; then
   PIMODEL="0w"
   PIVERSION=0
   FEATURES="$FEATURES bluetooth"
+  return
+ fi
+ 
+ if [[ $modelname == *"Pi Zero 2"* ]]; then
+  PIMODEL="02w"
+  PIVERSION=3
+  FEATURES="$FEATURES bluetooth pi3orlater arm7"
   return
  fi
 
@@ -280,6 +299,19 @@ guess_card() {
      SET_VOLUMERANGE="[50,100]"
    else
      SET_VOLUMERANGE="[0,100]"
+   fi
+   INTPIN=3
+   return
+ fi
+
+ if [ "$HATINFO" == "HiFiBerry Amp4" ]; then
+  if [ "$HAS_DSP" == "1" ]; then
+     CARD="Amp4 + DSP Module"
+     DSPTYPE="DSP add-on"
+     SECONDARY_MIXER_CONTROL="Digital"
+   else
+     CARD="Amp4"
+     FEATURE_usehwvolume=1
    fi
    INTPIN=3
    return
@@ -458,6 +490,10 @@ system_name() {
  if [ -f /etc/systemname ]; then
    SYSNAME=`cat /etc/systemname`
  else
+   SYSNAME=""
+ fi
+
+ if [ "$SYSNAME" == "" ]; then 
    SYSNAME=HiFiBerry
    echo $SYSNAME > /etc/systemname
  fi
@@ -515,7 +551,7 @@ reconfigure_vollibrespot() {
  fi
 
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
-  sed -i s/device-name\ =.*/device-name\ =\ \'$SYSNAME_NO_SPACES\'/ /etc/vollibrespot.conf
+  sed -i s/device-name\ =.*/device-name\ =\ \'$SYSNAME\'/ /etc/vollibrespot.conf
   RESTART=1
   echo " updated system name"
  fi
@@ -545,7 +581,7 @@ reconfigure_shairport() {
   echo " updated mixer"
  fi
  if [ "$SYSNAME" != "$CURRENT_SYSNAME" ]; then
-  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME_NO_SPACES\"\;/ /etc/shairport-sync.conf  
+  sed -i s/\ name\ =\ .*/\ name\ =\ \"$SYSNAME\"\;/ /etc/shairport-sync.conf  
   RESTART=1
   echo " updated system name"
  fi
