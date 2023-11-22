@@ -2,7 +2,6 @@ config BR2_PACKAGE_HIFIBERRY_BASE
 	bool "hifiberry-base"
         help
           install some base HiFiBerryOS prerequisites
-        depends on BR2_INIT_SYSTEMD
         select BR2_PACKAGE_ALSA_UTILS
 	select BR2_PACKAGE_ALSA_UTILS_ALSACTL
 	select BR2_PACKAGE_ALSA_UTILS_ALSAMIXER
@@ -16,3 +15,6 @@ config BR2_PACKAGE_HIFIBERRY_BASE
 	select BR2_PACKAGE_SOX
 	select BR2_PACKAGE_LINUX_TOOLS_GPIO
 	select BR2_PACKAGE_UTIL_LINUX_KILL
+	select BR2_PACKAGE_PYTHON3
+        select BR2_USE_MMU
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS

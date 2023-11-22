@@ -1,6 +1,5 @@
 [Unit]
 Description=HiFiBerry startup
-Before=basic.target
 After=local-fs.target sysinit.target
 
 [Service]

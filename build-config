@@ -1,6 +1,12 @@
 #!/bin/bash
 
 cd `dirname $0`
+MYNAME=`basename $0`
+
+if [ "$MYNAME" == "build-test-config" ]; then
+	echo "Creating config for test image"
+	TEST=1
+fi
 
 if [ "$1" == "" ]; then
  	VERSION=`cat .piversion`
@@ -19,8 +25,19 @@ echo $VERSION > buildroot/PIVERSION
 
 if [ "$VERSION" == "4" ]; then
 	CFG="raspberrypi4_64_defconfig"
+	UI=1
 elif [ "$VERSION" == "3" ]; then
 	CFG="raspberrypi3_64_defconfig"
+	UI=1
+elif [ "$VERSION" == "2" ]; then
+        CFG="raspberrypi2_defconfig"
+        UI=0
+elif [ "$VERSION" == "02" ]; then
+        CFG="raspberrypizero2w_defconfig"
+        UI=0
+elif [ "$VERSION" == "0" ]; then
+        CFG="raspberrypi0_defconfig"
+        UI=0
 else
 	echo "Pi version $1 not supported"
 	exit 1
@@ -35,6 +52,15 @@ cat configs/override.conf >> $BRDIR/.config
 echo "BR2_PACKAGE_PIVERSION_$VERSION=y" >> $BRDIR/.config
 # use full package set
 echo "BR2_PACKAGE_HIFIBERRY_ALL=y" >> $BRDIR/.config
+
+if [ "$UI" == "1" ]; then
+	echo "BR2_PACKAGE_HIFIBERRY_LOCALBROWSER=y" >> $BRDIR/.config
+fi
+
+if [ "$TEST" == "1" ]; then
+	echo "Changing to test config"
+	cat configs/override-test.conf >> $BRDIR/.config
+fi
 
 # Update version
 TS=`date +%Y%m%d`

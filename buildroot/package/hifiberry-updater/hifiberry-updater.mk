@@ -35,8 +35,11 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/usr/lib/systemd/system/updater.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/updater.timer \
 	        $(TARGET_DIR)/usr/lib/systemd/system/updater.timer
+	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/after-update \
+                $(TARGET_DIR)/opt/hifiberry/bin
 	echo "Installing updater"
 	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
+	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/updater.sh
 
 endef
 
@@ -62,6 +65,7 @@ define HIFIBERRY_UPDATER_INSTALL_FIRMWARE
         echo "HiFiBerry updater: adding Pi4 firmware files to /usr/lib/firmware/rpi"
         $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
         $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
+	$(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/bcm2711-rpi-4-b.dtb $(TARGET_DIR)/usr/lib/firmware/rpi/bcm2711-rpi-4-b.dtb
 
 endef
 else

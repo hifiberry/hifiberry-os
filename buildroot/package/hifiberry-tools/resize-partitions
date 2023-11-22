@@ -95,7 +95,7 @@ touch /resize-me.2
 fsck.f2fs -p -f ${DEVICEBASE}4
 RET=$?
 if [[ $RET == 8 || $RET==255 ]] ; then
-  mkfs -t f2fs ${DEVICEBASE}4
+  mkfs -t f2fs -f ${DEVICEBASE}4
 fi
 
 echo "Resized partitions" >> /tmp/reboot

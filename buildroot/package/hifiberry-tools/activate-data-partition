@@ -5,8 +5,11 @@ DEVICE=`mount | grep " / " | awk '{print $1}' | sed s/[0-9]\$//`
 
 FSTABDATA=`cat /etc/fstab | grep /data`
 if [ "$FSTABDATA" == "" ]; then
- echo "No filesystem defined in /etc/fstab, creating file system"
- mkfs -t f2fs ${DEVICE}4
+ echo "No filesystem defined in /etc/fstab"
+ fsck -t f2fs ${DEVICE}4
+ if [ "$?" != "0" ]; then
+  mkfs -t f2fs -f ${DEVICE}4
+ fi
 fi
 
 DATA=`mount | grep data`

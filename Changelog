@@ -1,3 +1,11 @@
+Unreleased:
+- Security: Updated [shairport-sync](https://github.com/mikebrady/shairport-sync) to version 4.3.1 ([release notes](https://github.com/mikebrady/shairport-sync/releases/tag/4.2)) and as required [nqptp](https://github.com/mikebrady/nqptp) to version 1.2.4 ([release notes](https://github.com/mikebrady/nqptp/releases/tag/1.2.4)). This important update fixes a crashing bug whereby a maliciously-crafted message to the control port could crash the shairport nqptp daemon.
+
+20230404:
+- Fix several DSP bugs
+- Fix screensaver bug
+- Fix UI bug when no samplerate is defined
+
 20230223:
 - DAC+ DSP profile v13 that is compatible with the latest DAC+ DSP hardware
 
@@ -7,7 +15,7 @@
 
 20221109:
 - improve Digi2 Pro detection
-- improve volume control of Amp3/DSP add-on 
+- improve volume control of Amp3/DSP add-on
 
 20221028:
 - Upgrade Linux kernel
@@ -35,7 +43,7 @@
 - Update kernel to 5.10.95
 - Update to buildroot 2021.11
 - Updated shairport-sync
-- audiocontrol2 websocket API by @schnabel 
+- audiocontrol2 websocket API by @schnabel
 - Bugfix: Set host name on MDNS when it changes
 - Bugfix: Shiaport-sync/nqptp
 
@@ -173,7 +181,7 @@
 - support setting maximum volume and mono/stereo mode for non-DSP sound cards
 - equalizer settings: A/B comparisson
 - support delay for DSP channels
-- named listening modes can be stored and activated 
+- named listening modes can be stored and activated
 - added automatic updates
 - improved metadata handling with radio stations
 - Squeezelite: Allow setting server address
@@ -181,7 +189,7 @@
 - Several other bugfixes and improvements
 
 20260226:
-- Bugfix: Spotify configuration 
+- Bugfix: Spotify configuration
 
 20200225:
 - Bugfix: ympd not using IPv6
@@ -262,9 +270,9 @@ Known problems:
 - Bugfix: Digi+ got stuck in previous release
 
 20190926
-- Added a central config file /etc/hifibery.conf that can be used to 
+- Added a central config file /etc/hifibery.conf that can be used to
   configure the whole system
-- Changed sound card reconfiguration that there is no plop sound 
+- Changed sound card reconfiguration that there is no plop sound
   during startup anymore
 - Added MPD web interface
 - Added player web interface
@@ -282,21 +290,21 @@ Known problems:
 - Added MPD
 - DSPToolkit version 0.17
 - Changed init system to use systemd (faster startup)
-- Removed audiocontrol (as it will be replaced by audiocontrol2 
+- Removed audiocontrol (as it will be replaced by audiocontrol2
   in the future)
 
 20181015
-- Added audiocontrol demon to support volume control 
+- Added audiocontrol demon to support volume control
   via rotary controller
-- DSPTookit upgraded to 0.14 which supports log scale 
+- DSPTookit upgraded to 0.14 which supports log scale
   for shairport-sync
 
 20181011
 - Bugfix: DSPToolkit upgraded to 0.13
-- Bugfix: Shairport now working (some libraries were missing in 
+- Bugfix: Shairport now working (some libraries were missing in
   previous version)
 
-20181009 
+20181009
 - added nano to allow editing local files
 - added WiFi support
 
