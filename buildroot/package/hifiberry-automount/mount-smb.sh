@@ -1,6 +1,6 @@
 #!/bin/bash
 BASEDIR=/data/library/music
-for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
+cat /etc/smbmounts.conf | grep -v '^#' | while read -r m; do
 
   # Split the line first
   readarray -d \; -t parts <<< "$m"
@@ -39,9 +39,8 @@ for m in `cat /etc/smbmounts.conf | grep -v ^#`; do
     SHARE=`echo $SHARE | sed s/$HOST/$IP/`
   fi
 
-  mountcmd="mount -t cifs -o user=$USER,password=$PASSWORD,$MOUNTOPTS $SHARE /data/library/music/$MOUNTID"
-  echo ${mountcmd}
-  ${mountcmd}
+  # mount is invoked directly with SHARE quoted to support space-containing paths
+  (set -x; mount -t cifs -o user=$USER,password=$PASSWORD,$MOUNTOPTS "$SHARE" /data/library/music/$MOUNTID)
 
   if [ -x /opt/hifiberry/bin/report-activation ]; then
     /opt/hifiberry/bin/report-activation mount_samba
