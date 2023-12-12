@@ -114,28 +114,28 @@ pi_model() {
  if [[ $modelname == *"3 Model A Plus"* ]]; then
   PIMODEL="3A+"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7 64bit"
   return
  fi
 
  if [[ $modelname == *"3 Model B"* ]]; then
   PIMODEL="3B"
   PIVERSION=3
-  FEATURES="$FEATURES pi3orlater arm7"
+  FEATURES="$FEATURES pi3orlater arm7 64bit"
   return
  fi 
 
  if [[ $modelname == *"4 Model B"* ]]; then
   PIMODEL="4"
   PIVERSION=4
-  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7 arm8 64bit"
   return
  fi
  
  if [[ $modelname == *"Compute Module 4"* ]]; then
   PIMODEL="4"
   PIVERSION=4
-  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7 arm8 64bit"
   return
  fi
 
@@ -149,7 +149,7 @@ pi_model() {
  if [[ $modelname == *"Pi Zero 2"* ]]; then
   PIMODEL="02w"
   PIVERSION=3
-  FEATURES="$FEATURES bluetooth pi3orlater arm7"
+  FEATURES="$FEATURES bluetooth pi3orlater arm7 64bit"
   return
  fi
 
@@ -157,6 +157,16 @@ pi_model() {
   PIMODEL="2"
   PIVERSION=2
   FEATURES="$FEATURES arm7"
+  return
+ fi
+
+ if [[ $modelname == *"Pi 5 Model"* ]]; then
+  PIMODEL="5"
+  PIVERSION=5
+  FEATURES="$FEATURES bluetooth pi3orlater arm7 arm8 64bit"
+  # Workaround
+  touch /etc/nosplash
+  touch /etc/hifiberry/pi5.detected
   return
  fi
 
