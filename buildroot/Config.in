@@ -19,6 +19,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/disable-samba/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-arm7/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/pigpiod-systemd/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hattools/Config.in"
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/bootfiles64/Config.in"
 
 comment "Players"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/lmsmpris/Config.in"
