@@ -5,7 +5,7 @@
 ################################################################################
 
 define HIFIBERRY_DOCKER_INSTALL_IMAGES_CMDS
-	ln -s ../lib/docker/cli-plugins/docker-compose $(TARGET_DIR)/usr/bin/docker-compose
+	- ln -s ../lib/docker/cli-plugins/docker-compose $(TARGET_DIR)/usr/bin/docker-compose
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-docker/start-containers \
                 $(TARGET_DIR)/opt/hifiberry/bin
 
