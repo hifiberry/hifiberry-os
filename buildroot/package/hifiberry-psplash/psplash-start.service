@@ -3,7 +3,8 @@
 Descriptihortn=Starts Psplash Boot screen
 DefaultDependencies=no
 ConditionPathExists=!/boot/nosplash
-After=fb0.device
+ConditionPathExists=!/etc/nosplash
+Requires=fb0.device
 
 [Service]
 Type=oneshot
