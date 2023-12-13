@@ -2,6 +2,7 @@
 Description=PiGPIOd
 Before=audiocontrol2.service beocreate2.service
 ConditionPathExists=!/boot/nopigpiod
+ConditionPathExists=!/etc/hifiberry/pi5.detected
 
 [Service]
 Type=simple
