@@ -5,6 +5,7 @@ HOST=`cat /etc/uuid`
 MODE=REBOOT
 FORCE=0
 DEVMODE=0
+LASTUPDATEFILE=/tmp/update.last
 
 # find correct version
 . /etc/hifiberry.state
@@ -66,12 +67,20 @@ for i in "$@"; do
  esac
 done
 
+# Check if the updater was running in the last 6 hours
+if [[ $(find "$LASTUPDATEFILE" -mmin -360) ]]; then
+    echo "Already looked for an update in the last 6 hours, aborting"
+    exit 0
+fi
+touch $LASTUPDATEFILE
+
 # Check version
 MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
 if [ "$MYVERSION" == "" ]; then
  MYVERSION=0
 fi
-VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d piversion=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$CURRENT_HATINFO" -m 10 $UPDATEURL/update-system`
+ARCH=`uname -m`
+VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d arch=$ARCH version=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$CURRENT_HATINFO" -m 10 $UPDATEURL/update-system`
 if [ "$?" != 0 ]; then
  echo "Couldn't get release information from $UPDATEURL/update-system, aborting..."
  sleep 60
