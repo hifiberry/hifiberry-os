@@ -14,16 +14,18 @@ define DSPPROFILES_INSTALL_TARGET_CMDS
 
      $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-96-11.xml \
 		$(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-96-11.xml
-     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-11.xml \
-                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-11.xml
-     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-12.xml \
-                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-12.xml
-     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-13.xml \
-                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-13.xml
-     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dacdsp-14.xml \
-                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-14.xml
-     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dsp-addon-96-11.xml \
-                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dsp-addon-96-11.xml
+#     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-11.xml \
+#                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-11.xml
+#     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-12.xml \
+#                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-12.xml
+#     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dspdac-13.xml \
+#                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-13.xml
+#     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dacdsp-14.xml \
+#                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-14.xml
+      $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dacdsp-15.xml \
+                $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dacdsp-15.xml
+#     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dsp-addon-96-11.xml \
+#               $(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dsp-addon-96-11.xml
      $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/dspprofiles/dsp-addon-96-13.xml \
 		$(TARGET_DIR)/opt/beocreate/beo-dsp-programs/dsp-addon-96-13.xml
 
