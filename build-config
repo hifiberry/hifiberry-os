@@ -43,6 +43,8 @@ else
 	exit 1
 fi
 
+echo Using defconfig $CFG in directory $BRDIR
+
 pushd ../buildroot
 make $CFG
 popd
@@ -52,6 +54,9 @@ cat configs/override.conf >> $BRDIR/.config
 echo "BR2_PACKAGE_PIVERSION_$VERSION=y" >> $BRDIR/.config
 # use full package set
 echo "BR2_PACKAGE_HIFIBERRY_ALL=y" >> $BRDIR/.config
+
+# Add 64bit boot files
+echo "BR2_PACKAGE_BOOTFILES64=y" >> $BRDIR/.config
 
 if [ "$UI" == "1" ]; then
 	echo "BR2_PACKAGE_HIFIBERRY_LOCALBROWSER=y" >> $BRDIR/.config
