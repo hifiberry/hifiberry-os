@@ -1,6 +1,5 @@
 #!/bin/bash
 if [ "$1" == "" ]; then 
-#	TAG=2023.02.3
         TAG=2023.11
 else
 	TAG=$1
@@ -53,6 +52,7 @@ else
 fi
 
 echo "Symlinking to buildroot"
+pwd
 rm buildroot
 ln -s $BRDIR buildroot
 
