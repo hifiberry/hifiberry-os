@@ -4,6 +4,7 @@
 if [ -f /proc/device-tree/hat/product ]; then
   PRODUCT=$(tr -d '\0' </proc/device-tree/hat/product)
   VENDOR=$(tr -d '\0' </proc/device-tree/hat/vendor)
+  UUID=$(tr -d '\0' </proc/device-tree/hat/uuid)
 else
   EEPFILE=/tmp/eeprom.eep
   TXTFILE=/tmp/eeprom.txt
@@ -29,6 +30,7 @@ else
   if [ -f $TXTFILE ]; then 
     VENDOR=`cat $TXTFILE | grep "vendor " | awk -F\" '{print $2}' | xargs echo`
     PRODUCT=`cat $TXTFILE | grep "product " | awk -F\" '{print $2}' | xargs echo`
+    UUID=`cat $TXTFILE | grep "product_uuid " | awk -F\" '{print $2}' | xargs echo`
 
     if [ "$VENDOR" == "" ]; then
       VENDOR="no vendor"
@@ -36,8 +38,15 @@ else
     if [ "$PRODUCT" == "" ]; then
       PRODUCT="no product"
     fi
+    if [ "$UUID" == "" ]; then
+      PRODUCT=""
+    fi
   fi
 fi
 
-echo $VENDOR:$PRODUCT
+if [ "$1" == "-a" ]; then
+  echo $VENDOR:$PRODUCT
+else
+  echo $VENDOR:$PRODUCT
+fi
 rm $TXTFILE 2>/dev/null
