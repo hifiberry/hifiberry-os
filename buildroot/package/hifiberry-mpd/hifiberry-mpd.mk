@@ -38,8 +38,8 @@ HIFIBERRY_MPD_CONF_OPTS += -Daudiofile=disabled
 # disable BZIP2
 HIFIBERRY_MPD_CONF_OPTS += -Dbzip2=disabled
 
-# disable CDIO
-HIFIBERRY_MPD_CONF_OPTS += -Dcdio_paranoia=disabled
+# enable CDIO
+HIFIBERRY_MPD_CONF_OPTS += -Dcdio_paranoia=enabled
 
 # enable CURL
 HIFIBERRY_MPD_DEPENDENCIES += libcurl
