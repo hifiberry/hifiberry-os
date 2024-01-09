@@ -1,0 +1,2 @@
+KERNEL=="sr[0-9]", ACTION=="change", ENV{ID_CDROM_MEDIA}=="1", ENV{ID_CDROM_MEDIA_STATE}!="blank", RUN+="/bin/systemctl start mpd-cd-autoplay.service"
+KERNEL=="sr[0-9]", ACTION=="change", ENV{DISK_EJECT_REQUEST}=="1", RUN+="/bin/systemctl stop mpd-cd-autoplay.service"
