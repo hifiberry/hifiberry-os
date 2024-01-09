@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HIFIBERRY_MPD_CD_AUTOPLAY
+	bool "hifiberry-mpd-cd-autoplay"
+        help
+	  Automatically play CDs with mpd when you insert them
+        depends on BR2_PACKAGE_HIFIBERRY_BASE
+				select BR2_PACKAGE_HIFIBERRY_MPD
+				select BR2_PACKAGE_HIFIBERRY_MPD
