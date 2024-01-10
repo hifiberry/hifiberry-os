@@ -5,7 +5,7 @@ if [[ -z ${ACTION} ]]; then
  exit 1
 fi
 
-DEV="/dev/sr0"
+DEV="/dev/sr*"
 MPC="/usr/bin/mpc"
 
 do_mount() {
