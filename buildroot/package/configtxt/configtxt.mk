@@ -4,7 +4,11 @@
 #
 ################################################################################
 
-CONFIGTXT_DEPENDENCIES = rpi-firmware
+CONFIGTXT_DEPENDENCIES = rpi-firmware 
+
+ifeq ($(BR2_PACKAGE_BOOTFILES64),y)
+CONFIGTXT_DEPENDENCIES += bootfiles64
+endif
 
 define CONFIGTXT_INSTALL_TARGET_CMDS
 	sed -i '/dtparam=i2c/d' $(BINARIES_DIR)/rpi-firmware/config.txt
