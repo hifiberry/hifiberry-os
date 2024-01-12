@@ -37,9 +37,6 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
 	        $(TARGET_DIR)/usr/lib/systemd/system/updater.timer
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/after-update \
                 $(TARGET_DIR)/opt/hifiberry/bin
-	echo "Installing updater"
-	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/tmp/updater.sh
-	$(INSTALL) -D -m 755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/../scripts/updater.sh $(TARGET_DIR)/updater.sh
 
 endef
 
@@ -47,32 +44,13 @@ ifeq ($(BR2_aarch64),y)
 define HIFIBERRY_UPDATER_INSTALL_KERNEL
      	echo "Installing 64bit kernel"
    	$(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm64/boot/Image.gz $(TARGET_DIR)/usr/lib/firmware/rpi/zImage
+        $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm64/boot/Image $(TARGET_DIR)/usr/lib/firmware/rpi/Image
 
 endef
 else
 define HIFIBERRY_UPDATER_INSTALL_KERNEL
         echo "Installing 32bit kernel"
         $(INSTALL) -D -m 0644 $(BUILD_DIR)/linux-custom/arch/arm/boot/zImage $(TARGET_DIR)/usr/lib/firmware/rpi
-
-endef
-endif
-
-### 
-### Add more functions to RPI firmware
-###
-ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
-define HIFIBERRY_UPDATER_INSTALL_FIRMWARE
-        echo "HiFiBerry updater: adding Pi4 firmware files to /usr/lib/firmware/rpi"
-        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/start4.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
-        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/fixup4.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
-	$(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/bcm2711-rpi-4-b.dtb $(TARGET_DIR)/usr/lib/firmware/rpi/bcm2711-rpi-4-b.dtb
-
-endef
-else
-define HIFIBERRY_UPDATER_INSTALL_FIRMWARE
-        echo "HiFiBerry updater: adding Pi1-3 firmware files to /usr/lib/firmware/rpi"
-        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/start.elf $(TARGET_DIR)/usr/lib/firmware/rpi/start.elf
-        $(INSTALL) -D -m 0644 $(BUILD_DIR)/rpi-firmware-$(RPI_FIRMWARE_VERSION)/boot/fixup.dat $(TARGET_DIR)/usr/lib/firmware/rpi/fixup.dat
 
 endef
 endif
@@ -84,6 +62,9 @@ define HIFIBERRY_UPDATER_INSTALL_ALL_OVERLAYS
         for ovldtb in $(@D)/boot/overlays/*.dtbo; do \
                 $(INSTALL) -D -m 0644 $${ovldtb} $(TARGET_DIR)/usr/lib/firmware/rpi/overlays/$${ovldtb##*/} || exit 1; \
         done
+endef
+
+define HIFIBERRY_UPDATER_INSTALL_FIRMWARE
 endef
 
 HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS += $(HIFIBERRY_UPDATER_INSTALL_FIRMWARE)
