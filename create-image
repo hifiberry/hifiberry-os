@@ -8,7 +8,13 @@ else
  VERSION=$1
 fi
 
-BRDIR=`./brdir $VERSION`
+if [ "$VERSION" == "64" ]; then
+ PIVERSION=4
+else
+ PIVERSION=$VERSION
+fi
+
+BRDIR=`./brdir $PIVERSION`
 echo "Building image from $BRDIR"
 
 if [ "$2" != "" ]; then
@@ -23,7 +29,7 @@ MYDIR=`pwd`
 mkdir -p images
 echo Copying $BRDIR/images/sdcard.img to images/hifiberryos-$TS-pi$VERSION.img
 cp $BRDIR/images/sdcard.img images/hifiberryos-$TS-pi$VERSION.img
-./fix-fs images/hifiberryos-$TS-pi$VERSION.img
+#./fix-fs images/hifiberryos-$TS-pi$VERSION.img
 pushd images
 if [ -f hifiberryos-pi$VERSION.zip ]; then
  rm hifiberryos-pi$VERSION.zip
@@ -32,12 +38,22 @@ zip hifiberryos-pi$VERSION.zip hifiberryos-$TS-pi$VERSION.img
 popd
 TMPDIR=/tmp/$$
 mkdir $TMPDIR
-cp $BRDIR/images/zImage $BRDIR/images/rootfs.ext2 $TMPDIR
+if [ -f $BRDIR/images/zImage ]; then
+ IMAGE=zImage
+else
+ IMAGE=Image
+fi
+cp $BRDIR/images/$IMAGE $BRDIR/images/rootfs.ext2 $TMPDIR
 pushd $TMPDIR
 pwd
-ls
-cp $MYDIR/scripts/updater.sh .
-tar cvfz $MYDIR/images/updater-$TS-pi$VERSION.tar.gz updater.sh zImage rootfs.ext2
-zip $MYDIR/images/updater-$TS-pi$VERSION.zip updater.sh zImage rootfs.ext2
+
+if [ "$VERSION" == "64" ]; then
+ echo "Using 64bit update script"
+ cp $MYDIR/scripts/updater64.sh ./updater.sh
+else
+ cp $MYDIR/scripts/updater.sh .
+fi
+tar cvfz $MYDIR/images/updater-$TS-pi$VERSION.tar.gz updater.sh $IMAGE rootfs.ext2
+zip $MYDIR/images/updater-$TS-pi$VERSION.zip updater.sh $IMAGE rootfs.ext2
 popd
 rm -rf $TMPDIR
