@@ -81,7 +81,7 @@ if [ "$MYVERSION" == "" ]; then
 fi
 ARCH=`uname -m`
 HAT=`/opt/hifiberry/bin/readhat -a`
-VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d arch=$ARCH version=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$HAT" -m 10 $UPDATEURL/update-system`
+VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d arch=$ARCH -d piversion=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$HAT" -m 10 $UPDATEURL/update-system`
 if [ "$?" != 0 ]; then
  echo "Couldn't get release information from $UPDATEURL/update-system, aborting..."
  sleep 60
