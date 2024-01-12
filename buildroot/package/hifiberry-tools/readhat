@@ -30,7 +30,7 @@ else
   if [ -f $TXTFILE ]; then 
     VENDOR=`cat $TXTFILE | grep "vendor " | awk -F\" '{print $2}' | xargs echo`
     PRODUCT=`cat $TXTFILE | grep "product " | awk -F\" '{print $2}' | xargs echo`
-    UUID=`cat $TXTFILE | grep "product_uuid " | awk -F\" '{print $2}' | xargs echo`
+    UUID=`cat $TXTFILE | grep "product_uuid " | awk '{print $2}' | xargs echo`
 
     if [ "$VENDOR" == "" ]; then
       VENDOR="no vendor"
@@ -39,13 +39,13 @@ else
       PRODUCT="no product"
     fi
     if [ "$UUID" == "" ]; then
-      PRODUCT=""
+      UUID="unknown"
     fi
   fi
 fi
 
 if [ "$1" == "-a" ]; then
-  echo $VENDOR:$PRODUCT
+  echo $VENDOR:$PRODUCT:$UUID
 else
   echo $VENDOR:$PRODUCT
 fi
