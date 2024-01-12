@@ -11,12 +11,12 @@ if [ "$PW" == "" ]; then
 fi
 
 ./clean-images
-for i in 0w 2 3 4; do
+for i in 4; do
  ./compile $i
  ./create-image $i
 done
 for i in images/updater*; do
  sha256sum $i
 done
-sshpass -p $PW scp -P $PORT images/updater* $HOST:images
-sshpass -p $PW scp -P $PORT images/hifiberryos*.zip $HOST:dev
+#sshpass -p $PW scp -P $PORT images/updater* $HOST:images
+##sshpass -p $PW scp -P $PORT images/hifiberryos*.zip $HOST:dev
