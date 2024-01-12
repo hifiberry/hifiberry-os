@@ -132,11 +132,13 @@ for i in `cat /opt/hifiberry/etc/services`; do
  fi
 done
 
-echo "looking for update script..."
-if [ -f /newroot/tmp/updater.sh ]; then
- cp /newroot/tmp/updater.sh /tmp/updater.sh
-elif [ -f /newroot/updater.sh ]; then
- cp /newroot/updater.sh /tmp/updater.sh
+if [ ! -f /tmp/updater.sh ]; then
+ echo "looking for update script..."
+ if [ -f /newroot/tmp/updater.sh ]; then
+  cp /newroot/tmp/updater.sh /tmp/updater.sh
+ elif [ -f /newroot/updater.sh ]; then
+  cp /newroot/updater.sh /tmp/updater.sh
+ fi
 fi
 cd /tmp
 if [ ! -f updater.sh ]; then
