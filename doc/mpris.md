@@ -7,7 +7,8 @@ Today not all applications support MPRIS. This is the current state of MPRIS imp
 
 | Player | MPRIS supported | MPRIS metadata |  Implemented
 | --- | --- | --- |  --- |
-| spotifyd | yes | yes |  yes |
+| spotifyd[^1] | yes | yes |  yes |
+| vollibrespot[^1] | no | no |  no |
 | shairport-sync  | yes | yes |  yes |
 | squeezelite | [lmsmpris](https://github.com/hifiberry/lmsmpris) | yes | yes |
 | bluez-alsa | [mpris-proxy](https://github.com/Vudentz/BlueZ/blob/master/tools/mpris-proxy.c) | yes | yes | 
@@ -15,3 +16,6 @@ Today not all applications support MPRIS. This is the current state of MPRIS imp
 | mpd | [mpd mpris](https://github.com/natsukagami/mpd-mpris) | yes | yes |
 | alsaloop | via  | no | yes |
 | gmediarender | [dlna-mpris](https://github.com/hifiberry/dlna-mpris) | yes | yes |
+
+
+[^1]: The default Spotify provider is `vollibrespot`.

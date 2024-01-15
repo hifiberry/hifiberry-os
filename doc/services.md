@@ -34,9 +34,9 @@ MPRIS is implemented using mpd-mpris.
 
 Roon is a high-end music player. It uses a proprietary protocol. Therefore, the sources for this player are not included.
 
-## Spotifyd
+## Vollibrespot
 
-Spotifyd implements a Spotify connect receiver.
+Vollibrespot implements a Spotify connect receiver.
 
 ## Squeezelite
 
@@ -55,6 +55,6 @@ A snapcast player is included, but is still experimental.
 |mpd|/etc/mpd.conf|mpd.service, mpd-mpris.service|
 |roon|/etc/hifiberry_raat.conf|raat.service|
 |shairport-sync|/etc/shairport-sync.conf|shairport-sync.service|
-|spotifyd|/etc/spotifyd.conf|spotify.service|
+||/etc/vollibrespot.conf|vollibrespot.service|
 |squeezelite|/var/squeezelite/squeezelite.name|squeezelite.service, lmsmpris.service|
 |snapcast|/etc/snapcastmpris.conf|snapcastmpris.service|

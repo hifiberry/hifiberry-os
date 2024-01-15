@@ -2,7 +2,9 @@
 
 ## Play/Pause
 
-### Spotify
+### Spotifyd
+
+*By default, hifiberry uses `volllibrespot` not `spotifyd` to provide Spotify playback. `vollibrespot` does not support `dbus`.* 
 
 dbus-send --system --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.spotifyd /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Pause
 
