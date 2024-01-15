@@ -18,7 +18,7 @@ The user interface is based on the [Bang & Olufsen Beocreate project](https://gi
 
 At the moment, the following services are supported:
 
-- Spotify (using [a fork of Spotifyd](https://github.com/hifiberry/spotifyd)) - requires a paid Spotify subscription
+- Spotify (using a fork of [vollibrespot](https://github.com/hifiberry/vollibrespot)) - requires a paid Spotify subscription
 - Airplay (using [shairport](https://github.com/mikebrady/shairport-sync))
 - Squeezebox (using [squeezelite](https://github.com/ralph-irving/squeezelite))
 - Bluetooth A2DP sink (using [BlueZ 5](http://www.bluez.org/))
