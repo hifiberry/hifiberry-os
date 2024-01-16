@@ -1,14 +1,47 @@
 #!/bin/bash
 
 UPDATEURL="https://musicdb.hifiberry.com"
-HOST=`cat /etc/uuid`
 MODE=REBOOT
 FORCE=0
 DEVMODE=0
-LASTUPDATEFILE=/tmp/update.last
 
-# find correct version
 . /etc/hifiberry.state
+MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
+if [ "$MYVERSION" == "" ]; then
+ MYVERSION=0
+fi
+
+get_version() {
+  # Check available version
+  local RELEASE=$1
+
+  HOST=`cat /etc/uuid`
+  ARCH=`uname -m`
+  HAT=`/opt/hifiberry/bin/readhat -a`
+  CACHE_FILE="/tmp/update.$RELEASE"
+  CACHE_DURATION=$((60 * 60 * 6))  # 6 hours
+
+  if [[ -f "$CACHE_FILE" ]]; then
+    local timestamp=$(stat -c %Y "$CACHE_FILE")
+    local current_time=$(date +%s)
+    local age=$((current_time - timestamp))
+
+    if ((age < CACHE_DURATION)); then
+      cat "$CACHE_FILE"
+      return 0  # Cache hit
+    fi
+  fi
+
+  VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d arch=$ARCH -d piversion=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$HAT" -m 10 $UPDATEURL/update-system`
+  if [ "$?" != 0 ]; then
+    echo "Couldn't get release information from $UPDATEURL/update-system, aborting..."
+    sleep 60
+    exit 1
+  fi
+  echo $VERSION > $CACHE_FILE
+  echo $VERSION
+}
+
 if [ "$PIVERSION" == "" ]; then
  PIVERSION=`cat /etc/raspberrypi.version`
 fi
@@ -67,21 +100,7 @@ for i in "$@"; do
  esac
 done
 
-# Check if the updater was running in the last 6 hours
-if [[ $(find "$LASTUPDATEFILE" -mmin -360) ]]; then
-    echo "Already looked for an update in the last 6 hours, aborting"
-    exit 0
-fi
-touch $LASTUPDATEFILE
-
-# Check version
-MYVERSION=`cat /etc/hifiberry.version 2>/dev/null`
-if [ "$MYVERSION" == "" ]; then
- MYVERSION=0
-fi
-ARCH=`uname -m`
-HAT=`/opt/hifiberry/bin/readhat -a`
-VERSION=`curl -f -s -d host=$HOST -d version=$MYVERSION -d arch=$ARCH -d piversion=$PIVERSION -d releasetag=$RELEASE -d zipsupport=1 -d card="$CURRENT_CARD" -d hatinfo="$HAT" -m 10 $UPDATEURL/update-system`
+VERSION=$(get_version $RELEASE)
 if [ "$?" != 0 ]; then
  echo "Couldn't get release information from $UPDATEURL/update-system, aborting..."
  sleep 60
@@ -114,7 +133,7 @@ fi
 echo "updating from $MYVERSION to $VERSION..."
 
 # find correct version
-UPDATER=`curl -f -s $UPDATEURL/updater-url/$VERSION/$PIVERSION/zip`
+UPDATER=`curl -L --max-redirs 5 -f -s $UPDATEURL/updater-url/$VERSION/$PIVERSION/zip`
 if [ "$UPDATER" == "" ]; then
  echo "No updater found for $VERSION/$PIVERSION"
  exit 1
