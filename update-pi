@@ -42,7 +42,7 @@ if [ "$REMOTEVERSION" == "" -o "$REMOTEVERSION" == "$VERSION" ]; then
 
  echo "Packaging Pi$VERSION release"
  ./compile $VERSION hifiberry-updater
- ./create-updater $VERSION
+ ./create-image $VERSION
 
  echo "Copying software to $HOST"
  if [ "$REMOTESUPPORTSF2FS" == "1" ]; then 
