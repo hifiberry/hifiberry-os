@@ -66,6 +66,12 @@ function detect_card {
                 return
         fi
 
+	if [ "$HATCARD" == "Amp4 Pro" ]; then
+                DETECTED="amp4pro"
+                EEPROM=0
+                return
+        fi
+
 	if [ "$HATCARD" == "Amp4" ]; then
                 DETECTED="dacplus"
                 EEPROM=0
