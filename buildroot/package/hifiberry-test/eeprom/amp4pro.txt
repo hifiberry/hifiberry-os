@@ -16,7 +16,7 @@
 
 # 128 bit UUID. If left at zero eepmake tool will auto-generate
 # RFC 4122 compliant UUID
-product_uuid fcb6ec42-a182-419d-a314-7eeae416f608
+product_uuid 3619722a-c92d-4092-95bd-493a2903e933
 
 # 16 bit product id
 product_id 0x0000
@@ -28,7 +28,7 @@ product_ver 0x0000
 vendor "HiFiBerry"
 
 # ASCII product string (max 255 characters)
-product "Amp4"
+product "Amp4 Pro"
 
 
 ########################################################################

@@ -1,14 +1,14 @@
 #!/bin/sh
-eepmake digipro.txt digipro.eep /boot/overlays/hifiberry-digi-pro.dtbo
-eepmake dacplus.txt dacplus.eep /boot/overlays/hifiberry-dacplus.dtbo
-eepmake digiplus.txt digiplus.eep /boot/overlays/hifiberry-digi.dtbo
-eepmake dacplusadcpro.txt dacplusadcpro.eep /boot/overlays/hifiberry-dacplusadcpro.dtbo
-eepmake dacplusadc.txt dacplusadc.eep /boot/overlays/hifiberry-dacplusadc.dtbo
-eepmake dac2hd.txt dac2hd.eep /boot/overlays/hifiberry-dacplushd.dtbo
-eepmake amp100.txt amp100.eep /boot/overlays/hifiberry-dacplus.dtbo
-eepmake dac2pro.txt dac2pro.eep /boot/overlays/hifiberry-dacplus.dtbo
-eepmake digi2pro.txt digi2pro.eep /boot/overlays/hifiberry-digi-pro.dtbo
-eepmake beocreate2.txt beocreate2.eep /boot/overlays/hifiberry-dac.dtbo
+eepmake digipro.txt digipro.eep
+eepmake dacplus.txt dacplus.eep 
+eepmake digiplus.txt digiplus.eep 
+eepmake dacplusadcpro.txt dacplusadcpro.eep 
+eepmake dacplusadc.txt dacplusadc.eep
+eepmake dac2hd.txt dac2hd.eep
+eepmake amp100.txt amp100.eep
+eepmake dac2pro.txt dac2pro.eep 
+eepmake digi2pro.txt digi2pro.eep 
+eepmake beocreate2.txt beocreate2.eep
 eepmake digi2standard.txt digi2standard.eep
 eepmake amp4.txt amp4.eep
 eepmake amp4pro.txt amp4pro.eep
