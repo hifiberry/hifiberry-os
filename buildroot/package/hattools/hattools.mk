@@ -15,6 +15,12 @@ endef
 define HATTOOLS_INSTALL_TARGET_CMDS
      $(INSTALL) -D -m 0755 $(@D)/eepmake $(TARGET_DIR)/usr/bin/
      $(INSTALL) -D -m 0755 $(@D)/eepdump $(TARGET_DIR)/usr/bin/
+
+     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hattools/eeprom/hbflash.sh \
+                $(TARGET_DIR)/opt/hifiberry/bin
+     mkdir -p $(TARGET_DIR)/opt/hifiberry/eeprom/
+     cp -r $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hattools/eeprom/*.eep \
+	        $(TARGET_DIR)/opt/hifiberry/eeprom/
 endef
 
 $(eval $(generic-package))
