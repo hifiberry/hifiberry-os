@@ -327,6 +327,19 @@ guess_card() {
    return
  fi
 
+ if [ "$HATINFO" == "HiFiBerry Amp4 Pro" ]; then
+  if [ "$HAS_DSP" == "1" ]; then
+     CARD="Amp4 Pro + DSP Module"
+     DSPTYPE="DSP add-on"
+     SECONDARY_MIXER_CONTROL="Digital"
+   else
+     CARD="Amp4 Pro"
+     FEATURE_usehwvolume=1
+   fi
+   INTPIN=3
+   return
+ fi
+
  DAC2HD=`aplay -l | grep hifiberry_dacplushd`
  if [ "$DAC2HD" != "" ]; then
    if [ "$HAS_DSP" == "1" ]; then
