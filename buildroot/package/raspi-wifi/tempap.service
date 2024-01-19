@@ -4,6 +4,7 @@ Wants=network.target
 After=network.target tempap-hostapd.service tempap-dnsmasq.service
 Requires=tempap-hostapd.service tempap-dnsmasq.service
 ConditionPathExists=!/boot/noap
+ConditionPathExists=!/etc/noap
 
 [Service]
 Type=oneshot

@@ -4,6 +4,7 @@ Wants=network.target
 After=network.target temporary-ap.service
 PartOf=temporary-ap.service
 ConditionPathExists=!/boot/noap
+ConditionPathExists=!/etc/noap
 
 [Service]
 Type=simple
