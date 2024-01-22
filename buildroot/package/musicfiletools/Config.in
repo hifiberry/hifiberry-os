@@ -4,3 +4,5 @@ config BR2_PACKAGE_MUSICFILETOOLS
 	  A collection of tools to work with music files
         depends on BR2_PACKAGE_PYTHON3
         select BR2_PACKAGE_PYTHON_MUTAGEN
+        select BR2_PACKAGE_IMAGEMAGICK
+        select BR2_PACKAGE_PYTHON_PILLOW

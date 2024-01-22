@@ -31,8 +31,6 @@ config BR2_PACKAGE_HIFIBERRY_MPD
 	select BR2_PACKAGE_LIBURING
 	select BR2_PACKAGE_LIBFMT
 	select BR2_PACKAGE_FMT
-	select BR2_PACKAGE_IMAGEMAGICK
-	select BR2_PACKAGE_PYTHON_PILLOW
 
 comment "HiFiBerry mpd package can't be used together with buildroot mpd version, disable this first!"
         depends on BR2_PACKAGE_MPD
