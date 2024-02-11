@@ -1,0 +1,5 @@
+config BR2_PACKAGE_LIBDISCID
+	bool "libdiscid"
+	help
+	  A Library for creating MusicBrainz DiscIDs
+	  https://github.com/metabrainz/libdiscid
