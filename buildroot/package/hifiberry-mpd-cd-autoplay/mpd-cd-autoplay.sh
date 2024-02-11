@@ -1,36 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ACTION="$1"
 if [[ -z ${ACTION} ]]; then
- exit 1
+	exit 1
 fi
 
-DEV="/dev/sr*"
 MPC="/usr/bin/mpc"
+WRITE_CD_XSPF="/usr/bin/write-cd-xspf"
+XSPF_PATH="/library/music/playlists/cd.xspf"
 
 do_mount() {
-	NUM_TRACK=$(/usr/bin/udevadm info --query=property ${DEV} | /bin/grep ID_CDROM_MEDIA_TRACK_COUNT_AUDIO | /usr/bin/awk -F= '{ print $2 }')
-	/bin/echo "cd with ${NUM_TRACK} tracks detected"
- 
-	/bin/echo "clearing mpd queue"
-	${MPC} clear
+	/bin/echo "fetching metadata"
+	${WRITE_CD_XSPF}
 
-	for i in $(/usr/bin/seq 1 ${NUM_TRACK}); do
-		${MPC} add cdda:///${i}
-	done
+	/bin/echo "loading playlist into mpd"
+	${MPC} update -w
+	${MPC} clear
+	${MPC} load ${XSPF_PATH}
 
 	${MPC} play
 }
 
 do_unmount() {
-	${MPC} -f "%position% %file%" playlist | /bin/grep cdda:// | /usr/bin/awk '{ print $1 }' | ${MPC} del
+	${MPC} stop
+	${MPC} clear
+	/bin/rm ${XSPF_PATH}
+	${MPC} update
 }
 
 case "${ACTION}" in
-	add)
+add)
 	do_mount
 	;;
-	remove)
+remove)
 	do_unmount
 	;;
 esac
