@@ -15,6 +15,8 @@ define HIFIBERRY_MPD_CD_AUTOPLAY_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/etc/udev/rules.d/80-mpd-cd-autoplay.rules
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd-cd-autoplay/mpd-cd-autoplay.sh \
                 $(TARGET_DIR)/usr/bin/mpd-cd-autoplay.sh
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd-cd-autoplay/write-cd-xspf \
+                $(TARGET_DIR)/usr/bin/write-cd-xspf
 endef
 
 define HIFIBERRY_MPD_CD_AUTOPLAY_INSTALL_INIT_SYSTEMD

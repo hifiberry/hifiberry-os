@@ -167,7 +167,7 @@ HIFIBERRY_MPD_CONF_OPTS += -Dchromaprint=disabled
 
 define HIFIBERRY_MPD_INSTALL_EXTRA_FILES
 	mkdir -p $(TARGET_DIR)/library
-	mkdir -p $(TARGET_DIR)/library/music
+	mkdir -p $(TARGET_DIR)/library/music/playlists
 	mkdir -p $(TARGET_DIR)/library/playlists
         mkdir -p $(TARGET_DIR)/var/lib/mpd
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-mpd/pause-state-file \
