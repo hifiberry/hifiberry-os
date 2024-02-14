@@ -9,36 +9,11 @@ HIFIBERRY_TEST_DEPENDENCIES += dsptoolkit
 define HIFIBERRY_TEST_INSTALL_TARGET_CMDS
 	echo "HiFiBerry Test"
 	[ -d $(TARGET_DIR)/opt/hifiberry/contrib ] || mkdir -p $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/hbflash.sh \
-           $(TARGET_DIR)/opt/hifiberry/contrib
+	[ -d $(TARGET_DIR)/boot ] || mkdir -p $(TARGET_DIR)/boot
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/dspdac.xml \
            $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/4output.xml \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp100.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplusadcpro.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dacplus.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digiplus.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digipro.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dac2hd.eep \
-	   $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/dac2pro.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digi2pro.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/digi2standard.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/beocreate2.eep \
-	   $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp4.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/eeprom/amp4pro.eep \
-           $(TARGET_DIR)/opt/hifiberry/contrib
 	$(INSTALL) -D -m 0700 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/flash.sh \
 	   $(TARGET_DIR)/opt/hifiberry/contrib
 endef
@@ -81,7 +56,7 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_AMP4PRO
         echo "dtoverlay=i2c-gpio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_sda=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "dtparam=i2c_gpio_scl=1" >> $(BINARIES_DIR)/rpi-firmware/config.txt
-        echo "dtoverlay=hifiberry-amp4" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=hifiberry-amp4pro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
         echo "force_eeprom_read=0" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
