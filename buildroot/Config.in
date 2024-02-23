@@ -113,7 +113,6 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-usagedata/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-validictory/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-youtube-dl/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-zopeevent/Config.in"
-source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-evdev/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/python-discid/Config.in"
 
 comment "Test tools"
