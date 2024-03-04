@@ -22,7 +22,7 @@ case "$1" in
 	# Program EEPROM
         PATH=$PATH:/opt/hifiberry/contrib
         export PATH
-        /opt/hifiberry/contrib/hbflash.sh --writeread -f=/opt/hifiberry/contrib/digi2pro.eep -t=24c32
+        /opt/hifiberry/bin/hbflash.sh --writeread -f=/opt/hifiberry/contrib/digi2pro.eep -t=24c32
         if [ "$?" != "0" ]; then
           echo
           echo
