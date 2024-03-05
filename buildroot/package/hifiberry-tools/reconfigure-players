@@ -340,6 +340,13 @@ guess_card() {
    return
  fi
 
+
+ if [ "$HATINFO" == "HiFiBerry DAC8x" ]; then
+   CARD="DAC8x"
+   return
+ fi
+
+
  DAC2HD=`aplay -l | grep hifiberry_dacplushd`
  if [ "$DAC2HD" != "" ]; then
    if [ "$HAS_DSP" == "1" ]; then
@@ -357,7 +364,20 @@ guess_card() {
    CARD="DAC+ ADC Pro"
    FEATURES="$FEATURES analoginput"
    return                                                     
- fi                                                           
+ fi 
+
+ DAC2ADCPRO=`aplay -l | grep DAC2 | grep ADC | grep Pro`
+ if [ "$DAC2ADCPRO" != "" ]; then
+   if [ "$HAS_DSP" == "1" ]; then
+     CARD="DAC2 ADC Pro + DSP Module"
+     DSPTYPE="DSP add-on"
+     SECONDARY_MIXER_CONTROL="Digital"
+   else
+     CARD="DAC2 ADC Pro"
+   fi
+   return
+ fi
+
                                                               
  DACPLUSADC=`aplay -l | grep DAC+ | grep ADC`                 
  if [ "$DACPLUSADC" != "" ]; then                             
