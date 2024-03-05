@@ -48,6 +48,11 @@ function detect_card {
                 return
         fi
 
+	if [ "$HATCARD" == "DAC2 ADC Pro" ]; then
+                DETECTED="dacplusadcpro"
+                return
+        fi
+
 	if [ "$HATCARD" == "DAC 2 HD" ]; then
 		DETECTED="dacplushd"
 		EEPROM=0
