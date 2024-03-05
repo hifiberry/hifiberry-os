@@ -37,6 +37,17 @@ define CONFIGTXT_REMOVESTUFF
 	sed -i '/ov5647/d' $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
+define CONFIGTXT_KMS
+        sed -i '/v3d/d' $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "[pi3]" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "dtoverlay=vc4-kms-v3d,noaudio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "[pi4]" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=vc4-kms-v3d-pi4,noaudio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "[pi5]" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+        echo "dtoverlay=vc4-kms-v3d-pi5,noaudio" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "[all]" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+endef
+
 
 
 define CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
@@ -51,7 +62,7 @@ define CONFIGTXT_VERBOSE_INSTALL_TARGET_CMDS
                 $(BINARIES_DIR)/rpi-firmware/cmdline.txt
 endef
 
-CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_REMOVESTUFF CONFIGTXT_BASE
+CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_REMOVESTUFF CONFIGTXT_BASE CONFIGTXT_KMS
 
 ifeq ($(BR2_PACKAGE_CONFIGTXT_QUIET),y)
 CONFIGTXT_POST_INSTALL_TARGET_HOOKS += CONFIGTXT_QUIET_INSTALL_TARGET_CMDS
