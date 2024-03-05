@@ -91,10 +91,13 @@ modprobe at24
 rc=$?
 
 # Bus number is different on Pi3 and 4
-for i in 7 3 11 0; do
+for i in $(seq 1 30); do
   if [ -d /sys/class/i2c-adapter/i2c-$i ]; then
-    DEVID=$i
-    break
+    ISSOC=`ls -l /sys/class/i2c-adapter/i2c-$i | grep -v "soc"`
+    if [ "$ISSOC" != "" ]; then 
+      DEVID=$i
+      break
+    fi
   fi
 done
 
