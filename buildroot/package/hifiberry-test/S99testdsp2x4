@@ -1,0 +1,36 @@
+#! /bin/sh
+
+# Write profile to DSP DAC and play a test tone
+
+OUT=/dev/tty1
+
+case "$1" in
+    start)
+	echo "Programming EEPROM"
+	/opt/hifiberry/bin/hbflash.sh --writeread -f=/opt/hifiberry/eeprom/dsp2x4.eep -t=24c32
+
+
+	echo "Reseting DSP"  > $OUT
+	gpio mode 0 out
+	gpio write 0 0
+	gpio write 0 1
+	echo "Programming DSP profile" > $OUT
+	dsptoolkit install-profile /opt/hifiberry/contrib/ > $OUT
+	echo "Testing EEPROM programming" > $OUT
+	dsptoolkit check-eeprom > $OUT
+	echo "Playing test tone" > $OUT
+	play -n synth 30 sine 1000 > $OUT
+	echo "Done" > $OUT
+	;;
+    stop)
+	;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+esac
+

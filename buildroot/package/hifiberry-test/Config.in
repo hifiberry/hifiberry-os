@@ -33,6 +33,8 @@ choice
           bool "DAC2 Pro"
     config HIFIBERRY_TEST_DAC2PROXLR
           bool "DAC2 Pro XLR"
+    config HIFIBERRY_TEST_DAC2ADCPRO
+          bool "DAC2 ADC Pro"
     config HIFIBERRY_TEST_DAC8X
           bool "DAC8x" 
     config HIFIBERRY_TEST_DSPADDON
