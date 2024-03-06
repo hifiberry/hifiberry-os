@@ -90,11 +90,11 @@ fi
 modprobe at24
 rc=$?
 
-# Bus number is different on Pi3 and 4
+# Bus number is not fixed, correct I2C adapter is iden
 for i in $(seq 1 30); do
   if [ -d /sys/class/i2c-adapter/i2c-$i ]; then
-    ISSOC=`ls -l /sys/class/i2c-adapter/i2c-$i | grep -v "soc"`
-    if [ "$ISSOC" != "" ]; then 
+    I2C=`ls -l /sys/class/i2c-adapter/i2c-$i | grep "platform/ffff"`
+    if [ "$I2C" != "" ]; then 
       DEVID=$i
       break
     fi
