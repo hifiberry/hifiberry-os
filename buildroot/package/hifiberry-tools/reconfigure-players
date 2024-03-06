@@ -340,12 +340,16 @@ guess_card() {
    return
  fi
 
+ if [ "$HATINFO" == "HiFiBerry DSP 2x4" ]; then
+   CARD="DSP 2x4"
+   HAS_DSP=1
+   return
+ fi
 
  if [ "$HATINFO" == "HiFiBerry DAC8x" ]; then
    CARD="DAC8x"
    return
  fi
-
 
  DAC2HD=`aplay -l | grep hifiberry_dacplushd`
  if [ "$DAC2HD" != "" ]; then
@@ -377,7 +381,6 @@ guess_card() {
    fi
    return
  fi
-
                                                               
  DACPLUSADC=`aplay -l | grep DAC+ | grep ADC`                 
  if [ "$DACPLUSADC" != "" ]; then                             

@@ -12,11 +12,14 @@ else
   modprobe i2c_dev
   modprobe at24
 
-  # Bus number is different on Pi3 and 4
-  for i in 7 3 11 22; do
+  # Bus number is not fixed, correct I2C adapter is iden
+  for i in $(seq 1 30); do
     if [ -d /sys/class/i2c-adapter/i2c-$i ]; then
-      DEVID=$i
-      break
+      I2C=`ls -l /sys/class/i2c-adapter/i2c-$i | grep "platform/ffff"`
+      if [ "$I2C" != "" ]; then
+        DEVID=$i
+        break
+      fi
     fi
   done
 
