@@ -78,7 +78,7 @@ function detect_card {
         fi
 
 	if [ "$HATCARD" == "Amp4" ]; then
-                DETECTED="dacplus"
+                DETECTED="dacplus-std"
                 EEPROM=0
                 return
         fi
@@ -112,7 +112,7 @@ function detect_card {
 	# DAC Plus
 	res=`i2cget -y 1 0x4d 40 2>/dev/null`
 	if [ "$res" == "0x02" ]; then
-                DETECTED="dacplus"
+                DETECTED="dacplus-std"
 		return
         fi
 
