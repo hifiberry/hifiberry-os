@@ -1,0 +1,4 @@
+config BR2_PACKAGE_EXTENSION_SPOTIFY
+	bool "Spotify"
+
+        depends on BR2_PACKAGE_EXTENSIONS
