@@ -18,7 +18,14 @@ define HIFIBERRY_DOCKER_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/lib/systemd/system/containers.service
 endef
 
+define HIFIBERRY_DOCKER_INSTALL_EXTRA_FILES
+        mkdir -p $(TARGET_DIR)/etc/docker
+        $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-docker/daemon.json \
+                $(TARGET_DIR)/etc/docker/daemon.json
+endef
+
 HIFIBERRY_DOCKER_INSTALL_TARGET_CMDS = $(HIFIBERRY_DOCKER_INSTALL_IMAGES_CMDS)
+HIFIBERRY_DOCKER_INSTALL_TARGET_CMDS += $(HIFIBERRY_DOCKER_INSTALL_EXTRA_FILES)
 
 $(eval $(generic-package))
 
