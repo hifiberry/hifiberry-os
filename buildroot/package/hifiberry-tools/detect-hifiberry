@@ -7,6 +7,13 @@ if [ "$SOFTVOL" == "" ]; then
 fi
 
 FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
+if [ "$FOUND" == "" ]; then
+ HAT=`/opt/hifiberry/bin/readhat | grep -i hifiberry`
+ if [ "$HAT" != "" ]; then 
+  FOUND=`aplay -l|grep hifiberry | grep "8x"`
+ fi
+fi
+
 CONFIG=/boot/config.txt
 REBOOTFILE=/tmp/reboot
 
