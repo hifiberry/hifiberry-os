@@ -8,9 +8,10 @@ ConditionPathExists=!/custom/service/snapcast.disable
 Type=simple
 Environment=HOME=/root
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+EnvironmentFile=/etc/hifiberry.state
 WorkingDirectory=/opt/snapcastmpris
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Snapcast"
-ExecStart=/usr/bin/python3 /opt/snapcastmpris/snapcastmpris.py
+ExecStart=/usr/bin/python3 /opt/snapcastmpris/snapcastmpris.py -m "$CURRENT_MIXER_CONTROL"
 StandardOutput=journal
 Restart=always
 RestartSec=5
