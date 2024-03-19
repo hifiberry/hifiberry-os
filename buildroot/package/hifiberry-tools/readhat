@@ -27,7 +27,15 @@ else
     echo "24c32 0x50" > /sys/class/i2c-adapter/i2c-$DEVID/new_device
   fi
 
-  dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$EEPFILE 2>/dev/null
+  if [ ! -d "/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0053" ]; then
+    echo "24c32 0x53" > /sys/class/i2c-adapter/i2c-$DEVID/new_device
+  fi
+
+  if [ -f "/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom" ]; then
+    dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$EEPFILE 2>/dev/null
+  else
+    dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0053/eeprom of=$EEPFILE 2>/dev/null
+  fi
   
   /usr/bin/eepdump $EEPFILE $TXTFILE >/dev/null
   if [ -f $TXTFILE ]; then 
