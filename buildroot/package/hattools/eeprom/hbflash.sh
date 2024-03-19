@@ -28,6 +28,8 @@ if [ "$(id -u)" != "0" ]; then
    echo "This script must be run as root" 1>&2
    exit 1
 fi
+
+ADDRESS=50
  
 while [ "$1" != "" ]; do
     PARAM=`echo $1 | awk -F= '{print $1}'`
@@ -57,6 +59,9 @@ while [ "$1" != "" ]; do
 			;;
 		-f | --file)
 			FILE=$VALUE
+			;;
+	        -a | --address)
+			ADDRESS=$VALUE
 			;;
 		*)
 			echo "ERROR: unknown parameter \"$PARAM\""
@@ -107,26 +112,26 @@ if [ $rc != 0 ]; then
 	exit $rc
 fi
 
-if [ ! -d "/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050" ]; then
-	echo "$TYPE 0x50" > /sys/class/i2c-adapter/i2c-$DEVID/new_device
+if [ ! -d "/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-00$ADDRESS" ]; then
+	echo "$TYPE 0x$ADDRESS" > /sys/class/i2c-adapter/i2c-$DEVID/new_device
 fi
 
 
 if [ "$MODE" = "write" ]
  then
 	echo "Writing..."
-	dd if=$FILE of=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom
+	dd if=$FILE of=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-00$ADDRESS/eeprom
 	rc=$?
 elif [ "$MODE" = "read" ]
  then
 	echo "Reading..."
-	dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=$FILE
+	dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-00$ADDRESS/eeprom of=$FILE
 	rc=$?
 elif [ "$MODE" = "writeread" ]
  then
         echo "Writing..."
-        dd if=$FILE of=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom
-        dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-0050/eeprom of=/tmp/eeprom.$$
+        dd if=$FILE of=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-00$ADDRESS/eeprom
+        dd if=/sys/class/i2c-adapter/i2c-$DEVID/$DEVID-00$ADDRESS/eeprom of=/tmp/eeprom.$$
         SIZEORIG=`wc -c $FILE | awk '{print $1}'`
         truncate -s $SIZEORIG /tmp/eeprom.$$
         diff $FILE /tmp/eeprom.$$
