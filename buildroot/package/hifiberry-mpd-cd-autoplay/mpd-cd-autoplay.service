@@ -1,0 +1,8 @@
+[Unit]
+Description=Automatically play CDs with mpd
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/mpd-cd-autoplay.sh add
+ExecStop=/usr/bin/mpd-cd-autoplay.sh remove
