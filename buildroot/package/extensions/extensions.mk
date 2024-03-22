@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EXTENSIONS_VERSION = b27f743e4da61eb746d1d64368539751fd13eaa7
+EXTENSIONS_VERSION = 8ec9b7138302a1599bca17692f8d68f38769c21c
 EXTENSIONS_SITE = $(call github,hifiberry,hifiberryos-extensions,$(EXTENSIONS_VERSION))
 
 EXTENSIONS_DEPENDENCIES = python3
@@ -25,6 +25,8 @@ endef
 define EXTENSIONS_INSTALL_INIT_SYSTEMD
     $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/extensions/extensions.service \
         $(TARGET_DIR)/lib/systemd/system/extensions.service
+    $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/extensions/extensions-install.service \
+        $(TARGET_DIR)/lib/systemd/system/extensions-install.service
 endef
 
 

@@ -1,0 +1,17 @@
+[Unit]
+Description=One time extension installer
+ConditionPathExists=!/etc/extensions.installed
+After=network-online.target docker.service
+Requires= docker.service
+
+[Service]
+Type=oneshot
+# Check internet connectivity before trying to download containers
+ExecStartPre=curl -m 10 -o /dev/null -s https://github.com
+ExecStart=/opt/hifiberry/bin/extensions defaultinstall
+ExecStartPost=/bin/touch /etc/extensions.installed
+ExecStartPost=systemctl restart beocreate2
+
+[Install]
+WantedBy=multi-user.target
+
