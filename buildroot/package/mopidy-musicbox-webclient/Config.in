@@ -1,8 +1,0 @@
-config BR2_PACKAGE_MOPIDY_MUSICBOX_WEBCLIENT
-	bool "mopidy-musicbox-webclient"
-	help
-	  Mopidy - Musicbox web client
-
-	  https://mopidy.com/
-	depends on BR2_PACKAGE_MOPIDY
-
