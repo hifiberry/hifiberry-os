@@ -1,8 +1,0 @@
-config BR2_PACKAGE_MOPIDY_SOUNDCLOUD
-	bool "mopidy-soundcloud"
-	help
-	  Mopidy - Soundcloud
-
-	  https://mopidy.com/
-	depends on BR2_PACKAGE_MOPIDY
-
