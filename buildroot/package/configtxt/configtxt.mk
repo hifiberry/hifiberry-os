@@ -15,6 +15,7 @@ define CONFIGTXT_INSTALL_TARGET_CMDS
 	sed -i '/dtparam=spi/d' $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "dtparam=i2c=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 	echo "dtparam=spi=on" >> $(BINARIES_DIR)/rpi-firmware/config.txt
+	echo "dtoverlay=hifiberry-dac" >> $(BINARIES_DIR)/rpi-firmware/config.txt
 endef
 
 define CONFIGTXT_EEPROM_WORKAROUND
