@@ -49,3 +49,4 @@
 /etc/modprobe.d/snd_soc_core_disable_pm.conf
 /etc/rc_keymaps/keymap.toml
 /etc/extensions.conf
+/etc/config-files

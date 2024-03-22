@@ -29,6 +29,7 @@ define HIFIBERRY_UPDATER_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/etc/raspberrypi.version
         $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/config-files \
                 $(TARGET_DIR)/opt/hifiberry/etc/config-files
+	touch $(TARGET_DIR)/etc/config-files
         $(INSTALL) -D -m 0444 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/services \
                 $(TARGET_DIR)/opt/hifiberry/etc/services
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-updater/updater.service \

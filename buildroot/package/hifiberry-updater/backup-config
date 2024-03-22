@@ -4,4 +4,4 @@ if [ "$1" == "" ]; then
  exit 1
 fi
 cd /
-tar --ignore-failed-read -cvz -f $1 -T /opt/hifiberry/etc/config-files
+tar --ignore-failed-read -cvz -f $1 -T /opt/hifiberry/etc/config-files -T /etc/config-files
