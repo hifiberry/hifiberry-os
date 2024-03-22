@@ -943,6 +943,13 @@ reconfigure_beocreate
 echo "Reconfiguring avahi"
 reconfigure_avahi
 
+for d in /data/extensions/*; do
+  if [ -x $d/reconfigure ]; then
+    echo "Reconfiguring extension in $d"
+    $d/reconfigure
+  fi
+done
+
 if [ "$1" == "--reboot" ]; then
   echo "System configuration changed" >> $REBOOTFILE
 fi
