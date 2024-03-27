@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EXTENSIONS_VERSION = 8ec9b7138302a1599bca17692f8d68f38769c21c
+EXTENSIONS_VERSION = f195c76cff56cf5800b6cc6133344541b820fbc7
 EXTENSIONS_SITE = $(call github,hifiberry,hifiberryos-extensions,$(EXTENSIONS_VERSION))
 
 EXTENSIONS_DEPENDENCIES = python3
