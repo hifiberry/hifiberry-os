@@ -1,6 +1,6 @@
 [Unit]
 Description=Push usage data to cloud
-After=network-online.target
+After=internet.service
 
 [Service]
 Type=oneshot

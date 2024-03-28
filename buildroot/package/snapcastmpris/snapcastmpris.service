@@ -1,7 +1,7 @@
 [Unit]
 Description=Snapcast MPRIS
 Wants=dbus.service
-After=network-online.target dbus.service
+After=network-up.service dbus.service
 ConditionPathExists=!/custom/service/snapcast.disable
 
 [Service]

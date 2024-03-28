@@ -16,6 +16,9 @@ endef
 define HIFIBERRY_DOCKER_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-docker/containers.service \
                 $(TARGET_DIR)/lib/systemd/system/containers.service
+	# Overwrite original docker.service file
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-docker/docker.service \
+                $(TARGET_DIR)/lib/systemd/system/docker.service
 endef
 
 define HIFIBERRY_DOCKER_INSTALL_EXTRA_FILES

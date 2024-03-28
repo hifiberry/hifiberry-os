@@ -1,7 +1,7 @@
 [Unit]
 Description=One time extension installer
 ConditionPathExists=!/etc/extensions.installed
-After=network-online.target docker.service
+After=docker.service internet.service
 Requires= docker.service
 
 [Service]

@@ -1,6 +1,6 @@
 [Unit]
 Description=Spotify connect
-Wants=network-online.target
+Wants=internet.service
 After=network.target sound.target dbus.service
 ConditionPathExists=/etc/features/arm7
 
