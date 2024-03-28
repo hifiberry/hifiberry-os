@@ -69,6 +69,8 @@ define HIFIBERRY_TOOLS_INSTALL_TARGET_CMDS
                 $(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/fix-unused-volume \
 		$(TARGET_DIR)/opt/hifiberry/bin
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/check-internet.py \
+                $(TARGET_DIR)/opt/hifiberry/bin
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/snd_soc_core_disable_pm.conf \
 		$(TARGET_DIR)/etc/modprobe.d/snd_soc_core_disable_pm.conf
     touch $(TARGET_DIR)/resize-me
@@ -123,6 +125,8 @@ define HIFIBERRY_TOOLS_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/hifiberry-finish.service
         $(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/sshdconfig.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/sshdconfig.service
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/internet.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/internet.service
 
 	# Systemd logging to RAM
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-tools/journald.conf \

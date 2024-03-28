@@ -1,0 +1,14 @@
+# This will detect if the system is connected to the internet independent from the "network-online" target
+[Unit]
+Description=Check Internet Service Availability
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/hifiberry/bin/check-internet.py hhttps://www.cloudflare.com https://www.google.com https://www.microsoft.com --timeout 60
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
