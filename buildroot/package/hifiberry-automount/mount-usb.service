@@ -1,0 +1,16 @@
+[Unit]
+Description=Mount USB drives
+Wants=network.target local-fs.target
+Requires=mount-data.service
+After=network.target sound.target local-fs.target mount-data.service
+Before=beocreate2.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/opt/hifiberry/bin/bootmsg "Mounting USB drives"
+ExecStart=-/opt/hifiberry/bin/mount-usb.sh
+RemainAfterExit=yes
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
