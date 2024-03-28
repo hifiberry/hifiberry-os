@@ -1,6 +1,5 @@
 [Unit]
-
-Descriptihortn=Starts Psplash Boot screen
+Description=Starts Psplash Boot screen
 DefaultDependencies=no
 ConditionPathExists=!/boot/nosplash
 ConditionPathExists=!/etc/nosplash
