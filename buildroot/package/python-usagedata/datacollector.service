@@ -1,6 +1,5 @@
 [Unit]
 Description=Usage data collector
-Wants=network-online.target
 After=network.target
 Before=audiocontrol2.service beocreate2.service
 

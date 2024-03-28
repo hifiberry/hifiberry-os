@@ -1,7 +1,6 @@
 [Unit]
 Description=Squeezelite
-Wants=network.target
-After=network.target sound.target spotify.service network-online.target
+After=networkup.service sound.target spotify.service
 Before=initial-volume.service
 
 [Service]

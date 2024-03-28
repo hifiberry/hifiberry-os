@@ -1,6 +1,6 @@
 [Unit]
 Description=Timezone update
-Wants=network-online.target
+Wants=internet.service
 After=network.target
 
 [Service]

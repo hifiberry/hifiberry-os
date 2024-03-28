@@ -1,6 +1,6 @@
 [Unit]
 Description=Install updates
-After=network-online.target
+After=internet.service
 
 [Service]
 Type=oneshot

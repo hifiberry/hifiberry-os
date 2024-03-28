@@ -1,6 +1,6 @@
 [Unit]
 Description=SigmaTCP Server for HiFiBerry DSP
-Wants=network-online.target sound.target
+Wants=network.target sound.target
 After=network.target sound.target
 
 [Service]

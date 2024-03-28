@@ -1,6 +1,6 @@
 [Unit]
 Description=MyIP - say local IP
-Wants=network-online.target
+Wants=network-up.service
 After=network.target network-online.target sound.target initial-volume.service
 
 [Service]

@@ -1,7 +1,7 @@
 [Unit]
 Description=LMS MPRIS
 Wants=dbus.service
-After=network-online.target dbus.service
+After=network-up.service dbus.service
 
 [Service]
 Type=simple

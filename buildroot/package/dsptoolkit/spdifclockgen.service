@@ -1,7 +1,7 @@
 [Unit]
 Description=SPDIF clock generator
-Wants=network-online.target sound.target
-After=network.target sound.target sigmatcp.service raat.service mpd.service
+Wants=sound.target
+After=sound.target sigmatcp.service
 ConditionPathExists=/etc/features/spdifnoclock
 
 [Service]
