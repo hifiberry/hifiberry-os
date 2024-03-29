@@ -1,8 +1,8 @@
 [Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
-After=network-up.service docker.socket firewalld.service containerd.service time-set.target
-Wants=network-up.service containerd.service
+After=network-up.service docker.socket firewalld.service containerd.service time-set.target mount-data.service
+Wants=network-up.service containerd.service mount-data.service
 Requires=docker.socket
 
 [Service]
