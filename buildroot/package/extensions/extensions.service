@@ -1,7 +1,7 @@
 [Unit]
 Description=Start containers
-Requires=docker.service
-Before=beocreate2.service
+Requires=docker.service sound.target dbus.service
+Before=beocreate2.service audiocontrol2.service
 
 [Service]
 Type=oneshot
