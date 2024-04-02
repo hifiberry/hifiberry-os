@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Path to Avahi configuration
+AVAHICONF="/etc/avahi/avahi-daemon.conf"
+
+# Create a temporary snapshot of the current Avahi configuration
+cp ${AVAHICONF} /tmp/avahi-daemon.conf.bak
+
+# Generate a comma-separated list of Docker network interfaces or other interfaces to ignore
+IFACES=$(ip -o link show | awk -F': ' '{print $2}' | grep -E '^(br-|docker0)' | tr '\n' ',')
+
+# Remove trailing comma
+IFACES=${IFACES%,}
+
+# Update the Avahi configuration to uncomment deny-interfaces line if necessary and set its value
+# This sed command handles both uncommented and commented lines
+sed -i "/^#?deny-interfaces=.*/c\deny-interfaces=${IFACES}" ${AVAHICONF}
+
+# Check if the configuration has changed
+if ! cmp -s ${AVAHICONF} /tmp/avahi-daemon.conf.bak; then
+    echo "Configuration has changed. Restarting Avahi daemon..."
+    systemctl restart avahi-daemon
+else
+    echo "No changes in configuration. No need to restart Avahi."
+fi
+
+# Clean up - remove the backup file
+rm /tmp/avahi-daemon.conf.bak
+
