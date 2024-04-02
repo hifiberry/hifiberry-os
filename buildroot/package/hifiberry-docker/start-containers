@@ -13,3 +13,5 @@ for d in /data/docker/*; do
     docker-compose up -d
   fi
 done
+
+/opt/hifiberry/bin/fix-avahi-ip
