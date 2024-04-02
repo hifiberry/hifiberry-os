@@ -12,7 +12,7 @@ if [ "$FSTABDATA" == "" ]; then
  fi
 fi
 
-DATA=`mount | grep data`
+DATA=`mount | grep " /data "`
 if [ "$DATA" == "" ]; then
  echo "/data not mounted, trying to mount it"
 
