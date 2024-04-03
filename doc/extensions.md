@@ -28,7 +28,7 @@ This file is managed by HiFIBerryOS. Do not edit it, as it will be overwritten b
 | Name      | Player      | Metadata       | Control     | Stop Other Players |
 |-----------|-------------|----------------|-------------|--------------------|
 |shairport|untested|untested|untested|untested|
-|raat|untested|untested|untested|untested|
+|raat|yes|yes|yes|yes|
 |spotifyd|untested|untested|untested|untested|
 |squeezelite|untested|untested|untested|untested|
 |snapcast|untested|untested|untested|untested|
