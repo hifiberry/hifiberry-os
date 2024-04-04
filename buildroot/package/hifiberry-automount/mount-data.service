@@ -1,6 +1,6 @@
 [Unit]
 Description=Mount /data
-After=local-fs.target datacollector.service
+After=local-fs.target datacollector.service activate-data-partition.service
 
 [Service]
 Type=oneshot
