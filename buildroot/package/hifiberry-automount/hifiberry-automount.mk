@@ -22,8 +22,6 @@ define HIFIBERRY_AUTOMOUNT_INSTALL_TARGET_CMDS
 	touch $(TARGET_DIR)/etc/smbmounts.conf
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-data.sh \
 		$(TARGET_DIR)/opt/hifiberry/bin/mount-data.sh
-	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-data.service \
-		$(TARGET_DIR)/etc/systemd/system/mount-data.service
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/list-usb-storage \
 		$(TARGET_DIR)/opt/hifiberry/bin/list-usb-storage
 endef
@@ -33,6 +31,8 @@ define HIFIBERRY_AUTOMOUNT_INSTALL_INIT_SYSTEMD
                 $(TARGET_DIR)/usr/lib/systemd/system/mount-smb.service
 	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-usb.service \
                 $(TARGET_DIR)/usr/lib/systemd/system/mount-usb.service
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-automount/mount-data.service \
+                $(TARGET_DIR)/usr/lib/systemd/system/mount-data.service
 endef
 
 $(eval $(generic-package))
