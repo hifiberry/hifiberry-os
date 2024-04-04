@@ -1,14 +1,14 @@
 [Unit]
 Description=One time extension installer
 ConditionPathExists=!/etc/extensions.installed
-After=docker.service internet.service extensions.service mount-data.service configure-players.service
-Requires= docker.service internet.service extensions.service mount-data.service
+Before=extensions.service
+After=docker.service internet.service mount-data.service configure-players.service
+Requires= docker.service internet.service mount-data.service
 
 [Service]
 Type=oneshot
 ExecStart=/opt/hifiberry/bin/extensions defaultinstall
 ExecStartPost=/bin/touch /etc/extensions.installed
-ExecStartPost=systemctl restart beocreate2
 
 [Install]
 WantedBy=multi-user.target
