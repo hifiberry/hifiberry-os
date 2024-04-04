@@ -50,3 +50,4 @@
 /etc/rc_keymaps/keymap.toml
 /etc/extensions-contrib.conf
 /etc/config-files
+/etc/dbus-1/system.d

@@ -21,7 +21,6 @@ fi
 # Re-link installed extensions
 if [ -f /opt/hifiberry/bin/extensions ]; then
   /opt/hifiberry/bin/extensions link
-  systemctl enable --now extensions
 fi
  
 # Script should run only once
