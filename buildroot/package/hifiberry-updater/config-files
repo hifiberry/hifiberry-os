@@ -29,6 +29,7 @@
 /etc/roomeq.conf
 /etc/dlnampris.conf
 /root/.ssh
+/root.profile
 /etc/sigmatcp.conf
 /etc/squeezelite.json
 /etc/mopidy.conf
