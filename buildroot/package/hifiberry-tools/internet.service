@@ -6,7 +6,7 @@ Wants=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/hifiberry/bin/check-internet.py hhttps://www.cloudflare.com https://www.google.com https://www.microsoft.com --timeout 60
+ExecStart=/opt/hifiberry/bin/check-internet.py https://www.cloudflare.com https://www.google.com https://www.microsoft.com --timeout 60
 Restart=on-failure
 RestartSec=5s
 
