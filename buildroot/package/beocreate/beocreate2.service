@@ -13,7 +13,7 @@ ExecStart=/usr/bin/node /opt/beocreate/beo-system/beo-server.js ${BEOCREATE_ARGS
 ExecStartPost=-rm /etc/quiet_start
 WorkingDirectory=/opt/beocreate/
 User=root
-Restart=on-failure
+Restart=always
 RestartSec=10s
 TimeoutStopSec=10
 
