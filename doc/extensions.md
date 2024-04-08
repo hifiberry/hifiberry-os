@@ -25,10 +25,10 @@ This is the main configuration file that contains the date for all extensions.
 This file is managed by HiFIBerryOS. Do not edit it, as it will be overwritten by updates.
 
 ## Current state (3.4.24)
-| Name      | Player      | Metadata       | Control     | Stop Other Players |
-|-----------|-------------|----------------|-------------|--------------------|
-|shairport|yes|yes|yes|yes|
-|raat|yes|yes|yes|yes|
+| Name      | Player      | Metadata       | Control     | is-active|Stop Other Players |
+|-----------|-------------|----------------|-------------|----------|-------------------|
+|shairport|yes|yes|yes|yes|yes|
+|raat|yes|yes|yes|-|yes|
 |spotifyd|untested|untested|untested|untested|
 |squeezelite|untested|untested|untested|untested|
 |snapcast|untested|untested|untested|untested|
