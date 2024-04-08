@@ -1,4 +1,4 @@
-# HiFIBerryOS Extensions
+# HiFiBerryOS Extensions
 
 ## Introduction
 
