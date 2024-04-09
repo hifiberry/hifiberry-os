@@ -25,9 +25,12 @@ with open("/etc/smbmounts.conf", "r") as f:
             # Resolve .local hostnames
             host = share.split('/')[2]
             ip = ""
-            if host.endswith(".local"):
-                result = subprocess.run(["avahi-resolve-host-name", "-4", host], stdout=subprocess.PIPE)
-                ip = result.stdout.decode().split()[1].strip() if result.returncode == 0 else ""
+            resolvhost = host
+            if not host.endswith(".local"):
+                resolvhost = host+".local"
+
+            result = subprocess.run(["avahi-resolve-host-name", "-4", resolvhost], stdout=subprocess.PIPE)
+            ip = result.stdout.decode().split()[1].strip() if result.returncode == 0 else ""
 
             # Try to resolve using nmblookup
             if not ip:
