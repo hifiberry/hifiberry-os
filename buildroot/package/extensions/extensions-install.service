@@ -3,11 +3,12 @@ Description=One time extension installer
 ConditionPathExists=!/etc/extensions.installed
 Before=extensions.service
 After=docker.service internet.service mount-data.service configure-players.service
-Requires= docker.service internet.service mount-data.service
+Requires=docker.service internet.service mount-data.service
 
 [Service]
 Type=oneshot
-ExecStart=/opt/hifiberry/bin/extensions defaultinstall
+# Use /bin/sh -c to run commands with shell features
+ExecStart=/bin/sh -c '/opt/hifiberry/bin/extensions defaultinstall && touch /etc/extensions.installed && echo "Installed Extensions" >> /tmp/reboot'
 ExecStartPost=/bin/touch /etc/extensions.installed
 
 [Install]
