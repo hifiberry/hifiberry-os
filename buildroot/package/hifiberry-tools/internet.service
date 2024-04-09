@@ -5,10 +5,9 @@ After=network.target
 Wants=network.target
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/opt/hifiberry/bin/check-internet.py https://www.cloudflare.com https://www.google.com https://www.microsoft.com --timeout 60
-Restart=on-failure
-RestartSec=5s
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
