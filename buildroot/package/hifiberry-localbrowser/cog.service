@@ -11,9 +11,10 @@ Environment=XDG_RUNTIME_DIR=/var/run/weston
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting web browser"
 ExecStart=cog --webprocess-failure=restart -P wl http://localhost:80/#now-playing
 StandardOutput=journal
-Restart=always
-RestartSec=20
-TimeoutStopSec=10
+Restart=on-failure
+RestartSec=30s
+StartLimitBurst=5
+StartLimitIntervalSec=200s
 
 [Install]
 WantedBy=multi-user.target
