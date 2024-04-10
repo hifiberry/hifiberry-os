@@ -68,8 +68,7 @@ source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/enable-vc4kms/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-psplash/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-weston/Config.in"
 source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/hifiberry-localbrowser/Config.in"
-
-
+source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/nanumfont/Config.in"
 
 comment "Libraries"
 #source "$BR2_EXTERNAL_HIFIBERRY_PATH/package/caps/Config.in"
