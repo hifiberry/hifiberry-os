@@ -134,6 +134,8 @@ define HIFIBERRY_TEST_INSTALL_INIT_SYSV_DAC2ADCPRO
         echo "Installing DAC2 ADC Pro test script"
         $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/S99testdac2adcpro \
                 $(TARGET_DIR)/etc/init.d/S99testdac2adcpro
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-test/sine1k.wav \
+		$(TARGET_DIR)/opt/hifiberry/contrib
 
         echo "Adding drivers to config.txt"
         echo "dtoverlay=hifiberry-dacplusadcpro" >> $(BINARIES_DIR)/rpi-firmware/config.txt
