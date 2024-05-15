@@ -1,17 +1,17 @@
 config BR2_PACKAGE_HIFIBERRY_MPD
 	bool "hifiberry-mpd"
-        help
-	  Start script and configuration files for MPD
-        depends on BR2_PACKAGE_HIFIBERRY_BASE
-#        depends on !BR2_PACKAGE_MPD
+	help
+		Start script and configuration files for MPD
+	depends on BR2_PACKAGE_HIFIBERRY_BASE
+	depends on !BR2_PACKAGE_MPD
 	select BR2_PACKAGE_LIBCURL
 	select BR2_PACKAGE_FAAD2
 	select BR2_PACKAGE_LAME 
 	select BR2_PACKAGE_LIBSHOUT
 	select BR2_PACKAGE_EXPAT
-        select BR2_PACKAGE_LIBUPNP
+	select BR2_PACKAGE_LIBUPNP
 	select BR2_PACKAGE_OPUS
-        select BR2_PACKAGE_LIBOGG
+	select BR2_PACKAGE_LIBOGG
 	select BR2_PACKAGE_SAMBA4
 	select BR2_PACKAGE_YAJL
 	select BR2_PACKAGE_AVAH
@@ -34,7 +34,7 @@ config BR2_PACKAGE_HIFIBERRY_MPD
 	select BR2_PACKAGE_AVAHI
 	select BR2_PACKAGE_BOOST
 	select BR2_PACKAGE_LIBVORBIS
+	select BR2_PACKAGE_LIBCDIO_PARANOIA
 
 comment "HiFiBerry mpd package can't be used together with buildroot mpd version, disable this first!"
-        depends on BR2_PACKAGE_MPD
-
+	depends on BR2_PACKAGE_MPD
