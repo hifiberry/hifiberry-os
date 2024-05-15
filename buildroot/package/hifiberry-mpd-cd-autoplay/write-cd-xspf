@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+
+import discid
+import musicbrainzngs
+import sys
+import pprint
+
+machine_id = open("/etc/machine-id", "r")
+hifiberry_version = open("/etc/hifiberry.version", "r")
+
+MACHINE_ID = machine_id.read().strip()
+HIFIBERRY_VERSION = hifiberry_version.read().strip()
+PLAYLIST_FILE = "/library/music/playlists/cd.xspf"
+
+musicbrainzngs.set_useragent(
+    f"HiFiBerryOS-{MACHINE_ID}",
+    HIFIBERRY_VERSION,
+    "https://github.com/hifiberry/hifiberry-os",
+)
+
+
+def escape(str_xml: str):
+    str_xml = str_xml.replace("&", "&amp;")
+    str_xml = str_xml.replace("<", "&lt;")
+    str_xml = str_xml.replace(">", "&gt;")
+    str_xml = str_xml.replace('"', "&quot;")
+    str_xml = str_xml.replace("'", "&apos;")
+    return str_xml
+
+
+def write_untagged_xspf(disc_id):
+    with open(PLAYLIST_FILE, "w") as playlist_file:
+        playlist_file.write(
+            '<?xml version="1.0" encoding="UTF-8"?><playlist version="1" xmlns="http://xspf.org/ns/0/">'
+        )
+        playlist_file.write("<trackList>")
+        for track in disc_id.tracks:
+            playlist_file.write("<track>")
+            playlist_file.write(f"<location>cdda:///{track.number}</location>")
+            playlist_file.write(f"<duration>{track.seconds * 1000}</duration>")
+            playlist_file.write(f"<trackNum>{track.number}</trackNum>")
+            playlist_file.write(f"<title>Track {track.number}</title>")
+            playlist_file.write("</track>")
+        playlist_file.write("</trackList>")
+        playlist_file.write("</playlist>\n")
+
+
+if __name__ == "__main__":
+    disc_id = discid.read()
+
+    try:
+        # the "labels" include enables the cat#s we display
+        result = musicbrainzngs.get_releases_by_discid(
+            disc_id.id, includes=["artists", "labels", "recordings", "artist-credits"]
+        )
+    except musicbrainzngs.ResponseError as err:
+        if err.cause.code == 404:
+            print("disc not found")
+        else:
+            print("received bad response from the MB server")
+        write_untagged_xspf(disc_id)
+        sys.exit()
+
+    # The result can either be a "disc" or a "cdstub"
+    if result.get("disc"):
+        with open(PLAYLIST_FILE, "w") as playlist_file:
+            playlist_file.write(
+                '<?xml version="1.0" encoding="UTF-8"?><playlist version="1" xmlns="http://xspf.org/ns/0/">'
+            )
+            disc = result["disc"]["release-list"][0]
+            for medium in disc["medium-list"]:
+                if all(
+                    medium_disc["id"] != disc_id.id
+                    for medium_disc in medium["disc-list"]
+                ):
+                    continue
+                playlist_file.write("<trackList>")
+                if len(disc["medium-list"]) > 1:
+                    album_name = escape(
+                        f'{disc["title"]} - Disc {medium["position"]}'
+                    )
+                else:
+                    album_name = escape(
+                        f'{disc["title"]}'
+                    )
+                for track in medium["track-list"]:
+                    playlist_file.write("<track>")
+                    playlist_file.write(
+                        f'<location>cdda:///{track["number"]}</location>'
+                    )
+                    playlist_file.write(f'<duration>{track["track_or_recording_length"]}</duration>')
+                    playlist_file.write(f"<album>{album_name}</album>")
+                    playlist_file.write(f'<trackNum>{track["number"]}</trackNum>')
+                    playlist_file.write("<creator>")
+                    for artist in track["artist-credit"]:
+                        if "artist" in artist:
+                            playlist_file.write(escape(artist["artist"]["name"]))
+                        else:
+                            playlist_file.write(escape(artist))
+                    playlist_file.write("</creator>")
+                    playlist_file.write(
+                        f'<title>{escape(track["recording"]["title"])}</title>'
+                    )
+                    playlist_file.write("</track>")
+                playlist_file.write("</trackList>")
+            playlist_file.write("</playlist>\n")
+    else:
+        print("no valid results")
+        write_untagged_xspf(disc_id)
