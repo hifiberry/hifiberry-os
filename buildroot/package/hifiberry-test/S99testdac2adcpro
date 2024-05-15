@@ -35,9 +35,10 @@ case "$1" in
         fi
 
         # Test sine wave
-        if [ ! -f /opt/hifiberry/contrib/sine1k.wav ]; then
-            sox -n -r 48000 -c 2 /opt/hifiberry/contrib/sine1k.wav synth 5 sine 1000
-        fi
+	if [ ! -s /opt/hifiberry/contrib/sine1k.wav ]; then
+	    echo "Could not create Sine wave test image" > $OUT
+	    fail=1
+        fi 
         aplay /opt/hifiberry/contrib/sine1k.wav 2>/dev/null &
         arecord -r 48000 -d 2 -c 2 -f S32_LE /tmp/input.wav 2>/dev/null
         RMS=`sox /tmp/input.wav -n stat 2>&1 | grep RMS | grep amplitude | awk '{print $3}'`

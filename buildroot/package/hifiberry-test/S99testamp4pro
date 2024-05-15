@@ -16,7 +16,7 @@ case "$1" in
 		exit 1
 	fi
 
-        /opt/hifiberry/bin/hbflash.sh -w -f=/opt/hifiberry/eeprom/amp4pro.eep -t=24c32
+        /opt/hifiberry/bin/hbflash.sh -w -f=/opt/hifiberry/eeprom/amp4pro.eep -t=24c32 -a=53
 	if [ "$?" != "0" ]; then
 		echo "Couldn't program EEPROM"
 		exit 1
