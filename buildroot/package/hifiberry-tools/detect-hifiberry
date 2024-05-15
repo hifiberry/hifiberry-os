@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# sometimes the alsa device is LATE and 'aplay -l' delivers a empty result.
+# in that case we would then create a new config.txt and trigger a reboot.
+# after reboot we might be lucky, or do another loop.....
+# Fix: be more patient: wait a couple of secs
+for I in 1 2 3 4 5
+do
+  FOUND=`aplay -l|grep hifiberry | grep -v "pcm5102"`
+  if [ ! -z "$FOUND" ]; then
+    echo "alsa hifiberry device found. "  >> /var/log/hifiberry.log 2>&1
+    break
+  fi
+  echo "no alsa hifiberry device present. waiting another 2 seconds..." >> /var/log/hifiberry.log 2>&1
+  sleep 2
+done
+
 # On the Pi Zero, volume controls won't show up before playing something :(
 SOFTVOL=`amixer | grep Softvol`
 if [ "$SOFTVOL" == "" ]; then
