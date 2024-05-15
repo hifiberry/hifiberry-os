@@ -10,6 +10,8 @@ HIFIBERRY_ALSALOOP_SITE = $(call github,hifiberry,alsaloop,$(HIFIBERRY_ALSALOOP_
 define HIFIBERRY_ALSALOOP_INSTALL_TARGET_CMDS
         mkdir -p $(TARGET_DIR)/opt/alsaloop
 	cp -rv $(@D)/* $(TARGET_DIR)/opt/alsaloop
+	$(INSTALL) -D -m 0644 $(BR2_EXTERNAL_HIFIBERRY_PATH)/package/hifiberry-alsaloop/dbus.conf \
+			$(TARGET_DIR)/etc/dbus-1/system.d/alsaloop.conf
 endef
 
 
