@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HIFIBERRY_ALSALOOP_VERSION = 1bacf8e37b91bd2ae6c72fa6b34a4343dec6f43d
+HIFIBERRY_ALSALOOP_VERSION = c4674d7609bf96d34b206ca07d87e6e239d6df95
 HIFIBERRY_ALSALOOP_SITE = $(call github,hifiberry,alsaloop,$(HIFIBERRY_ALSALOOP_VERSION))
 
 define HIFIBERRY_ALSALOOP_INSTALL_TARGET_CMDS
