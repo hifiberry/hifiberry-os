@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_RPIGPIO2
+	bool "python-rpigpio2"
+	depends on BR2_PACKAGE_PYTHON3
+        select BR2_PACKAGE_PYTHON_GPIOD
+	depends on !BR2_PACKAGE_PYTHON_PIGPIO
+	help
+	  RPi.GPIO2 is a library to control the GPIO on a Raspberry Pi.
+
+	  https://github.com/underground-software/RPi.GPIO2
+
