@@ -30,6 +30,8 @@ vendor "HiFiBerry"
 # ASCII product string (max 255 characters)
 product "DAC2 Pro"
 
+#devicetree overlay
+dt_blob "hifiberry-dacplus-pro"
 
 ########################################################################
 # GPIO bank settings, set to nonzero to change from the default.

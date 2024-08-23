@@ -1,3 +1,4 @@
+e6204ae4-75d7-460a-9e89-3dcd94cfd702,ADC            ,hifiberry-adc
 5eb863b8-12f9-41ad-978f-4cee1b3eca62,Amp 100        ,hifiberry-amp100
 b1a57dbe-8b52-447f-939e-1baf72157d79,Amp 100        ,hifiberry-amp100
 3619722a-c92d-4092-95bd-493a2903e933,Amp4 Pro       ,hifiberry-amp4pro
