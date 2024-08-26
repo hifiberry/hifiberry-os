@@ -30,6 +30,8 @@ vendor "HiFiBerry"
 # ASCII product string (max 255 characters)
 product "DAC8x"
 
+#devicetree overlay
+dt_blob "hifiberry-dac8x"
 
 ########################################################################
 # GPIO bank settings, set to nonzero to change from the default.
