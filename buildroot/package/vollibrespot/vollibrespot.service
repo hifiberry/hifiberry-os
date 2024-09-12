@@ -8,7 +8,6 @@ ConditionPathExists=!/custom/service/spotify.disable
 Type=simple
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Vollibrespot"
 ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/spotifyvol
-ExecStartPre=/opt/hifiberry/bin/set-host-ip ap-gew4.spotify.com 104.199.65.124
 ExecStart=/usr/bin/vollibrespot -c /etc/vollibrespot.conf
 ExecStartPost=sleep 1
 ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/spotifyvol
