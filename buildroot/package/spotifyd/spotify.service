@@ -12,7 +12,6 @@ Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 Environment=SPOTIFYD_CLIENT_ID=9223bb6a6d924c8da9b02519d03c987a
 ExecStartPre=/opt/hifiberry/bin/bootmsg "Starting Spotify"
 ExecStartPre=/opt/hifiberry/bin/store-volume /tmp/spotifyvol
-ExecStartPre=/opt/hifiberry/bin/set-host-ip ap-gew4.spotify.com 104.199.65.124
 ExecStart=/opt/hifiberry/bin/spotify-start
 ExecStartPost=sleep 1
 ExecStartPost=/opt/hifiberry/bin/restore-volume /tmp/spotifyvol
