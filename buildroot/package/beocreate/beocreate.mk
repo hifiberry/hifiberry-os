@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BEOCREATE_VERSION =  7d1f48805d9efd698e50fe0d290c378faabab2ed
+BEOCREATE_VERSION = 9a90d083c26601ef0fe792e7e6616d1539cd7127
 BEOCREATE_SITE = $(call github,hifiberry,create,$(BEOCREATE_VERSION))
 
 BEOCREATE_DEPENDENCIES += nodejs
