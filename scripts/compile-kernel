@@ -16,7 +16,7 @@ trap cleanup EXIT
 
 # Directory for the kernel source
 KERNEL_DIR=~/linux
-KERNEL_INSTALL_PATH=/boot
+KERNEL_INSTALL_PATH=/boot/firmware
 
 # Ensure the kernel source directory is present
 if [ ! -d "$KERNEL_DIR" ]; then
@@ -32,10 +32,10 @@ declare -a disable_drivers=("SOC_CHIPDIP" "SOC_PIFI" "SOC_RPI" "SOC_JUSTBOOM"
                              "SND_AUDIOSENSE" "SND_DIGIDAC1" "SOC_DIONAUDIO" "SOC_ALLO"
                              "SOC_FE" "SND_DACBERRY")
 
-NUM_CORES=$(awk "BEGIN {print int($(nproc) * 1.5)}")
 # Function to compile a kernel
 compile_kernel() {
     local config=$1
+    local kernel_name=$2
 
     echo "Compiling kernel with configuration: $config"
     make $config
@@ -50,28 +50,27 @@ compile_kernel() {
 
     # Save changes and regenerate .config
     make olddefconfig
-    echo "Generated config"
 
-    # Build the kernel, modules, and dtbs
-    echo "Compiling using $NUM_CORES parallel processes"
-    make -j$NUM_CORES Image modules dtbs
-    echo "Compiled kernel"
+    echo "Compiling kernel, modules, and device tree blobs using 6 parallel processes"
+    make -j6 Image.gz modules dtbs
 }
 
 # Function to install a kernel
 install_kernel() {
-    local kernel_image_name=$1
+    local kernel_name=$1
 
-    echo "Installing kernel: $kernel_image_name"
-    sudo make modules_install
-    sudo cp arch/arm64/boot/zImage $KERNEL_INSTALL_PATH/$kernel_image_name
+    echo "Installing kernel: $kernel_name"
+    sudo make -j6 modules_install
+    sudo cp "$KERNEL_INSTALL_PATH/$kernel_name.img" "$KERNEL_INSTALL_PATH/${kernel_name}-backup.img"
+    sudo cp arch/arm64/boot/Image.gz "$KERNEL_INSTALL_PATH/$kernel_name.img"
     sudo cp arch/arm64/boot/dts/broadcom/*.dtb $KERNEL_INSTALL_PATH/
-    sudo cp arch/arm64/boot/dts/overlays/*.dtbo $KERNEL_INSTALL_PATH/overlays/
+    sudo cp arch/arm64/boot/dts/overlays/*.dtb* $KERNEL_INSTALL_PATH/overlays/
+    sudo cp arch/arm64/boot/dts/overlays/README $KERNEL_INSTALL_PATH/overlays/
 }
 
 # Update /boot/config.txt to ensure correct kernel is loaded based on the Pi model
 update_config_txt() {
-    local config_path="/boot/config.txt"
+    local config_path="/boot/firmware/config.txt"
     sudo sed -i '/^\[pi3\]/,+2 d' $config_path
     sudo sed -i '/^\[pi4\]/,+2 d' $config_path
     sudo sed -i '/^\[pi5\]/,+2 d' $config_path
@@ -82,20 +81,19 @@ update_config_txt() {
     echo "[pi4]" | sudo tee -a $config_path
     echo "kernel=kernel8.img" | sudo tee -a $config_path
     echo "[pi5]" | sudo tee -a $config_path
-    echo "kernel=kernel8-pi5.img" | sudo tee -a $config_path
+    echo "kernel=kernel_2712.img" | sudo tee -a $config_path
     echo "[all]" | sudo tee -a $config_path
 }
 
-# Compile and install a common kernel for Pi 3 and Pi 4
-compile_kernel bcm2711_defconfig  # This will be used for both Pi 3 and Pi 4
-install_kernel kernel8.img
+# Compile and install kernels for Pi3/Pi4 and Pi5
+#compile_kernel bcm2711_defconfig kernel8
+#install_kernel kernel8
 
-# Compile and install a specific kernel for Pi 5
-compile_kernel bcm2712_defconfig
-install_kernel kernel8-pi5.img
+compile_kernel bcm2712_defconfig kernel_2712
+install_kernel kernel_2712
 
 # Update config.txt
 update_config_txt
 
-echo "Kernels compilation and installation complete!"
+echo "Kernel compilation and installation complete!"
 
