@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Directory for the kernel source
+KERNEL_DIR=~/linux
+KERNEL_INSTALL_PATH=/boot
+
+# Function to check and update /boot/config.txt
+update_config_txt() {
+    local model=$1
+    local kernel_name=$2
+    local config_path="/boot/config.txt"
+
+    # Check if the entry already exists, remove it if it does
+    sudo sed -i "/^\[$model\]/,+1 d" $config_path
+
+    # Add new entry for this model
+    echo "[$model]" | sudo tee -a $config_path
+    echo "kernel=$kernel_name" | sudo tee -a $config_path
+}
+
+# Clone the kernel repository if not already done
+if [ ! -d "$KERNEL_DIR" ]; then
+    echo "Cloning the Raspberry Pi Linux kernel..."
+    git clone https://github.com/raspberrypi/linux $KERNEL_DIR
+fi
+
+cd $KERNEL_DIR
+
+# Function to compile and install a kernel
+compile_install_kernel() {
+    local config=$1
+    local kernel_image_name=$2
+
+    echo "Compiling kernel with configuration: $config"
+    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- $config
+    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) Image modules dtbs
+
+    echo "Installing kernel: $kernel_image_name"
+    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=/ modules_install
+    cp arch/arm64/boot/Image $KERNEL_INSTALL_PATH/$kernel_image_name
+    cp arch/arm64/boot/dts/broadcom/*.dtb $KERNEL_INSTALL_PATH/
+    cp arch/arm64/boot/dts/overlays/*.dtbo $KERNEL_INSTALL_PATH/overlays/
+}
+
+# Install necessary packages
+echo "Installing necessary packages..."
+sudo apt-get update
+sudo apt-get install -y git bc bison flex libssl-dev make gcc-aarch64-linux-gnu
+
+# Compile and install kernels
+compile_install_kernel bcmrpi3_defconfig kernel8.img        # Pi 3 and Pi 4
+compile_install_kernel bcm2712_defconfig kernel8-pi5.img    # Pi 5
+
+# Update /boot/config.txt for each model
+update_config_txt "pi3" "kernel8.img"
+update_config_txt "pi4" "kernel8.img"
+update_config_txt "pi5" "kernel8-pi5.img"
+
+echo "[all]" | sudo tee -a /boot/config.txt
+echo "Kernels compilation and installation complete!"
+
