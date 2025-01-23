@@ -86,8 +86,8 @@ update_config_txt() {
 }
 
 # Compile and install kernels for Pi3/Pi4 and Pi5
-#compile_kernel bcm2711_defconfig kernel8
-#install_kernel kernel8
+compile_kernel bcm2711_defconfig kernel8
+install_kernel kernel8
 
 compile_kernel bcm2712_defconfig kernel_2712
 install_kernel kernel_2712
