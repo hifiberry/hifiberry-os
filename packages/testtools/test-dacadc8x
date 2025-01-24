@@ -1,0 +1,17 @@
+#/bin/bash
+PATH=$PATH:/usr/local/bin
+check-rms 8 1 0 0.001
+if [ "$?" != "0" ]; then
+ figlet "To much noise"
+ exit 1
+fi
+
+play -n -c 8 synth 5 sine 1000 &
+check-rms 8 3 0.5 1
+if [ "$?" != "0" ]; then
+ figlet "Signal too low"
+ exit 1
+fi
+
+clear
+figlet "DAC/ADC OK"
