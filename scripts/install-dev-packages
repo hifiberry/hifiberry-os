@@ -1,4 +1,4 @@
 #!/bin/bash
 sudo apt update
 sudo apt dist-upgrade
-sudo apt install -y  git bc bison flex libssl-dev make screen build-essential devscripts dh-make
+sudo apt install -y  git bc bison flex libssl-dev make screen build-essential devscripts dh-make python3-setuptools  python3-pip
