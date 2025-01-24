@@ -18,13 +18,40 @@ trap cleanup EXIT
 KERNEL_DIR=~/linux
 KERNEL_INSTALL_PATH=/boot/firmware
 
+# Determine the script directory
+SCRIPT_DIR=$(dirname "$0")
+
+# Check if a commit ID or user is provided in the "commitid" file
+if [ -f "$SCRIPT_DIR/commitid" ]; then
+    COMMIT_INFO=$(cat "$SCRIPT_DIR/commitid")
+    if [[ "$COMMIT_INFO" == *":"* ]]; then
+        REPO_USER=${COMMIT_INFO%%:*}
+        COMMIT_ID=${COMMIT_INFO##*:}
+        echo "Using repository user: $REPO_USER and commit ID: $COMMIT_ID"
+    else
+        COMMIT_ID=$COMMIT_INFO
+        REPO_USER="raspberrypi"
+        echo "Using default repository user: $REPO_USER and commit ID: $COMMIT_ID"
+    fi
+else
+    REPO_USER="raspberrypi"
+    COMMIT_ID=""
+    echo "No commit ID or user provided. Using default repository user: $REPO_USER and the active branch."
+fi
+
 # Ensure the kernel source directory is present
 if [ ! -d "$KERNEL_DIR" ]; then
-    echo "Cloning the Raspberry Pi Linux kernel..."
-    git clone https://github.com/raspberrypi/linux $KERNEL_DIR
+    echo "Cloning the Linux kernel repository for user: $REPO_USER..."
+    git clone https://github.com/$REPO_USER/linux $KERNEL_DIR
 fi
 
 cd $KERNEL_DIR
+
+# Checkout the specified commit ID if provided
+if [ -n "$COMMIT_ID" ]; then
+    git fetch --all
+    git checkout $COMMIT_ID
+fi
 
 # List of driver substrings to be disabled
 declare -a disable_drivers=("SOC_CHIPDIP" "SOC_PIFI" "SOC_RPI" "SOC_JUSTBOOM"
@@ -50,7 +77,6 @@ compile_kernel() {
 
     # Save changes and regenerate .config
     make olddefconfig
-
     echo "Compiling kernel, modules, and device tree blobs using 6 parallel processes"
     make -j6 Image.gz modules dtbs
 }
