@@ -1,4 +1,7 @@
 #!/bin/bash
 sudo apt update
 sudo apt dist-upgrade
-sudo apt install -y  git bc bison flex libssl-dev make screen build-essential devscripts dh-make python3-setuptools  python3-pip
+sudo apt install -y  git bc bison flex libssl-dev make screen build-essential devscripts dh-make python3-setuptools  python3-pip ruby-full dh-python python3-all python3-all-dev
+sudo gem install fpm
+
+sudo pip install --break-system-packages build
