@@ -16,7 +16,8 @@ setup(
             "config-hattools=configurator.hattools:main",
             "config-installer=configurator.installer:main",
             "config-detect=configurator.soundcard_detector:main",
-            "config-detectpi=configurator.pimodel:main"
+            "config-detectpi=configurator.pimodel:main",
+            "config-soundcard=configurator.soundcard:main"
         ],
     },
     classifiers=[
