@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import hashlib
 import os
 import argparse
@@ -56,8 +58,7 @@ def parse_arguments():
     parser.add_argument("--hw", type=int, default=0, help="Set the default hardware card number")
     return parser.parse_args()
 
-# Example usage
-if __name__ == "__main__":
+def main():
     args = parse_arguments()
     alsa_config = ALSAConfig()
 
@@ -70,4 +71,7 @@ if __name__ == "__main__":
             print("No changes to save.")
     else:
         print("No --default flag provided, no configuration created.")
+
+if __name__ == "__main__":
+    main()
 

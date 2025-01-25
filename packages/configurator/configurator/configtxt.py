@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+
 import os
 import shutil
 import hashlib
 import logging
 import argparse
+
 
 class ConfigTxt:
     def __init__(self, file_path="/boot/firmware/config.txt"):
@@ -63,12 +66,6 @@ class ConfigTxt:
         self._update_line("dtparam=audio=", "dtparam=audio=on\n")
         logging.info("Onboard sound enabled.")
 
-    def disable_hdmi_sound(self):
-        self._update_hdmi_sound("noaudio")
-
-    def enable_hdmi_sound(self):
-        self._update_hdmi_sound("audio")
-
     def _update_hdmi_sound(self, mode):
         updated = False
         for i, line in enumerate(self.lines):
@@ -79,6 +76,14 @@ class ConfigTxt:
                 elif mode == "audio" and ",noaudio" in line:
                     self.lines[i] = line.replace(",noaudio", "").strip() + "\n"
                     updated = True
+
+    def disable_hdmi_sound(self):
+        self._update_hdmi_sound("noaudio")
+        logging.info("HDMI sound disabled.")
+
+    def enable_hdmi_sound(self):
+        self._update_hdmi_sound("audio")
+        logging.info("HDMI sound enabled.")
 
     def disable_eeprom(self):
         self._update_line("force_eeprom_read=", "force_eeprom_read=0\n")
@@ -124,11 +129,24 @@ class ConfigTxt:
         self.enable_i2c()
         logging.info("Default configuration applied.")
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    def enable_updi(self):
+        """
+        Enables UPDI by ensuring the following entries exist in the config file:
+        - enable_uart=1
+        - dtoverlay=uart0
+        - dtoverlay=disable-bt
+        """
+        self._update_line("enable_uart=", "enable_uart=1\n")
+        self._update_line("dtoverlay=uart0", "dtoverlay=uart0\n")
+        self._update_line("dtoverlay=disable-bt", "dtoverlay=disable-bt\n")
+        logging.info("UPDI settings applied. Reboot may be required.")
+
+
+def main():
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     parser = argparse.ArgumentParser(description="Manage /boot/firmware/config.txt settings.")
-    parser.add_argument("--overlay", type=str, help="Add a live dtoverlay with the given parameter.")
+    parser.add_argument("--overlay", type=str, help="Add a dtoverlay with the given parameter.")
     parser.add_argument("--remove-hifiberry", action="store_true", help="Remove all HiFiBerry overlays.")
     parser.add_argument("--disable-onboard-sound", action="store_true", help="Disable onboard sound.")
     parser.add_argument("--enable-onboard-sound", action="store_true", help="Enable onboard sound.")
@@ -140,8 +158,9 @@ if __name__ == "__main__":
     parser.add_argument("--enable-i2c", action="store_true", help="Enable I2C interface.")
     parser.add_argument("--disable-spi", action="store_true", help="Disable SPI interface.")
     parser.add_argument("--enable-spi", action="store_true", help="Enable SPI interface.")
-    parser.add_argument("--default-config", action="store_true", help="Apply the default configuration: remove HiFiBerry overlays, disable onboard and HDMI audio, enable EEPROM, and enable SPI and I2C.")
-    parser.add_argument("--report-change", action="store_true", help="Exit with return code 1 if any changes were made, 0 otherwise.")
+    parser.add_argument("--default-config", action="store_true", help="Apply the default configuration.")
+    parser.add_argument("--report-change", action="store_true", help="Exit with return code 1 if changes were made.")
+    parser.add_argument("--enable-updi", action="store_true", help="Enable UPDI settings: enable UART, dtoverlay for uart0, and disable Bluetooth.")
     args = parser.parse_args()
 
     config = ConfigTxt()
@@ -186,6 +205,9 @@ if __name__ == "__main__":
         if args.enable_spi:
             config.enable_spi()
 
+        if args.enable_updi:
+            config.enable_updi()
+
         config.save()
 
         if args.report_change:
@@ -196,4 +218,8 @@ if __name__ == "__main__":
         logging.error(f"An error occurred: {e}")
         if args.report_change:
             exit(1)
+
+
+if __name__ == "__main__":
+    main()
 
