@@ -2,3 +2,5 @@ python3-audiocontrol2
 python3-configurator
 python3-hifiberrydsp
 shairport-sync
+pipewire
+librespot

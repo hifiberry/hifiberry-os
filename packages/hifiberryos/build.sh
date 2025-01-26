@@ -53,8 +53,6 @@ function build_package() {
     # Read dependencies from the file
     local dependencies
     dependencies=$(tr '\n' ',' < "$merged_dependencies_file" | sed 's/,$//') # Remove trailing comma
-    echo $dependencies
-    sleep 2
 
     # Prepare package directory
     local package_dir="${WORK_DIR}/${package_name}"
