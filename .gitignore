@@ -2,4 +2,5 @@ packages/hifiberryos/dependencies.full.merged
 packages/audiocontrol2/audiocontrol2
 packages/raat/raat
 packages/librespot/librespot
-packages/sptifyd/spotifyd
+packages/spotifyd/spotifyd
+packages/snapcast/snapcast
