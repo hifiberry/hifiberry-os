@@ -10,6 +10,7 @@ WORK_DIR="$HOME/src/$PACKAGE_NAME"
 OUTPUT_DIR="$HOME/packages"
 DEB_BUILD_DIR="$WORK_DIR/deb"
 INSTALL_DIR="$WORK_DIR/bin/install"
+ARCH="arm64" # Set architecture to arm64
 
 # Install dependencies
 function install_dependencies() {
@@ -26,7 +27,7 @@ function compile_binaries() {
     fi
     cd librespot
     git checkout "$VERSION"
-    cargo build --release
+    cargo build --release --target aarch64-unknown-linux-gnu
     cd ..
 }
 
@@ -40,7 +41,7 @@ function prepare_debian_structure() {
 
     # Copy binary to the package directory
     echo "Copying binary to package directory..."
-    cp librespot/target/release/librespot "$DEB_BUILD_DIR/usr/bin/"
+    cp librespot/target/aarch64-unknown-linux-gnu/release/librespot "$DEB_BUILD_DIR/usr/bin/"
     chmod +x "$DEB_BUILD_DIR/usr/bin/librespot"
 
     # Create systemd unit file
@@ -88,7 +89,7 @@ EOL
     cat > "$DEB_BUILD_DIR/DEBIAN/control" <<EOL
 Package: $PACKAGE_NAME
 Version: ${VERSION/v/}
-Architecture: amd64
+Architecture: $ARCH
 Maintainer: $MAINTAINER
 Priority: optional
 Section: sound
@@ -105,8 +106,8 @@ EOL
 function build_debian_package() {
     echo "Building Debian package..."
     mkdir -p "$OUTPUT_DIR"
-    dpkg-deb --build "$DEB_BUILD_DIR" "$OUTPUT_DIR/${PACKAGE_NAME}_${VERSION}_amd64.deb"
-    echo "Debian package created at $OUTPUT_DIR/${PACKAGE_NAME}_${VERSION}_amd64.deb"
+    dpkg-deb --build "$DEB_BUILD_DIR" "$OUTPUT_DIR/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+    echo "Debian package created at $OUTPUT_DIR/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
 }
 
 # Clean temporary files
