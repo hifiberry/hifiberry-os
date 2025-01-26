@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+# Define the packages directory
+PACKAGES_DIR="$HOME/packages"
+
+# Step 1: Clean ~/packages directory
+echo "Cleaning $PACKAGES_DIR..."
+if [ -d "$PACKAGES_DIR" ]; then
+    find "$PACKAGES_DIR" -type f -name "*.deb" -exec rm -f {} +
+    echo "All .deb files removed from $PACKAGES_DIR."
+else
+    echo "$PACKAGES_DIR does not exist. Creating it now..."
+    mkdir -p "$PACKAGES_DIR"
+fi
+
+# Step 2: Iterate through all subdirectories
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo "Looking for build.sh in subdirectories of $SCRIPT_DIR..."
+
+for dir in "$SCRIPT_DIR"/*/; do
+    if [ -f "$dir/build.sh" ]; then
+        echo "Found build.sh in $dir. Executing..."
+        (
+            cd "$dir"
+            ./build.sh --clean
+            ./build.sh
+            ./build.sh --clean
+        )
+    else
+        echo "No build.sh found in $dir. Skipping..."
+    fi
+done
+
+echo "All builds completed."
+
