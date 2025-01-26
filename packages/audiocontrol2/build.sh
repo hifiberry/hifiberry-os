@@ -7,8 +7,6 @@ REPO_URL="https://github.com/hifiberry/audiocontrol2"
 REPO_DIR="audiocontrol2"
 DEST_DIR="$HOME/packages"
 VERSION_FILE="$REPO_DIR/ac2/version.py"
-OVERRIDES_FILE="py3dist-overrides"
-CONTROL_FILE="control"
 
 # Function to clean up build files
 clean() {
@@ -23,15 +21,12 @@ if [[ "$1" == "--clean" ]]; then
     exit 0
 fi
 
-# Step 1: Clone or update the repository
+# Step 1: Clone the repository if it doesn't exist
 if [[ ! -d $REPO_DIR ]]; then
     echo "Cloning the repository..."
     git clone "$REPO_URL" "$REPO_DIR"
 else
-    echo "Updating the repository..."
-    cd "$REPO_DIR"
-    git pull --rebase
-    cd ..
+    echo "Repository already exists. Skipping clone and update."
 fi
 
 # Step 2: Extract the version dynamically
@@ -47,36 +42,26 @@ fi
 echo "Building the Debian package..."
 cd "$REPO_DIR"
 export DEB_BUILD_OPTIONS="noautodbgsym"
-python3 setup.py --command-packages=stdeb.command bdist_deb
 
-# Step 4: Define DEB_DIR dynamically
-DEB_DIR="$REPO_DIR/deb_dist/audiocontrol2-$VERSION/debian"
-
-# Ensure DEB_DIR exists after the build step
-if [[ ! -d $DEB_DIR ]]; then
-    echo "Error: Debian directory $DEB_DIR does not exist after building. Exiting."
-    exit 1
+# Ensure debian/compat does not exist
+if [[ -f "debian/compat" ]]; then
+    echo "Removing conflicting debian/compat file..."
+    rm -f debian/compat
 fi
 
-# Step 5: Update debian/py3dist-overrides
-echo "Creating or updating dependency overrides..."
-cat > "$DEB_DIR/$OVERRIDES_FILE" <<EOF
-dbus python3-dbus
-mpd python3-mpd
-socketio python3-socketio
-EOF
-echo "Dependency overrides updated in $DEB_DIR/$OVERRIDES_FILE."
+# Clean previous builds
+echo "Running clean step..."
+fakeroot debian/rules clean || true
 
-# Step 6: Update version in debian/control
-echo "Updating version in $DEB_DIR/$CONTROL_FILE..."
-sed -i "s/^Version: .*/Version: $VERSION/" "$DEB_DIR/$CONTROL_FILE"
+# Build the package
+python3 setup.py --command-packages=stdeb.command bdist_deb
 
-# Step 7: Copy .deb files to the destination
+# Step 4: Copy .deb files to the destination
 echo "Copying .deb files to $DEST_DIR..."
 mkdir -p "$DEST_DIR"
 find "deb_dist" -name '*.deb' ! -name '*dbgsym*.deb' -exec cp {} "$DEST_DIR" \;
 
-# Step 8: Output the result
+# Step 5: Output the result
 echo "Debian packages created and copied to: $DEST_DIR"
 find "$DEST_DIR" -name '*.deb'
 
