@@ -1,0 +1,14 @@
+[Unit]
+Description=Check network connectivity on eth0 or wlan0
+Wants=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/check-network.sh
+RemainAfterExit=yes
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=network-online.target

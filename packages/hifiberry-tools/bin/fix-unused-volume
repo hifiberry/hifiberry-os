@@ -1,0 +1,11 @@
+#!/bin/sh
+if [ -f /tmp/fix-volume.done ]; then
+ exit
+fi
+. /etc/hifiberry.state
+for MIXER in Softvol DSPVolume Digital "A.Mstr Vol"; do
+  if [ "$CURRENT_MIXER_CONTROL" != "$MIXER" ]; then
+    amixer -q sset "$MIXER" 100% 2>/dev/null
+  fi
+done
+touch /tmp/fix-volume.done

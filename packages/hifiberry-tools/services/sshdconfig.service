@@ -1,0 +1,11 @@
+[Unit]
+Description=sshd config
+Before=sshd.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/hifiberry/bin/sshdconfig
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

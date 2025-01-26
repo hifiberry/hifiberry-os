@@ -1,0 +1,31 @@
+#!/bin/bash
+if [ "$1" == "" ]; then
+ STORE=/etc/alsactl.store
+ TMP=/tmp/alsactl.store
+ rm -f $TMP
+ alsactl -f $TMP store
+ sed -i.bak s/\\[//g $TMP
+ sed -i.bak s/\\]//g $TMP
+ diff $TMP $STORE >/dev/null
+ if [ "$?" != "0" ]; then
+  echo "Storing ALSA volume..."
+  cp $TMP $STORE
+ fi
+
+ DSP=`grep FEATURES /etc/hifiberry.state | grep -i dsp`
+ if [ "$DSP" != "" ]; then
+  DSPVOL=`dsptoolkit get-volume | awk '{print $2}'`
+  DSPVOL_PREV=`cat /etc/dspvolume.store`
+ fi 
+ if [ "$DSPVOL" != "$DSPVOL_PREV" ]; then 
+   echo "Storing DSP Volume..."
+   echo $DSPVOL > /etc/dspvolume.store
+ fi 
+else
+ rm -f $1
+ alsactl -f $1 store
+ sed -i.bak s/\\[//g $1
+ sed -i.bak s/\\]//g $1
+fi
+
+

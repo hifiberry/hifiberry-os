@@ -1,0 +1,6 @@
+#!/bin/sh
+
+DATE=`/bin/date`
+/usr/bin/test -f /bin/psplash-write && psplash-write "MSG $@"
+
+echo "$DATE $@" >> /tmp/boot.log
