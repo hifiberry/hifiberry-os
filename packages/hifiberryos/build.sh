@@ -46,13 +46,15 @@ function build_package() {
     # Check if the merged file exists
     if [ ! -f "$merged_dependencies_file" ]; then
         echo "Error: Merged dependencies file $merged_dependencies_file not found!"
-        ls $merged_dependencies_file
+        ls "$merged_dependencies_file" || true
         exit 1
     fi
 
     # Read dependencies from the file
     local dependencies
-    dependencies=$(tr '\n' ',' < "$merged_dependencies_file" | sed 's/,$//')
+    dependencies=$(tr '\n' ',' < "$merged_dependencies_file" | sed 's/,$//') # Remove trailing comma
+    echo $dependencies
+    sleep 2
 
     # Prepare package directory
     local package_dir="${WORK_DIR}/${package_name}"
@@ -90,6 +92,7 @@ EOL
 }
 
 function build_meta_packages() {
+    mkdir -p "$WORK_DIR"
     for dependency_file in "${DEPENDENCY_FILES[@]}"; do
         local base_name
         base_name=$(basename "$dependency_file" .dependencies | sed 's/dependencies\.//')
