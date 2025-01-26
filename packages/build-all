@@ -20,6 +20,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Looking for build.sh in subdirectories of $SCRIPT_DIR..."
 
 for dir in "$SCRIPT_DIR"/*/; do
+    figlet `basename $dir`
     if [ -f "$dir/build.sh" ]; then
         echo "Found build.sh in $dir. Executing..."
         (
