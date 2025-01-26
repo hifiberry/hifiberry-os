@@ -28,6 +28,8 @@ for dir in "$SCRIPT_DIR"/*/; do
             ./build.sh --clean
             ./build.sh
             ./build.sh --clean
+            echo 
+            sleep 2
         )
     else
         echo "No build.sh found in $dir. Skipping..."
