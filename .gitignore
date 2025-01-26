@@ -4,3 +4,5 @@ packages/raat/raat
 packages/librespot/librespot
 packages/spotifyd/spotifyd
 packages/snapcast/snapcast
+packages/snapcastmpris/snapcastmpris
+
