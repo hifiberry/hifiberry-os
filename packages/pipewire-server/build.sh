@@ -34,6 +34,7 @@ function prepare_package_structure() {
     # Copy the config file
     echo "Copying pipewire.conf to the package..."
     cp "$CONFIG_FILE" "$WORK_DIR/etc/pipewire/pipewire.conf"
+    cp asound.conf "$WORK_DIR/etc/asound.conf"
 
     # Create the systemd unit file
     echo "Creating systemd unit file..."
@@ -66,7 +67,7 @@ Architecture: all
 Maintainer: $MAINTAINER
 Priority: optional
 Section: sound
-Depends: pipewire, systemd
+Depends: pipewire, pipewire-alsa, systemd
 Description: PipeWire media server
  This package installs PipeWire as a system daemon, making it available for use by background processes and system services.
 EOL
