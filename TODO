@@ -1,0 +1,15 @@
+Players
+=======
+
+- DLNA
+- Bluetooth
+- Analog In (using Pipewire)
+- Squeezelite
+- Web radio
+
+Configuration
+=============
+
+- Start pipewire first
+- handle volume control completey in Pipewire
+- make sure no player starts before pipewire is active
