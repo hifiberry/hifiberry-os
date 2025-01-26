@@ -85,7 +85,6 @@ override_dh_auto_install:
 	echo "Expected paths for installed files:"
 	echo $(CURDIR)/debian/$(shell dh_listpackages)
 	find $(CURDIR)/debian/$(shell dh_listpackages) -type f
-	sleep 2
 EOL
     chmod +x debian/rules
 
