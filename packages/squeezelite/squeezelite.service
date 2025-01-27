@@ -1,0 +1,20 @@
+[Unit]
+Description=Squeezelite
+Wants=network.target
+After=network.target sound.target pipwire-server.service
+Before=initial-volume.service
+
+[Service]
+Type=simple
+Environment=HOME=/root
+ExecStartPre=-/opt/hifiberry/bin/store-volume /tmp/sqvol store
+ExecStart=/usr/bin/start-squeezelite
+ExecStartPost=sleep 2
+ExecStartPost=-/opt/hifiberry/bin/restore-volume /tmp/sqvol
+StandardOutput=journal
+Restart=always
+RestartSec=5
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

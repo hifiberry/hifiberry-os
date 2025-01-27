@@ -1,0 +1,9 @@
+packages/hifiberryos/dependencies.full.merged
+packages/audiocontrol2/audiocontrol2
+packages/raat/raat
+packages/librespot/librespot
+packages/spotifyd/spotifyd
+packages/snapcast/snapcast
+packages/snapcastmpris/snapcastmpris
+packages/squeezelite/squeezelite
+packages/pipewire-server/pipewire-server

@@ -1,0 +1,178 @@
+#!/bin/bash
+#
+# Pause all players and make sure they are not using the sound card anymore
+#
+
+CARD=`aplay -l | grep -i hifiberry | awk '{print $2}' | sed s/://`
+DATE1=`date +%Y%m%d-%H%M%S`
+PLAYER=$1
+CALLINGPID=$PPID
+
+if [ "$PLAYER" == "" ]; then
+ PLAYER="unknown_caller"
+fi
+
+check_paused() {
+  STATUS=`cat /proc/asound/card${CARD}/pcm0p/sub0/hw_params`
+  if [ "$STATUS" == "closed" ]; then
+    DATE2=`date +%Y%m%d-%H%M%S`
+    echo "pause-all $PLAYER ($PPID): $DATE1 $DATE2 $PLAYER - closed" | systemd-cat -p info
+    exit 0
+  fi
+  PROCESSLINE=`lsof /dev/snd/pcmC*D*p | grep -v COMMAND`
+  APP=`echo $PROCESSLINE| awk '{print $1}'`
+  PROCESSID=`echo $PROCESSLINE| awk '{print $2}'`
+  if [[ "$PLAYER" == "$APP*" ]]; then
+    echo "pause-all $PLAYER ($PPID): requested pause, but is already using sound card, ignoring" | systemd-cat -p info
+    exit 0
+  fi
+  if [ "$PROCESSID" == "$PPID" ]; then
+    echo "pause-all $PLAYER ($PPID): requested pause, but is already using sound card, ignoring" | systemd-cat -p info
+    exit 0
+  fi
+
+ echo "pause-all $PLAYER ($PPID): process $PROCESSID/$APP still using the sound card" | systemd-cat -p info
+}
+
+pause_alsaloop() {
+  ps -ef | grep alsaloopmpris | grep -v grep | awk '{print $2}'  | xargs kill -USR1
+  sleep 1
+}
+
+pause_snapcast() {
+  ps -ef | grep snapcastmpris | grep -v grep | awk '{print $2}'  | xargs kill -USR1
+  sleep 1
+}
+
+pause_spotify() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_mpd() {
+  mpc pause
+}
+
+pause_bluetooth() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_raat() {
+  pkill -USR1 $PROCESSID
+  # unfortunately it takes 5s until RAAT stops using the sound card
+  ## therefore, we're restarting the service
+  # pkill raat_app 
+  sleep 6
+}
+
+pause_spotify() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_shairport() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_squeezelite() {
+  # TODO
+  echo "not yet implemented"
+}
+
+pause_gmediarender() {
+ pkill -USR1 $PROCESSID
+}
+
+
+pause_process() {
+  echo "$APP"
+  case $APP in
+    mpd)
+      pause_mpd
+      ;;
+    raat_app)
+      pause_raat
+      ;;
+    alsaloop)
+      pause_alsaloop
+      ;;
+    snapcast)
+      pause_snapcast
+      ;;
+    gmediarender)
+      pause_gmediarender
+      ;;
+    *)
+      echo "don't know how to pause $APP"
+      ;;
+  esac
+}
+
+kill_process() {
+  if [ "$PROCESSID" != "" ]; then
+    kill $PROCESSID
+  else 
+    pkill $APP
+  fi
+  sleep 1
+  PID=`pgrep $PROCESS`
+  if [ "$PID" != "" ]; then
+    if [ "$PROCESSID" != "" ]; then
+      kill -KILL $PROCESSID
+    else
+      pkill -KILL $APP
+    fi
+  fi
+}
+
+# What's the new player?
+if [ -x /opt/hifiberry/bin/report-activation ]; then
+  /opt/hifiberry/bin/report-activation "playercontrol_player_$PLAYER"
+fi
+
+# Map process names to audiocontrols internal service name as we want to make
+# sure a player doesn't pause itself
+ACNAME=$PLAYER
+case $PLAYER in
+  vollibrespot)
+    ACNAME=spotify
+    ;;
+  raat_app)
+    ACNAME=raat
+    ;;
+esac
+
+# Check if something is playing at all
+check_paused
+if [ "$APP" != "" ]; then 
+ if [ -x /opt/hifiberry/bin/report-deactivation ]; then
+  /opt/hifiberry/bin/report-deactivation "playercontrol_player_$APP"
+ fi
+fi
+
+# Try to control the player directly, this might not work
+# for all players
+pause_process
+check_paused
+echo "pause-all $PLAYER ($PPID): $DATE1 pause_process done, but playback still active"  | systemd-cat
+
+# Use API to pause
+curl -X post http://localhost:81/api/player/pause/$ACNAME ; echo
+for i in 1 1 1 1 1 ; do 
+ sleep $i
+ check_paused
+done
+echo "pause-all $PLAYER ($PPID): $DATE1 pause via API done, but playback still active"  | systemd-cat
+
+# Still in use
+kill_process
+
+# Now it should REALLY be available
+check_paused
+
+# Still not? Something is wrong, exit with exit code 1
+DATE2=`date +%Y%m%d-%H%M%S`
+echo "$DATE1 $DATE2 pause-all $1 failed, $APP still running "  | systemd-cat
+exit 1

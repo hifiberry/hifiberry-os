@@ -1,0 +1,17 @@
+e6204ae4-75d7-460a-9e89-3dcd94cfd702,ADC            ,hifiberry-adc
+5eb863b8-12f9-41ad-978f-4cee1b3eca62,Amp 100        ,hifiberry-amp100
+b1a57dbe-8b52-447f-939e-1baf72157d79,Amp 100        ,hifiberry-amp100
+3619722a-c92d-4092-95bd-493a2903e933,Amp4 Pro       ,hifiberry-amp4pro
+fcb6ec42-a182-419d-a314-7eeae416f608,Amp 4          ,hifiberry-dacplus-slave
+81cac43d-27c6-4a1e-a0b2-c70b4e608ab6,DAC+/Amp2      ,hifiberry-dacplus-slave
+ef586afc-2efa-47a0-be2e-95a7d952fe98,DAC+/Amp2      ,hifiberry-dacplus-slave
+36e3d3da-1ed9-468b-aea3-cd165f6820f0,DAC+ ADC Pro   ,hifiberry-dacplusadcpro
+30660215-dbb2-4c57-953f-099370b63e2e,DAC2 Pro ADC   ,hifiberry-dacplusadcpro
+482ad277-5586-480c-88e7-85ae89c4e501,DAC2 HD        ,hifiberry-dacplushd
+ebf9cfc4-6d77-4880-89fd-353690467dfc,DAC2 Pro       ,hifiberry-dacplus-pro
+f65985f9-5354-4457-ae3b-3da39ba2cf6d,DAC 8x         ,hifiberry-dac8x
+2154f80b-0f92-45e4-96db-c1643ec2b46b,Digi+ Pro      ,hifiberry-digi-pro
+5af941bb-4dcf-4eac-82a8-e36e84fcabef,Digi2 Pro      ,hifiberry-digi-pro
+7c980a0e-9d15-40af-9f40-bddfbd3aee8c,Digi2 Standard ,hifiberry-digi
+8f287583-429d-4206-a751-862264bbda63,DSP 2x4        ,hifiberry-dacplus-dsp
+c05bce95-fa8d-4cde-a7c2-827abfd49c80,Beocreate2,    ,hifiberry-dac
