@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYLAST
-	bool "python-pylast"
-	help
-	  A Python interface to Last.fm and Libre.fm.
-
-	  https://github.com/pylast/pylast

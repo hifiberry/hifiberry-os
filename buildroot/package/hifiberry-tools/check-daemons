@@ -1,6 +1,0 @@
-#!/bin/bash
-
-for i in shairport squeezelite spotifyd sigmatcpserver bluetoothd mpd raat_app; do
- PID=`ps -ef | grep $i | grep -v grep | awk '{print $1}'`
- echo $i: $PID
-done

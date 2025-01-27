@@ -1,7 +1,0 @@
-#!/bin/sh
-if [ "$1" == "" ]; then
- echo "backup file name missing"
- exit 1
-fi
-cd /
-tar --ignore-failed-read -cvz -f $1 -T /opt/hifiberry/etc/config-files -T /etc/config-files

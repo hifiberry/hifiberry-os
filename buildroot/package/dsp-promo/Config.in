@@ -1,7 +1,0 @@
-config BR2_PACKAGE_DSP_PROMO
-	bool "dsp-promo"
-        help
-	  Promote DSP features in sound menu
-        depends on BR2_PACKAGE_HIFIBERRY_BASE
-        depends on BR2_PACKAGE_BEOCREATE
-

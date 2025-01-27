@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYEDBGLIB
-	bool "python-pyedbglib"
-	help
-	  A low-level protocol library for communicating with Microchip CMSIS-DAP based debuggers
-
-	  https://github.com/microchip-pic-avr-tools/pyedbglib

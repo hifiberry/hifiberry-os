@@ -1,8 +1,0 @@
-#!/bin/sh
-echo "Updating Beocreate software to latest version from Github"
-cd /tmp
-git clone -b development https://github.com/hifiberry/create
-cp -rv create/Beocreate2/beo-* /opt/beocreate/
-cp -rv create/beocreate_essentials /opt/beocreate
-rm -rf create
-systemctl restart beocreate2

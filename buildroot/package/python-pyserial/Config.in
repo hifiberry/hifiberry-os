@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYSERIAL
-	bool "python-pyserial"
-	help
-	  Python Serial Port Extension.
-
-	  https://github.com/pyserial/pyserial

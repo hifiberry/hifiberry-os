@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/zope.event/json
-md5  bc38324cb29ce2d759c3cb56ea199995  zope.event-4.5.0.tar.gz
-sha256  5e76517f5b9b119acf37ca8819781db6c16ea433f7e2062c4afc2b6fbedb1330  zope.event-4.5.0.tar.gz
-# Locally computed sha256 checksums
-sha256  3e671db11df687516cc1db5b3d65e4aa383eaca3c20cea3faf53a0f7335d0a3c  LICENSE.txt

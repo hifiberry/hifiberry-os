@@ -1,4 +1,0 @@
-config BR2_PACKAGE_HATTOOLS
-	bool "hattools"
-        help
-          tools to read/write to HAT EEPROM

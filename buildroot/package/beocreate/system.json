@@ -1,6 +1,0 @@
-{
-        "cardType":"DAC+ Pro",
-        "port": 80,
-        "runAtStart": "/bin/systemd-notify --ready"
-}
-

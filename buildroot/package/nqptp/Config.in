@@ -1,4 +1,0 @@
-config BR2_PACKAGE_NQPTP
-	bool "nqptp"
-        help
-	  NQPTP deamon (required for Airplay2)

@@ -1,6 +1,0 @@
-config BR2_PACKAGE_ENABLE_ARM7
-	bool "enable ARM7 feature"
-        help
-	  "creates /etc/features/arm7"
-
-

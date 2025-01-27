@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/youtube_dl/json
-md5  b2ddcefe8a7f30260f8f22ededcc56db  youtube_dl-2020.3.8.tar.gz
-sha256  1b098b7ae41551f46dbae70e56dbabdf39c8faf50e072d0c0b42c44d64afebf8  youtube_dl-2020.3.8.tar.gz
-# Locally computed sha256 checksums
-sha256  7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c  LICENSE

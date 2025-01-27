@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PIGPIOD_SYSTEMD
-	bool "pigpiod-systemd"
-        help
-	  "GPIOd systemd integration"
-	select BR2_PACKAGE_LIBGPIOD
-	select BR2_PACKAGE_LIBGPIOD_TOOLS

@@ -1,6 +1,0 @@
-#!/bin/bash
-# System shutdown including turnoff using the HiFiBerry power controller
-
-i2cset -y -f 1 0x77 0x09 20 2>/dev/null >/dev/null  # power off timer
-
-/usr/sbin/shutdown -h now

@@ -1,5 +1,0 @@
-#/bin/sh
-# output the name of the ALSA volume control name
-. /etc/hifiberry.state
-echo $CURRENT_MIXER_CONTROL
-

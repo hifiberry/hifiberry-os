@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_YOUTUBE_DL
-	bool "python-youtube-dl"
-	help
-	  YouTube video downloader.
-
-	  https://github.com/ytdl-org/youtube-dl

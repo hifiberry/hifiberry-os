@@ -1,6 +1,0 @@
-config BR2_PACKAGE_VOLLIBRESPOT
-	bool "vollibrespot"
-        help
-	  An open source Spotify player with a metadata interface
-        select BR2_PACKAGE_HOST_CARGO
-	select BR2_PACKAGE_HOST_RUSTC

@@ -1,8 +1,0 @@
-IIR_L1: pass
-IIR_L2: mute
-IIR_L3: mute
-IIR_L4: mute
-IIR_R1: mute
-IIR_R2: pass
-IIR_R3: mute
-IIR_R4: mute

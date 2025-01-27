@@ -1,9 +1,0 @@
-#!/bin/sh
-. /etc/hifiberry.state
-
-if [ "$CURRENT_MIXER_CONTROL" == "DSPVolume" ]; then
-	ARGS="-v alsa_linear"
-fi
-
-/usr/bin/spotifyd --no-daemon $ARGS
-

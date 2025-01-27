@@ -1,3 +1,0 @@
-#!/bin/bash
-cat /proc/asound/card?/pcm?p/sub?/hw_params
-lsof /dev/snd/pcmC*D*p | grep -v COMMAND

@@ -1,9 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/gevent/json
-md5  84014946a25407706cbe9ecb088f1e9c  gevent-21.12.0.tar.gz
-sha256  f48b64578c367b91fa793bf8eaaaf4995cb93c8bc45860e473bf868070ad094e  gevent-21.12.0.tar.gz
-sha256  1ca01da176ee37b3527a2702f7d40dbc9ffb8cfc7be5a03bfa4f9eec45e55c46  gevent-22.10.2.tar.gz
-# Locally computed sha256 checksums
-sha256  4d46bc11d19e3853d54325973b8e2c53090f5638a7bf27fa1f5f1232c78901f7  LICENSE
-sha256  db4eb63fe09daebdf57d3f79b091bb5ee5070c0d761040e83264e648d307af4c  deps/c-ares/LICENSE.md
-sha256  c4dd1a5bc38b041a320b93c5d6c08f5c41a63f2ce718ee16cfcb757fad448199  deps/libev/LICENSE
-sha256  6d20216ae022fbeed23916f48508fd807ece3d8464992330643b0e64e5c0c24b  deps/libuv/LICENSE

@@ -1,7 +1,0 @@
-#!/bin/bash
-rm /library/mpd
-rm /etc/hifiberry.state
-docker stop $(docker ps -q)
-docker system prune -a --force
-rm -rf /data/extensions/*
-

@@ -1,8 +1,0 @@
-[Unit]
-Description=Install updates
-After=internet.service
-
-[Service]
-Type=oneshot
-ExecStart=/opt/hifiberry/bin/update
-

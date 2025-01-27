@@ -1,9 +1,0 @@
-config BR2_PACKAGE_IR_REMOTE
-	bool "IR Remote"
-        help
-	  "Control HiFiBerryOS using an IR remote control"
-    depends on BR2_PACKAGE_CONFIGTXT
-    depends on BR2_PACKAGE_COPY_OVERLAYS
-    depends on BR2_PACKAGE_HIFIBERRY_UPDATER
-    select BR2_PACKAGE_LIBV4L
-    select BR2_PACKAGE_LIBV4L_UTILS

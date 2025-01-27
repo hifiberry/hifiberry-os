@@ -1,9 +1,0 @@
-# from https://github.com/badaix/snapos
-
-config BR2_PACKAGE_BRUTEFIR
-	bool "Brutefir"
-	help
-        brutefir
-    select BR2_PACKAGE_FFTW
-    select BR2_PACKAGE_FFTW_DOUBLE
-    select BR2_PACKAGE_FFTW_SINGLE

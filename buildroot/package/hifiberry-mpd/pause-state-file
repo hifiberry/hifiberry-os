@@ -1,6 +1,0 @@
-#!/bin/bash
-# Modify MPD's state file to ensure current state is "pause"
-# From  https://www.runeaudio.com/forum/mpd-starts-playing-after-boot-t182.html
-if [ -f /var/lib/mpd/state ]; then
- sed -i 's/^\(state: \).*/\1pause/' /var/lib/mpd/state
-fi

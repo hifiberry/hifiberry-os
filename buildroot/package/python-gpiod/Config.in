@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_GPIOD
-	bool "python-gpiod"
-	help
-	  Python bindings for libgpiod.
-
-	  https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git

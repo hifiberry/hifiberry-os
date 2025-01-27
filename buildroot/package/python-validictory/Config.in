@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_VALIDICTORY
-	bool "python-validictory"
-	help
-	  general purpose python data validator.
-
-	  http://github.com/jamesturk/validictory

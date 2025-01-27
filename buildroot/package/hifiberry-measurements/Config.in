@@ -1,4 +1,0 @@
-config BR2_PACKAGE_HIFIBERRY_MEASUREMENTS
-	bool "hifiberry-measurements"
-        help
-	  Tools for acoustic measurements

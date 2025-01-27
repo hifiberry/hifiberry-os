@@ -1,8 +1,0 @@
-config BR2_PACKAGE_BEOCREATE
-	bool "beocreate"
-        help
-	  "Beocreate server and web interface"
-	select BR2_PACKAGE_BZIP2 # required for Node.JS
-	select BR2_PACKAGE_NODEJS
-	select BR2_PACKAGE_NODEJS_NPM
-	select BR2_PACKAGE_LIBUSB
