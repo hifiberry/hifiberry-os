@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# File to check
+UUID_FILE="/etc/uuid"
+
+# Ensure the script runs as root
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root. Please use sudo."
+    exit 1
+fi
+
+# Check if the UUID file exists and is not empty
+if [[ -s $UUID_FILE ]]; then
+    echo "UUID file exists and is not empty: $(cat $UUID_FILE)"
+else
+    echo "UUID file is missing or empty. Generating a new UUID..."
+    # Generate a new UUID
+    NEW_UUID=$(uuid)
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to generate UUID. Ensure 'uuid' is installed."
+        exit 1
+    fi
+
+    # Write the new UUID to the file
+    echo "$NEW_UUID" > "$UUID_FILE"
+    chmod 444 "$UUID_FILE"
+    echo "New UUID generated and saved to $UUID_FILE: $NEW_UUID"
+fi
+
+exit 0
+

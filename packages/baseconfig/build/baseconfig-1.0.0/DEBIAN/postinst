@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+echo "Running baseconfig after installation..."
+/usr/sbin/baseconfig || true
+
+exit 0
