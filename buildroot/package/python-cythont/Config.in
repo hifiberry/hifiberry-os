@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_CYTHONT
-	bool "python-cythont"
-	help
-	  The Cython compiler for writing C extensions for the Python
-	  language - target installation
-
-	  http://cython.org/

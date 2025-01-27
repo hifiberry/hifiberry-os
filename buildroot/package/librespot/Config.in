@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LIBRESPOT
-	bool "librespot"
-        help
-	  An open source Spotify player
-        select BR2_PACKAGE_HOST_CARGO
-	select BR2_PACKAGE_HOST_RUSTC

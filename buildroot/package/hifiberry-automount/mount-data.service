@@ -1,8 +1,0 @@
-[Unit]
-Description=Mount /data
-After=local-fs.target datacollector.service activate-data-partition.service
-
-[Service]
-Type=oneshot
-RemainAfterExit=true
-ExecStart=/opt/hifiberry/bin/mount-data.sh

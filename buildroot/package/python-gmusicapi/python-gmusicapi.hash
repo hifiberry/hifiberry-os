@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/gmusicapi/json
-md5  fa083ffc257266672e0f8ec8e6bc81ff  gmusicapi-12.1.1.tar.gz
-sha256  a825a4d183fe39dd10003acfe6fd7b9b0d1fb981e1ecd35bb91f054522eef2b1  gmusicapi-12.1.1.tar.gz
-# Locally computed sha256 checksums
-sha256  e767d7d19840a388be34aa315d92140200a09f3bae1d88455f3fa1061bf3aec9  LICENSE

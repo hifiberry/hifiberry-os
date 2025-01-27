@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_DISCID
-	bool "python-discid"
-	select BR2_PACKAGE_LIBDISCID
-	help
-	  Python-discid implements Python bindings for MusicBrainz Libdiscid.
-
-	  https://github.com/JonnyJD/python-discid

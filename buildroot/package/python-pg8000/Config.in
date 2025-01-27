@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_PG8000
-	bool "python-pg8000"
-	select BR2_PACKAGE_PYTHON_SCRAMP # runtime
-	help
-	  PostgreSQL interface library.
-
-	  https://github.com/tlocke/pg8000

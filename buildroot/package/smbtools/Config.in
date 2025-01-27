@@ -1,5 +1,0 @@
-config BR2_PACKAGE_SMBTOOLS
-	bool "smbtools"
-	help
-	  Tools to work with Samba shares
-        select BR2_PACKAGE_CIFS_UTILS

@@ -1,1 +1,0 @@
-root=/dev/mmcblk0p2 rootwait console=tty1 net.ifnames=0

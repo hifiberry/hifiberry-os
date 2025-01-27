@@ -1,7 +1,0 @@
-#/bin/sh
-echo "Updating Audiocontrol2 from Github"
-cd /tmp
-git clone https://github.com/hifiberry/audiocontrol2
-cp -rv audiocontrol2/* /opt/audiocontrol2/
-rm -rf audiocontrol2
-systemctl restart audiocontrol2

@@ -1,7 +1,0 @@
-#!/bin/bash
-pushd ../buildroot/utils
-./scanpypi $1
-popd
-ls ../buildroot/utils/packages/
-mv ../buildroot/utils/packages/python- buildroot/package/
-

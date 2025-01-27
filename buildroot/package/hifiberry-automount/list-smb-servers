@@ -1,9 +1,0 @@
-#!/bin/bash
-
-for host in `nmblookup -s /dev/null -S workgroup | grep "<20>" | awk '{print $1}'`; do
- IPS=""
- for ip in `nmblookup -s /dev/null $host | awk '{print $1}'`; do
-   IPS="$IPS $ip"
- done
- echo "$host,$IPS"
-done

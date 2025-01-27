@@ -1,4 +1,0 @@
-config BR2_PACKAGE_RAAT
-	bool "raat"
-        help
-	  "Roon endpoint"

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/validictory/json
-md5  ee3ea24d0e5602255d618fd63487dd0f  validictory-1.1.2.tar.gz
-sha256  3a87b84658592f75f37d6bab77ac223774c9989dc7349c8aad19a424770835ba  validictory-1.1.2.tar.gz
-# Locally computed sha256 checksums
-sha256  2244258a7ed65a402cfb423ea3918201ad5203cc29987e65bc99e064e173c219  LICENSE.txt

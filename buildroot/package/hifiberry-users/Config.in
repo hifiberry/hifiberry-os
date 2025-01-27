@@ -1,6 +1,0 @@
-config BR2_PACKAGE_HIFIBERRY_USERS
-	bool "hifiberry-users"
-        help
-	  Creates the users required by some other packages
-        depends on BR2_PACKAGE_HIFIBERRY_BASE
-

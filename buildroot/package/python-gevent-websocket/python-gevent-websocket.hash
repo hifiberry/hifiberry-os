@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/gevent-websocket/json
-md5	e095bf3358175489a956949c1b4de9ff  gevent-websocket-0.10.1.tar.gz
-sha256	7eaef32968290c9121f7c35b973e2cc302ffb076d018c9068d2f5ca8b2d85fb0  gevent-websocket-0.10.1.tar.gz
-# Locally computed sha256 checksums
-sha256	ddfeaafdefb5d826be791126cb74b843a8e22cb59a5e3304b170cde7d57f0208  LICENSE

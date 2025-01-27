@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYKY040
-	bool "python-pyky040"
-	select BR2_PACKAGE_PYTHON_RPIGPIO # runtime
-	help
-	  High-level interface for the KY040 rotary encoder and
-	  switch.
-
-	  https://github.com/raphaelyancey/pyKY040

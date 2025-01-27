@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYKKA
-	bool "python-pykka"
-	help
-	  Pykka is a Python implementation of the actor model.
-
-	  https://www.pykka.org/

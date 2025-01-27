@@ -1,8 +1,0 @@
-config BR2_PACKAGE_NANUMFONT
-    bool "nanumfont"
-    help
-      NanumGothicCoding font package
-
-      This package downloads the NanumGothicCoding font from GitHub
-      and installs it
-

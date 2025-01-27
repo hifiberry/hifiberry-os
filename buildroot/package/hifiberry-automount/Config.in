@@ -1,5 +1,0 @@
-config BR2_PACKAGE_HIFIBERRY_AUTOMOUNT
-	bool "hifiberry-automount"
-        help
-	  Automatically mount USB devices
-

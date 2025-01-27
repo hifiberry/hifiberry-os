@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_BOTTLE_WEBSOCKET
-	bool "python-bottle-websocket"
-	select BR2_PACKAGE_PYTHON_BOTTLE # runtime
-	select BR2_PACKAGE_PYTHON_GEVENT_WEBSOCKET # runtime
-	help
-	  WebSockets for bottle.
-
-	  https://github.com/zeekay/bottle-websocket

@@ -1,9 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYGOBJECT
-	bool "python-pygobject"
-	select BR2_PACKAGE_PYTHON_PYCAIRO # runtime
-	select BR2_PACKAGE_GOBJECT_INTROSPECTION
-	help
-	  Python bindings for GObject Introspection.
-
-	  https://pygobject.readthedocs.io
-

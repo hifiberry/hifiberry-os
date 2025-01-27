@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/tzupdate/json
-md5	3dacb482cf17cb8ce24273db9bae8362  tzupdate-2.0.0.tar.gz
-sha256	d5810e3bc64bfcf06f9599aa791c15e35a3b99fad19284fffc0aba9bd4f75b8a  tzupdate-2.0.0.tar.gz
-# Locally computed sha256 checksums
-sha256	d34c316184c3ff160b3fc554a444348be95eba0ec693f325e327e2b5236fc863  LICENSE

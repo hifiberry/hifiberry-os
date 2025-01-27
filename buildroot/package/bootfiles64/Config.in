@@ -1,4 +1,0 @@
-config BR2_PACKAGE_BOOTFILES64
-	bool "bootfiles64"
-        help
-	  "64bit boot files"

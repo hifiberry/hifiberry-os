@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_ZOPEEVENT
-	bool "python-zopeevent"
-	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
-	help
-	  Very basic event publishing system.
-
-	  https://github.com/zopefoundation/zope.event

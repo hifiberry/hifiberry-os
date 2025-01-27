@@ -1,9 +1,0 @@
-[Unit]
-Description=Install upgrades
-
-[Timer]
-OnCalendar=03:00
-Unit=updater.service
-
-[Install]
-WantedBy=timers.target  
