@@ -1,0 +1,18 @@
+Players
+=======
+
+- DLNA
+
+Configuration
+=============
+
+- Start pipewire first
+- handle volume control completey in Pipewire
+- make sure no player starts before pipewire is active
+- handle BT audio via Pipewire
+- handle analog in via Pipewire
+- pause one player when another becomes active
+
+Test players
+============
+...

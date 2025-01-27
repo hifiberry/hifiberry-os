@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Check if the correct number of parameters is provided
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 <channel_count> <duration> <rms_min> <rms_max>"
+    exit 1
+fi
+
+# Command-line parameters
+channel_count=$1
+duration=$2
+rms_min=$3
+rms_max=$4
+
+# Input multichannel file
+input_file="multichannel_recording.wav"
+
+# Remove previous recording if it exists
+if [ -f "$input_file" ]; then
+    rm "$input_file"
+fi
+
+# Record audio for the specified duration
+echo "Recording for $duration seconds with $channel_count channels..."
+arecord -D hw:0,0 -c "$channel_count" -r 48000 -f S32_LE -t wav -d "$duration" "$input_file"
+
+# Flag to track if any channel is out of range
+error_flag=0
+
+# Loop through each channel
+for ((channel=1; channel<=channel_count; channel++)); do
+    # Generate output filename for the channel
+    output_file="channel${channel}.wav"
+
+    # Extract the channel to a separate file
+    echo "Extracting Channel $channel to $output_file..."
+    sox "$input_file" "$output_file" remix "$channel"
+
+    # Analyze the extracted channel and extract RMS value
+    rms_value=$(sox "$output_file" -n stat 2>&1 | grep 'RMS' | grep 'amplitude' | awk '{print $3}')
+
+    # Check if RMS value is valid
+    if [ -z "$rms_value" ]; then
+        echo "Failed to extract RMS value for Channel $channel. Skipping."
+        echo "-------------------------"
+        continue
+    fi
+
+    # Check if RMS value is within the specified range
+    echo "Analyzing Channel $channel:"
+    echo "RMS Value: $rms_value"
+
+    if (( $(echo "$rms_value >= $rms_min" | bc -l) && $(echo "$rms_value <= $rms_max" | bc -l) )); then
+        echo "Channel $channel RMS is within range [$rms_min, $rms_max]."
+    else
+        echo "Channel $channel RMS is OUTSIDE the range [$rms_min, $rms_max]."
+        error_flag=1
+    fi
+
+    echo "-------------------------"
+done
+
+# Exit with error if any channel was outside the range
+if [ "$error_flag" -eq 1 ]; then
+    echo "One or more channels were outside the expected RMS range. Exiting with error."
+    exit 1
+fi
+
+echo "All channels are within the expected RMS range."
+exit 0
+

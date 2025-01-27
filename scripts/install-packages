@@ -1,0 +1,5 @@
+#!/bin/sh
+sudo apt update 
+sudo apt install sox figlet python3-pip
+
+sudo pip3 install --break-system-packages RPi.GPIO pyalsaaudio

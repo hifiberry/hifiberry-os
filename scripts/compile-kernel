@@ -1,0 +1,132 @@
+#!/bin/bash
+
+# Trigger sudo authorization at the beginning of the script
+sudo -v
+
+# Keep sudo active
+while true; do sudo -v; sleep 50; done &
+SUDO_PID=$!
+
+# Function to clean up background process on script exit
+cleanup() {
+    echo "Cleaning up..."
+    kill $SUDO_PID
+}
+trap cleanup EXIT
+
+# Directory for the kernel source
+KERNEL_DIR=~/linux
+KERNEL_INSTALL_PATH=/boot/firmware
+
+# Determine the script directory
+SCRIPT_DIR=$(dirname "$0")
+
+# Check if a commit ID or user is provided in the "commitid" file
+if [ -f "$SCRIPT_DIR/commitid" ]; then
+    COMMIT_INFO=$(cat "$SCRIPT_DIR/commitid")
+    if [[ "$COMMIT_INFO" == *":"* ]]; then
+        REPO_USER=${COMMIT_INFO%%:*}
+        COMMIT_ID=${COMMIT_INFO##*:}
+        echo "Using repository user: $REPO_USER and commit ID: $COMMIT_ID"
+    else
+        COMMIT_ID=$COMMIT_INFO
+        REPO_USER="raspberrypi"
+        echo "Using default repository user: $REPO_USER and commit ID: $COMMIT_ID"
+    fi
+else
+    REPO_USER="raspberrypi"
+    COMMIT_ID=""
+    echo "No commit ID or user provided. Using default repository user: $REPO_USER and the active branch."
+fi
+
+# Ensure the kernel source directory is present
+if [ ! -d "$KERNEL_DIR" ]; then
+    echo "Cloning the Linux kernel repository for user: $REPO_USER..."
+    git clone https://github.com/$REPO_USER/linux $KERNEL_DIR
+fi
+
+cd $KERNEL_DIR
+
+# Checkout the specified commit ID if provided
+if [ -n "$COMMIT_ID" ]; then
+    git fetch --all
+    git checkout $COMMIT_ID
+fi
+
+# Parse arguments
+ONLY_COMPILE="${1:-}"
+ONLY_PI5="${2:-}"
+
+# Function to compile a kernel
+compile_kernel() {
+    local config=$1
+    local kernel_name=$2
+    local skip_config=$3
+
+    if [ "$skip_config" != "skip_config" ]; then
+        echo "Compiling kernel with configuration: $config"
+        make $config
+
+        echo "Disabling specified drivers..."
+        local disable_drivers=("SOC_CHIPDIP" "SOC_PIFI" "SOC_RPI" "SOC_JUSTBOOM"
+                               "SOC_IQAUDIO" "SOC_I_SABRE" "SOC_ADAU1977" "SND_AUDIOINJECTOR"
+                               "SND_AUDIOSENSE" "SND_DIGIDAC1" "SOC_DIONAUDIO" "SOC_ALLO"
+                               "SOC_FE" "SND_DACBERRY")
+        for driver in "${disable_drivers[@]}"; do
+            grep -E "CONFIG.*$driver.*=(y|m)" .config | cut -d'=' -f1 | while read config_option; do
+                scripts/config --file .config --set-val $config_option n
+            done
+        done
+        make olddefconfig
+    fi
+
+    echo "Compiling kernel, modules, and device tree blobs using 6 parallel processes"
+    make -j6 Image.gz modules dtbs
+}
+
+# Function to install a kernel
+install_kernel() {
+    local kernel_name=$1
+
+    echo "Installing kernel: $kernel_name"
+    sudo make -j6 modules_install
+    sudo cp "$KERNEL_INSTALL_PATH/$kernel_name.img" "$KERNEL_INSTALL_PATH/${kernel_name}-backup.img"
+    sudo cp arch/arm64/boot/Image.gz "$KERNEL_INSTALL_PATH/$kernel_name.img"
+    sudo cp arch/arm64/boot/dts/broadcom/*.dtb $KERNEL_INSTALL_PATH/
+    sudo cp arch/arm64/boot/dts/overlays/*.dtb* $KERNEL_INSTALL_PATH/overlays/
+    sudo cp arch/arm64/boot/dts/overlays/README $KERNEL_INSTALL_PATH/overlays/
+}
+
+# Update /boot/config.txt to ensure correct kernel is loaded based on the Pi model
+update_config_txt() {
+    local config_path="/boot/firmware/config.txt"
+    sudo sed -i '/^\[pi3\]/,+2 d' $config_path
+    sudo sed -i '/^\[pi4\]/,+2 d' $config_path
+    sudo sed -i '/^\[pi5\]/,+2 d' $config_path
+    echo "[pi3]" | sudo tee -a $config_path
+    echo "kernel=kernel8.img" | sudo tee -a $config_path
+    echo "[pi4]" | sudo tee -a $config_path
+    echo "[pi5]" | sudo tee -a $config_path
+    echo "kernel=kernel_2712.img" | sudo tee -a $config_path
+    echo "[all]" | sudo tee -a $config_path
+}
+
+# Conditionally compile and install kernels
+if [ "$ONLY_PI5" == "pi5" ]; then
+    compile_kernel bcm2712_defconfig kernel_2712 $ONLY_COMPILE
+    install_kernel kernel_2712
+else
+    compile_kernel bcm2711_defconfig kernel8 $ONLY_COMPILE
+    install_kernel kernel8
+
+    if [ -z "$ONLY_COMPILE" ]; then
+        compile_kernel bcm2712_defconfig kernel_2712
+        install_kernel kernel_2712
+    fi
+fi
+
+# Update config.txt
+update_config_txt
+
+echo "Kernel compilation and installation complete!"
+

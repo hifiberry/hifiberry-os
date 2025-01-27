@@ -1,0 +1,13 @@
+#!/bin/bash
+. /etc/hifiberry.state
+HATINFO=`/opt/hifiberry/bin/readhat`
+if [ "$HATINFO" == "HiFiBerry:Digi2 Pro" ]; then
+  DACDETECTED=`aplay -l | grep hifiberry_dac`
+  if [ "$DACDETECTED" != "" ]; then
+   	MODEL=$(tr -d '\0' < /proc/device-tree/model)
+  	echo "Problem with Digi2 Pro on $MODEL"
+        exit
+  fi
+fi
+
+echo No known problems

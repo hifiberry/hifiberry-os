@@ -1,0 +1,8 @@
+#!/bin/bash
+IP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -1` 
+
+if [ "$IP" == "" ]; then
+  /opt/hifiberry/bin/bootmsg "No network connected, configure network using WiFi setup"
+else
+  /opt/hifiberry/bin/bootmsg "Web interface ready at http://$IP"
+fi

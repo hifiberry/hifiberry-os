@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Save the current directory and change to the script's relative directory
+pushd "$(dirname "${BASH_SOURCE[0]}")/../configurator" >/dev/null
+
+# Execute the Python script
+sudo python configtxt.py --disable-onboard-sound --disable-hdmi-sound --disable-eeprom --overlay=hifiberry-dac8x
+
+# Return to the original directory
+popd >/dev/null
