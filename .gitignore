@@ -7,3 +7,4 @@ packages/snapcast/snapcast
 packages/snapcastmpris/snapcastmpris
 packages/squeezelite/squeezelite
 packages/pipewire-server/pipewire-server
+**/.debhelper/
