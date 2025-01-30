@@ -1,0 +1,35 @@
+#!/bin/bash
+PATH=$PATH:/usr/local/bin
+
+# Check for "dac8x" in the output of `aplay -l`
+if ! aplay -l | grep -q "dac8x"; then
+    figlet "No DAC8x"
+    exit 1
+fi
+
+# Check for "adc" in the output of `aplay -l`
+if ! aplay -l | grep -q "adc"; then
+    figlet "No ADC"
+    exit 1
+fi
+
+# Proceed with other tests
+check-rms 8 1 0 0.001
+if [ "$?" != "0" ]; then
+    figlet "Too much noise"
+    exit 1
+fi
+
+# Play a test tone
+play -n -c 8 synth 5 sine 1000 &
+
+# Check RMS levels
+check-rms 8 3 0.5 1
+if [ "$?" != "0" ]; then
+    figlet "Signal too low"
+    exit 1
+fi
+
+clear
+figlet "DAC/ADC OK"
+

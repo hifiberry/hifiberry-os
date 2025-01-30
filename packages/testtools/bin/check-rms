@@ -41,9 +41,9 @@ for ((channel=1; channel<=channel_count; channel++)); do
 
     # Check if RMS value is valid
     if [ -z "$rms_value" ]; then
-        echo "Failed to extract RMS value for Channel $channel. Skipping."
-        echo "-------------------------"
-        continue
+        echo "Failed to extract RMS value for Channel $channel."
+        echo "Exiting with error due to critical failure in RMS extraction."
+        exit 1  # Exit with error immediately if RMS value cannot be extracted
     fi
 
     # Check if RMS value is within the specified range
@@ -62,7 +62,7 @@ done
 
 # Exit with error if any channel was outside the range
 if [ "$error_flag" -eq 1 ]; then
-    echo "One or more channels were outside the expected RMS range. Exiting with error."
+    echo "One or more channels were outside the expected RMS range."
     exit 1
 fi
 

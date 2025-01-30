@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+# Enable the getty service with custom autologin configuration
+systemctl enable getty@tty1.service
+
+# Reload the systemd daemon to apply new changes
+systemctl daemon-reload
+
+# Run test script
+if ! grep -q "/opt/test/bin/run-test" /home/pi/.bashrc; then
+    echo "/opt/test/bin/run-test" >> /home/pi/.bashrc
+fi
+
+echo "Autologin setup completed."
+
+exit 0
+

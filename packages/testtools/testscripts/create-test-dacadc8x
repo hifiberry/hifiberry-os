@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Configure DAC8x driver
+config-configtxt --remove-hifiberry --disable-onboard-sound --disable-hdmi-sound --disable-eeprom --overlay=hifiberry-dac8x
