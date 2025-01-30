@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Check if the script is running on a local console
+if [[ $(tty) != /dev/tty[1-9] ]]; then
+    echo "User session, not running test script"
+    exit 0
+fi
+
+clear
+figlet Testing
+
+/opt/test/bin/active-test
+
