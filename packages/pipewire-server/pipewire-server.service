@@ -1,0 +1,18 @@
+[Unit]
+Description=PipeWire Media Server
+Documentation=man:pipewire(1)
+Wants=pipewire.service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/pipewire -c /etc/pipewire/pipewire.conf
+Restart=always
+User=root
+Group=audio
+Environment=PIPEWIRE_RUNTIME_DIR=/run/pipewire
+AmbientCapabilities=CAP_SYS_ADMIN CAP_NET_ADMIN
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
