@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e  # Exit script immediately on any errors
+
 # Trigger sudo authorization at the beginning of the script
 sudo -v
 
@@ -34,22 +36,22 @@ if [ -f "$SCRIPT_DIR/commitid" ]; then
         echo "Using default repository user: $REPO_USER and commit ID: $COMMIT_ID"
     fi
 else
-    REPO_USER="raspberrypi"
-    COMMIT_ID=""
+    REPO_USER="torvalds"  # Default to Torvalds if no user/commit provided
+    COMMIT_ID="master"
     echo "No commit ID or user provided. Using default repository user: $REPO_USER and the active branch."
 fi
 
 # Ensure the kernel source directory is present
 if [ ! -d "$KERNEL_DIR" ]; then
     echo "Cloning the Linux kernel repository for user: $REPO_USER..."
-    git clone https://github.com/$REPO_USER/linux $KERNEL_DIR
+    git clone --depth 1 https://github.com/$REPO_USER/linux $KERNEL_DIR
 fi
 
 cd $KERNEL_DIR
 
 # Checkout the specified commit ID if provided
 if [ -n "$COMMIT_ID" ]; then
-    git fetch --all
+    git fetch --depth 1 origin $COMMIT_ID
     git checkout $COMMIT_ID
 fi
 
@@ -106,6 +108,7 @@ update_config_txt() {
     echo "[pi3]" | sudo tee -a $config_path
     echo "kernel=kernel8.img" | sudo tee -a $config_path
     echo "[pi4]" | sudo tee -a $config_path
+    echo "kernel=kernel8.img" | sudo tee -a $config_path
     echo "[pi5]" | sudo tee -a $config_path
     echo "kernel=kernel_2712.img" | sudo tee -a $config_path
     echo "[all]" | sudo tee -a $config_path
