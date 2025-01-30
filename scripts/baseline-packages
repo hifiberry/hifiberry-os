@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Define the location of the baseline file
+baseline_file="/etc/package_baseline.txt"
+
+# Ensure the script is run as root
+if [ "$(id -u)" -ne 0 ]; then
+    echo "This script must be run as root. Please use sudo or log in as the root user."
+    exit 1
+fi
+
+function create_baseline() {
+    echo "Creating baseline of currently installed packages..."
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > "$baseline_file"
+    echo "Baseline created and stored in $baseline_file"
+}
+
+function remove_new_packages() {
+    if [ ! -f "$baseline_file" ]; then
+        echo "Baseline file does not exist. Cannot proceed with removal."
+        exit 1
+    fi
+
+    echo "Removing packages not in the baseline..."
+    # Get the list of currently installed packages
+    current_packages=$(dpkg --get-selections | grep -v deinstall | awk '{print $1}')
+    # Load baseline packages into an array
+    readarray -t baseline_packages < "$baseline_file"
+    
+    # Convert baseline packages to a hash for faster lookup
+    declare -A baseline_pkg_hash
+    for pkg in "${baseline_packages[@]}"; do
+        baseline_pkg_hash["$pkg"]=1
+    done
+
+    # Uninstall packages that are not in the baseline
+    for pkg in $current_packages; do
+        if [ -z "${baseline_pkg_hash[$pkg]}" ]; then
+            echo "Uninstalling $pkg..."
+            sudo apt-get remove --purge -y "$pkg"
+        fi
+    done
+
+    echo "Cleanup completed."
+}
+
+# Check if the '--remove' option is given
+if [ "$1" == "--remove" ]; then
+    remove_new_packages
+else
+    create_baseline
+fi
+
