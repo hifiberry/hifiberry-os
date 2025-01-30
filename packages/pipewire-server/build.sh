@@ -5,10 +5,12 @@ set -e
 # Configuration
 VERSION="1.0.0"
 PACKAGE_NAME="pipewire-server"
-MAINTAINER="HiFiBerry <info@hifiberry.com>"
+MAINTAINER="HiFiBerry <support@hifiberry.com>"
 WORK_DIR="$(pwd)/${PACKAGE_NAME}"
 OUTPUT_DIR="$HOME/packages"
 CONFIG_FILE="$(pwd)/pipewire.conf"
+POSTINSTALL_SCRIPT="$(pwd)/postinstall"
+UNIT_FILE="$(pwd)/pipewire-server.service"
 
 # Install dependencies
 function install_dependencies() {
@@ -25,9 +27,19 @@ function prepare_package_structure() {
     rm -rf "$WORK_DIR"
     mkdir -p "$WORK_DIR/DEBIAN" "$WORK_DIR/usr/lib/systemd/system" "$WORK_DIR/etc/pipewire"
 
-    # Verify the presence of the config file
+    # Verify the presence of required files
     if [ ! -f "$CONFIG_FILE" ]; then
         echo "Error: pipewire.conf not found in the script directory!"
+        exit 1
+    fi
+
+    if [ ! -f "$POSTINSTALL_SCRIPT" ]; then
+        echo "Error: postinstall script not found in the script directory!"
+        exit 1
+    fi
+
+    if [ ! -f "$UNIT_FILE" ]; then
+        echo "Error: pipewire-server.service not found in the script directory!"
         exit 1
     fi
 
@@ -36,27 +48,14 @@ function prepare_package_structure() {
     cp "$CONFIG_FILE" "$WORK_DIR/etc/pipewire/pipewire.conf"
     cp asound.conf "$WORK_DIR/etc/asound.conf"
 
-    # Create the systemd unit file
-    echo "Creating systemd unit file..."
-    cat > "$WORK_DIR/usr/lib/systemd/system/pipewire-server.service" <<EOL
-[Unit]
-Description=PipeWire Media Server
-Documentation=man:pipewire(1)
-Wants=pipewire.service
-After=network.target
+    # Copy the postinstall script
+    echo "Copying postinstall script to the package..."
+    cp "$POSTINSTALL_SCRIPT" "$WORK_DIR/DEBIAN/postinst"
+    chmod +x "$WORK_DIR/DEBIAN/postinst"
 
-[Service]
-ExecStart=/usr/bin/pipewire -c /etc/pipewire/pipewire.conf
-Restart=always
-User=root
-Group=audio
-Environment=PIPEWIRE_RUNTIME_DIR=/run/pipewire
-AmbientCapabilities=CAP_SYS_ADMIN CAP_NET_ADMIN
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-EOL
+    # Copy the systemd unit file
+    echo "Copying pipewire-server.service to the package..."
+    cp "$UNIT_FILE" "$WORK_DIR/usr/lib/systemd/system/pipewire-server.service"
 
     # Create the control file
     echo "Creating control file..."
@@ -67,34 +66,10 @@ Architecture: all
 Maintainer: $MAINTAINER
 Priority: optional
 Section: sound
-Depends: pipewire, pipewire-alsa, systemd
+Depends: pipewire, pipewire-alsa, systemd, pulseaudio-utils, pipewire-pulse
 Description: PipeWire media server
  This package installs PipeWire as a system daemon, making it available for use by background processes and system services.
 EOL
-
-    # Add postinst script to enable and start the service
-    echo "Creating postinst script..."
-    cat > "$WORK_DIR/DEBIAN/postinst" <<EOL
-#!/bin/bash
-set -e
-
-# Create the runtime directory with the correct permissions
-if [ ! -d /run/pipewire ]; then
-    mkdir -p /run/pipewire
-    chmod 1777 /run/pipewire
-fi
-
-# Create tmpfiles configuration for persistence
-echo "d /run/pipewire 0777 root root -" > /etc/tmpfiles.d/pipewire.conf
-systemd-tmpfiles --create /etc/tmpfiles.d/pipewire.conf
-
-# Enable and start the service
-systemctl daemon-reload
-systemctl enable pipewire-server.service
-systemctl start pipewire-server.service
-EOL
-
-    chmod +x "$WORK_DIR/DEBIAN/postinst"
 
     # Set permissions for the package structure
     chmod -R 755 "$WORK_DIR"
