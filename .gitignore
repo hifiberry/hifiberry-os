@@ -8,3 +8,7 @@ packages/snapcastmpris/snapcastmpris
 packages/squeezelite/squeezelite
 packages/pipewire-server/pipewire-server
 **/.debhelper/
+packages/testtools_*.dsc
+packages/testtools_*.tar.gz
+packages/testtools_*.buildinfo
+packages/testtools_*.changes
