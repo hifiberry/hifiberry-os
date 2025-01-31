@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Set the mode using fbset
+fbset -xres 1024 -yres 768 -depth 8

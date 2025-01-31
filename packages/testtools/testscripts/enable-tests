@@ -7,6 +7,11 @@ systemctl enable getty@tty1.service
 # Reload the systemd daemon to apply new changes
 systemctl daemon-reload
 
+# Screen resolution
+if ! grep -q "/opt/test/bin/set-resolution" /home/pi/.bashrc; then
+    echo "/opt/test/bin/set-resolution" >> /home/pi/.bashrc
+fi
+
 # Run test script
 if ! grep -q "/opt/test/bin/run-test" /home/pi/.bashrc; then
     echo "/opt/test/bin/run-test" >> /home/pi/.bashrc

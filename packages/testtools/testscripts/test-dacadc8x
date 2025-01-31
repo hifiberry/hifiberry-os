@@ -2,13 +2,13 @@
 PATH=$PATH:/usr/local/bin
 
 # Check for "dac8x" in the output of `aplay -l`
-if ! aplay -l | grep -q "dac8x"; then
+if ! aplay -l | grep -qi "dac8x"; then
     figlet "No DAC8x"
     exit 1
 fi
 
 # Check for "adc" in the output of `aplay -l`
-if ! aplay -l | grep -q "adc"; then
+if ! aplay -l | grep -qi "adc"; then
     figlet "No ADC"
     exit 1
 fi
@@ -21,7 +21,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Play a test tone
-play -n -c 8 synth 5 sine 1000 &
+play -q -n -c 8 synth 5 sine 1000 2>/dev/null &
 
 # Check RMS levels
 check-rms 8 3 0.5 1
@@ -30,6 +30,6 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-clear
+reset
 figlet "DAC/ADC OK"
 
