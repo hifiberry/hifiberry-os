@@ -28,7 +28,7 @@ function build_package() {
         echo "Error: eeprom directory not found!"
         exit 1
     fi
-    cp -r eeprom/* "$WORK_DIR/opt/hifiberry/eeprom/"
+    cp -r eeprom/*.eep eeprom/*.sh "$WORK_DIR/opt/hifiberry/eeprom/"
 
     # Create the control file
     cat > "$WORK_DIR/DEBIAN/control" <<EOL
