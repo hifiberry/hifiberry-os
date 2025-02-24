@@ -13,3 +13,8 @@ packages/testtools_*.tar.gz
 packages/testtools_*.buildinfo
 packages/testtools_*.changes
 packages/python-pymcuprog/wheel_dir
+packages/configurator/configurator-*.tar.gz
+packages/configurator/PACKAGEFILE
+packages/configurator/configurator.egg-info
+packages/configurator/deb_dist
+packages/configurator/dist
