@@ -1,0 +1,42 @@
+#!/bin/bash
+PATH=$PATH:/usr/local/bin
+
+MAJOR=0
+MINOR=1
+
+# Write firmware to controller
+sudo pymcuprog write --erase -d attiny402 -t uart -u /dev/ttyAMA0 -f /opt/test/firmware/studiodac8x-${MAJOR}.${MINOR}.hex
+sleep 2
+
+# Read back version from Microcontroller to check if the firmware was installed correctly
+MAJOR_HEX=$(i2cget -y 1 0x17 1 b 2>/dev/null | sed 's/0x//')
+MINOR_HEX=$(i2cget -y 1 0x17 2 b 2>/dev/null | sed 's/0x//')
+
+MAJOR_READ=$((16#$MAJOR_HEX))
+MINOR_READ=$((16#$MINOR_HEX))
+
+# Check if major and minor versions are correct
+if [[ $MAJOR_READ -ne $MAJOR || $MINOR_READ -ne $MINOR ]]; then
+    figlet "FAIL"
+    echo "Version mismatch: Expected ${MAJOR}.${MINOR}, but read ${MAJOR_READ}.${MINOR_READ}"
+    exit 1
+fi
+
+echo "Controller firmware $MAJOR.$MINOR installed correctly"
+
+# Write HAT EEPROM
+sudo /opt/hifiberry/eeprom/hbflash.sh -w -f=/opt/hifiberry/eeprom/studiodac8x.eep -t=24c32
+if [ "$?" != 0 ]; then
+    figlet "FAIL"
+    echo "Fail4ed to write HAT EEPROM"
+    exit 1
+fi
+
+figlet "OK"
+
+# Play a test tone
+play -q -n -c 8 synth 20 sine 1000
+
+reset
+figlet "Studio DAC8x OK"
+
