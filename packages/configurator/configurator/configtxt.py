@@ -141,6 +141,20 @@ class ConfigTxt:
         self._update_line("dtoverlay=disable-bt", "dtoverlay=disable-bt\n")
         logging.info("UPDI settings applied. Reboot may be required.")
 
+    # New methods for hat I2C overlay
+    def enable_hat_i2c(self):
+        overlay_line = "dtoverlay=i2c-gpio,i2c_gpio_sda=0,i2c_gpio_scl=1\n"
+        # Prevent duplicates if the line already exists
+        if not any(line.strip() == overlay_line.strip() for line in self.lines):
+            self.lines.append(overlay_line)
+            logging.info("HAT I2C overlay enabled.")
+
+    def disable_hat_i2c(self):
+        original_length = len(self.lines)
+        self.lines = [line for line in self.lines if line.strip() != "dtoverlay=i2c-gpio,i2c_gpio_sda=0,i2c_gpio_scl=1"]
+        if len(self.lines) < original_length:
+            logging.info("HAT I2C overlay disabled.")
+
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -161,6 +175,8 @@ def main():
     parser.add_argument("--default-config", action="store_true", help="Apply the default configuration.")
     parser.add_argument("--report-change", action="store_true", help="Exit with return code 1 if changes were made.")
     parser.add_argument("--enable-updi", action="store_true", help="Enable UPDI settings: enable UART, dtoverlay for uart0, and disable Bluetooth.")
+    parser.add_argument("--enable-hat_i2c", action="store_true", help="Enable HAT I2C overlay (dtoverlay=i2c-gpio,i2c_gpio_sda=0,i2c_gpio_scl=1).")
+    parser.add_argument("--disable-hat_i2c", action="store_true", help="Disable HAT I2C overlay (dtoverlay=i2c-gpio,i2c_gpio_sda=0,i2c_gpio_scl=1).")
     args = parser.parse_args()
 
     config = ConfigTxt()
@@ -207,6 +223,13 @@ def main():
 
         if args.enable_updi:
             config.enable_updi()
+
+        # New hat I2C overlay handling
+        if args.enable_hat_i2c:
+            config.enable_hat_i2c()
+
+        if args.disable_hat_i2c:
+            config.disable_hat_i2c()
 
         config.save()
 
