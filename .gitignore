@@ -12,3 +12,4 @@ packages/testtools_*.dsc
 packages/testtools_*.tar.gz
 packages/testtools_*.buildinfo
 packages/testtools_*.changes
+packages/python-pymcuprog/wheel_dir
