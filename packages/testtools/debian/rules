@@ -9,9 +9,9 @@ override_dh_auto_build:
 override_dh_auto_install:
 	mkdir -p debian/testtools/opt/test/bin
 	mkdir -p debian/testtools/usr/bin
-        mkdir -p debian/testtools/opt/test/firmware
+	mkdir -p debian/testtools/opt/test/firmware
 	mkdir -p debian/testtools/etc/systemd/system/getty@tty1.service.d/
 	cp -r testscripts/* debian/testtools/opt/test/bin
 	cp -r bin/* debian/testtools/usr/bin
-        cp -r firmware/* debian/testtools/opt/test/firmware
+	cp -r firmware/* debian/testtools/opt/test/firmware
 	cp autologin.conf debian/testtools/etc/systemd/system/getty@tty1.service.d/
