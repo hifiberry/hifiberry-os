@@ -2,7 +2,7 @@
 
 # Define variables
 PACKAGE_NAME="configurator"
-VERSION="1.0.0"
+VERSION="1.1.0"
 OUTPUT_DIR="$HOME/packages"
 BUILD_DIR="deb_dist"
 PACKAGEFILE="./PACKAGEFILE" # File to store the package name

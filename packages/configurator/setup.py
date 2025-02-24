@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="configurator",
-    version="1.0.0",
+    version="1.1.0",
     description="System configuration scripts",
     long_description="System configuration scripts",
     author="HiFiBerry",
