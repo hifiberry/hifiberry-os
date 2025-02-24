@@ -1,0 +1,129 @@
+#!/bin/bash
+
+set -e  # Exit on errors
+
+# Function to display available disks and partitions
+function select_disk() {
+    echo "Available Disks:"
+    lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS,FSTYPE
+    echo ""
+
+    read -p "Enter the device (e.g., sda, mmcblk0): " DEVICE
+    DEVICE="/dev/$DEVICE"
+
+    if [[ ! -b $DEVICE ]]; then
+        echo "Invalid device selected. Exiting."
+        exit 1
+    fi
+
+    echo "Selected device: $DEVICE"
+}
+
+# Function to resize partitions
+function resize_partitions() {
+    # Only get partitions from the selected disk
+    PARTITIONS=$(lsblk -lnp -o NAME,FSTYPE,PKNAME | awk -v dev="$DEVICE" '$3==dev && ($2=="ext2" || $2=="ext3" || $2=="ext4") {print $1}')
+
+    if [[ -z "$PARTITIONS" ]]; then
+        echo "No ext2/ext3/ext4 partitions found on $DEVICE."
+        exit 1
+    fi
+
+    for PART in $PARTITIONS; do
+        echo "----------------------------------------"
+        echo "Processing partition: $PART"
+        echo "----------------------------------------"
+
+        # Ensure the partition is not mounted
+        if mount | grep -q "$PART"; then
+            echo "Error: Partition $PART is mounted. Unmount it first."
+            exit 1
+        fi
+
+        # Get partition number (e.g., sda2 -> 2)
+        PART_NUM=$(echo $PART | grep -o '[0-9]*$')
+
+        # Get start sector & total sectors
+        PART_INFO=$(fdisk -l $DEVICE | grep "$PART")
+        START_SECTOR=$(echo "$PART_INFO" | awk '{print $2}')
+        TOTAL_SECTORS=$(echo "$PART_INFO" | awk '{print $4}')
+        DISK_SIZE_SECTORS=$(fdisk -l $DEVICE | grep "sectors" | awk '{print $NF}')
+
+        if [[ -z "$START_SECTOR" || -z "$TOTAL_SECTORS" || -z "$DISK_SIZE_SECTORS" ]]; then
+            echo "Error: Could not determine start or total sectors for $PART."
+            exit 1
+        fi
+
+        echo "Start sector: $START_SECTOR"
+        echo "Total sectors before resize: $TOTAL_SECTORS"
+
+        # Display current filesystem size
+        FS_SIZE=$(df -h --output=size $PART | tail -n 1)
+        echo "Current filesystem size: $FS_SIZE"
+
+        # Get filesystem details
+        BLOCK_SIZE=$(tune2fs -l $PART | grep "Block size" | awk '{print $3}')
+        TOTAL_BLOCKS=$(tune2fs -l $PART | grep "Block count" | awk '{print $3}')
+        MIN_BLOCKS=$(resize2fs -P $PART | awk '{print $NF}')
+
+        # **Ensure filesystem won't be too small**
+        SAFE_BLOCKS=$((MIN_BLOCKS + 5000))
+
+        # Calculate new partition size with precise sector alignment
+        NEW_BLOCKS=$((SAFE_BLOCKS + SAFE_BLOCKS / 10))
+        NEW_SIZE_MB=$((NEW_BLOCKS * BLOCK_SIZE / 1024 / 1024))
+        NEW_SIZE_SECTORS=$((NEW_BLOCKS * BLOCK_SIZE / 512))
+
+        echo "Resizing filesystem..."
+        e2fsck -f $PART
+        resize2fs $PART ${NEW_BLOCKS}
+
+        echo "Filesystem resized successfully."
+        echo "New filesystem size: $(df -h --output=size $PART | tail -n 1)"
+
+        echo "Resizing partition..."
+
+        # Ensure partition size matches filesystem size exactly
+        LAST_SECTOR=$((START_SECTOR + NEW_SIZE_SECTORS - 1))
+
+        # Prevent exceeding disk size
+        if (( LAST_SECTOR >= DISK_SIZE_SECTORS )); then
+            LAST_SECTOR=$((DISK_SIZE_SECTORS - 1))
+        fi
+
+        echo "New partition size in MB: $NEW_SIZE_MB"
+        echo "New last sector: $LAST_SECTOR"
+
+        # Backup current partition table
+        echo "Backing up current partition table..."
+        sfdisk -d $DEVICE > /tmp/partition_table_backup.sfdisk
+
+        # Use `sfdisk` to recreate partition table correctly
+        echo "Deleting and recreating partition with exact size..."
+        (
+            echo d      # Delete partition
+            echo $PART_NUM
+            echo n      # New partition
+            echo p      # Primary partition
+            echo $PART_NUM
+            echo $START_SECTOR
+            echo $LAST_SECTOR
+            echo w      # Write changes
+        ) | fdisk $DEVICE
+
+        # Inform kernel about partition table changes
+        partprobe $DEVICE
+
+        echo "Partition $PART resized successfully."
+    done
+
+    echo "----------------------------------------"
+    echo "Updated Partition Table:"
+    fdisk -l $DEVICE
+    echo "All partitions resized."
+}
+
+# Run the selection and resizing functions
+select_disk
+resize_partitions
+
