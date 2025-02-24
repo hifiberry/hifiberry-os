@@ -4,7 +4,7 @@ set -e
 
 # Configuration
 PACKAGE_NAME="hifiberry-eeprom"
-VERSION="1.0.0"
+VERSION="1.1.0"
 MAINTAINER="HiFiBerry <support@hifiberry.com>"
 WORK_DIR="$HOME/src/debian/$PACKAGE_NAME"
 OUTPUT_DIR="$HOME/packages"
