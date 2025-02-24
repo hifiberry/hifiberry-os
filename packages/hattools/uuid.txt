@@ -10,8 +10,10 @@ ef586afc-2efa-47a0-be2e-95a7d952fe98,DAC+/Amp2      ,hifiberry-dacplus-slave
 482ad277-5586-480c-88e7-85ae89c4e501,DAC2 HD        ,hifiberry-dacplushd
 ebf9cfc4-6d77-4880-89fd-353690467dfc,DAC2 Pro       ,hifiberry-dacplus-pro
 f65985f9-5354-4457-ae3b-3da39ba2cf6d,DAC 8x         ,hifiberry-dac8x
+be3b8164-dd7b-48fc-ab27-79dd7c641980,StudioDAC 8x   ,hifiberry-dac8x
 2154f80b-0f92-45e4-96db-c1643ec2b46b,Digi+ Pro      ,hifiberry-digi-pro
 5af941bb-4dcf-4eac-82a8-e36e84fcabef,Digi2 Pro      ,hifiberry-digi-pro
 7c980a0e-9d15-40af-9f40-bddfbd3aee8c,Digi2 Standard ,hifiberry-digi
 8f287583-429d-4206-a751-862264bbda63,DSP 2x4        ,hifiberry-dacplus-dsp
 c05bce95-fa8d-4cde-a7c2-827abfd49c80,Beocreate2,    ,hifiberry-dac
+
