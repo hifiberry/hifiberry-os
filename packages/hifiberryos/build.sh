@@ -3,7 +3,7 @@
 set -e
 
 # Configuration
-VERSION="1.0.0"
+VERSION="1.0.2"
 MAINTAINER="HiFiBerry <support@hifiberry.com>"
 WORK_DIR="$HOME/src/debian"
 OUTPUT_DIR="$HOME/packages"
