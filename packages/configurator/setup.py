@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="configurator",
-    version="1.1.0",
+    version="1.2.0",
     description="System configuration scripts",
     long_description="System configuration scripts",
     author="HiFiBerry",
@@ -17,7 +17,8 @@ setup(
             "config-installer=configurator.installer:main",
             "config-detect=configurator.soundcard_detector:main",
             "config-detectpi=configurator.pimodel:main",
-            "config-soundcard=configurator.soundcard:main"
+            "config-soundcard=configurator.soundcard:main",
+            "config-cmdline=configurator.cmdline:main"
         ],
     },
     classifiers=[
