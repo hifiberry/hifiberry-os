@@ -7,7 +7,7 @@ Standards-Version: 4.1.4
 
 Package: testtools
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, sox, figlet, systemd, python3-configurator
+Depends: ${shlibs:Depends}, ${misc:Depends}, sox, figlet, systemd, python3-configurator, python3-pymcuprog, i2c-tools, python3-yaml
 Description: HiFiBerry hardware test tools
  This includes tools for HiFiBerry sound card production testing including
  programming of the HAT EEPROM

@@ -1,8 +1,10 @@
 #!/bin/bash
 PATH=$PATH:/usr/local/bin
-
 MAJOR=0
 MINOR=1
+
+# Load I2C module
+sudo modprobe i2c-dev
 
 # Write firmware to controller
 sudo pymcuprog write --erase -d attiny402 -t uart -u /dev/ttyAMA0 -f /opt/test/firmware/studiodac8x-${MAJOR}.${MINOR}.hex
