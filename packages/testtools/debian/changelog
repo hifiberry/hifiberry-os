@@ -1,3 +1,15 @@
+testtools (1.0.2-1) bookworm; urgency=medium
+
+  * Fix StudioDAC8x setup
+
+ --  <support@hifiberry.com>  Tue, 25 Feb 2025 11:14:19 +0000
+
+testtools (1.0.1-2) bookworm; urgency=medium
+
+  * Add pyedbglib dependency
+
+ --  <support@hifiberry.com>  Tue, 25 Feb 2025 11:14:19 +0000
+
 testtools (1.0.1-1) bookworm; urgency=medium
 
   * Add missing dependenciesq
