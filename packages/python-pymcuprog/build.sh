@@ -52,9 +52,10 @@ if [ -f "$CONTROL_FILE" ]; then
     # Adjust dependencies and architecture in the control file
     sed -i 's/python3-pyserial/python3-serial/g' "$CONTROL_FILE"
     sed -i 's/python3-pyyaml/python3-yaml/g' "$CONTROL_FILE"
-    sed -i 's/python3-pyedbglib.*,//g'  "$CONTROL_FILE"
     sed -i 's/Architecture: all/Architecture: arm64/g' "$CONTROL_FILE"
+    echo "Modified control file:"
     cat "$CONTROL_FILE"
+    echo "------"
     # Remove distribution suffix if present
     dch -r "" --force-distribution --newversion $VERSION-1
 else
@@ -71,7 +72,7 @@ echo "Copying .deb files to $DEST_DIR..."
 mkdir -p "$DEST_DIR"
 export DEST_DIR
 cd ..
-find . -name '*.deb' -exec bash -c 'debfile="$1"; newfile="${debfile//~w2d0_/}"; echo Copy $debfile to $DEST_DIR/$newfile; cp "$debfile" "$DEST_DIR/$newfile"' _ {} \;
+find . -name '*.deb' -exec bash -c 'debfile="$1"; newfile="${debfile//~w2d0/}"; echo Copy $debfile to $DEST_DIR/$newfile; cp "$debfile" "$DEST_DIR/$newfile"' _ {} \;
 
 # Step 6: Output the result
 if [ -d "$DEST_DIR" ]; then
