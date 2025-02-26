@@ -1,111 +1,140 @@
 #!/usr/bin/env python3
-
+import argparse
 import os
+import sys
 import subprocess
-import logging
+import re
 
+def read_file_strip_null(path):
+    """Read a file in binary mode, decode as UTF-8, and remove any null bytes."""
+    try:
+        with open(path, "rb") as f:
+            content = f.read().decode("utf-8", errors="ignore")
+        return content.replace('\0', '').strip()
+    except Exception:
+        return ""
 
-class HatReader:
-    def __init__(self):
-        self.logger = logging.getLogger(self.__class__.__name__)
+def get_hat_info():
+    """
+    Return a dictionary with keys 'vendor', 'product', and 'uuid'.
+    If a value is not found, its value is set to None.
+    """
+    vendor = None
+    product = None
+    uuid = None
 
-    def read_hat_product(self):
-        """Attempts to read the HAT product and vendor information."""
-        product = None
-        vendor = None
+    # First, try to access HAT info directly via /proc/device-tree/hat
+    if os.path.exists("/proc/device-tree/hat/product"):
+        prod_str = read_file_strip_null("/proc/device-tree/hat/product")
+        vendor_str = read_file_strip_null("/proc/device-tree/hat/vendor")
+        uuid_str = read_file_strip_null("/proc/device-tree/hat/uuid")
+        product = prod_str if prod_str else None
+        vendor = vendor_str if vendor_str else None
+        uuid = uuid_str if uuid_str else None
+    else:
+        EEPFILE = "/tmp/eeprom.eep"
+        TXTFILE = "/tmp/eeprom.txt"
 
-        # Try to directly access the HAT via /sys
-        self.logger.debug("Checking for HAT information in /proc/device-tree/hat...")
-        if os.path.isfile("/proc/device-tree/hat/product"):
-            try:
-                with open("/proc/device-tree/hat/product", "r") as f:
-                    product = f.read().strip("\0")
-                with open("/proc/device-tree/hat/vendor", "r") as f:
-                    vendor = f.read().strip("\0")
-                self.logger.info("HAT information found via /proc/device-tree.")
-            except Exception as e:
-                self.logger.error(f"Failed to read HAT information: {e}")
-        else:
-            self.logger.debug("Falling back to reading EEPROM data via I2C.")
-            eepfile = "/tmp/eeprom.eep"
-            txtfile = "/tmp/eeprom.txt"
+        # Load necessary kernel modules
+        subprocess.run(["modprobe", "i2c_dev"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["modprobe", "at24"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-            # Load required kernel modules
-            self.logger.debug("Loading kernel modules: i2c_dev, at24")
-            subprocess.run(["modprobe", "i2c_dev"], check=False)
-            subprocess.run(["modprobe", "at24"], check=False)
-
-            # Identify the correct I2C bus
-            device_id = None
-            for i in [7, 3, 11, 22]:
-                if os.path.isdir(f"/sys/class/i2c-adapter/i2c-{i}"):
-                    device_id = i
+        # Find the correct I2C adapter by scanning i2c-1 through i2c-30
+        devid = None
+        for i in range(1, 31):
+            adapter_path = f"/sys/class/i2c-adapter/i2c-{i}"
+            if os.path.isdir(adapter_path):
+                try:
+                    ls_output = subprocess.check_output(["ls", "-l", adapter_path], text=True)
+                except subprocess.CalledProcessError:
+                    ls_output = ""
+                if "platform/ffff" in ls_output:
+                    devid = i
                     break
 
-            if device_id is None:
-                self.logger.error("No suitable I2C adapter found.")
-                raise RuntimeError("No suitable I2C adapter found.")
+        if devid is None:
+            print("No suitable I2C adapter found.", file=sys.stderr)
+            sys.exit(1)
 
-            device_path = f"/sys/class/i2c-adapter/i2c-{device_id}/{device_id}-0050"
-            if not os.path.isdir(device_path):
-                self.logger.debug(f"Creating new device on I2C bus {device_id}.")
-                with open(f"/sys/class/i2c-adapter/i2c-{device_id}/new_device", "w") as f:
+        # Register new devices if they are not already present
+        new_device_path = f"/sys/class/i2c-adapter/i2c-{devid}/new_device"
+        device_0050_path = f"/sys/class/i2c-adapter/i2c-{devid}/{devid}-0050"
+        device_0053_path = f"/sys/class/i2c-adapter/i2c-{devid}/{devid}-0053"
+
+        if not os.path.isdir(device_0050_path):
+            try:
+                with open(new_device_path, "w") as f:
                     f.write("24c32 0x50\n")
-
-            # Dump the EEPROM data
+            except Exception as e:
+                print(f"Error writing new_device for 0x50: {e}", file=sys.stderr)
+        if not os.path.isdir(device_0053_path):
             try:
-                with open(f"{device_path}/eeprom", "rb") as src, open(eepfile, "wb") as dst:
-                    dst.write(src.read())
-                self.logger.info("EEPROM data successfully dumped.")
-            except FileNotFoundError:
-                self.logger.error("EEPROM data could not be read.")
-                raise RuntimeError("EEPROM data could not be read.")
+                with open(new_device_path, "w") as f:
+                    f.write("24c32 0x53\n")
+            except Exception as e:
+                print(f"Error writing new_device for 0x53: {e}", file=sys.stderr)
 
-            # Decode the EEPROM data
-            self.logger.debug("Decoding EEPROM data.")
-            subprocess.run(["/usr/bin/eepdump", eepfile, txtfile], stdout=subprocess.DEVNULL)
+        # Dump the EEPROM from device 0x50 if available, else 0x53
+        eeprom_source = None
+        eeprom_0050 = f"{device_0050_path}/eeprom"
+        eeprom_0053 = f"{device_0053_path}/eeprom"
+        if os.path.isfile(eeprom_0050):
+            eeprom_source = eeprom_0050
+        elif os.path.isfile(eeprom_0053):
+            eeprom_source = eeprom_0053
 
-            if os.path.isfile(txtfile):
-                try:
-                    with open(txtfile, "r") as f:
-                        for line in f:
-                            if "vendor " in line:
-                                vendor = line.split('"')[1].strip()
-                            if "product " in line:
-                                product = line.split('"')[1].strip()
+        if eeprom_source:
+            subprocess.run(["dd", f"if={eeprom_source}", f"of={EEPFILE}"],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            print("No EEPROM file found.", file=sys.stderr)
+            sys.exit(1)
 
-                    vendor = vendor or "no vendor"
-                    product = product or "no product"
-                    self.logger.info("HAT information successfully retrieved.")
-                except Exception as e:
-                    self.logger.error(f"Error reading decoded EEPROM data: {e}")
+        # Convert the EEPROM binary into text form using eepdump
+        subprocess.run(["/usr/bin/eepdump", EEPFILE, TXTFILE],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-            # Clean up temporary files
-            try:
-                os.remove(txtfile)
-                self.logger.debug("Temporary TXT file removed.")
-            except FileNotFoundError:
-                self.logger.warning("Temporary TXT file not found for cleanup.")
+        # Parse the TXTFILE for vendor, product, and uuid information
+        if os.path.isfile(TXTFILE):
+            with open(TXTFILE, "r") as f:
+                for line in f:
+                    if "vendor " in line:
+                        m = re.search(r'vendor\s+"([^"]+)"', line)
+                        if m:
+                            vendor = m.group(1).strip() or None
+                    elif "product " in line and "product_uuid" not in line:
+                        m = re.search(r'product\s+"([^"]+)"', line)
+                        if m:
+                            product = m.group(1).strip() or None
+                    elif "product_uuid " in line:
+                        parts = line.split()
+                        if len(parts) >= 2:
+                            uuid = parts[1].strip() or None
+        # Clean up temporary TXTFILE if it exists
+        try:
+            os.remove(TXTFILE)
+        except Exception:
+            pass
 
-        return vendor, product
-
+    return {"vendor": vendor, "product": product, "uuid": uuid}
 
 def main():
-    """Main function to initialize logging and run the HAT reader."""
-    logging.basicConfig(
-        level=logging.ERROR,  # Set default log level to ERROR
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-    logger = logging.getLogger("Main")
+    parser = argparse.ArgumentParser(description="Retrieve HAT information")
+    parser.add_argument("-a", "--all", action="store_true",
+                        help="Display vendor, product, and UUID")
+    args = parser.parse_args()
 
-    logger.info("Starting HAT Reader...")  # This won't show due to ERROR level
-    hat_reader = HatReader()
-    try:
-        vendor, product = hat_reader.read_hat_product()
+    info = get_hat_info()
+
+    # Convert None values to default strings in main
+    vendor = info["vendor"] if info["vendor"] is not None else "no vendor"
+    product = info["product"] if info["product"] is not None else "no product"
+    uuid = info["uuid"] if info["uuid"] is not None else "unknown"
+
+    if args.all:
+        print(f"{vendor}:{product}:{uuid}")
+    else:
         print(f"{vendor}:{product}")
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-
 
 if __name__ == "__main__":
     main()
