@@ -5,7 +5,7 @@ import subprocess
 import logging
 import argparse
 from configurator.configtxt import ConfigTxt
-
+from configurator.hattools import get_hat_info  # Import the get_hat_info module
 
 class SoundcardDetector:
     def __init__(self, config_file="/boot/config.txt", reboot_file="/tmp/reboot"):
@@ -16,7 +16,9 @@ class SoundcardDetector:
 
     def _run_command(self, command):
         try:
-            result = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL, text=True).strip()
+            result = subprocess.check_output(
+                command, shell=True, stderr=subprocess.DEVNULL, text=True
+            ).strip()
             return result
         except subprocess.CalledProcessError:
             return ""
@@ -26,12 +28,15 @@ class SoundcardDetector:
         found = self._run_command("aplay -l | grep hifiberry | grep -v pcm5102")
 
         if not found:
-            hat_card = self._run_command("/opt/hifiberry/bin/readhat | awk -F: '{print $2}'")
+            # Use the imported get_hat_info function
+            hat_info = get_hat_info()
+            hat_card = hat_info.get("product")
+            logging.info(f"Retrieved HAT info: {hat_info}")
             self.detected_card = self._map_hat_to_overlay(hat_card)
             if not self.detected_card:
                 self.detected_card = self._probe_i2c()
         else:
-            logging.info(f"Found HiFiBerry card: {found}")
+            logging.info(f"Found HiFiBerry card via aplay: {found}")
             self.detected_card = found
 
     def _map_hat_to_overlay(self, hat_card):
@@ -47,6 +52,7 @@ class SoundcardDetector:
             "Amp4": "dacplus-std",
             "DAC8x": "dac8x",
             "DSP 2x4": "dacplusdsp",
+            "StudioDAC8x": "dac8x",
         }
         logging.info(f"Mapping HAT card: {hat_card}")
         return card_map.get(hat_card)
@@ -97,7 +103,6 @@ class SoundcardDetector:
         else:
             logging.info(f"Detected card: {self.detected_card}")
 
-
 def main():
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser(description="HiFiBerry Sound Card Detector")
@@ -107,7 +112,7 @@ def main():
     detector = SoundcardDetector()
     detector.detect_and_configure(store=args.store)
 
-
 if __name__ == "__main__":
     main()
+
 
