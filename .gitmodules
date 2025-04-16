@@ -1,0 +1,3 @@
+[submodule "packages/configurator"]
+	path = packages/configurator
+	url = https://github.com/hifiberry/configurator
