@@ -25,8 +25,9 @@ RUN mkdir -p $BUILD_DIR && \
 
 WORKDIR $BUILD_DIR
 
-# Copy the build script
+# Copy the build script and wireplumber service file
 COPY compile.sh $BUILD_DIR/
+COPY wireplumber-system.service $BUILD_DIR/
 RUN chmod +x $BUILD_DIR/compile.sh
 
 # Use compile.sh directly as entrypoint
