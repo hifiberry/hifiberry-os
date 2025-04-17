@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "deb [signed-by=/usr/share/keyrings/hifiberry-archive-keyring.gpg] http://debianrepo.hifiberry.com:8080 bookworm main" | sudo tee /etc/apt/sources.list.d/hifiberry.list
+echo "deb [signed-by=/usr/share/keyrings/hifiberry-archive-keyring.gpg] http://debianrepo.hifiberry.com bookworm main" | sudo tee /etc/apt/sources.list.d/hifiberry.list
 wget -O- "https://keys.openpgp.org/vks/v1/by-fingerprint/4192E989F186E770B273F98B7997FC464E443CFA" | gpg --dearmor | sudo tee /usr/share/keyrings/hifiberry-archive-keyring.gpg > /dev/null
 sudo apt update
