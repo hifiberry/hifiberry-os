@@ -19,3 +19,5 @@ packages/configurator/configurator.egg-info
 packages/configurator/deb_dist
 packages/configurator/dist
 packages/pipewire/pipewire-docker-build/out/
+packages/raat/raat-docker-build/out/
+packages/raat/raat-docker-build/raat/
