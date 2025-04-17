@@ -1,0 +1,19 @@
+[Unit]
+Description=Roon
+After=network.target sound.target pipewire.service
+ConditionPathExists=!/custom/service/roon.disable
+
+[Service]
+Type=simple
+User=raat
+Group=raat
+Environment=HOME=/var/lib/raat
+ExecStartPre=/usr/bin/configure-raat
+ExecStart=/usr/bin/raat_app /usr/share/raat/hifiberry_raat.conf
+StandardOutput=journal
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,9 +1,7 @@
 #!/bin/bash
-if [ ! -f "/etc/uuid" ]; then
-  /usr/bin/uuidgen > /etc/uuid
-fi
-
+# Read UUID from /etc/uuid
 UUID=`cat /etc/uuid`
+
 CARD=`aplay -l | grep -i hifiberry`
 DIGI=`echo $CARD | grep -i digi`
 if [ "$DIGI" != "" ]; then
@@ -12,7 +10,7 @@ else
  CARD="DAC+"
 fi
 DRIVER=`aplay -l | grep "\[snd_rpi" | awk -F\[ '{print $2}' | awk -F\] '{print $1}'`
-VERSION=`cat /etc/hifiberry.version`
+VERSION=`###MYVERSION###`
 
 DIGIFIXED=0
 DIGIDOP=0
@@ -26,36 +24,19 @@ MAXFS=192000
 DSD=""
 SIGNALTYPE="analog"
 
-MIXER=`cat /etc/hifiberry.state | grep CURRENT_MIXER_CONTROL | awk -F= '{print $2}'`
-if [ "$MIXER" == "" ]; then
- MIXER=Softvol
+MIXER=Softvol
+# Check if Pipewire is running
+if pgrep -x "pipewire" > /dev/null; then
+    echo "Using Pipewire volume control"
+    MIXER=Master
 fi
-
 
 V1='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":'
-if [ "$CARD" == "DAC+" ]; then
- if [ "$LINEARVOLUME" == "1" ]; then
-  V2=$MIXER
-  V3=', "mode":"number" },'
- else
-  V2=$MIXER
-  V3=', "mode":"db","db_step":0.5 ,"db_max":10, "db_min":-100},'
- fi
- VOLCTL=$V1$V2$V3
- MAXFS=192000
-elif [ "$CARD" == "Digi+" ]; then
- if [ "$DIGIFIXED" == "1" ]; then
-   VOLCTL=""
- else
-   VOLCTL='"volume": { "type": "alsa", "optional": "false", "device":"default", "index":0, "name":"Softvol" },'
- fi
- # DOP not supported on HiFiBerryOS
- DSD=""
-
- MAXFS=192000
- SIGNALTYPE="digital"
-fi
-
+V2=\"$MIXER\"
+V3=', "mode":"number" },'
+VOLCTL=$V1$V2$V3
+MAXFS=192000
+ 
 # Allow user to set softvol in RAAT. This is incompatible with volume control for other services!
 if [ -f "/etc/hifiberry_raat.softvol" ]; then
  VOLCTL='"volume": { "type": "software" },'
@@ -64,7 +45,7 @@ fi
 PLAYBACKDEVICE="default"
 
 
-cat <<END >/etc/hifiberry_raat.conf
+cat <<END >/usr/share/raat/hifiberry_raat.conf
 {
     "vendor":      "HiFiBerry",
     "model":       "$CARD",
@@ -100,4 +81,3 @@ $VOLCTL
     "transport":   { "type": "hifiberry" }
 }
 END
-
