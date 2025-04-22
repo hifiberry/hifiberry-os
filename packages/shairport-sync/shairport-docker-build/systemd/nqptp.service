@@ -1,0 +1,21 @@
+[Unit]
+Description=NQPTP daemon for network clock synchronization
+Documentation=https://github.com/mikebrady/nqptp
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/nqptp -v
+Restart=on-failure
+RestartSec=5
+
+# Hardening measures
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+ReadWritePaths=/var/run/
+
+[Install]
+WantedBy=multi-user.target
