@@ -15,7 +15,7 @@ mkdir -p "$OUTPUT_DIR"
 
 # Build Docker image
 echo "Building Docker image for shairport-sync build environment..."
-docker build -t "$DOCKER_TAG" "$DOCKER_DIR"
+docker build --progress=plain -t "$DOCKER_TAG" "$DOCKER_DIR"
 
 # Create package in Docker container - run in foreground to see build output
 echo "Building package in Docker container for reproducible build..."
