@@ -4,124 +4,60 @@ set -e
 
 # Configuration
 VERSION="1.0.0"
-COMMIT_ID="ed3c82052db4846e8e0da01c5bf8db130db00dee"
-PACKAGE_NAME="squeezelite"
-MAINTAINER="HiFiBerry <info@hifiberry.com>"
-WORK_DIR="$HOME/src/$PACKAGE_NAME"
-OUTPUT_DIR="$HOME/packages"
-DEB_BUILD_DIR="$WORK_DIR/deb"
-UNIT_FILE="squeezelite.service"
-START_SCRIPT="start-squeezelite"
+COMMIT_ID="db51a7b16934f41b72437394bf8114c3a85e0a91"
+PACKAGE_NAME="hifiberry-squeezelite"
+DOCKER_TAG="squeezelite-build-env"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DOCKER_DIR="${SCRIPT_DIR}/squeezelite-docker-build"
+OUTPUT_DIR="${SCRIPT_DIR}/out"
 
-# Install dependencies
-function install_dependencies() {
-    echo "Installing build dependencies..."
-    sudo apt-get update
-    sudo apt-get install -y build-essential libflac-dev libmad0-dev libvorbis-dev \
-        libmpg123-dev libfaad-dev fakeroot dh-make devscripts jq
+# Ensure output directory exists
+mkdir -p "$OUTPUT_DIR"
+
+# Print help message
+function print_help() {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --help          Display this help message"
 }
 
-# Clone and prepare the repository
-function prepare_repository() {
-    echo "Cloning Squeezelite repository..."
-    if [ ! -d squeezelite ]; then
-        git clone https://github.com/ralph-irving/squeezelite.git
-    fi
-    cd squeezelite
-    git checkout "$COMMIT_ID"
-    cd ..
-}
+# Process command-line arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --help)
+            print_help
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            print_help
+            exit 1
+            ;;
+    esac
+done
 
-# Build Squeezelite
-function compile_binaries() {
-    echo "Compiling Squeezelite..."
-    cd squeezelite
-    make
-    cd ..
-}
+# Build Docker image
+echo "Building Docker image for Squeezelite build environment..."
+docker build --progress=plain -t "$DOCKER_TAG" "$DOCKER_DIR"
 
-# Prepare Debian package structure
-function prepare_debian_structure() {
-    echo "Preparing Debian package structure..."
+# Build package in Docker container - run in foreground to see build output
+echo "Building package in Docker container for reproducible build..."
+docker run --name squeezelite_build \
+    -e "SQUEEZELITE_VERSION=$VERSION" \
+    -e "COMMIT_ID=$COMMIT_ID" \
+    "$DOCKER_TAG"
 
-    # Clean up old directories
-    rm -rf "$WORK_DIR"
-    mkdir -p "$DEB_BUILD_DIR/DEBIAN" "$DEB_BUILD_DIR/usr/bin" "$DEB_BUILD_DIR/usr/lib/systemd/system"
+# Copy package from container after build 
+echo "Copying package from container..."
+PKG_NAME="${PACKAGE_NAME}_${VERSION}_arm64.deb"
+docker cp "squeezelite_build:/out/$PKG_NAME" "$OUTPUT_DIR/"
 
-    # Copy binaries
-    echo "Copying binaries to package directory..."
-    cp squeezelite/squeezelite "$DEB_BUILD_DIR/usr/bin/"
+# Clean up container
+docker rm squeezelite_build
 
-    # Copy start-squeezelite script
-    if [ -f "$START_SCRIPT" ]; then
-        echo "Copying start-squeezelite script to package directory..."
-        cp "$START_SCRIPT" "$DEB_BUILD_DIR/usr/bin/"
-        chmod +x "$DEB_BUILD_DIR/usr/bin/$START_SCRIPT"
-    else
-        echo "Error: $START_SCRIPT not found in the current directory."
-        exit 1
-    fi
-
-    # Copy systemd unit file
-    echo "Installing systemd unit file..."
-    cp "$UNIT_FILE" "$DEB_BUILD_DIR/usr/lib/systemd/system/"
-
-    # Create control file
-    cat > "$DEB_BUILD_DIR/DEBIAN/control" <<EOL
-Package: $PACKAGE_NAME
-Version: $VERSION
-Architecture: arm64
-Maintainer: $MAINTAINER
-Priority: optional
-Section: sound
-Depends: libflac12, libmad0, libvorbis0a, libmpg123-0, libfaad2, jq
-Description: Squeezelite - Lightweight Squeezebox player
- Squeezelite is a small headless squeezebox emulator for Linux.
- This package includes the Squeezelite binary and helper scripts.
-EOL
-
-    # Create postinst script for enabling the service
-    echo "Creating postinst script..."
-    cat > "$DEB_BUILD_DIR/DEBIAN/postinst" <<EOL
-#!/bin/bash
-set -e
-
-# Enable and start Squeezelite service
-systemctl daemon-reload
-systemctl enable squeezelite.service
-
-#DEBHELPER#
-EOL
-
-    chmod +x "$DEB_BUILD_DIR/DEBIAN/postinst"
-}
-
-# Build Debian package
-function build_debian_package() {
-    echo "Building Debian package..."
-    mkdir -p "$OUTPUT_DIR"
-    dpkg-deb --build "$DEB_BUILD_DIR" "$OUTPUT_DIR/${PACKAGE_NAME}_${VERSION}_arm64.deb"
-    echo "Debian package created at $OUTPUT_DIR/${PACKAGE_NAME}_${VERSION}_arm64.deb"
-}
-
-# Clean temporary files
-function clean() {
-    echo "Cleaning up temporary files..."
-    rm -rf "$WORK_DIR" squeezelite
-    echo "Cleanup complete."
-}
-
-# Main function
-case "$1" in
-    --clean)
-        clean
-        ;;
-    *)
-        install_dependencies
-        prepare_repository
-        compile_binaries
-        prepare_debian_structure
-        build_debian_package
-        ;;
-esac
+# Show build results
+echo "Package build complete. Output available in ${OUTPUT_DIR}"
+ls -la "$OUTPUT_DIR"
 
