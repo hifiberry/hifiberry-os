@@ -1,0 +1,33 @@
+[Unit]
+Description=HiFiBerry Music Player Daemon
+Documentation=https://www.musicpd.org/
+After=network.target sound.target
+Wants=network.target sound.target
+
+[Service]
+Type=simple
+User=mpd
+Group=audio
+# Create the runtime directory before starting
+ExecStartPre=-/bin/mkdir -p /run/mpd
+ExecStartPre=-/bin/chown mpd:audio /run/mpd
+ExecStart=/usr/bin/mpd --no-daemon
+Restart=on-failure
+RestartSec=10
+
+# Allow MPD to lock real-time priority
+LimitRTPRIO=50
+LimitNICE=-10
+
+# Disable the problematic namespace features
+ProtectSystem=no
+NoNewPrivileges=no
+PrivateTmp=no
+ProtectHome=no
+# Still define the paths MPD needs to write to
+RuntimeDirectory=mpd
+StateDirectory=mpd
+ReadWritePaths=/var/lib/mpd /run/mpd
+
+[Install]
+WantedBy=multi-user.target

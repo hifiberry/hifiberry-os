@@ -1,0 +1,59 @@
+# Default MPD configuration for HiFiBerryOS
+# This file will be copied to /etc/mpd.conf if it doesn't exist
+
+music_directory		"/var/lib/mpd/music"
+playlist_directory	"/var/lib/mpd/playlists"
+db_file			"/var/lib/mpd/database"
+state_file		"/var/lib/mpd/state"
+sticker_file		"/var/lib/mpd/sticker.sql"
+
+# For network access
+bind_to_address		"0.0.0.0"
+bind_to_address		"/run/mpd/mpd.socket"
+port			"6600"
+
+# Input
+input {
+        plugin "curl"
+}
+
+# Audio Output
+audio_output {
+	type		"alsa"
+	name		"HiFiBerry"
+	mixer_type	"hardware"
+	mixer_device	"default"
+	mixer_control	"Master"
+}
+
+# Enable visualizations
+audio_output {
+	type		"fifo"
+	name		"Visualizer feed"
+	path		"/tmp/mpd.fifo"
+	format		"44100:16:2"
+}
+
+# Unix socket for local playback control
+audio_output {
+	type		"pipe"
+	name		"pipe"
+	command		"aplay -f cd"
+	format		"44100:16:2"
+}
+
+# Volume normalization
+replaygain			"album"
+replaygain_preamp		"0"
+
+# Log settings
+log_level			"default"
+log_file			"syslog"
+
+# Security
+password                        "hifiberry@read,add,control,admin"
+default_permissions             "read,add,control"
+
+# Zeroconf
+zeroconf_enabled		"yes"
+zeroconf_name			"HiFiBerry MPD"
