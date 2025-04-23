@@ -8,10 +8,11 @@ cd `dirname $0`
 VERSION=$(cat version.txt)
 VERSION_SUFFIX=""  # Leave empty or set to a value like "1" for 1.0.0.1
 
-cd raat-docker-build
 if [ ! -d out ]; then
   mkdir out
 fi
+
+cd raat-docker-build
 
 # Copy version.txt to the docker build directory
 cp ../version.txt .
@@ -41,7 +42,7 @@ docker run \
 
 # Copy the .deb files from the container to the local out directory
 echo "Copying .deb files from container..."
-docker cp raat-build-container:/out/. ./out/
+docker cp raat-build-container:/out/. ../out/
 
 # Remove the container
 docker rm raat-build-container
