@@ -8,7 +8,7 @@ PACKAGE_NAME="hifiberry-shairport"
 DOCKER_TAG="shairport-build-env"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DOCKER_DIR="${SCRIPT_DIR}/shairport-docker-build"
-OUTPUT_DIR="${DOCKER_DIR}/out"
+OUTPUT_DIR="${SCRIPT_DIR}/out"
 
 # Ensure output directory exists
 mkdir -p "$OUTPUT_DIR"
