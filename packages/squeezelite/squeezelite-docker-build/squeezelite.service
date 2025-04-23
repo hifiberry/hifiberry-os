@@ -6,7 +6,9 @@ Before=initial-volume.service
 
 [Service]
 Type=simple
-Environment=HOME=/root
+Environment=HOME=/var/lib/squeezelite
+User=squeezelite
+Group=audio
 ExecStartPre=-/opt/hifiberry/bin/store-volume /tmp/sqvol store
 ExecStart=/usr/bin/start-squeezelite
 ExecStartPost=sleep 2
