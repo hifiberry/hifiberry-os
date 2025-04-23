@@ -1,3 +1,4 @@
+packages/*/out
 packages/hifiberryos/dependencies.full.merged
 packages/audiocontrol2/audiocontrol2
 packages/raat/raat
@@ -23,4 +24,3 @@ packages/raat/raat-docker-build/out/
 packages/raat/raat-docker-build/raat/
 packages/raat/raat-docker-build/version.txt
 packages/shairport/shairport-docker-build/out
-packages/mpd/out
