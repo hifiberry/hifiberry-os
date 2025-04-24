@@ -1,0 +1,44 @@
+// Sample configuration file for Shairport Sync
+// Comments start with // and extend to the end of the line.
+
+general = {
+  name = "HiFiBerry"; // This is the name the device will advertise to iTunes
+  interpolation = "basic";
+  output_backend = "alsa";
+  mdns_backend = "avahi";
+  volume_control_profile = "standard";
+  drift_tolerance_in_seconds = 0.015;
+  ignore_volume_control = "no";
+  volume_range_db = 60;
+  regtype = "_raop._tcp";
+  playback_mode = "stereo";
+};
+
+sessioncontrol = {
+  allow_session_interruption = "yes";
+  session_timeout = 120;
+};
+
+alsa = {
+  output_format = "S16_LE";
+  output_rate = 44100;
+};
+
+metadata = {
+  enabled = "yes";
+  include_cover_art = "yes";
+  pipe_name = "/tmp/shairport-sync-metadata";
+  pipe_timeout = 5000;
+  socket_address = "226.0.0.1";
+  socket_port = 5555;
+  socket_msglength = 65000;
+};
+
+// These are parameters for the "AirPlay 2" backend
+airplay_2 = {
+  use_negotiated_ports = "yes";
+};
+
+diagnostics = {
+  log_verbosity = 0;
+};

@@ -1,28 +1,17 @@
 [Unit]
-Description=HiFiBerry Shairport - AirPlay Audio Receiver
-Documentation=https://github.com/mikebrady/shairport-sync
-After=network.target sound.target avahi-daemon.service pipewire.service nqptp.service
-Wants=network.target sound.target avahi-daemon.service nqptp.service
-StartLimitIntervalSec=350
-StartLimitBurst=8
+Description=Shairport Sync - AirPlay Audio Receiver
+After=sound.target network.target
+Wants=nqptp.service
+After=nqptp.service 
+After=pipewire.service
 
 [Service]
 Type=simple
 User=shairport-sync
 Group=shairport-sync
-ExecStart=/usr/bin/shairport-sync -v
-Restart=on-failure
-RestartSec=30
-
-# Audio group membership for access to audio devices
-SupplementaryGroups=audio pipewire
-
-# Hardening measures
-ProtectSystem=strict
-ProtectHome=yes
-PrivateTmp=yes
-NoNewPrivileges=yes
-ReadWritePaths=/var/run/
+ExecStart=/usr/bin/start-shairport.sh
+Restart=always
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target
