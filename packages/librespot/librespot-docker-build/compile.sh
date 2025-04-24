@@ -10,6 +10,9 @@ if [ -z "${LIBRESPOT_VERSION}" ]; then
     exit 1
 fi
 
+# Use PACKAGE_VERSION if provided, otherwise fall back to LIBRESPOT_VERSION
+PACKAGE_VERSION=${PACKAGE_VERSION:-${LIBRESPOT_VERSION}}
+
 # Set required environment variables for dh_make
 export USER=root
 export LOGNAME=root
@@ -31,6 +34,7 @@ mkdir -p "$BUILD_DIR"
 cd "$WORK_DIR"
 
 echo "===== Building Librespot ====="
+echo "Building package version: ${PACKAGE_VERSION} from librespot version: ${LIBRESPOT_VERSION}"
 echo "Cloning Librespot repository..."
 git clone https://github.com/librespot-org/librespot.git
 cd librespot
@@ -55,21 +59,38 @@ mkdir -p "${PKG_DIR}/DEBIAN"
 mkdir -p "${PKG_DIR}/usr/bin"
 mkdir -p "${PKG_DIR}/lib/systemd/system"
 
-# Copy the binary to the package
-echo "Copying binary and service file..."
+# Copy the binary and supporting files to the package
+echo "Copying binary and supporting files..."
 cp "target/release/librespot" "${PKG_DIR}/usr/bin/"
 cp "/build/librespot.service" "${PKG_DIR}/lib/systemd/system/"
+cp "/build/start-librespot.sh" "${PKG_DIR}/usr/bin/"
+cp "/build/spotify-event.sh" "${PKG_DIR}/usr/bin/"
+
+# Set executable permissions
+chmod +x "${PKG_DIR}/usr/bin/librespot"
+chmod +x "${PKG_DIR}/usr/bin/start-librespot.sh"
+chmod +x "${PKG_DIR}/usr/bin/spotify-event.sh"
+
+# Define base dependencies
+BASE_DEPS="libasound2, libssl3 | libssl1.1, libc6, libdbus-1-3, libglib2.0-0"
+
+# Add custom dependencies if provided
+if [ -n "${DEPENDENCIES}" ]; then
+    FULL_DEPS="${BASE_DEPS}, ${DEPENDENCIES}"
+else
+    FULL_DEPS="${BASE_DEPS}"
+fi
 
 # Create control file
 echo "Creating Debian control file..."
 cat > "${PKG_DIR}/DEBIAN/control" << EOL
 Package: ${PACKAGE_NAME}
-Version: ${LIBRESPOT_VERSION}
+Version: ${PACKAGE_VERSION}
 Architecture: arm64
 Maintainer: ${MAINTAINER}
 Priority: optional
 Section: sound
-Depends: libasound2, libssl3 | libssl1.1, libc6, libdbus-1-3, libglib2.0-0
+Depends: ${FULL_DEPS}
 Provides: librespot
 Conflicts: librespot
 Replaces: librespot
@@ -159,7 +180,7 @@ chmod +x "${PKG_DIR}/DEBIAN/postrm"
 
 # Build Debian package
 echo "Building Debian package..."
-PKG_NAME="${PACKAGE_NAME}_${LIBRESPOT_VERSION}_arm64.deb"
+PKG_NAME="${PACKAGE_NAME}_${PACKAGE_VERSION}_arm64.deb"
 dpkg-deb --build "${PKG_DIR}" "${OUTPUT_DIR}/${PKG_NAME}"
 
 echo "Package build complete: ${OUTPUT_DIR}/${PKG_NAME}"

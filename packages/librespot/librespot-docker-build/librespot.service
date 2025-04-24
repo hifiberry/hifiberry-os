@@ -8,8 +8,7 @@ Type=simple
 User=librespot
 Group=audio
 Environment=RUST_BACKTRACE=1
-ExecStartPre=/bin/sh -c 'PRETTY_HOSTNAME=$(hostnamectl hostname --pretty) || PRETTY_HOSTNAME="HiFiBerry"; echo $PRETTY_HOSTNAME > /tmp/librespot-hostname'
-ExecStart=/bin/sh -c 'PRETTY_HOSTNAME=$(cat /tmp/librespot-hostname); /usr/bin/librespot --name "$PRETTY_HOSTNAME" --backend alsa --device default --bitrate 320 --disable-audio-cache'
+ExecStart=/usr/bin/start-librespot.sh
 Restart=always
 RestartSec=10
 StartLimitInterval=30
