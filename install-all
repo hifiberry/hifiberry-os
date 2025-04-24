@@ -1,0 +1,6 @@
+sudo apt update -y
+sudo apt install -y hifiberry-pipewire 
+sudo apt install -y python3-hifiberrydsp python3-configurator python3-audiocontrol2 hifiberry-raat
+
+# Base configuration
+ sudo config-configtxt --default-config
