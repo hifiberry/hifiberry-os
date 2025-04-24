@@ -5,16 +5,18 @@ After=network.target
 Wants=network.target
 
 [Service]
+User=nqptp
+Group=nqptp
 Type=simple
 ExecStart=/usr/bin/nqptp -v
 Restart=on-failure
 RestartSec=5
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 # Hardening measures
 ProtectSystem=strict
 ProtectHome=yes
 PrivateTmp=yes
-NoNewPrivileges=yes
 ReadWritePaths=/var/run/
 
 [Install]
