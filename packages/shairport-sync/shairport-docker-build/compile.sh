@@ -186,17 +186,24 @@ if getent group pipewire > /dev/null; then
     usermod -a -G pipewire shairport-sync || true
 fi
 
+# Create runtime directory for shairport-sync
+if [ ! -d /var/run/shairport ]; then
+    mkdir -p /var/run/shairport
+    chown shairport-sync:shairport-sync /var/run/shairport
+    chmod 755 /var/run/shairport
+fi
+
+# Add tmpfiles.d configuration for persistent directory across reboots
+if [ -d /usr/lib/tmpfiles.d ]; then
+    cat > /usr/lib/tmpfiles.d/shairport-sync.conf <<EOF
+# Create /var/run/shairport directory at boot
+d /var/run/shairport 0755 shairport-sync shairport-sync -
+EOF
+fi
+
 # Set capabilities for nqptp
 if command -v setcap > /dev/null; then
     setcap 'cap_net_bind_service=+ep' /usr/bin/nqptp || true
-fi
-
-# Check if /etc/shairport-sync.conf exists, if not copy the default configuration
-if [ ! -f /etc/shairport-sync.conf ] && [ -f /etc/shairport-sync.conf.default ]; then
-    echo "No configuration file found. Installing default configuration."
-    cp /etc/shairport-sync.conf.default /etc/shairport-sync.conf
-    chown root:root /etc/shairport-sync.conf
-    chmod 644 /etc/shairport-sync.conf
 fi
 
 # Enable and start systemd services
