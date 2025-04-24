@@ -58,7 +58,7 @@ mkdir -p "${PKG_DIR}/lib/systemd/system"
 # Copy the binary to the package
 echo "Copying binary and service file..."
 cp "target/release/librespot" "${PKG_DIR}/usr/bin/"
-cp "${BUILD_DIR}/librespot.service" "${PKG_DIR}/lib/systemd/system/"
+cp "/build/librespot.service" "${PKG_DIR}/lib/systemd/system/"
 
 # Create control file
 echo "Creating Debian control file..."
@@ -91,7 +91,14 @@ if ! getent group librespot > /dev/null; then
 fi
 if ! getent passwd librespot > /dev/null; then
     adduser --quiet --system --ingroup librespot --no-create-home --home /var/lib/librespot librespot
-    usermod -a -G audio librespot
+fi
+
+# Add librespot user to audio group
+usermod -a -G audio librespot || true
+
+# Add librespot user to pipewire group if it exists
+if getent group pipewire > /dev/null; then
+    usermod -a -G pipewire librespot || true
 fi
 
 # Create home directory for librespot if it doesn't exist
