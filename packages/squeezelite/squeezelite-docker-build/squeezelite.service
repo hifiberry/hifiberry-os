@@ -9,10 +9,10 @@ Type=simple
 Environment=HOME=/var/lib/squeezelite
 User=squeezelite
 Group=audio
-ExecStartPre=-/opt/hifiberry/bin/store-volume /tmp/sqvol store
+ExecStartPre=-/usr/bin/config-volume --store
 ExecStart=/usr/bin/start-squeezelite
 ExecStartPost=sleep 2
-ExecStartPost=-/opt/hifiberry/bin/restore-volume /tmp/sqvol
+ExecStartPost=-/usr/bin/config-volume --restore
 StandardOutput=journal
 Restart=always
 RestartSec=5
