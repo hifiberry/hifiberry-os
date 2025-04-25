@@ -2,7 +2,7 @@
 ARGS="-o default -M HiFiBerry"
 
 # Get the ALSA parameters
-ALSAPARAMS=$(config-db get squeezelite.alsaparams 2>/dev/null)
+ALSAPARAMS=$(config-db --get squeezelite.alsaparams 2>/dev/null)
 if [ $? -eq 0 ] && [ -n "$ALSAPARAMS" ]; then
   ARGS="$ARGS -a $ALSAPARAMS"
 else
@@ -10,7 +10,7 @@ else
 fi
 
 # Get the idle timeout
-IDLETIMEOUT=$(config-db get squeezelite.idletimeout 2>/dev/null)
+IDLETIMEOUT=$(config-db --get squeezelite.idletimeout 2>/dev/null)
 if [ $? -eq 0 ] && [ -n "$IDLETIMEOUT" ]; then
   ARGS="$ARGS -C $IDLETIMEOUT"
 else
@@ -18,7 +18,7 @@ else
 fi
 
 # Get the max sample rate
-MAXSAMPLERATE=$(config-db get squeezelite.maxsamplerate 2>/dev/null)
+MAXSAMPLERATE=$(config-db --get squeezelite.maxsamplerate 2>/dev/null)
 if [ $? -eq 0 ] && [ -n "$MAXSAMPLERATE" ]; then
   ARGS="$ARGS -r $MAXSAMPLERATE"
 else
@@ -35,24 +35,31 @@ if [ -z "$HOSTNAME" ] || [ "$HOSTNAME" = "localhost" ]; then
     HOSTNAME="HiFiBerry"
   fi
 fi
-ARGS="$ARGS -n \"$HOSTNAME\""
 
 # Get volume control from config-soundcard tool
 VOLUME_CONTROL=$(config-soundcard --volume-control-softvol 2>/dev/null)
-if [ -n "$VOLUME_CONTROL" ]; then
-  ARGS="$ARGS -V \"$VOLUME_CONTROL\""
-fi
 
 # Get mixer device from config-soundcard tool
 MIXER_DEVICE=$(config-soundcard --hw 2>/dev/null)
-if [ -n "$MIXER_DEVICE" ]; then
-  ARGS="$ARGS -O hw:$MIXER_DEVICE"
+if [ -z "$MIXER_DEVICE" ]; then
+  MIXER_DEVICE="0"
 fi
 
 # Get server configuration using config-db
-SERVER=$(config-db get squeezelite.server 2>/dev/null)
-if [ $? -eq 0 ] && [ -n "$SERVER" ]; then
-  ARGS="$ARGS -s $SERVER"
+SERVER=$(config-db --get squeezelite.server 2>/dev/null)
+
+# Build the command with proper quoting
+CMD="/usr/bin/squeezelite $ARGS -n \"$HOSTNAME\""
+
+if [ -n "$VOLUME_CONTROL" ]; then
+  CMD="$CMD -V $VOLUME_CONTROL"
 fi
 
-/usr/bin/squeezelite $ARGS
+CMD="$CMD -O hw:$MIXER_DEVICE"
+
+if [ $? -eq 0 ] && [ -n "$SERVER" ]; then
+  CMD="$CMD -s $SERVER"
+fi
+
+# Execute the command through the shell to maintain quoting
+eval $CMD

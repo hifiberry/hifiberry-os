@@ -3,7 +3,7 @@
 set -e
 
 # Configuration
-VERSION="1.0.0"
+VERSION="2.0.0"
 COMMIT_ID="db51a7b16934f41b72437394bf8114c3a85e0a91"
 PACKAGE_NAME="hifiberry-squeezelite"
 DOCKER_TAG="squeezelite-build-env"
