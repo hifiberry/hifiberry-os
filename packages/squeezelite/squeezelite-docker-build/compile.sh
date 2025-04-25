@@ -67,7 +67,7 @@ Architecture: arm64
 Maintainer: $MAINTAINER
 Priority: optional
 Section: sound
-Depends: libflac12, libmad0, libvorbis0a, libmpg123-0, libfaad2, jq
+Depends: libflac12, libmad0, libvorbis0a, libmpg123-0, libfaad2
 Conflicts: squeezelite
 Replaces: squeezelite
 Provides: squeezelite
