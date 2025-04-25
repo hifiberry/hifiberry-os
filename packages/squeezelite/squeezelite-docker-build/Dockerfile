@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     fakeroot \
     dh-make \
     devscripts \
-    jq \
     ca-certificates \
     wget
 

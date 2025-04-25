@@ -1,11 +1,58 @@
 #!/bin/sh
-ARGS="-o default -M HiFiBerry -N /var/lib/squeezelite/squeezelite.name -a 10240:10240:24_3:0 -C 1 -r 192000"
+ARGS="-o default -M HiFiBerry"
 
-if [ -f /etc/squeezelite.json ]; then
- SERVER=`jq .server.value /etc/squeezelite.json | sed s/\"//g` 2>/dev/null
- if [ "$SERVER" != "" ]; then
+# Get the ALSA parameters
+ALSAPARAMS=$(config-db get squeezelite.alsaparams 2>/dev/null)
+if [ $? -eq 0 ] && [ -n "$ALSAPARAMS" ]; then
+  ARGS="$ARGS -a $ALSAPARAMS"
+else
+  ARGS="$ARGS -a 10240:10240:24_3:0"
+fi
+
+# Get the idle timeout
+IDLETIMEOUT=$(config-db get squeezelite.idletimeout 2>/dev/null)
+if [ $? -eq 0 ] && [ -n "$IDLETIMEOUT" ]; then
+  ARGS="$ARGS -C $IDLETIMEOUT"
+else
+  ARGS="$ARGS -C 1"
+fi
+
+# Get the max sample rate
+MAXSAMPLERATE=$(config-db get squeezelite.maxsamplerate 2>/dev/null)
+if [ $? -eq 0 ] && [ -n "$MAXSAMPLERATE" ]; then
+  ARGS="$ARGS -r $MAXSAMPLERATE"
+else
+  ARGS="$ARGS -r 192000"
+fi
+
+# Get the pretty hostname from hostnamectl and properly quote it
+HOSTNAME=$(hostnamectl hostname --pretty 2>/dev/null)
+if [ -z "$HOSTNAME" ] || [ "$HOSTNAME" = "localhost" ]; then
+  # Try to get normal hostname if pretty hostname is not available
+  HOSTNAME=$(hostname 2>/dev/null)
+  # If still not available, use default
+  if [ -z "$HOSTNAME" ] || [ "$HOSTNAME" = "localhost" ]; then
+    HOSTNAME="HiFiBerry"
+  fi
+fi
+ARGS="$ARGS -n \"$HOSTNAME\""
+
+# Get volume control from config-soundcard tool
+VOLUME_CONTROL=$(config-soundcard --volume-control-softvol 2>/dev/null)
+if [ -n "$VOLUME_CONTROL" ]; then
+  ARGS="$ARGS -V \"$VOLUME_CONTROL\""
+fi
+
+# Get mixer device from config-soundcard tool
+MIXER_DEVICE=$(config-soundcard --hw 2>/dev/null)
+if [ -n "$MIXER_DEVICE" ]; then
+  ARGS="$ARGS -O hw:$MIXER_DEVICE"
+fi
+
+# Get server configuration using config-db
+SERVER=$(config-db get squeezelite.server 2>/dev/null)
+if [ $? -eq 0 ] && [ -n "$SERVER" ]; then
   ARGS="$ARGS -s $SERVER"
- fi
 fi
 
 /usr/bin/squeezelite $ARGS
