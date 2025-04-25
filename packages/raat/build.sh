@@ -4,6 +4,17 @@ set -e
 
 cd `dirname $0`
 
+# Parse arguments
+NO_UPDATE=false
+for arg in "$@"; do
+  case $arg in
+    --no-update)
+      NO_UPDATE=true
+      shift
+      ;;
+  esac
+done
+
 # Read version from version.txt
 VERSION=$(cat version.txt)
 VERSION_SUFFIX=""  # Leave empty or set to a value like "1" for 1.0.0.1
@@ -20,10 +31,14 @@ cp ../version.txt .
 # Clone the RAAT repository outside of the container
 echo "Cloning the RAAT repository..."
 if [ -d "raat" ]; then
-  echo "RAAT repository already exists, updating..."
-  cd raat
-  git pull
-  cd ..
+  if [ "$NO_UPDATE" = false ]; then
+    echo "RAAT repository already exists, updating..."
+    cd raat
+    git pull
+    cd ..
+  else
+    echo "RAAT repository already exists, skipping update due to --no-update flag."
+  fi
 else
   git clone https://github.com/hifiberry/raat
 fi
