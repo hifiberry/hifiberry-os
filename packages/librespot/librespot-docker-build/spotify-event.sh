@@ -7,12 +7,24 @@
 
 # Log file location
 LOG_FILE="/tmp/spotify.log"
-JSON_FILE="/tmp/spotifyevent.json"
+EVENT_PIPE="/var/run/librespot/event_pipe"
+
+# Check if the pipe exists, if not create it and set permissions
+if [ ! -p "$EVENT_PIPE" ]; then
+    # Create directory if it doesn't exist
+    mkdir -p "$(dirname "$EVENT_PIPE")"
+    # Create the named pipe
+    mkfifo "$EVENT_PIPE"
+    # Set permissions: readable by group audio
+    chmod 660 "$EVENT_PIPE"
+    chown root:audio "$EVENT_PIPE"
+fi
 
 # Log timestamp, command line parameters, and event type
-echo "$(date): EVENT=$PLAYER_EVENT" >> "$LOG_FILE"
+# echo "$(date): EVENT=$PLAYER_EVENT" >> "$LOG_FILE"
 
-# Dump all player event variables in JSON format
+# Dump all player event variables in JSON format to the named pipe
+# We do this in the background to avoid blocking if no reader is connected
 {
     echo "{"
     echo "  \"timestamp\": \"$(date +%s)\","
@@ -34,7 +46,6 @@ echo "$(date): EVENT=$PLAYER_EVENT" >> "$LOG_FILE"
     done
     
     echo "}"
-} > "$JSON_FILE"
-
+} > "$EVENT_PIPE" &
 
 exit 0
