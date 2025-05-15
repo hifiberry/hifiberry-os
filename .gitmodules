@@ -1,3 +1,12 @@
 [submodule "packages/configurator"]
 	path = packages/configurator
 	url = https://github.com/hifiberry/configurator
+[submodule "packages/audiocontrol3"]
+	path = packages/audiocontrol3
+	url = https://github.com/hifiberry/audiocontrol3
+[submodule "packages/acr"]
+	path = packages/acr
+	url = https://github.com/hifiberry/acr
+[submodule "packages/ack"]
+	path = packages/ack
+	url = https://github.com/hifiberry/ack
