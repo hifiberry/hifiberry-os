@@ -128,6 +128,20 @@ if [ ! -d /var/lib/librespot ]; then
     chown librespot:librespot /var/lib/librespot
 fi
 
+# Create /var/run/librespot directory with audio group permissions
+mkdir -p /var/run/librespot
+chown librespot:audio /var/run/librespot
+chmod 775 /var/run/librespot
+
+# Create Event FIFO
+mkfifo /var/run/librespot/event_pipe
+chmod 660 /var/run/librespot/event_pipe
+chown librespot:audio /var/run/librespot/event_pipe
+
+touch /var/run/librespot/event_pipe.lock
+chown librespot:audio /var/run/librespot/event_pipe.lock
+chmod 660 /var/run/librespot/event_pipe.lock
+
 # Enable the librespot service
 systemctl daemon-reload
 systemctl enable librespot.service
