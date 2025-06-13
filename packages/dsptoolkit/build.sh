@@ -6,11 +6,7 @@ set -e
 # Define variables
 PACKAGE="dsptoolkit"
 REPO_URL="https://github.com/hifiberry/hifiberry-dsp"
-DEB_OUTPUT_DIR="deb_dist"
 DEST_DIR="$HOME/packages"
-UNIT_FILE="sigma-tcpserver.service"
-UNIT_DESCRIPTION="SigmaTCP Server for HiFiBerry DSP"
-EXEC_START="\$LOC"
 
 # Function to clean up build and downloaded files
 clean() {
@@ -36,23 +32,11 @@ else
     cd "$PACKAGE"
 fi
 
-# Step 2: Add stdeb configuration with dependencies
-echo "Adding stdeb configuration for dependencies..."
-cat > stdeb.cfg <<EOF
-[DEFAULT]
-Depends = python3-pyalsaaudio
-EOF
+# Step 2: Build using the script in the package
+chmod ugo+x ./build*.sh
+./build-docker.sh
+cd ..
 
-# Step 5: Build the Debian package
-echo "Building Debian package for $PACKAGE..."
-python3 setup.py --command-packages=stdeb.command bdist_deb
-
-# Step 6: Locate and copy the generated .deb files, excluding dbgsym
-echo "Copying .deb files (excluding dbgsym) to $DEST_DIR..."
-mkdir -p "$DEST_DIR"
-find "$DEB_OUTPUT_DIR" -name '*.deb' ! -name '*dbgsym*.deb' -exec cp {} "$DEST_DIR" \;
-
-# Step 7: Output the result
-echo "Debian packages for $PACKAGE created and copied to: $DEST_DIR"
-find "$DEST_DIR" -name '*.deb'
-
+# Step 3: Show the package
+echo "Package created:"
+ls $PACKAGE/*deb
