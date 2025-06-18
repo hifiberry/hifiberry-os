@@ -9,7 +9,7 @@ User=raat
 Group=raat
 Environment=HOME=/var/lib/raat
 ExecStartPre=/usr/bin/configure-raat
-ExecStart=/usr/bin/raat_app /var/run/raat/hifiberry.conf
+ExecStart=/usr/bin/raat_app /var/lib/raat/hifiberry.conf
 StandardOutput=journal
 Restart=always
 RestartSec=5
