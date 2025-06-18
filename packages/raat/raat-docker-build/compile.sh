@@ -37,6 +37,7 @@ echo "Building RAAT from pre-cloned repository..."
 cd raat
 
 echo "Compiling RAAT..."
+chmod u+x compile64
 ./compile64
 
 echo "Build complete. Creating package..."
@@ -103,10 +104,10 @@ chown raat:raat /var/lib/raat
 mkdir -p /usr/share/raat
 chown raat:raat /usr/share/raat
 
-# Create /var/run/raat directory and set ownership to raat
-mkdir -p /var/run/raat
-chown raat:raat /var/run/raat
-chmod 755 /var/run/raat
+# Create /var/lib/raat directory and set ownership to raat
+mkdir -p /var/lib/raat
+chown raat:raat /var/lib/raat
+chmod 755 /var/lib/raat
 
 # Create UUID if it doesn't exist or is empty
 if [ ! -f "/etc/uuid" ] || [ ! -s "/etc/uuid" ]; then
