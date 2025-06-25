@@ -1,3 +1,0 @@
-[submodule "packages/acr"]
-	path = packages/acr
-	url = https://github.com/hifiberry/acr
