@@ -8,16 +8,12 @@ VERSION_POSTFIX=3 # 1,2,3,... unset when VERSION increases to start from 0 again
 COMMIT_ID="2c425ebd0685820a59eac1a4206728acb8a24a51"  # Optional specific commit ID to use (overrides VERSION if set)
 PACKAGE_NAME="hifiberry-librespot"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTPUT_DIR="${SCRIPT_DIR}/out"
 
 # Construct full version string - append VERSION_POSTFIX if it exists
 FULL_VERSION="${VERSION}"
 if [ -n "${VERSION_POSTFIX}" ]; then
     FULL_VERSION="${VERSION}.${VERSION_POSTFIX}"
 fi
-
-# Ensure output directory exists
-mkdir -p "$OUTPUT_DIR"
 
 # Print help message
 function print_help() {
