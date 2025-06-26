@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    purge)
+        # Remove librespot user and group
+        if getent passwd librespot > /dev/null; then
+            deluser --quiet --system librespot || true
+        fi
+        if getent group librespot > /dev/null; then
+            delgroup --quiet --system librespot || true
+        fi
+        
+        # Remove home directory
+        rm -rf /var/lib/librespot || true
+        rm -rf /var/run/librespot || true
+        ;;
+    
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        ;;
+    
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
