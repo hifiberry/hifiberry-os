@@ -38,4 +38,4 @@ cd ..
 
 # Step 3: Show the package
 echo "Package created:"
-ls $PACKAGE/*deb
+ls *deb
