@@ -5,7 +5,7 @@ set -e
 # Configuration
 VERSION="0.6.0"
 VERSION_POSTFIX=3 # 1,2,3,... unset when VERSION increases to start from 0 again
-COMMIT_ID="59381ccad38ed39037392f3d2d30bf0d9593ff56"  # Optional specific commit ID to use (overrides VERSION if set)
+COMMIT_ID="2c425ebd0685820a59eac1a4206728acb8a24a51"  # Optional specific commit ID to use (overrides VERSION if set)
 PACKAGE_NAME="hifiberry-librespot"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OUTPUT_DIR="${SCRIPT_DIR}/out"
