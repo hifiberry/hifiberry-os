@@ -4,7 +4,7 @@
 set -e
 
 # Define variables
-PACKAGE="dsptoolkit"
+PACKAGE="hifiberry-dsp"
 REPO_URL="https://github.com/hifiberry/hifiberry-dsp"
 DEST_DIR="$HOME/packages"
 
@@ -32,9 +32,8 @@ else
     cd "$PACKAGE"
 fi
 
-# Step 2: Build using the script in the package
-chmod ugo+x ./build*.sh
-./build-docker.sh
+# Step 2: Build using sbuild
+sbuild --chroot-mode=unshare --no-clean-source
 cd ..
 
 # Step 3: Show the package
