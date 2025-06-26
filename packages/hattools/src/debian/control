@@ -1,0 +1,18 @@
+Source: hifiberry-eeprom
+Section: utils
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://github.com/hifiberry/hifiberry-os
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: hifiberry-eeprom
+Architecture: all
+Depends: ${misc:Depends}
+Suggests: raspi-utils-eeprom
+Description: HiFiBerry EEPROM tools
+ EEPROM files and tools for HiFiBerry HAT boards.
+ Contains pre-compiled EEPROM images for various HiFiBerry products.
+ Files are installed to /usr/share/hifiberry-eeprom/.

@@ -1,0 +1,7 @@
+hifiberry-eeprom (1.1.0) unstable; urgency=low
+
+  * Initial Debian package release
+  * EEPROM files for HiFiBerry HAT boards
+  * Tools for EEPROM compilation and flashing
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 26 Jun 2025 12:00:00 +0000

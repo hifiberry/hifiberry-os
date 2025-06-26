@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Nothing to build - just copy files
+
+override_dh_auto_install:
+	# Install EEPROM files to /usr/share instead of /opt
+	mkdir -p debian/hifiberry-eeprom/usr/share/hifiberry-eeprom
+	cp -r eeprom/*.eep eeprom/*.txt eeprom/*.sh debian/hifiberry-eeprom/usr/share/hifiberry-eeprom/
+	chmod 755 debian/hifiberry-eeprom/usr/share/hifiberry-eeprom/*.sh
+
+override_dh_auto_test:
+	# No tests for this package
