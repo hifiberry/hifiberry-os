@@ -3,9 +3,7 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        # Stop and disable the Librespot service on package removal
-        systemctl stop librespot.service || true
-        systemctl disable librespot.service || true
+        # Let debhelper handle systemd service management
         ;;
     
     failed-upgrade)

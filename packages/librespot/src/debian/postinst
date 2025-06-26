@@ -38,10 +38,6 @@ case "$1" in
         touch /var/lib/librespot/event_pipe.lock
         chown librespot:audio /var/lib/librespot/event_pipe.lock
         chmod 660 /var/lib/librespot/event_pipe.lock
-
-        # Enable the librespot service
-        systemctl daemon-reload
-        systemctl enable librespot.service
         ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)

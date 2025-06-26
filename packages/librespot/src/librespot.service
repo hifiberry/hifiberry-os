@@ -8,7 +8,7 @@ Type=simple
 User=librespot
 Group=audio
 Environment=RUST_BACKTRACE=1
-ExecStart=/usr/bin/start-librespot.sh
+ExecStart=/usr/bin/start-librespot
 Restart=always
 RestartSec=10
 StartLimitInterval=30

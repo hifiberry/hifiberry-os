@@ -1,0 +1,32 @@
+.TH SPOTIFY-EVENT 1 "2025-01-27" "HiFiBerry" "User Commands"
+.SH NAME
+spotify-event \- Event handler script for Librespot
+.SH SYNOPSIS
+.B spotify-event
+.SH DESCRIPTION
+.B spotify-event
+is an event handler script for Librespot that logs all received Spotify events
+and dumps track information when events occur. It creates JSON-formatted output
+for integration with other applications.
+.PP
+The script logs events to /tmp/spotify.log and creates JSON output in
+/tmp/spotifyevent.json containing event details including timestamps, event types,
+and track information.
+.SH FILES
+.I /tmp/spotify.log
+.RS
+Event log file
+.RE
+.I /tmp/spotifyevent.json
+.RS
+JSON-formatted event data
+.RE
+.SH ENVIRONMENT
+.TP
+.B PLAYER_EVENT
+The type of player event received from librespot
+.SH SEE ALSO
+.BR librespot (1),
+.BR start-librespot (1)
+.SH AUTHOR
+HiFiBerry <info@hifiberry.com>
