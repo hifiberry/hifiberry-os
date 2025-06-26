@@ -1,0 +1,9 @@
+hifiberry-librespot (0.6.0.3) unstable; urgency=low
+
+  * Initial Debian package release
+  * Librespot Spotify Connect player for HiFiBerry devices
+  * Built with ALSA backend and mDNS support
+  * Includes systemd service and helper scripts
+
+ -- HiFiBerry <info@hifiberry.com>  Thu, 26 Jun 2025 12:00:00 +0000
+ 

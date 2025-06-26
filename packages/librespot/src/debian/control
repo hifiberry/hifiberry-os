@@ -1,0 +1,36 @@
+Source: hifiberry-librespot
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <info@hifiberry.com>
+Build-Depends: debhelper-compat (= 13), 
+               git,
+               curl,
+               pkg-config,
+               libssl-dev,
+               libasound2-dev,
+               libpulse-dev,
+               libdbus-1-dev,
+               libglib2.0-dev,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://github.com/librespot-org/librespot
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: hifiberry-librespot
+Architecture: arm64
+Depends: ${shlibs:Depends}, ${misc:Depends}, 
+         libasound2, 
+         libssl3 | libssl1.1, 
+         libc6, 
+         libdbus-1-3, 
+         libglib2.0-0,
+         python3-configurator (>= 1.4.2)
+Provides: librespot
+Conflicts: librespot
+Replaces: librespot
+Description: HiFiBerry Librespot Spotify Connect player
+ An open source client library for Spotify, enabling applications to use
+ Spotify Connect directly without having to use the official Spotify app.
+ This package provides the librespot binary optimized for HiFiBerry devices
+ with ALSA backend and mDNS support.

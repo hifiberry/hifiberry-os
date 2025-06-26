@@ -1,0 +1,54 @@
+#!/usr/bin/make -f
+
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#export DH_VERBOSE = 1
+
+# Rust build configuration
+export CARGO_HOME = $(CURDIR)/debian/cargo_home
+export RUSTUP_HOME = $(CURDIR)/debian/rustup_home
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf target/
+	rm -rf $(CARGO_HOME)
+	rm -rf $(RUSTUP_HOME)
+
+override_dh_auto_configure:
+	# Install Rust if not available
+	if ! which cargo >/dev/null 2>&1; then \
+		mkdir -p $(RUSTUP_HOME) $(CARGO_HOME); \
+		curl https://sh.rustup.rs -sSf | \
+		RUSTUP_HOME=$(RUSTUP_HOME) CARGO_HOME=$(CARGO_HOME) \
+		sh -s -- -y --no-modify-path; \
+	fi
+	# Clone librespot source
+	if [ ! -d librespot-source ]; then \
+		git clone https://github.com/librespot-org/librespot.git librespot-source; \
+		cd librespot-source && git checkout v0.6.0; \
+	fi
+
+override_dh_auto_build:
+	cd librespot-source && \
+	PATH="$(CARGO_HOME)/bin:$(PATH)" \
+	cargo build --release --no-default-features --features "alsa-backend with-libmdns"
+
+override_dh_auto_install:
+	# Install librespot binary
+	mkdir -p debian/hifiberry-librespot/usr/bin
+	cp librespot-source/target/release/librespot debian/hifiberry-librespot/usr/bin/
+	
+	# Install helper scripts
+	cp start-librespot.sh debian/hifiberry-librespot/usr/bin/ 
+	cp spotify-event.sh debian/hifiberry-librespot/usr/bin/
+	chmod +x debian/hifiberry-librespot/usr/bin/*
+	
+	# Install systemd service
+	mkdir -p debian/hifiberry-librespot/usr/lib/systemd/system
+	cp librespot.service debian/hifiberry-librespot/usr/lib/systemd/system/
+
+override_dh_auto_test:
+	# Skip tests - requires network access and specific hardware
