@@ -35,7 +35,7 @@ fi
 
 # Step 2: Create secrets.txt if it doesn't exist
 if [ ! -f "secrets.txt" ]; then
-  if [-f "~/secrets.txt" ]; then
+  if [ -f "~/secrets.txt" ]; then
     echo "Copying secrets.txt from ~/secrets.txt..."
     cp ~/secrets.txt secrets.txt
   else
