@@ -1,0 +1,25 @@
+.TH START-LIBRESPOT 1 "2025-01-27" "HiFiBerry" "User Commands"
+.SH NAME
+start-librespot \- Librespot startup script for HiFiBerry devices
+.SH SYNOPSIS
+.B start-librespot
+.SH DESCRIPTION
+.B start-librespot
+is a startup script that handles the initialization of librespot with system-specific
+configuration for HiFiBerry devices. It automatically configures audio parameters
+based on the detected sound card and uses the system's pretty hostname.
+.PP
+The script sets up librespot with a default bitrate of 320 kbps and uses the ALSA
+audio backend. It attempts to get the system's pretty hostname, falling back to
+the regular hostname, and finally to "HiFiBerry" if neither is available.
+.SH FILES
+.I /etc/hostname
+.RS
+System hostname configuration
+.RE
+.SH SEE ALSO
+.BR librespot (1),
+.BR hostnamectl (1),
+.BR spotify-event (1)
+.SH AUTHOR
+HiFiBerry <info@hifiberry.com>

@@ -40,15 +40,22 @@ override_dh_auto_install:
 	# Install librespot binary
 	mkdir -p debian/hifiberry-librespot/usr/bin
 	cp librespot-source/target/release/librespot debian/hifiberry-librespot/usr/bin/
+	strip debian/hifiberry-librespot/usr/bin/librespot
 	
-	# Install helper scripts
-	cp start-librespot.sh debian/hifiberry-librespot/usr/bin/ 
-	cp spotify-event.sh debian/hifiberry-librespot/usr/bin/
+	# Install helper scripts without .sh extension
+	cp start-librespot.sh debian/hifiberry-librespot/usr/bin/start-librespot
+	cp spotify-event.sh debian/hifiberry-librespot/usr/bin/spotify-event
 	chmod +x debian/hifiberry-librespot/usr/bin/*
 	
 	# Install systemd service
 	mkdir -p debian/hifiberry-librespot/usr/lib/systemd/system
 	cp librespot.service debian/hifiberry-librespot/usr/lib/systemd/system/
+	
+	# Install man pages
+	mkdir -p debian/hifiberry-librespot/usr/share/man/man1
+	cp debian/librespot.1 debian/hifiberry-librespot/usr/share/man/man1/
+	cp debian/start-librespot.1 debian/hifiberry-librespot/usr/share/man/man1/
+	cp debian/spotify-event.1 debian/hifiberry-librespot/usr/share/man/man1/
 
 override_dh_auto_test:
 	# Skip tests - requires network access and specific hardware

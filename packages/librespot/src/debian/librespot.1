@@ -1,0 +1,32 @@
+.TH LIBRESPOT 1 "2025-01-27" "HiFiBerry" "User Commands"
+.SH NAME
+librespot \- Spotify Connect client daemon
+.SH SYNOPSIS
+.B librespot
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B librespot
+is an open source Spotify Connect client daemon that allows you to stream
+music from Spotify to audio devices. This version is built specifically for
+HiFiBerry devices with ALSA backend and mDNS support.
+.PP
+Librespot emulates a Spotify Connect speaker, allowing you to stream music
+from any Spotify app to the device running librespot.
+.SH OPTIONS
+For a complete list of options, run:
+.B librespot --help
+.SH FILES
+.I /var/lib/librespot/
+.RS
+Application data directory
+.RE
+.SH SEE ALSO
+.BR start-librespot (1),
+.BR spotify-event (1)
+.PP
+Project homepage: https://github.com/librespot-org/librespot
+.SH AUTHOR
+librespot-org
+.PP
+This manual page was written for the HiFiBerry package by
+HiFiBerry <info@hifiberry.com>
