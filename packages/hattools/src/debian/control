@@ -1,8 +1,12 @@
 Source: hifiberry-eeprom
-Section: utils
+Section: utils  
 Priority: optional
 Maintainer: HiFiBerry <support@hifiberry.com>
-Build-Depends: debhelper-compat (= 13)
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               libgpiod-dev
 Standards-Version: 4.6.0
 Homepage: https://github.com/hifiberry/hifiberry-os
 Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
@@ -10,9 +14,19 @@ Vcs-Browser: https://github.com/hifiberry/hifiberry-os
 
 Package: hifiberry-eeprom
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         python3-libgpiod,
+         gpiod
 Suggests: raspi-utils-eeprom
 Description: HiFiBerry EEPROM tools
  EEPROM files and tools for HiFiBerry HAT boards.
- Contains pre-compiled EEPROM images for various HiFiBerry products.
+ Contains pre-compiled EEPROM images for various HiFiBerry products
+ and the hateeprom library for reading/writing HAT EEPROMs.
+ .
+ This package provides:
+  - Pre-compiled EEPROM images for HiFiBerry products
+  - hateeprom command-line tool for EEPROM manipulation
+  - Python library for HAT EEPROM access via bitbang I2C
+ .
  Files are installed to /usr/share/hifiberry-eeprom/.
