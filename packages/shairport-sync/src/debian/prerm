@@ -3,11 +3,11 @@ set -e
 
 # Stop and disable systemd services on package removal
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
-    if command -v systemctl >/dev/null; then
-        systemctl stop shairport.service || true
-        systemctl disable shairport.service || true
-        systemctl stop nqptp.service || true
-        systemctl disable nqptp.service || true
+    if [ -d /run/systemd/system ]; then
+        deb-systemd-invoke stop shairport.service >/dev/null || true
+        deb-systemd-helper disable shairport.service >/dev/null || true
+        deb-systemd-invoke stop nqptp.service >/dev/null || true
+        deb-systemd-helper disable nqptp.service >/dev/null || true
     fi
 fi
 

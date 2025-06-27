@@ -31,6 +31,17 @@ override_dh_auto_install:
 	cd shairport-sync-4.3.7 && sed -i '/getent group/d' Makefile && sed -i '/getent passwd/d' Makefile && sed -i '/cp \.\/scripts\/shairport-sync\.conf/d' Makefile
 	cd shairport-sync-4.3.7 && make install DESTDIR=$(CURDIR)/debian/hifiberry-shairport AM_UPDATE_INFO_DIR=no
 	
+	# Remove any .sh scripts installed by upstream that we'll replace
+	rm -f $(CURDIR)/debian/hifiberry-shairport/usr/bin/*.sh
+	
+	# Remove any upstream systemd service files that we'll replace
+	rm -f $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/shairport-sync.service
+	
+	# Remove any upstream systemd service files that conflict with ours
+	rm -f $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/shairport-sync.service
+	rm -f $(CURDIR)/debian/hifiberry-shairport/usr/lib/systemd/system/shairport-sync.service
+	rm -f $(CURDIR)/debian/hifiberry-shairport/shairport-sync.service	
+	
 	# Install systemd service files
 	install -D -m644 systemd/shairport.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/shairport.service
 	install -D -m644 systemd/nqptp.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/nqptp.service
@@ -54,11 +65,9 @@ override_dh_auto_install:
 	install -D -m755 shairport-playpause.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-playpause
 	
 	# Install man pages for event scripts
+	install -D -m644 man/start-shairport.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/start-shairport.1
 	install -D -m644 man/shairport-event-start.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event-start.1
 	install -D -m644 man/shairport-event-stop.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event-stop.1
-	install -D -m644 man/shairport-event.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event.1
-	install -D -m644 man/shairport-metadata-example.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-metadata-example.1
-	install -D -m644 man/shairport-playpause.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-playpause.1
 	install -D -m644 man/shairport-event.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event.1
 	install -D -m644 man/shairport-metadata-example.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-metadata-example.1
 	install -D -m644 man/shairport-playpause.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-playpause.1

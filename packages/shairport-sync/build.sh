@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-shairport"
-VERSION="4.3.7-2"
+VERSION="4.3.7.3"
 DIST="bullseye"
 CHROOT="${DIST}-amd64-sbuild"
 BUILD_DIR="/tmp/${PACKAGE}-build"
@@ -51,19 +51,6 @@ echo "Moving build artifacts..."
 mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
 mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
 mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
-
-# Run lintian on the built package
-echo "Running lintian to check package compliance..."
-if ls "$SCRIPT_DIR"/*.deb 1> /dev/null 2>&1; then
-    for deb_file in "$SCRIPT_DIR"/*.deb; do
-        echo "Checking $deb_file with lintian..."
-        lintian "$deb_file" || true
-        echo "Lintian check completed for $(basename "$deb_file")"
-        echo "----------------------------------------"
-    done
-else
-    echo "No .deb files found to check with lintian"
-fi
 
 echo "Package built successfully"
 echo "Built packages:"

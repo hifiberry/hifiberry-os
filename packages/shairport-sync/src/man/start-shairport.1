@@ -1,0 +1,40 @@
+.TH START-SHAIRPORT 1 "December 2024" "start-shairport" "User Commands"
+.SH NAME
+start-shairport \- Start script for Shairport Sync service
+.SH SYNOPSIS
+.B start-shairport
+.SH DESCRIPTION
+.B start-shairport
+is a startup script for the Shairport Sync AirPlay audio receiver service.
+This script is typically called by systemd when the shairport service is started.
+.PP
+The script performs initialization tasks and starts the main shairport-sync daemon
+with the appropriate configuration and runtime parameters.
+.SH CONFIGURATION
+The script uses the configuration file at:
+.TP
+.I /etc/shairport-sync.conf
+Main configuration file for Shairport Sync
+.SH SYSTEMD INTEGRATION
+This script is invoked by the systemd service:
+.PP
+.RS
+systemctl start shairport
+.br
+systemctl enable shairport
+.br
+systemctl status shairport
+.RE
+.SH FILES
+.TP
+.I /etc/shairport-sync.conf
+Configuration file
+.TP
+.I /lib/systemd/system/shairport.service
+Systemd service file
+.SH SEE ALSO
+.BR shairport-sync (1),
+.BR systemctl (1),
+.BR shairport-event (1)
+.SH AUTHOR
+HiFiBerry team
