@@ -1,0 +1,32 @@
+#!/usr/bin/make -f
+
+# Configuration
+PACKAGE_VERSION = 0.11.0
+
+export PYBUILD_NAME=pyalsaaudio
+export PYBUILD_DIR=pyalsaaudio-source
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_clean:
+	rm -rf pyalsaaudio-source/
+	rm -f *.tar.gz
+	rm -f setup.py setup.cfg pyproject.toml
+
+override_dh_auto_configure:
+	# Download pyalsaaudio source from PyPI
+	if [ ! -d pyalsaaudio-source ]; then \
+		wget "https://files.pythonhosted.org/packages/source/p/pyalsaaudio/pyalsaaudio-$(PACKAGE_VERSION).tar.gz" -O "pyalsaaudio-$(PACKAGE_VERSION).tar.gz"; \
+		tar -xzf "pyalsaaudio-$(PACKAGE_VERSION).tar.gz"; \
+		mv "pyalsaaudio-$(PACKAGE_VERSION)" pyalsaaudio-source; \
+	fi
+
+override_dh_auto_build:
+	dh_auto_build
+
+override_dh_auto_install:
+	dh_auto_install
+
+override_dh_auto_test:
+	# Skip tests - requires audio hardware
