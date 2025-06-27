@@ -1,0 +1,40 @@
+.TH BASECONFIG 8 "June 2025" "HiFiBerry OS" "System Administration"
+.SH NAME
+baseconfig \- HiFiBerry base configuration script
+.SH SYNOPSIS
+.B baseconfig
+.SH DESCRIPTION
+.B baseconfig
+is a system configuration script for HiFiBerry OS that ensures the system has a unique UUID for identification purposes.
+.PP
+The script checks if the file
+.I /etc/uuid
+exists and contains a valid UUID. If the file is missing or empty, it generates a new UUID using the
+.B uuid
+command and saves it to the file with read-only permissions.
+.SH FILES
+.TP
+.I /etc/uuid
+System UUID file. Contains a unique identifier for the HiFiBerry system.
+.SH DEPENDENCIES
+.TP
+.B uuid
+Command-line utility for generating UUIDs. Must be installed for the script to function.
+.SH EXIT STATUS
+.TP
+0
+Success
+.TP
+1
+Error occurred (missing dependencies, permission issues, etc.)
+.SH EXAMPLES
+.TP
+Run the base configuration:
+.B sudo baseconfig
+.SH NOTES
+This script must be run as root. It will automatically run during package installation via the postinst script.
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>
+.SH SEE ALSO
+.BR uuid (1),
+.BR uuidgen (1)

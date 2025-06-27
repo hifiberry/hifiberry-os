@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	install -D -m 755 baseconfig debian/hifiberry-baseconfig/usr/sbin/baseconfig
+	install -D -m 644 man/baseconfig.8 debian/hifiberry-baseconfig/usr/share/man/man8/baseconfig.8
+
+override_dh_auto_build:
+	# No build required
+
+override_dh_auto_test:
+	# No tests required

@@ -1,0 +1,7 @@
+hifiberry-baseconfig (1.0.0) unstable; urgency=medium
+
+  * Initial release
+  * Base configuration script for HiFiBerry OS
+  * Generates system UUID if missing
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Jun 2025 12:00:00 +0000
