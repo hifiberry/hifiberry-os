@@ -48,16 +48,14 @@ if command -v setcap > /dev/null; then
 fi
 
 # Enable and start systemd services
-if command -v systemctl >/dev/null; then
-    systemctl daemon-reload || true
+if [ -d /run/systemd/system ]; then
+    # Enable nqptp service first
+    deb-systemd-helper enable nqptp.service >/dev/null || true
+    deb-systemd-invoke start nqptp.service >/dev/null || true
     
-    # Enable and start nqptp service first
-    systemctl enable nqptp.service || true
-    systemctl start nqptp.service || true
-    
-    # Enable and start shairport service
-    systemctl enable shairport.service || true
-    systemctl start shairport.service || true
+    # Enable shairport service
+    deb-systemd-helper enable shairport.service >/dev/null || true
+    deb-systemd-invoke start shairport.service >/dev/null || true
 fi
 
 #DEBHELPER#
