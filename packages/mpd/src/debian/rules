@@ -1,0 +1,82 @@
+#!/usr/bin/make -f
+
+# Configuration
+MPD_VERSION = 0.24.3
+MPC_VERSION = 0.35
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf mpd-source/
+	rm -rf mpc-source/
+	rm -rf mpc-install/
+
+override_dh_auto_configure:
+	# Download and build MPC first
+	if [ ! -d mpc-source ]; then \
+		wget "https://github.com/MusicPlayerDaemon/mpc/archive/refs/tags/v$(MPC_VERSION).tar.gz" -O "mpc-$(MPC_VERSION).tar.gz"; \
+		tar -xzf "mpc-$(MPC_VERSION).tar.gz"; \
+		mv "mpc-$(MPC_VERSION)" mpc-source; \
+	fi
+	cd mpc-source && mkdir -p build
+	cd mpc-source/build && meson setup --prefix="$(CURDIR)/mpc-install" --buildtype=release ..
+	cd mpc-source/build && ninja && ninja install
+	
+	# Download MPD source
+	if [ ! -d mpd-source ]; then \
+		wget "https://github.com/MusicPlayerDaemon/MPD/archive/refs/tags/v$(MPD_VERSION).tar.gz" -O "mpd-$(MPD_VERSION).tar.gz"; \
+		tar -xzf "mpd-$(MPD_VERSION).tar.gz"; \
+		mv "MPD-$(MPD_VERSION)" mpd-source; \
+	fi
+	
+	# Configure MPD using meson directly
+	cd mpd-source && mkdir -p build
+	cd mpd-source/build && meson setup --buildtype=release \
+		-Dalsa=enabled \
+		-Dsystemd=enabled \
+		-Dtest=false \
+		-Dlocal_socket=true \
+		-Dcue=true \
+		-Dzeroconf=avahi \
+		-Dpulse=disabled \
+		-Djack=disabled \
+		--prefix=/usr \
+		..
+
+override_dh_auto_build:
+	cd mpd-source/build && ninja
+
+override_dh_auto_install:
+	# Install MPD binary and files
+	mkdir -p debian/hifiberry-mpd/usr/bin
+	mkdir -p debian/hifiberry-mpd/usr/share/man/man1
+	mkdir -p debian/hifiberry-mpd/usr/share/man/man5
+	
+	# Install MPD from build directory
+	cd mpd-source/build && DESTDIR=$(CURDIR)/debian/hifiberry-mpd ninja install
+	
+	# Remove the automatically installed service files
+	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd.service || true
+	rm -f debian/hifiberry-mpd/usr/lib/systemd/user/mpd.service || true
+	
+	# Install our custom systemd service file
+	mkdir -p debian/hifiberry-mpd/usr/lib/systemd/system
+	cp systemd/mpd.service debian/hifiberry-mpd/usr/lib/systemd/system/
+	
+	# Install default configuration file
+	mkdir -p debian/hifiberry-mpd/etc
+	cp config/mpd.conf.default debian/hifiberry-mpd/etc/
+	
+	# Create directories for MPD
+	mkdir -p debian/hifiberry-mpd/var/lib/mpd
+	mkdir -p debian/hifiberry-mpd/var/lib/mpd/music
+	mkdir -p debian/hifiberry-mpd/var/lib/mpd/playlists
+	
+	# Install MPC binary and man page
+	cp mpc-install/bin/mpc debian/hifiberry-mpd/usr/bin/
+	cp mpc-install/share/man/man1/mpc.1 debian/hifiberry-mpd/usr/share/man/man1/
+	
+override_dh_auto_test:
+	# Skip tests - requires network access and specific hardware

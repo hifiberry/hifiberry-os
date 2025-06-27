@@ -1,0 +1,9 @@
+hifiberry-mpd (0.24.3) unstable; urgency=low
+
+  * Initial Debian package release
+  * Music Player Daemon optimized for HiFiBerry devices
+  * Built with ALSA backend and Avahi/mDNS support
+  * Includes both MPD daemon and MPC client
+  * Custom configuration for HiFiBerry audio devices
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 26 Jun 2025 12:00:00 +0000
