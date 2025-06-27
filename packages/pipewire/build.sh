@@ -1,31 +1,42 @@
 #!/bin/bash
 
-# Set the PipeWire version and version suffix directly here
-PIPEWIRE_VERSION="1.4.2"
-VERSION_SUFFIX="1"  # This will create version 1.4.2.1
+set -e
 
-cd pipewire-docker-build
-if [ ! -d out ]; then
-  mkdir out
+# Configuration
+PIPEWIRE_VERSION="1.4.5"
+VERSION_SUFFIX="1"
+PACKAGE_NAME="hifiberry-pipewire"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OUTPUT_DIR="${SCRIPT_DIR}/out"
+
+# Construct full version string
+FULL_VERSION="${PIPEWIRE_VERSION}.${VERSION_SUFFIX}"
+
+# Ensure output directory exists
+mkdir -p "$OUTPUT_DIR"
+
+echo "Building package with sbuild..."
+
+# Check if changelog version matches expected version
+cd src
+CHANGELOG_VERSION=$(head -1 debian/changelog | sed 's/.*(\([^)]*\)).*/\1/')
+if [ "$CHANGELOG_VERSION" != "$FULL_VERSION" ]; then
+    echo "ERROR: Changelog version ($CHANGELOG_VERSION) does not match expected version ($FULL_VERSION)"
+    echo "Please update debian/changelog manually"
+    exit 1
 fi
 
-# Build the Docker image with plain progress output
-docker build --progress=plain -t pipewire-builder .
+# Make sure debian/rules is executable
+chmod +x debian/rules
 
-# Run Docker container in foreground mode and build the package
-echo "Starting PipeWire build in Docker container version $PIPEWIRE_VERSION.$VERSION_SUFFIX..."
-docker run \
-  --name pipewire-build-container \
-  --env PIPEWIRE_VERSION="$PIPEWIRE_VERSION" \
-  --env VERSION_SUFFIX="$VERSION_SUFFIX" \
-  pipewire-builder
+# Use sbuild to build the package
+sbuild --chroot-mode=unshare --no-clean-source --enable-network \
+       --extra-repository='deb http://deb.debian.org/debian bookworm non-free non-free-firmware' \
+       --build-dep-resolver=aspcud
 
-# Copy the .deb files from the container to the local out directory
-echo "Copying .deb files from container..."
-docker cp pipewire-build-container:/out/. ./out/
+# Go back to parent directory
+cd ..
 
-# Remove the container
-docker rm pipewire-build-container
-
-# Display success message
-echo "Build complete. Output files are in $(pwd)/out/"
+echo "Package build completed."
+echo "Built packages:"
+ls -la src/../*.deb 2>/dev/null || echo "No .deb files found"

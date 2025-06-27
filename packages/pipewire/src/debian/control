@@ -1,0 +1,51 @@
+Source: hifiberry-pipewire
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               meson,
+               ninja-build,
+               pkgconf,
+               pkg-config,
+               git,
+               systemd,
+               systemd-dev,
+               libsystemd-dev,
+               libdbus-1-dev,
+               libudev-dev,
+               libasound2-dev,
+               libjack-jackd2-dev,
+               libpulse-dev,
+               libavahi-client-dev,
+               libbluetooth-dev,
+               libsbc-dev,
+               libldacbt-abr-dev,
+               libldacbt-enc-dev,
+               libfdk-aac-dev,
+               wget,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://pipewire.org/
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: hifiberry-pipewire
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         adduser,
+         libasound2-plugins,
+         alsa-utils
+Provides: pipewire
+Conflicts: pipewire, pulseaudio
+Replaces: pipewire
+Description: HiFiBerry PipeWire multimedia server
+ PipeWire is a server and user space API to deal with multimedia pipelines.
+ This includes:
+ .
+  - Making available sources of video (such as from a capture devices or
+    application provided streams) and multiplexing this with clients.
+  - Accessing sources of audio and video for consumption.
+  - Generating graphs for audio and video processing.
+ .
+ This custom package is optimized for HiFiBerry devices with system-wide
+ configuration and includes WirePlumber session manager.

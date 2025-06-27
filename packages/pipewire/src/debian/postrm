@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    purge)
+        # Remove user and group on purge
+        if getent passwd pipewire > /dev/null; then
+            deluser --quiet pipewire || true
+        fi
+        
+        if getent group pipewire > /dev/null; then
+            delgroup --quiet pipewire || true
+        fi
+        
+        # Remove directories on purge
+        rm -rf /var/lib/pipewire || true
+        rm -rf /run/pipewire || true
+        
+        # Remove ALSA configuration
+        rm -f /etc/alsa/conf.d/50-pipewire.conf || true
+        ;;
+    
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        ;;
+    
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

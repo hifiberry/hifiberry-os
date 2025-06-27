@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    remove|upgrade|deconfigure)
+        # If we're removing the package (not upgrading), restore the original asound.conf if it exists
+        if [ "$1" = "remove" ]; then
+            # Check if we have a symlink and a backup
+            if [ -L /etc/asound.conf ] && [ -f /etc/asound.conf.bak ]; then
+                # Remove the symlink
+                rm -f /etc/asound.conf
+                # Restore the original
+                mv /etc/asound.conf.bak /etc/asound.conf
+                echo "Restored original ALSA configuration."
+            elif [ -L /etc/asound.conf ]; then
+                # Just remove the symlink if there's no backup
+                rm -f /etc/asound.conf
+            fi
+        fi
+        # Let debhelper handle systemd service management
+        ;;
+    
+    failed-upgrade)
+        ;;
+    
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
