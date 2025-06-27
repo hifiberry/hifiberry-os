@@ -1,0 +1,70 @@
+.TH CHECK-RMS 1 "June 2025" "HiFiBerry Testtools 1.0.3" "User Commands"
+.SH NAME
+check-rms \- analyze audio recording RMS levels for HiFiBerry hardware testing
+.SH SYNOPSIS
+.B check-rms
+.I channel_count duration rms_min rms_max
+.SH DESCRIPTION
+.B check-rms
+is a tool for testing HiFiBerry audio hardware by recording multi-channel audio and analyzing the RMS (Root Mean Square) levels of each channel. It is used in production testing to verify that audio input channels are functioning correctly and producing signals within expected amplitude ranges.
+.PP
+The tool records audio from the default ALSA device (hw:0,0) for the specified duration, then extracts each channel separately and calculates the RMS amplitude. Each channel's RMS value is compared against the specified minimum and maximum thresholds.
+.SH ARGUMENTS
+.TP
+.I channel_count
+Number of audio channels to record and analyze (1-8 typically)
+.TP
+.I duration
+Recording duration in seconds
+.TP
+.I rms_min
+Minimum acceptable RMS amplitude value (floating point)
+.TP
+.I rms_max
+Maximum acceptable RMS amplitude value (floating point)
+.SH OPERATION
+The tool performs the following steps:
+.IP 1. 3
+Records multi-channel audio using arecord at 48kHz, 32-bit signed format
+.IP 2. 3
+Extracts each channel to a separate WAV file using sox
+.IP 3. 3
+Calculates RMS amplitude for each channel using sox statistics
+.IP 4. 3
+Compares each channel's RMS against the specified range
+.IP 5. 3
+Reports results and exits with appropriate status code
+.SH EXIT STATUS
+.TP
+.B 0
+All channels are within the specified RMS range
+.TP
+.B 1
+One or more channels are outside the RMS range, or RMS extraction failed
+.SH EXAMPLES
+.TP
+Test a stereo input with 5-second recording, expecting RMS between 0.1 and 0.8:
+.B check-rms 2 5 0.1 0.8
+.TP
+Test an 8-channel DAC/ADC with 3-second recording:
+.B check-rms 8 3 0.05 0.9
+.SH FILES
+.TP
+.I multichannel_recording.wav
+Temporary file created during recording (removed after processing)
+.TP
+.I channel*.wav
+Temporary files for individual channel analysis (removed after processing)
+.SH DEPENDENCIES
+Requires
+.BR arecord (1),
+.BR sox (1),
+and
+.BR bc (1)
+for audio recording, processing, and mathematical calculations.
+.SH SEE ALSO
+.BR arecord (1),
+.BR sox (1),
+.BR bc (1)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>

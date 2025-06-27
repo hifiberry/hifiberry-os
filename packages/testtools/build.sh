@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="testtools"
-VERSION="1.0.2"
+VERSION="1.0.3"
 DIST="bullseye"
 CHROOT="${DIST}-amd64-sbuild"
 BUILD_DIR="/tmp/${PACKAGE}-build"
