@@ -1,0 +1,56 @@
+#!/usr/bin/make -f
+
+# Configuration
+PIPEWIRE_VERSION = 1.4.2
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf pipewire-source/
+	rm -f *.tar.gz
+
+override_dh_auto_configure:
+	# Download PipeWire source
+	if [ ! -d pipewire-source ]; then \
+		wget "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)/pipewire-$(PIPEWIRE_VERSION).tar.gz" -O "pipewire-$(PIPEWIRE_VERSION).tar.gz"; \
+		tar -xzf "pipewire-$(PIPEWIRE_VERSION).tar.gz"; \
+		mv "pipewire-$(PIPEWIRE_VERSION)" pipewire-source; \
+	fi
+	
+	# Configure PipeWire with system service enabled
+	cd pipewire-source && meson setup builddir --prefix=/usr \
+		-Dsystemd=enabled \
+		-Dsystemd-system-service=enabled \
+		-Dsystemd-user-service=disabled \
+		-Dtest=disabled \
+		-Dbuildtype=release
+
+override_dh_auto_build:
+	cd pipewire-source && meson compile -C builddir
+
+override_dh_auto_install:
+	cd pipewire-source && DESTDIR=$(CURDIR)/debian/hifiberry-pipewire meson install -C builddir
+	
+	# Remove files that conflict with libspa-0.2-dev package
+	rm -rf debian/hifiberry-pipewire/usr/include/spa-0.2 || true
+	rm -f debian/hifiberry-pipewire/usr/lib/*/pkgconfig/libspa-0.2.pc || true
+	
+	# Install custom WirePlumber systemd service
+	mkdir -p debian/hifiberry-pipewire/usr/lib/systemd/system
+	cp wireplumber-system.service debian/hifiberry-pipewire/usr/lib/systemd/system/
+	
+	# Install ALSA configuration for PipeWire
+	mkdir -p debian/hifiberry-pipewire/etc
+	cp asound.conf.pipewire debian/hifiberry-pipewire/etc/
+	
+	# Create ALSA plugin configuration directory
+	mkdir -p debian/hifiberry-pipewire/etc/alsa/conf.d
+	
+	# Create directories for PipeWire runtime
+	mkdir -p debian/hifiberry-pipewire/var/lib/pipewire
+	mkdir -p debian/hifiberry-pipewire/run/pipewire
+
+override_dh_auto_test:
+	# Skip tests - requires specific hardware and complex setup

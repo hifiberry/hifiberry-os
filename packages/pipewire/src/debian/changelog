@@ -1,0 +1,9 @@
+hifiberry-pipewire (1.4.5.1) unstable; urgency=low
+
+  * Initial Debian package release
+  * PipeWire multimedia server optimized for HiFiBerry devices
+  * Built with system-wide service configuration
+  * Includes WirePlumber session manager
+  * Custom ALSA configuration for seamless audio routing
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 27 Jun 2025 12:00:00 +0000

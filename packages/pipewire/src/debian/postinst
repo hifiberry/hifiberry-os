@@ -1,0 +1,60 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    configure)
+        # Create pipewire system user and group if they don't exist
+        if ! getent group pipewire > /dev/null; then
+            addgroup --quiet --system pipewire
+        fi
+        
+        if ! getent passwd pipewire > /dev/null; then
+            adduser --quiet --system --ingroup pipewire --no-create-home --home /nonexistent pipewire
+            usermod -c "PipeWire System Daemon" pipewire
+        fi
+        
+        # Add pipewire user to the audio group for access to audio devices
+        if getent group audio > /dev/null; then
+            usermod -aG audio pipewire || true
+        fi
+        
+        # Set proper permissions for pipewire directories
+        if [ -d /var/lib/pipewire ]; then
+            chown -R pipewire:pipewire /var/lib/pipewire
+        fi
+        
+        if [ -d /run/pipewire ]; then
+            chown pipewire:pipewire /run/pipewire
+        fi
+        
+        # Handle asound.conf file
+        if [ -f /etc/asound.conf ] && [ ! -L /etc/asound.conf ]; then
+            # Backup existing asound.conf if it's a regular file (not a symlink)
+            mv /etc/asound.conf /etc/asound.conf.bak
+            echo "Backed up existing /etc/asound.conf to /etc/asound.conf.bak"
+        elif [ -L /etc/asound.conf ]; then
+            # Remove existing symlink
+            rm -f /etc/asound.conf
+        fi
+        
+        # Create symlink from PipeWire asound.conf
+        ln -sf /etc/asound.conf.pipewire /etc/asound.conf
+        
+        # Copy ALSA configuration for PipeWire if available
+        if [ -f /usr/share/alsa/alsa.conf.d/50-pipewire.conf ]; then
+            cp -f /usr/share/alsa/alsa.conf.d/50-pipewire.conf /etc/alsa/conf.d/ || true
+        fi
+        ;;
+    
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+    
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
