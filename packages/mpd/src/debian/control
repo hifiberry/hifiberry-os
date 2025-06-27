@@ -39,7 +39,9 @@ Vcs-Browser: https://github.com/hifiberry/hifiberry-os
 
 Package: hifiberry-mpd
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         adduser,
+         hifiberry-pipewire
 Provides: mpd
 Conflicts: mpd
 Replaces: mpd
