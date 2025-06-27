@@ -5,16 +5,24 @@
 #export DH_VERBOSE = 1
 
 %:
-	dh $@
+	dh $@ --with python3 --buildsystem=pybuild
 
 override_dh_auto_build:
-	# Nothing to build - just copy files
+	# Build Python package
+	python3 setup.py build
 
 override_dh_auto_install:
+	# Install Python package
+	python3 setup.py install --root=debian/hifiberry-eeprom --install-layout=deb
+	
 	# Install EEPROM files to /usr/share instead of /opt
 	mkdir -p debian/hifiberry-eeprom/usr/share/hifiberry-eeprom
+	mkdir -p debian/hifiberry-eeprom/usr/share/man/man1
 	cp -r eeprom/*.eep eeprom/*.txt eeprom/*.sh debian/hifiberry-eeprom/usr/share/hifiberry-eeprom/
 	chmod 755 debian/hifiberry-eeprom/usr/share/hifiberry-eeprom/*.sh
+	
+	# Install manual page
+	cp man/hateeprom.1 debian/hifiberry-eeprom/usr/share/man/man1/
 
 override_dh_auto_test:
 	# No tests for this package

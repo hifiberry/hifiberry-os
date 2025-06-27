@@ -1,3 +1,16 @@
+hifiberry-eeprom (1.2.0) unstable; urgency=low
+
+  * Refactored hateeprom into a proper Python library
+  * Added hateeprom Python package with BitbangI2C and HatEEPROM classes
+  * Command-line tool now uses the library internally
+  * HAT EEPROM parsing with vendor information extraction
+  * Support for multiple EEPROM types (24C32, 24C64, 24C128, 24C256)
+  * Added info command for displaying HAT information
+  * Library can be used by other Python applications
+  * Complete API documentation and examples
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Jun 2025 09:00:00 +0000
+
 hifiberry-eeprom (1.1.0) unstable; urgency=low
 
   * Initial Debian package release

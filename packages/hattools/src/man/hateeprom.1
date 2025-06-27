@@ -1,0 +1,83 @@
+.TH HATEEPROM 1 "June 2025" "HiFiBerry HAT Tools" "User Commands"
+.SH NAME
+hateeprom \- HAT EEPROM reader/writer tool using bitbanging I2C
+.SH SYNOPSIS
+.B hateeprom
+[\fIOPTIONS\fR] \fICOMMAND\fR [\fIARGS\fR...]
+.SH DESCRIPTION
+.B hateeprom
+is a tool for reading and writing HAT EEPROM data using bitbanging I2C over GPIO pins with libgpiod. HAT EEPROMs are typically 24C32 (4KB) I2C devices at address 0x50 that contain device tree overlay information and HAT identification data.
+.PP
+The tool uses software-based I2C communication (bitbanging) which allows it to work even when the hardware I2C is disabled or in use by other devices.
+.SH OPTIONS
+.TP
+.B \-\-sda \fIPIN\fR
+SDA GPIO pin number (default: 0)
+.TP
+.B \-\-scl \fIPIN\fR
+SCL GPIO pin number (default: 1)
+.TP
+.B \-\-addr \fIADDRESS\fR
+I2C device address in hex or decimal (default: 0x50)
+.SH COMMANDS
+.TP
+.B read \fIADDRESS\fR \fILENGTH\fR [\fB\-o\fR \fIFILE\fR]
+Read LENGTH bytes starting from ADDRESS. If \-o is specified, write to FILE, otherwise display hex dump.
+.TP
+.B write \fIADDRESS\fR \fIDATA\fR
+Write DATA to EEPROM starting at ADDRESS. DATA can be a hex string or file path.
+.TP
+.B dump \fIFILENAME\fR [\fB\-\-size\fR \fISIZE\fR]
+Dump entire EEPROM to FILENAME. Default size is 4096 bytes.
+.TP
+.B flash \fIFILENAME\fR [\fB\-\-offset\fR \fIOFFSET\fR]
+Flash file contents to EEPROM starting at OFFSET (default: 0).
+.TP
+.B detect
+Check if a HAT EEPROM is available and responding at the specified address and GPIO pins.
+.SH EXAMPLES
+.TP
+Read 16 bytes from address 0x00 and display as hex dump:
+.B hateeprom read 0x00 16
+.TP
+Dump entire EEPROM to file:
+.B hateeprom dump hat_backup.bin
+.TP
+Write hex data to EEPROM:
+.B hateeprom write 0x100 "48656c6c6f20576f726c64"
+.TP
+Flash a binary file to EEPROM:
+.B hateeprom flash my_hat.eep
+.TP
+Use custom GPIO pins:
+.B hateeprom \-\-sda 2 \-\-scl 3 dump backup.bin
+.TP
+Check if EEPROM is available:
+.B hateeprom detect
+.SH GPIO CONNECTIONS
+The tool requires two GPIO pins for I2C communication:
+.IP \(bu 2
+SDA (Serial Data) - bidirectional data line
+.IP \(bu 2
+SCL (Serial Clock) - clock line
+.PP
+These pins should be connected to the HAT EEPROM's SDA and SCL pins respectively. Pull-up resistors (typically 4.7kΩ) are required on both lines.
+.PP
+Default pins (GPIO0/GPIO1) correspond to the standard I2C pins on Raspberry Pi HAT connectors.
+.SH NOTES
+.IP \(bu 2
+Root privileges may be required for GPIO access
+.IP \(bu 2
+EEPROM writes have a delay for write cycle completion
+.IP \(bu 2
+Large operations show progress indicators
+.IP \(bu 2
+The tool automatically handles 16-bit addressing for 24C32 EEPROMs
+.SH DEPENDENCIES
+Requires python3-libgpiod package for GPIO access.
+.SH SEE ALSO
+.BR gpiodetect (1),
+.BR gpioinfo (1),
+.BR i2cdetect (8)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>
