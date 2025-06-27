@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+# Stop and disable the Squeezelite service on package removal
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    systemctl stop squeezelite.service || true
+    systemctl disable squeezelite.service || true
+fi
+
+#DEBHELPER#
+exit 0

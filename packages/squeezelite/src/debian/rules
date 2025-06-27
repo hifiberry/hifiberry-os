@@ -1,0 +1,39 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# Clone squeezelite repository if not present
+	@if [ ! -d "squeezelite" ]; then \
+		echo "Cloning squeezelite repository..."; \
+		git clone https://github.com/ralph-irving/squeezelite.git; \
+		cd squeezelite && git checkout db51a7b16934f41b72437394bf8114c3a85e0a91; \
+	fi
+
+override_dh_auto_build:
+	# Build squeezelite
+	cd squeezelite && $(MAKE)
+
+override_dh_auto_install:
+	# Install squeezelite binary
+	mkdir -p debian/hifiberry-squeezelite/usr/bin
+	mkdir -p debian/hifiberry-squeezelite/etc/systemd/system
+	mkdir -p debian/hifiberry-squeezelite/var/lib/squeezelite
+	
+	# Copy squeezelite binary
+	cp squeezelite/squeezelite debian/hifiberry-squeezelite/usr/bin/
+	
+	# Copy start script
+	cp start-squeezelite debian/hifiberry-squeezelite/usr/bin/
+	chmod +x debian/hifiberry-squeezelite/usr/bin/start-squeezelite
+	
+	# Install systemd service
+	cp squeezelite.service debian/hifiberry-squeezelite/etc/systemd/system/
+
+override_dh_auto_clean:
+	rm -rf squeezelite/
+	find . -name "*.o" -delete 2>/dev/null || true
+
+override_dh_auto_test:
+	# Skip tests - requires audio hardware

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+if [ "$1" = "purge" ]; then
+    # Remove squeezelite user and group
+    if getent passwd squeezelite > /dev/null; then
+        deluser --quiet --system squeezelite || true
+    fi
+    if getent group squeezelite > /dev/null; then
+        delgroup --quiet --system squeezelite || true
+    fi
+    
+    # Remove home directory
+    rm -rf /var/lib/squeezelite || true
+fi
+
+#DEBHELPER#
+exit 0
