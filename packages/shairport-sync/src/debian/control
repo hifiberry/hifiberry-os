@@ -22,8 +22,6 @@ Build-Depends: debhelper-compat (= 13),
                libmosquitto-dev,
                libasound2-dev,
                vim-common,
-               build-essential,
-               autotools-dev,
                autoconf,
                automake,
                libtool,
@@ -56,7 +54,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libsystemd0,
          libcap2-bin,
          libglib2.0-0,
-         libmosquitto1
+         libmosquitto1,
+         adduser
 Provides: shairport-sync, nqptp
 Conflicts: shairport-sync, nqptp
 Replaces: shairport-sync, nqptp

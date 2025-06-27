@@ -8,7 +8,7 @@ fi
 
 # Create shairport-sync user if it doesn't exist
 if ! getent passwd shairport-sync > /dev/null; then
-    adduser --system --ingroup shairport-sync --no-create-home --shell /usr/sbin/nologin shairport-sync
+    adduser --system --ingroup shairport-sync --home /var/lib/shairport-sync --no-create-home --shell /usr/sbin/nologin shairport-sync
     usermod -a -G audio shairport-sync
 fi
 
@@ -19,7 +19,7 @@ fi
 
 # Create nqptp user if it doesn't exist
 if ! getent passwd nqptp > /dev/null; then
-    adduser --system --ingroup nqptp --no-create-home --shell /usr/sbin/nologin nqptp
+    adduser --system --ingroup nqptp --home /var/lib/nqptp --no-create-home --shell /usr/sbin/nologin nqptp
 fi
 
 # Add shairport-sync user to pipewire group for PipeWire integration
@@ -48,7 +48,7 @@ if command -v setcap > /dev/null; then
 fi
 
 # Enable and start systemd services
-if [ -x /bin/systemctl ] || [ -x /usr/bin/systemctl ]; then
+if command -v systemctl >/dev/null; then
     systemctl daemon-reload || true
     
     # Enable and start nqptp service first

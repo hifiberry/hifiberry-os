@@ -32,8 +32,8 @@ override_dh_auto_install:
 	cd shairport-sync-4.3.7 && make install DESTDIR=$(CURDIR)/debian/hifiberry-shairport AM_UPDATE_INFO_DIR=no
 	
 	# Install systemd service files
-	install -D -m644 systemd/shairport.service $(CURDIR)/debian/hifiberry-shairport/usr/lib/systemd/system/shairport.service
-	install -D -m644 systemd/nqptp.service $(CURDIR)/debian/hifiberry-shairport/usr/lib/systemd/system/nqptp.service
+	install -D -m644 systemd/shairport.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/shairport.service
+	install -D -m644 systemd/nqptp.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/nqptp.service
 	
 	# Install NQPTP binary and man page
 	install -D -m755 nqptp/nqptp $(CURDIR)/debian/hifiberry-shairport/usr/bin/nqptp
