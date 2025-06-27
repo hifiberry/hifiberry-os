@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+# Create squeezelite user and group if they don't exist
+if ! getent group squeezelite > /dev/null; then
+    addgroup --quiet --system squeezelite
+fi
+if ! getent passwd squeezelite > /dev/null; then
+    adduser --quiet --system --ingroup squeezelite --no-create-home --home /var/lib/squeezelite squeezelite
+    usermod -a -G audio squeezelite
+fi
+
+# Create home directory for squeezelite if it doesn't exist
+if [ ! -d /var/lib/squeezelite ]; then
+    mkdir -p /var/lib/squeezelite
+    chown squeezelite:squeezelite /var/lib/squeezelite
+fi
+
+# Enable the Squeezelite service
+systemctl daemon-reload
+systemctl enable squeezelite.service
+
+#DEBHELPER#
+exit 0

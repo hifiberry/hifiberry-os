@@ -1,63 +1,46 @@
 #!/bin/bash
 
+# Exit on error
 set -e
 
-# Configuration
+PACKAGE="hifiberry-squeezelite"
 VERSION="2.0.0"
-COMMIT_ID="db51a7b16934f41b72437394bf8114c3a85e0a91"
-PACKAGE_NAME="hifiberry-squeezelite"
-DOCKER_TAG="squeezelite-build-env"
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DOCKER_DIR="${SCRIPT_DIR}/squeezelite-docker-build"
-OUTPUT_DIR="${SCRIPT_DIR}/out"
+DIST="bullseye"
+CHROOT="${DIST}-amd64-sbuild"
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="$(dirname $(realpath $0))/src"
+SCRIPT_DIR="$(dirname $(realpath $0))"
 
-# Ensure output directory exists
-mkdir -p "$OUTPUT_DIR"
+echo "Building $PACKAGE version $VERSION"
 
-# Print help message
-function print_help() {
-    echo "Usage: $0 [options]"
-    echo ""
-    echo "Options:"
-    echo "  --help          Display this help message"
-}
+# Clean previous build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
-# Process command-line arguments
-while [[ $# -gt 0 ]]; do
-    key="$1"
-    case $key in
-        --help)
-            print_help
-            exit 0
-            ;;
-        *)
-            echo "Unknown option: $1"
-            print_help
-            exit 1
-            ;;
-    esac
-done
+# Copy source files to build directory
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
 
-# Build Docker image
-echo "Building Docker image for Squeezelite build environment..."
-docker build --progress=plain -t "$DOCKER_TAG" "$DOCKER_DIR"
+# Change to build directory
+cd "$BUILD_DIR"
 
-# Build package in Docker container - run in foreground to see build output
-echo "Building package in Docker container for reproducible build..."
-docker run --name squeezelite_build \
-    -e "SQUEEZELITE_VERSION=$VERSION" \
-    -e "COMMIT_ID=$COMMIT_ID" \
-    "$DOCKER_TAG"
+# Build package using sbuild
+echo "Using sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    --dist="$DIST" \
+    --chroot="$CHROOT" \
+    --build-dir="$BUILD_DIR" \
+    --verbose
 
-# Copy package from container after build 
-echo "Copying package from container..."
-PKG_NAME="${PACKAGE_NAME}_${VERSION}_arm64.deb"
-docker cp "squeezelite_build:/out/$PKG_NAME" "$OUTPUT_DIR/"
+# Move build artifacts to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
 
-# Clean up container
-docker rm squeezelite_build
-
-# Show build results
-echo "Package build complete. Output available in ${OUTPUT_DIR}"
-ls -la "$OUTPUT_DIR"
+echo "Package built successfully"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
 

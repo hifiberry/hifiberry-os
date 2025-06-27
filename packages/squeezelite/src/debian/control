@@ -1,0 +1,37 @@
+Source: hifiberry-squeezelite
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <info@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               build-essential,
+               git,
+               libflac-dev,
+               libmad0-dev,
+               libvorbis-dev,
+               libmpg123-dev,
+               libfaad-dev,
+               libasound2-dev,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://github.com/ralph-irving/squeezelite
+Vcs-Git: https://github.com/ralph-irving/squeezelite.git
+
+Package: hifiberry-squeezelite
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libflac12,
+         libmad0,
+         libvorbis0a,
+         libmpg123-0,
+         libfaad2,
+         hifiberry-tools
+Conflicts: squeezelite
+Replaces: squeezelite
+Provides: squeezelite
+Description: Squeezelite - Lightweight Squeezebox player for HiFiBerry
+ Squeezelite is a small headless squeezebox emulator for Linux designed
+ to work with HiFiBerry audio hardware. It connects to Logitech Media Server
+ to provide synchronized multi-room audio playback.
+ .
+ This package includes the Squeezelite binary optimized for HiFiBerry devices
+ and configuration scripts for seamless integration with HiFiBerry OS.
