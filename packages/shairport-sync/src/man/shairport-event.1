@@ -1,0 +1,30 @@
+.TH SHAIRPORT-EVENT 1 "December 2024" "shairport-event" "User Commands"
+.SH NAME
+shairport-event \- Shairport Sync event handler script
+.SH SYNOPSIS
+.B shairport-event
+.I command
+.SH DESCRIPTION
+.B shairport-event
+is an event handler script for Shairport Sync that processes start and stop events.
+When called with different commands, it performs appropriate actions for session management.
+.PP
+This script is typically invoked automatically by Shairport Sync based on the program name
+or through symbolic links (shairport-event-start, shairport-event-stop).
+.SH ARGUMENTS
+.TP
+.I command
+The command to execute, typically "start" or "stop" based on the program name.
+.SH FILES
+.TP
+.I /usr/bin/shairport-event-start
+Symbolic link to shairport-event for start events
+.TP
+.I /usr/bin/shairport-event-stop
+Symbolic link to shairport-event for stop events
+.SH SEE ALSO
+.BR shairport-sync (1),
+.BR shairport-event-start (1),
+.BR shairport-event-stop (1)
+.SH AUTHOR
+HiFiBerry team

@@ -1,0 +1,47 @@
+.TH SHAIRPORT-SYNC-METADATA-READER 1 "December 2024" "shairport-sync-metadata-reader" "User Commands"
+.SH NAME
+shairport-sync-metadata-reader \- Metadata reader for Shairport Sync
+.SH SYNOPSIS
+.B shairport-sync-metadata-reader
+.RI [ options ]
+.SH DESCRIPTION
+.B shairport-sync-metadata-reader
+is a utility that reads and processes metadata from Shairport Sync.
+It can extract track information, artwork, and other metadata from
+AirPlay streams for display or logging purposes.
+.PP
+This tool is useful for integrating Shairport Sync with media display
+systems, logging applications, or custom metadata processing workflows.
+.SH OPTIONS
+Run
+.B shairport-sync-metadata-reader --help
+for available command line options.
+.SH CONFIGURATION
+The metadata reader typically reads from a pipe or shared memory
+configured in the Shairport Sync configuration file:
+.PP
+.RS
+metadata = {
+.RS
+enabled = "yes";
+.br
+pipe_name = "/tmp/shairport-sync-metadata";
+.br
+pipe_timeout = 5000;
+.RE
+};
+.RE
+.SH FILES
+.TP
+.I /etc/shairport-sync.conf
+Main configuration file for Shairport Sync
+.TP
+.I /tmp/shairport-sync-metadata
+Default metadata pipe location
+.SH SEE ALSO
+.BR shairport-sync (1),
+.BR shairport-metadata-example (1)
+.SH AUTHOR
+Mike Brady and contributors
+.PP
+This manual page was written for the HiFiBerry OS package.
