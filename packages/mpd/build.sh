@@ -1,36 +1,67 @@
 #!/bin/bash
 
-# Exit on error
 set -e
 
-# Set MPD version
-MPD_VERSION="0.24.3"
+# Configuration
+MPD_VERSION="0.24.4"
 MPC_VERSION="0.35"
+PACKAGE_NAME="hifiberry-mpd"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OUTPUT_DIR="${SCRIPT_DIR}/out"
 
-# Get the directory of this script
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-DOCKER_DIR="$SCRIPT_DIR/mpd-docker-build"
-OUT_DIR="$SCRIPT_DIR/out"
+# Construct full version string
+FULL_VERSION="${MPD_VERSION}"
 
 # Ensure output directory exists
-mkdir -p "$OUT_DIR"
+mkdir -p "$OUTPUT_DIR"
 
-# Build the Docker image
-echo "Building Docker image..."
-docker build --progress=plain  -t mpd-build "$DOCKER_DIR"
+# Print help message
+function print_help() {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --help           Display this help message"
+    echo ""
+    echo "Use ./clean.sh to clean build artifacts"
+}
 
-# Run the Docker container to build the package - interactive mode to show build output
-echo "Building MPD package..."
-docker run --name mpd_build \
-    -e MPD_VERSION="$MPD_VERSION" \
-    -e MPC_VERSION="$MPC_VERSION" \
-    mpd-build
+# Build function using sbuild
+function build_package() {
+    echo "Building package with sbuild..."
+    
+    # Update version in changelog if different
+    cd src
+    sed -i "s/hifiberry-mpd ([^)]*)/hifiberry-mpd (${FULL_VERSION})/" debian/changelog
+    
+    # Make sure debian/rules is executable
+    chmod +x debian/rules
+    
+    # Use sbuild to build the package
+    sbuild --chroot-mode=unshare --no-clean-source --enable-network
+    
+    # Go back to parent directory
+    cd ..
+    
+    echo "Package build completed."
+    echo "Built packages:"
+    ls -la src/../*.deb 2>/dev/null || echo "No .deb files found"
+}
 
-# Copy the build artifacts from the container
-echo "Copying build artifacts..."
-docker cp "mpd_build:/out/." "$OUT_DIR"
+# Process command-line arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --help)
+            print_help
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            print_help
+            exit 1
+            ;;
+    esac
+done
 
-# Clean up the container
-docker rm mpd_build
-
-echo "Package build complete! Check $OUT_DIR for the package."
+# Main logic
+build_package

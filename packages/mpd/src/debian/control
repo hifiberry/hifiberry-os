@@ -1,0 +1,53 @@
+Source: hifiberry-mpd
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               meson,
+               ninja-build,
+               pkgconf,
+               git,
+               libavcodec-dev,
+               libavformat-dev,
+               libavutil-dev,
+               libboost-dev,
+               libasound2-dev,
+               libflac-dev,
+               libid3tag0-dev,
+               libmad0-dev,
+               libmikmod-dev,
+               libpcre2-dev,
+               libsndfile1-dev,
+               libsoxr-dev,
+               libvorbis-dev,
+               libopus-dev,
+               libsystemd-dev,
+               python3-sphinx,
+               libsqlite3-dev,
+               libcurl4-openssl-dev,
+               libyajl-dev,
+               libgcrypt20-dev,
+               libfmt-dev,
+               libexpat1-dev,
+               libavahi-client-dev,
+               wget,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://www.musicpd.org/
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: hifiberry-mpd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
+Provides: mpd
+Conflicts: mpd
+Replaces: mpd
+Description: HiFiBerry Music Player Daemon
+ MPD is a daemon for playing music files. Music is played through the
+ configured audio outputs. The daemon can be controlled from the command
+ line or through its network protocol.
+ .
+ This custom package is optimized for HiFiBerry devices and includes
+ both MPD and MPC (Music Player Client) for complete music playback
+ control.

@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    purge)
+        # Remove user and group on purge
+        if getent passwd mpd > /dev/null; then
+            deluser --quiet mpd || true
+        fi
+        
+        if getent group mpd > /dev/null; then
+            delgroup --quiet mpd || true
+        fi
+        
+        # Remove directories on purge (but preserve music and playlists)
+        rm -rf /run/mpd || true
+        # Note: We don't remove /var/lib/mpd as it may contain user data
+        ;;
+    
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        ;;
+    
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
