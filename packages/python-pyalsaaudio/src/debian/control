@@ -1,0 +1,29 @@
+Source: python3-pyalsaaudio
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all-dev,
+               python3-setuptools,
+               libasound2-dev,
+               wget,
+               ca-certificates,
+               devscripts
+Standards-Version: 4.6.0
+Homepage: https://github.com/larsimmisch/pyalsaaudio
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: python3-pyalsaaudio
+Architecture: any
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Replaces: python3-alsaaudio
+Conflicts: python3-alsaaudio
+Description: Python ALSA bindings
+ This package contains wrappers for accessing the ALSA API from Python.
+ It is fairly complete for PCM devices and Mixer access.
+ .
+ ALSA is the Advanced Linux Sound Architecture.
+ .
+ This is the Python 3 version of the package.
