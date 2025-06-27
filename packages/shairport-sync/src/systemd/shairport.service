@@ -1,0 +1,17 @@
+[Unit]
+Description=Shairport Sync - AirPlay Audio Receiver
+After=sound.target network.target
+Wants=nqptp.service
+After=nqptp.service 
+After=pipewire.service
+
+[Service]
+Type=simple
+User=shairport-sync
+Group=shairport-sync
+ExecStart=/usr/bin/start-shairport.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

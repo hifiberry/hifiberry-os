@@ -1,0 +1,47 @@
+.TH SHAIRPORT-START 1 "June 2025" "HiFiBerry Shairport 4.3.7.2" "User Commands"
+.SH NAME
+shairport-start \- AirPlay playback start event handler
+.SH SYNOPSIS
+.B shairport-start
+.SH DESCRIPTION
+.B shairport-start
+is an event handler script that is automatically called by Shairport Sync when AirPlay playback begins on the device. This is 
+.B not
+a manual start/stop control script, but rather an event callback that responds to playback state changes.
+
+The script is a symbolic link to 
+.BR shairport-event.sh (1),
+which detects its invocation name and performs the appropriate action.
+
+When playbook starts, this script:
+.IP \(bu 2
+Logs the start event with timestamp to /tmp/shairport-events.log
+.IP \(bu 2
+Writes "playing" status to /tmp/shairport-status
+.IP \(bu 2
+Optionally sends a desktop notification if notify-send is available
+
+.SH USAGE
+This script is designed to be called automatically by Shairport Sync during AirPlay events. It should not be called manually for controlling playback. For playback control, use the Shairport Sync configuration or your AirPlay client device.
+
+.SH FILES
+.TP
+.I /tmp/shairport-status
+Status file containing current playback state
+.TP
+.I /tmp/shairport-events.log
+Log file with timestamped playback events
+.TP
+.I /tmp/shairport-sync-metadata
+Named pipe for metadata communication (created by shairport-sync)
+
+.SH SEE ALSO
+.BR shairport-stop (1),
+.BR shairport-event.sh (1),
+.BR shairport-sync (1)
+
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>
+
+.SH COPYRIGHT
+This script is part of the HiFiBerry Shairport package and is licensed under GPL-2+.

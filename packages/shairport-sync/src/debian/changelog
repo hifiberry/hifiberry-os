@@ -1,0 +1,8 @@
+hifiberry-shairport (4.3.7.2-1) unstable; urgency=medium
+
+  * Migrated from Docker-based build to sbuild
+  * Updated packaging for policy compliance
+  * Includes Shairport Sync, NQPTP, and metadata reader
+  * Added proper user/service management
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Jun 2025 09:30:00 +0000

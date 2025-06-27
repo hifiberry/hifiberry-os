@@ -1,0 +1,50 @@
+// IMPORTANT: This is only a default configuration template. 
+// This file is NOT used directly by Shairport Sync at runtime.
+// At startup, the system will create a runtime copy at 
+//      /var/run/shairport/shairport-sync.conf
+// with system-specific settings applied.
+// Any changes made here will only take effect after a system restart.
+
+general = {
+  name = "HiFiBerry"; // This is the name the device will advertise to iTunes
+  interpolation = "basic";
+  output_backend = "alsa";
+  mdns_backend = "avahi";
+  volume_control_profile = "standard";
+  drift_tolerance_in_seconds = 0.015;
+  ignore_volume_control = "no";
+  volume_range_db = 60;
+  regtype = "_raop._tcp";
+  playback_mode = "stereo";
+};
+
+sessioncontrol = {
+  allow_session_interruption = "yes";
+  session_timeout = 120;
+};
+
+alsa = {
+  mixer_control_name = "Softvol";
+  mixer_device = "hw:0";
+  output_format = "S16_LE";
+  output_rate = 44100;
+};
+
+metadata = {
+  enabled = "yes";
+  include_cover_art = "yes";
+  pipe_name = "/tmp/shairport-sync-metadata";
+  pipe_timeout = 5000;
+  socket_address = "226.0.0.1";
+  socket_port = 5555;
+  socket_msglength = 65000;
+};
+
+// These are parameters for the "AirPlay 2" backend
+airplay_2 = {
+  use_negotiated_ports = "yes";
+};
+
+diagnostics = {
+  log_verbosity = 0;
+};
