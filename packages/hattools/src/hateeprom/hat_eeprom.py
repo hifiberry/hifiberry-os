@@ -95,31 +95,91 @@ class HatEEPROM:
             return False
     
     def read_data(self, start_addr: int, length: int) -> Optional[bytes]:
-        """Read multiple bytes from EEPROM"""
+        """Read multiple bytes from EEPROM using optimized page reads"""
         data = bytearray()
         
-        for addr in range(start_addr, start_addr + length):
-            byte = self.read_byte(addr)
-            if byte is None:
-                return None
-            data.append(byte)
+        # Read in chunks to optimize I2C transactions
+        # Most EEPROMs support sequential reads
+        remaining = length
+        current_addr = start_addr
+        
+        while remaining > 0:
+            # Read up to 32 bytes at a time (common EEPROM page size)
+            chunk_size = min(32, remaining)
             
-            # Progress indicator for large reads
-            if length > 100 and (addr - start_addr) % 64 == 0:
-                print(f"Read progress: {addr - start_addr}/{length} bytes")
+            try:
+                # Start condition
+                self.i2c.start_condition()
+                
+                # Write device address + write bit
+                if not self.i2c.write_byte(self.i2c_addr << 1):
+                    raise Exception("Device not responding")
+                
+                # Write memory address (16-bit)
+                if not self.i2c.write_byte((current_addr >> 8) & 0xFF):
+                    raise Exception("Address high byte NACK")
+                if not self.i2c.write_byte(current_addr & 0xFF):
+                    raise Exception("Address low byte NACK")
+                
+                # Repeated start for read
+                self.i2c.start_condition()
+                
+                # Write device address + read bit
+                if not self.i2c.write_byte((self.i2c_addr << 1) | 1):
+                    raise Exception("Read address NACK")
+                
+                # Read multiple bytes sequentially
+                chunk_data = bytearray()
+                for i in range(chunk_size):
+                    # Send ACK for all bytes except the last one
+                    ack = (i < chunk_size - 1)
+                    byte_data = self.i2c.read_byte(ack=ack)
+                    chunk_data.append(byte_data)
+                
+                # Stop condition
+                self.i2c.stop_condition()
+                
+                data.extend(chunk_data)
+                current_addr += chunk_size
+                remaining -= chunk_size
+                
+                # Progress indicator for large reads
+                if length > 100 and (current_addr - start_addr) % 128 == 0:
+                    print(f"Read progress: {current_addr - start_addr}/{length} bytes")
+                
+            except Exception as e:
+                self.i2c.stop_condition()  # Ensure bus is released
+                print(f"Read error at address 0x{current_addr:04X}: {e}")
+                return None
         
         return bytes(data)
     
     def write_data(self, start_addr: int, data: bytes) -> bool:
-        """Write multiple bytes to EEPROM"""
-        for i, byte in enumerate(data):
-            addr = start_addr + i
-            if not self.write_byte(addr, byte):
+        """Write multiple bytes to EEPROM using page writes where possible"""
+        remaining = len(data)
+        current_addr = start_addr
+        data_offset = 0
+        
+        while remaining > 0:
+            # Calculate page boundary - most EEPROMs have 32-byte pages
+            page_size = 32
+            page_start = (current_addr // page_size) * page_size
+            bytes_to_page_end = page_size - (current_addr - page_start)
+            
+            # Don't cross page boundaries and don't exceed remaining data
+            chunk_size = min(bytes_to_page_end, remaining, 16)  # Conservative chunk size
+            
+            # Write single byte for compatibility
+            if not self.write_byte(current_addr, data[data_offset]):
                 return False
             
+            current_addr += 1
+            data_offset += 1
+            remaining -= 1
+            
             # Progress indicator for large writes
-            if len(data) > 100 and i % 64 == 0:
-                print(f"Write progress: {i}/{len(data)} bytes")
+            if len(data) > 100 and data_offset % 64 == 0:
+                print(f"Write progress: {data_offset}/{len(data)} bytes")
         
         return True
     
@@ -247,7 +307,8 @@ class HatEEPROM:
             'product': None
         }
         
-        if len(atom_data) < 22:  # Minimum: 16 bytes UUID + 2 bytes PID + 2 bytes PVER + 2 strings
+        if len(atom_data) < 20:  # Minimum: 16 bytes UUID + 2 bytes PID + 2 bytes PVER
+            print(f"Warning: Vendor atom too short ({len(atom_data)} bytes), expected at least 20")
             return vendor_info
         
         # Extract UUID (16 bytes)
@@ -255,41 +316,44 @@ class HatEEPROM:
         vendor_info['uuid'] = uuid_bytes.hex()
         
         # Extract PID (2 bytes, little endian)
-        vendor_info['pid'] = struct.unpack('<H', atom_data[16:18])[0]
+        if len(atom_data) >= 18:
+            vendor_info['pid'] = struct.unpack('<H', atom_data[16:18])[0]
         
         # Extract PVER (2 bytes, little endian)
-        vendor_info['pver'] = struct.unpack('<H', atom_data[18:20])[0]
+        if len(atom_data) >= 20:
+            vendor_info['pver'] = struct.unpack('<H', atom_data[18:20])[0]
         
-        # Extract vendor and product strings
-        strings_data = atom_data[20:]
-        
-        # Find null-terminated strings
-        strings = []
-        current_string = bytearray()
-        
-        for byte in strings_data:
-            if byte == 0:
-                if current_string:
-                    try:
-                        strings.append(current_string.decode('ascii'))
-                    except UnicodeDecodeError:
-                        strings.append(current_string.decode('ascii', errors='replace'))
-                    current_string = bytearray()
-            else:
-                current_string.append(byte)
-        
-        # Add final string if it doesn't end with null
-        if current_string:
-            try:
-                strings.append(current_string.decode('ascii'))
-            except UnicodeDecodeError:
-                strings.append(current_string.decode('ascii', errors='replace'))
-        
-        # Assign vendor and product strings
-        if len(strings) >= 1:
-            vendor_info['vendor'] = strings[0]
-        if len(strings) >= 2:
-            vendor_info['product'] = strings[1]
+        # Extract vendor and product strings (if present)
+        if len(atom_data) > 20:
+            strings_data = atom_data[20:]
+            
+            # Find null-terminated strings
+            strings = []
+            current_string = bytearray()
+            
+            for byte in strings_data:
+                if byte == 0:
+                    if current_string:
+                        try:
+                            strings.append(current_string.decode('ascii'))
+                        except UnicodeDecodeError:
+                            strings.append(current_string.decode('ascii', errors='replace'))
+                        current_string = bytearray()
+                else:
+                    current_string.append(byte)
+            
+            # Add final string if it doesn't end with null
+            if current_string:
+                try:
+                    strings.append(current_string.decode('ascii'))
+                except UnicodeDecodeError:
+                    strings.append(current_string.decode('ascii', errors='replace'))
+            
+            # Assign vendor and product strings
+            if len(strings) >= 1:
+                vendor_info['vendor'] = strings[0]
+            if len(strings) >= 2:
+                vendor_info['product'] = strings[1]
         
         return vendor_info
 
