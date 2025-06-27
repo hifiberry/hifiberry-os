@@ -27,10 +27,10 @@ fi
 echo "Controller firmware $MAJOR.$MINOR installed correctly"
 
 # Write HAT EEPROM
-sudo /opt/hifiberry/eeprom/hbflash.sh -w -f=/opt/hifiberry/eeprom/studiodac8x.eep -t=24c32
+sudo hateeprom --type=24c32 flash /opt/hifiberry/eeprom/studiodac8x.eep
 if [ "$?" != 0 ]; then
     figlet "FAIL"
-    echo "Fail4ed to write HAT EEPROM"
+    echo "Failed to write HAT EEPROM"
     exit 1
 fi
 
