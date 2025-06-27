@@ -3,7 +3,6 @@ Section: sound
 Priority: optional
 Maintainer: HiFiBerry <info@hifiberry.com>
 Build-Depends: debhelper-compat (= 13),
-               build-essential,
                git,
                libflac-dev,
                libmad0-dev,
@@ -12,7 +11,7 @@ Build-Depends: debhelper-compat (= 13),
                libfaad-dev,
                libasound2-dev,
                ca-certificates
-Standards-Version: 4.6.0
+Standards-Version: 4.5.1
 Homepage: https://github.com/ralph-irving/squeezelite
 Vcs-Git: https://github.com/ralph-irving/squeezelite.git
 
@@ -24,7 +23,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libvorbis0a,
          libmpg123-0,
          libfaad2,
-         hifiberry-tools
+         hifiberry-tools,
+         adduser
 Conflicts: squeezelite
 Replaces: squeezelite
 Provides: squeezelite

@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-squeezelite"
-VERSION="2.0.0"
+VERSION="2.0.0.1541"
 DIST="bullseye"
 CHROOT="${DIST}-amd64-sbuild"
 BUILD_DIR="/tmp/${PACKAGE}-build"

@@ -1,7 +1,7 @@
-hifiberry-squeezelite (2.0.0-1) bullseye; urgency=medium
+hifiberry-squeezelite (2.0.0.1541) bullseye; urgency=medium
 
   * Initial sbuild-based packaging
-  * Built from commit db51a7b16934f41b72437394bf8114c3a85e0a91
+  * Built from commit 72e1fd8abfa9b2f8e9636f033247526920878718
   * Converted from Docker-based build to proper Debian packaging
   * Added systemd service integration
   * Added HiFiBerry-specific configuration scripts
