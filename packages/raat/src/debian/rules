@@ -1,0 +1,43 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# Source is already available at raat/ (pre-cloned)
+	@echo "Using pre-cloned RAAT source from raat/"
+
+override_dh_auto_build:
+	# Build RAAT using compile64 script
+	chmod +x raat/compile64
+	cd raat && ./compile64
+
+override_dh_auto_install:
+	# Install RAAT components
+	mkdir -p debian/hifiberry-raat/opt/raat
+	mkdir -p debian/hifiberry-raat/etc/systemd/system
+	mkdir -p debian/hifiberry-raat/usr/bin
+	mkdir -p debian/hifiberry-raat/var/lib/raat
+	
+	# Copy RAAT source files
+	cp -r raat/* debian/hifiberry-raat/opt/raat/
+	
+	# Install systemd service file
+	cp raat.service debian/hifiberry-raat/etc/systemd/system/
+	
+	# Install configure-raat script
+	cp configure-raat debian/hifiberry-raat/usr/bin/
+	chmod +x debian/hifiberry-raat/usr/bin/configure-raat
+	
+	# Install raat_app binary (must exist)
+	cp raat/raat_app debian/hifiberry-raat/usr/bin/
+	chmod +x debian/hifiberry-raat/usr/bin/raat_app
+	
+	# Create raat user home directory
+	# Note: User creation and ownership will be handled in postinst
+
+override_dh_auto_clean:
+	# Don't remove raat/ directory during build - only remove build artifacts
+
+override_dh_auto_test:
+	# Skip tests - requires audio hardware and network setup

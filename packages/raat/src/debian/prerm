@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    remove)
+        # Stop and disable the service
+        systemctl stop raat.service || true
+        systemctl disable raat.service || true
+        systemctl daemon-reload || true
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
