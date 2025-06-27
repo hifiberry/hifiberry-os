@@ -1,0 +1,3 @@
+# PipeWire modules need custom RUNPATH to find each other
+# This is the standard behavior for PipeWire plugin architecture
+hifiberry-pipewire: custom-library-search-path

@@ -48,9 +48,12 @@ override_dh_auto_install:
 	# Create ALSA plugin configuration directory
 	mkdir -p debian/hifiberry-pipewire/etc/alsa/conf.d
 	
+	# Install lintian overrides
+	mkdir -p debian/hifiberry-pipewire/usr/share/lintian/overrides
+	cp debian/hifiberry-pipewire.lintian-overrides debian/hifiberry-pipewire/usr/share/lintian/overrides/hifiberry-pipewire
+	
 	# Create directories for PipeWire runtime
 	mkdir -p debian/hifiberry-pipewire/var/lib/pipewire
-	mkdir -p debian/hifiberry-pipewire/run/pipewire
 
 override_dh_auto_test:
 	# Skip tests - requires specific hardware and complex setup

@@ -20,11 +20,15 @@ case "$1" in
         
         # Set proper permissions for pipewire directories
         if [ -d /var/lib/pipewire ]; then
-            chown -R pipewire:pipewire /var/lib/pipewire
+            chown pipewire:pipewire /var/lib/pipewire
+            chmod 755 /var/lib/pipewire
         fi
         
+        # Create runtime directory (will be handled by systemd)
+        mkdir -p /run/pipewire || true
         if [ -d /run/pipewire ]; then
             chown pipewire:pipewire /run/pipewire
+            chmod 755 /run/pipewire
         fi
         
         # Handle asound.conf file
