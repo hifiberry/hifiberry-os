@@ -12,6 +12,9 @@ Build-Depends: debhelper-compat (= 13),
                g++,
                make,
                cmake,
+               pkg-config,
+               libglib2.0-dev,
+               libasound2-dev,
                ca-certificates
 Standards-Version: 4.6.0
 Homepage: https://github.com/hifiberry/raat

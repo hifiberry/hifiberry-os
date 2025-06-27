@@ -14,24 +14,22 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	# Install RAAT components
-	mkdir -p debian/hifiberry-raat/opt/raat
-	mkdir -p debian/hifiberry-raat/etc/systemd/system
+	mkdir -p debian/hifiberry-raat/usr/lib/systemd/system
 	mkdir -p debian/hifiberry-raat/usr/bin
 	mkdir -p debian/hifiberry-raat/var/lib/raat
 	
-	# Copy RAAT source files
-	cp -r raat/* debian/hifiberry-raat/opt/raat/
-	
 	# Install systemd service file
-	cp raat.service debian/hifiberry-raat/etc/systemd/system/
+	cp raat.service debian/hifiberry-raat/usr/lib/systemd/system/
 	
 	# Install configure-raat script
 	cp configure-raat debian/hifiberry-raat/usr/bin/
 	chmod +x debian/hifiberry-raat/usr/bin/configure-raat
 	
-	# Install raat_app binary (must exist)
-	cp raat/raat_app debian/hifiberry-raat/usr/bin/
-	chmod +x debian/hifiberry-raat/usr/bin/raat_app
+	# Install RAAT binaries (excluding .a files)
+	find raat/bin/release/linux/aarch64/ -type f ! -name '*.a' -exec cp {} debian/hifiberry-raat/usr/bin/ \;
+	
+	# Make all binaries executable
+	chmod +x debian/hifiberry-raat/usr/bin/*
 	
 	# Create raat user home directory
 	# Note: User creation and ownership will be handled in postinst
