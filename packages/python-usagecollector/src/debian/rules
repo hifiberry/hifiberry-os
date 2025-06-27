@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=usagecollector
+export PYBUILD_DIR=usagecollector-source
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_configure:
+	# Clone usagecollector source from GitHub
+	if [ ! -d usagecollector-source ]; then \
+		git clone https://github.com/hifiberry/usagecollector usagecollector-source; \
+	fi
+
+override_dh_auto_clean:
+	rm -rf usagecollector-source/
+	find . -name "*.pyc" -delete
+	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+override_dh_auto_build:
+	dh_auto_build
+
+override_dh_auto_install:
+	dh_auto_install
+
+override_dh_auto_test:
+	# Skip tests - no test suite provided

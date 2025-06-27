@@ -1,0 +1,28 @@
+Source: python3-usagecollector
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               git,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://github.com/hifiberry/usagecollector
+Vcs-Git: https://github.com/hifiberry/usagecollector.git
+Vcs-Browser: https://github.com/hifiberry/usagecollector
+
+Package: python3-usagecollector
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: Usage data collection library for HiFiBerry
+ This package provides a Python library for collecting usage statistics
+ and analytics data for HiFiBerry devices and services.
+ .
+ The library includes functionality for:
+  - Anonymous usage data collection
+  - Privacy-aware statistics gathering
+  - Data transmission and reporting
+ .
+ This is the Python 3 version of the package.
