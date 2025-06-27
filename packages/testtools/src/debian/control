@@ -18,7 +18,8 @@ Depends: ${misc:Depends},
          i2c-tools,
          python3-yaml,
          python3-pyedbglib,
-         python3-serial
+         python3-serial,
+         hattools
 Description: HiFiBerry hardware test tools
  This package includes tools for HiFiBerry sound card production testing
  including programming of the HAT EEPROM and various hardware validation
