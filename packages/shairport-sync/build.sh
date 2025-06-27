@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-shairport"
-VERSION="4.3.7.2"
+VERSION="4.3.7-2"
 DIST="bullseye"
 CHROOT="${DIST}-amd64-sbuild"
 BUILD_DIR="/tmp/${PACKAGE}-build"
