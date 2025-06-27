@@ -219,82 +219,143 @@ class HatEEPROM:
             print("Write failed")
             return False
     
-    def parse_hat_eeprom(self, data: bytes) -> dict:
+    def parse_hat_eeprom(self, data: bytes, debug: bool = False) -> dict:
         """
-        Parse HAT EEPROM data according to HAT specification
+        Parse HAT EEPROM data according to the official format
+        Based on official Raspberry Pi eeptools/eeplib.c
         
         Args:
             data: Raw EEPROM data bytes
+            debug: Enable debug output for parsing
             
         Returns:
             Dictionary containing parsed HAT information
         """
         result = {
             'valid': False,
-            'signature': None,
-            'version': None,
-            'vendor_info': {},
-            'atoms': []
+            'header': {},
+            'atoms': [],
+            'vendor_info': {}
         }
         
         if len(data) < 12:
-            result['error'] = 'EEPROM data too short'
+            result['error'] = 'Data too short for header'
             return result
         
-        # Check HAT signature (should be "R-Pi" at offset 0)
-        signature = data[0:4]
-        if signature != b'R-Pi':
-            result['error'] = f'Invalid HAT signature: {signature}'
+        # Parse EEPROM header (first 12 bytes)
+        try:
+            # Signature should be "R-Pi" (0x52-50-69 in little endian becomes 0x69502d52)
+            signature = struct.unpack('<I', data[0:4])[0]
+            ver = data[4]
+            res = data[5]
+            numatoms = struct.unpack('<H', data[6:8])[0]
+            eeplen = struct.unpack('<I', data[8:12])[0]
+            
+            result['header'] = {
+                'signature': f"0x{signature:08X}",
+                'version': ver,
+                'reserved': res,
+                'num_atoms': numatoms,
+                'eep_length': eeplen
+            }
+            
+            if debug:
+                print(f"Debug: Header: signature=0x{signature:08X}, ver={ver}, atoms={numatoms}, len={eeplen}")
+            
+            # Check signature (should be 0x69502d52 for "R-Pi")
+            if signature != 0x69502d52:
+                result['error'] = f'Invalid signature: expected 0x69502d52, got 0x{signature:08X}'
+                if debug:
+                    print(f"Debug: Invalid signature, but continuing parsing...")
+                # Continue parsing anyway for analysis
+        
+        except struct.error as e:
+            result['error'] = f'Header parsing error: {e}'
             return result
-        
-        result['signature'] = signature.decode('ascii')
-        result['version'] = data[4]
-        
-        # Skip reserved bytes and numatoms
-        numatoms = struct.unpack('<H', data[6:8])[0]
-        eeplen = struct.unpack('<L', data[8:12])[0]
         
         # Parse atoms starting at offset 12
         offset = 12
         atom_count = 0
         
-        while offset < len(data) and atom_count < numatoms:
-            if offset + 4 > len(data):
+        while offset < len(data) and atom_count < result['header']['num_atoms']:
+            if offset + 8 > len(data):  # Need at least 8 bytes for atom header
+                break
+            
+            # Parse atom header (8 bytes total):
+            # type (2 bytes) + count (2 bytes) + dlen (4 bytes)
+            atom_type = struct.unpack('<H', data[offset:offset+2])[0]
+            atom_seq = struct.unpack('<H', data[offset+2:offset+4])[0]
+            atom_dlen = struct.unpack('<I', data[offset+4:offset+8])[0]
+            
+            if debug:
+                print(f"Debug: Atom header at offset {offset}: {data[offset:offset+8].hex()}")
+                print(f"Debug: type=0x{atom_type:04X}, seq={atom_seq}, dlen={atom_dlen}")
+            
+            # Atom data length includes 2-byte CRC, so actual data is dlen-2
+            if atom_dlen < 2:
+                if debug:
+                    print(f"Warning: Invalid atom data length {atom_dlen}")
                 break
                 
-            # Read atom header
-            atom_type = struct.unpack('<H', data[offset:offset+2])[0]
-            atom_count_field = struct.unpack('<H', data[offset+2:offset+4])[0]
-            atom_dlen = atom_count_field & 0x7FFF  # Lower 15 bits
+            data_len = atom_dlen - 2  # Subtract CRC length
             
-            atom_data = data[offset+4:offset+4+atom_dlen]
+            # Ensure we don't read beyond the data
+            if offset + 8 + atom_dlen > len(data):
+                if debug:
+                    print(f"Warning: Atom {atom_count} total length {8 + atom_dlen} exceeds available data")
+                break
+            
+            # Extract atom data (excluding CRC)
+            atom_data = data[offset+8:offset+8+data_len]
+            
+            # Extract CRC (last 2 bytes of atom)
+            atom_crc = struct.unpack('<H', data[offset+8+data_len:offset+8+atom_dlen])[0]
             
             atom_info = {
                 'type': atom_type,
-                'length': atom_dlen,
+                'sequence': atom_seq,
+                'data_length': data_len,
+                'total_length': atom_dlen,
+                'crc': atom_crc,
                 'data': atom_data
             }
             
+            # Debug output for atom parsing
+            if debug:
+                print(f"Debug: Atom {atom_count}: type=0x{atom_type:04X}, seq={atom_seq}, data_len={data_len}, crc=0x{atom_crc:04X}")
+                if len(atom_data) > 0:
+                    preview = atom_data[:16].hex() if len(atom_data) >= 16 else atom_data.hex()
+                    print(f"Debug: Atom data preview: {preview}")
+            
             # Parse ATOM 0x01 (Vendor info)
             if atom_type == 0x0001:
-                atom_info['parsed'] = self._parse_vendor_atom(atom_data)
+                atom_info['parsed'] = self._parse_vendor_atom(atom_data, debug=debug)
                 result['vendor_info'] = atom_info['parsed']
             
             result['atoms'].append(atom_info)
             
-            # Move to next atom (4 bytes header + data length)
-            offset += 4 + atom_dlen
+            # Move to next atom (8 bytes header + data + CRC)
+            offset += 8 + atom_dlen
             atom_count += 1
         
         result['valid'] = True
         return result
     
-    def _parse_vendor_atom(self, atom_data: bytes) -> dict:
+    def _parse_vendor_atom(self, atom_data: bytes, debug: bool = False) -> dict:
         """
         Parse vendor information atom (ATOM 0x01)
+        Based on official Raspberry Pi eeptools format:
+        - serial[4] (16 bytes): UUID as 4 uint32_t values 
+        - pid (2 bytes): product ID
+        - pver (2 bytes): product version
+        - vslen (1 byte): vendor string length
+        - pslen (1 byte): product string length
+        - vstr (vslen bytes): vendor string
+        - pstr (pslen bytes): product string
         
         Args:
             atom_data: Raw atom data bytes
+            debug: Enable debug output
             
         Returns:
             Dictionary containing vendor information
@@ -307,74 +368,232 @@ class HatEEPROM:
             'product': None
         }
         
-        if len(atom_data) < 20:  # Minimum: 16 bytes UUID + 2 bytes PID + 2 bytes PVER
-            print(f"Warning: Vendor atom too short ({len(atom_data)} bytes), expected at least 20")
+        if len(atom_data) < 22:  # Minimum: 16 bytes UUID + 2 bytes PID + 2 bytes PVER + 1 byte vslen + 1 byte pslen
+            if debug:
+                print(f"Warning: Vendor atom too short ({len(atom_data)} bytes), expected at least 22")
             return vendor_info
         
-        # Extract UUID (16 bytes)
-        uuid_bytes = atom_data[0:16]
-        vendor_info['uuid'] = uuid_bytes.hex()
+        # Extract UUID (16 bytes as 4 uint32_t little-endian values)
+        uuid_parts = struct.unpack('<4I', atom_data[0:16])
+        # Format as standard UUID string: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+        vendor_info['uuid'] = f"{uuid_parts[3]:08x}-{(uuid_parts[2] >> 16):04x}-{(uuid_parts[2] & 0xffff):04x}-{(uuid_parts[1] >> 16):04x}-{(uuid_parts[1] & 0xffff):04x}{uuid_parts[0]:08x}"
         
-        # Extract PID (2 bytes, little endian)
-        if len(atom_data) >= 18:
-            vendor_info['pid'] = struct.unpack('<H', atom_data[16:18])[0]
+        # Extract PID (2 bytes, little endian)  
+        vendor_info['pid'] = struct.unpack('<H', atom_data[16:18])[0]
         
         # Extract PVER (2 bytes, little endian)
-        if len(atom_data) >= 20:
-            vendor_info['pver'] = struct.unpack('<H', atom_data[18:20])[0]
+        vendor_info['pver'] = struct.unpack('<H', atom_data[18:20])[0]
         
-        # Extract vendor and product strings (if present)
-        if len(atom_data) > 20:
-            strings_data = atom_data[20:]
-            
-            # Find null-terminated strings
-            strings = []
-            current_string = bytearray()
-            
-            for byte in strings_data:
-                if byte == 0:
-                    if current_string:
-                        try:
-                            strings.append(current_string.decode('ascii'))
-                        except UnicodeDecodeError:
-                            strings.append(current_string.decode('ascii', errors='replace'))
-                        current_string = bytearray()
-                else:
-                    current_string.append(byte)
-            
-            # Add final string if it doesn't end with null
-            if current_string:
-                try:
-                    strings.append(current_string.decode('ascii'))
-                except UnicodeDecodeError:
-                    strings.append(current_string.decode('ascii', errors='replace'))
-            
-            # Assign vendor and product strings
-            if len(strings) >= 1:
-                vendor_info['vendor'] = strings[0]
-            if len(strings) >= 2:
-                vendor_info['product'] = strings[1]
+        # Extract string lengths
+        vslen = atom_data[20]  # vendor string length
+        pslen = atom_data[21]  # product string length
+        
+        if debug:
+            print(f"Debug: Vendor atom - vslen={vslen}, pslen={pslen}")
+        
+        # Extract vendor string (if present)
+        if vslen > 0 and len(atom_data) >= 22 + vslen:
+            vendor_str_data = atom_data[22:22+vslen]
+            try:
+                vendor_info['vendor'] = vendor_str_data.decode('ascii').rstrip('\x00')
+            except UnicodeDecodeError:
+                vendor_info['vendor'] = vendor_str_data.decode('ascii', errors='replace').rstrip('\x00')
+        
+        # Extract product string (if present)
+        if pslen > 0 and len(atom_data) >= 22 + vslen + pslen:
+            product_str_data = atom_data[22+vslen:22+vslen+pslen]
+            try:
+                vendor_info['product'] = product_str_data.decode('ascii').rstrip('\x00')
+            except UnicodeDecodeError:
+                vendor_info['product'] = product_str_data.decode('ascii', errors='replace').rstrip('\x00')
+        
+        if debug:
+            print(f"Debug: Parsed vendor info: {vendor_info}")
         
         return vendor_info
 
-    def read_and_parse_hat(self, size: int = None) -> dict:
+    def read_and_parse_hat(self, size: int = None, debug: bool = False, vendor_only: bool = False) -> dict:
         """
-        Read and parse HAT EEPROM data
+        Read and parse HAT EEPROM data efficiently
+        By default uses incremental reading (atom by atom), but can fallback to bulk read
         
         Args:
-            size: Number of bytes to read (default: auto-detect from type)
+            size: If specified, uses bulk read with this size; otherwise uses incremental read
+            debug: Enable debug output for parsing
+            vendor_only: If True, stop after finding and parsing the vendor atom (only works with incremental read)
             
         Returns:
             Dictionary containing parsed HAT information
         """
         if size is None:
-            size = 4096  # Default size
+            # Use incremental reading by default (more efficient)
+            return self.read_and_parse_hat_incremental(debug=debug, vendor_only=vendor_only)
+        else:
+            # Use bulk reading when size is specified (vendor_only not supported for bulk read)
+            return self.read_and_parse_hat_bulk(size, debug=debug)
+    
+    def read_and_parse_hat_bulk(self, size: int, debug: bool = False) -> dict:
+        """
+        Read and parse HAT EEPROM data using bulk read
+        Reads the specified amount of data at once, then parses it
         
+        Args:
+            size: Number of bytes to read
+            debug: Enable debug output for parsing
+            
+        Returns:
+            Dictionary containing parsed HAT information
+        """
+        # First, read the header (12 bytes) to get EEPROM length if size not specified
+        if size == 0:
+            header_data = self.read_data(0, 12)
+            if header_data is None:
+                return {'valid': False, 'error': 'Failed to read EEPROM header'}
+            
+            try:
+                eeplen = struct.unpack('<I', header_data[8:12])[0]
+                size = min(eeplen, 8192)  # Cap at 8KB for safety
+                if debug:
+                    print(f"Debug: Auto-detected size from header: {size} bytes")
+            except struct.error:
+                size = 4096  # Fallback default
+        
+        # Read the data
         data = self.read_data(0, size)
         if data is None:
             return {'valid': False, 'error': 'Failed to read EEPROM data'}
         
-        return self.parse_hat_eeprom(data)
+        return self.parse_hat_eeprom(data, debug=debug)
+
+    def read_and_parse_hat_incremental(self, debug: bool = False, vendor_only: bool = False) -> dict:
+        """
+        Read and parse HAT EEPROM data incrementally, atom by atom
+        This is more efficient as it only reads what's needed for each atom
+        
+        Args:
+            debug: Enable debug output for parsing
+            vendor_only: If True, stop after finding and parsing the vendor atom (ATOM 0x01)
+            
+        Returns:
+            Dictionary containing parsed HAT information
+        """
+        result = {
+            'valid': False,
+            'header': {},
+            'atoms': [],
+            'vendor_info': {}
+        }
+        
+        # Read header (12 bytes)
+        header_data = self.read_data(0, 12)
+        if header_data is None:
+            return {'valid': False, 'error': 'Failed to read EEPROM header'}
+        
+        if len(header_data) < 12:
+            return {'valid': False, 'error': 'Header data too short'}
+        
+        # Parse header
+        try:
+            signature = struct.unpack('<I', header_data[0:4])[0]
+            ver = header_data[4]
+            res = header_data[5]
+            numatoms = struct.unpack('<H', header_data[6:8])[0]
+            eeplen = struct.unpack('<I', header_data[8:12])[0]
+            
+            result['header'] = {
+                'signature': f"0x{signature:08X}",
+                'version': ver,
+                'reserved': res,
+                'num_atoms': numatoms,
+                'eep_length': eeplen
+            }
+            
+            if debug:
+                print(f"Debug: Header: signature=0x{signature:08X}, ver={ver}, atoms={numatoms}, len={eeplen}")
+            
+            # Check signature (should be 0x69502d52 for "R-Pi")
+            if signature != 0x69502d52:
+                result['error'] = f'Invalid signature: expected 0x69502d52, got 0x{signature:08X}'
+                if debug:
+                    print(f"Debug: Invalid signature, but continuing parsing...")
+        
+        except struct.error as e:
+            result['error'] = f'Header parsing error: {e}'
+            return result
+        
+        # Parse atoms incrementally
+        offset = 12
+        atom_count = 0
+        
+        while atom_count < result['header']['num_atoms']:
+            # Read atom header (8 bytes)
+            atom_header_data = self.read_data(offset, 8)
+            if atom_header_data is None or len(atom_header_data) < 8:
+                if debug:
+                    print(f"Warning: Failed to read atom {atom_count} header at offset {offset}")
+                break
+            
+            # Parse atom header
+            atom_type = struct.unpack('<H', atom_header_data[0:2])[0]
+            atom_seq = struct.unpack('<H', atom_header_data[2:4])[0]
+            atom_dlen = struct.unpack('<I', atom_header_data[4:8])[0]
+            
+            if debug:
+                print(f"Debug: Atom {atom_count}: type=0x{atom_type:04X}, seq={atom_seq}, dlen={atom_dlen} at offset {offset}")
+            
+            # Validate atom data length
+            if atom_dlen < 2:
+                if debug:
+                    print(f"Warning: Invalid atom data length {atom_dlen}")
+                break
+            
+            data_len = atom_dlen - 2  # Subtract CRC length
+            
+            # Read atom data + CRC
+            atom_payload = self.read_data(offset + 8, atom_dlen)
+            if atom_payload is None or len(atom_payload) < atom_dlen:
+                if debug:
+                    print(f"Warning: Failed to read atom {atom_count} data at offset {offset + 8}")
+                break
+            
+            # Extract atom data (excluding CRC)
+            atom_data = atom_payload[:data_len]
+            
+            # Extract CRC (last 2 bytes)
+            atom_crc = struct.unpack('<H', atom_payload[data_len:data_len+2])[0]
+            
+            atom_info = {
+                'type': atom_type,
+                'sequence': atom_seq,
+                'data_length': data_len,
+                'total_length': atom_dlen,
+                'crc': atom_crc,
+                'data': atom_data
+            }
+            
+            if debug:
+                preview = atom_data[:16].hex() if len(atom_data) >= 16 else atom_data.hex()
+                print(f"Debug: Atom data preview: {preview}")
+            
+            # Parse ATOM 0x01 (Vendor info)
+            if atom_type == 0x0001:
+                atom_info['parsed'] = self._parse_vendor_atom(atom_data, debug=debug)
+                result['vendor_info'] = atom_info['parsed']
+            
+            result['atoms'].append(atom_info)
+            
+            # Move to next atom
+            offset += 8 + atom_dlen
+            atom_count += 1
+            
+            # Early exit optimization: if we only need vendor info and found it, we can stop
+            if vendor_only and atom_type == 0x0001:
+                if debug:
+                    print(f"Debug: Found vendor atom, stopping early (vendor_only=True)")
+                break
+        
+        result['valid'] = True
+        return result
 
     def is_available(self) -> bool:
         """
@@ -423,3 +642,74 @@ class HatEEPROM:
             except:
                 pass
             return False
+    
+    def short_info(self, debug: bool = False) -> dict:
+        """
+        Get concise HAT information (vendor info only)
+        This is optimized for efficiency and stops after reading the vendor atom
+        
+        Args:
+            debug: Enable debug output for parsing
+            
+        Returns:
+            Dictionary with keys: 'success', 'vendor', 'product', 'uuid', 'pid', 'pver'
+            If unsuccessful, 'success' is False and 'error' contains the error message
+        """
+        result = {
+            'success': False,
+            'vendor': 'Unknown',
+            'product': 'Unknown', 
+            'uuid': 'Unknown',
+            'pid': None,
+            'pver': None,
+            'error': None
+        }
+        
+        try:
+            # Use incremental reading with vendor_only=True for maximum efficiency
+            hat_info = self.read_and_parse_hat(size=None, debug=debug, vendor_only=True)
+            
+            if hat_info is None:
+                result['error'] = 'Failed to read EEPROM data'
+                return result
+                
+            if not hat_info['valid']:
+                result['error'] = hat_info.get('error', 'Invalid HAT EEPROM data')
+                return result
+            
+            # Extract vendor information if available
+            if hat_info.get('vendor_info'):
+                vi = hat_info['vendor_info']
+                result['success'] = True
+                result['vendor'] = vi.get('vendor', 'Unknown')
+                result['product'] = vi.get('product', 'Unknown')
+                result['uuid'] = vi.get('uuid', 'Unknown')
+                result['pid'] = vi.get('pid')
+                result['pver'] = vi.get('pver')
+            else:
+                result['error'] = 'No vendor information found in HAT EEPROM'
+                
+        except Exception as e:
+            result['error'] = f'Exception during HAT info read: {str(e)}'
+            
+        return result
+    
+    def format_short_info(self, separator: str = ':', debug: bool = False) -> str:
+        """
+        Get HAT information as a formatted string
+        
+        Args:
+            separator: String to use between vendor, product, and uuid (default: ':')
+            debug: Enable debug output for parsing
+            
+        Returns:
+            Formatted string: "vendor{separator}product{separator}uuid"
+            Returns "Unknown{separator}Unknown{separator}Unknown" if no info found
+            Returns "ERROR{separator}{error_message}" if an error occurs
+        """
+        info = self.short_info(debug=debug)
+        
+        if not info['success']:
+            return f"ERROR{separator}{info.get('error', 'Unknown error')}"
+        
+        return f"{info['vendor']}{separator}{info['product']}{separator}{info['uuid']}"

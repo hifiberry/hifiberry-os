@@ -47,8 +47,12 @@ def main():
     detect_parser.add_argument('--quiet', '-q', action='store_true', help='Quiet mode - no output, only return code')
     
     # Info command
-    info_parser = subparsers.add_parser('info', help='Display HAT information from EEPROM')
-    info_parser.add_argument('--size', type=int, help='EEPROM size in bytes (default: auto-detect from type)')
+    info_parser = subparsers.add_parser('info', help='Display HAT vendor information from EEPROM')
+    info_parser.add_argument('--debug', action='store_true', help='Enable debug output for atom parsing')
+    
+    # Short info command  
+    shortinfo_parser = subparsers.add_parser('shortinfo', help='Display HAT info in short format: vendor:product:uuid')
+    shortinfo_parser.add_argument('--debug', action='store_true', help='Enable debug output for atom parsing')
     
     args = parser.parse_args()
     
@@ -149,21 +153,21 @@ def main():
             return 1
     
     elif args.command == 'info':
-        info_size = args.size if args.size else eeprom_size
-        hat_info = eeprom.read_and_parse_hat(info_size)
+        # Always use incremental reading and stop after vendor atom for efficiency
+        hat_info = eeprom.read_and_parse_hat(size=None, debug=args.debug, vendor_only=True)
         
+        if hat_info is None:
+            print("Error: Failed to read EEPROM data")
+            return 1
+            
         if not hat_info['valid']:
             print(f"Error: {hat_info.get('error', 'Invalid HAT EEPROM data')}")
             return 1
         
-        print("HAT EEPROM Information:")
-        print(f"  Signature: {hat_info['signature']}")
-        print(f"  Version: {hat_info['version']}")
-        print(f"  Atoms found: {len(hat_info['atoms'])}")
-        
+        # Display only vendor information
         if hat_info['vendor_info']:
             vi = hat_info['vendor_info']
-            print("\nVendor Information (ATOM 0x01):")
+            print("HAT Vendor Information:")
             print(f"  UUID: {vi.get('uuid', 'N/A')}")
             
             pid = vi.get('pid')
@@ -180,18 +184,13 @@ def main():
                 
             print(f"  Vendor: {vi.get('vendor', 'N/A')}")
             print(f"  Product: {vi.get('product', 'N/A')}")
-        
-        # Display other atoms
-        for atom in hat_info['atoms']:
-            if atom['type'] != 0x0001:  # Skip vendor info atom (already displayed)
-                print(f"\nATOM 0x{atom['type']:04X}:")
-                print(f"  Length: {atom['length']} bytes")
-                # Show first 32 bytes of data as hex
-                data_preview = atom['data'][:32]
-                hex_data = ' '.join(f'{b:02X}' for b in data_preview)
-                if len(atom['data']) > 32:
-                    hex_data += '...'
-                print(f"  Data: {hex_data}")
+        else:
+            print("No vendor information found in HAT EEPROM")
+            
+    elif args.command == 'shortinfo':
+        # Use the library's short_info method for consistency
+        result = eeprom.format_short_info(separator=':', debug=args.debug)
+        print(result)
     
     return 0
 
