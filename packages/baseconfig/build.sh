@@ -2,88 +2,44 @@
 
 set -e
 
-# Define variables
-PKG_NAME="baseconfig"
-PKG_VERSION="1.0.0"
-PKG_MAINTAINER="HiFiBerry <support@hifiberry.com>"
-PKG_DESCRIPTION="Base configuration script"
-INSTALL_PATH="/usr/sbin"
-SCRIPT_NAME="baseconfig"
+# Configuration
+VERSION="1.0.0"
+PACKAGE_NAME="hifiberry-baseconfig"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="${SCRIPT_DIR}/src"
+BUILD_DIR="/tmp/build-${PACKAGE_NAME}"
 
-BUILD_DIR="build"
-DEB_DIR="$BUILD_DIR/$PKG_NAME-$PKG_VERSION"
-CONTROL_FILE="$DEB_DIR/DEBIAN/control"
-POSTINST_FILE="$DEB_DIR/DEBIAN/postinst"
-OUTPUT_DIR="$HOME/packages"
+echo "Building ${PACKAGE_NAME} package..."
 
-# Clean up previous builds
-clean() {
-    echo "Cleaning up previous builds..."
-    rm -rf "$BUILD_DIR"
-    mkdir -p "$BUILD_DIR"
-}
+# Ensure we have the source directory
+if [ ! -d "$SRC_DIR" ]; then
+    echo "Error: Source directory $SRC_DIR not found!"
+    exit 1
+fi
 
-# Create the directory structure for the Debian package
-prepare_package_structure() {
-    echo "Preparing package structure..."
-    mkdir -p "$DEB_DIR/DEBIAN"
-    mkdir -p "$DEB_DIR/$INSTALL_PATH"
-}
+# Clean and create build directory
+rm -rf "$BUILD_DIR"
+cp -r "$SRC_DIR" "$BUILD_DIR"
 
-# Create the control file
-create_control_file() {
-    echo "Creating control file..."
-    cat > "$CONTROL_FILE" <<EOL
-Package: $PKG_NAME
-Version: $PKG_VERSION
-Section: utils
-Priority: optional
-Architecture: all
-Maintainer: $PKG_MAINTAINER
-Description: $PKG_DESCRIPTION
-EOL
-}
+cd "$BUILD_DIR"
 
-# Create the post-installation script
-create_postinst_file() {
-    echo "Creating post-installation script..."
-    cat > "$POSTINST_FILE" <<EOL
-#!/bin/bash
-set -e
+# Make sure debian/rules is executable
+chmod +x debian/rules
 
-echo "Running $SCRIPT_NAME after installation..."
-$INSTALL_PATH/$SCRIPT_NAME || true
+# Build binary packages directly
+echo "Building binary packages..."
+dpkg-buildpackage -us -uc
 
-exit 0
-EOL
-    chmod 755 "$POSTINST_FILE"
-}
+# Move packages to script directory
+cd ..
+mv ${PACKAGE_NAME}_${VERSION}*.deb "${SCRIPT_DIR}/" 2>/dev/null || true
+mv ${PACKAGE_NAME}_${VERSION}*.dsc "${SCRIPT_DIR}/" 2>/dev/null || true
+mv ${PACKAGE_NAME}_${VERSION}*.tar.* "${SCRIPT_DIR}/" 2>/dev/null || true
+mv ${PACKAGE_NAME}_${VERSION}*.changes "${SCRIPT_DIR}/" 2>/dev/null || true
+mv ${PACKAGE_NAME}_${VERSION}*.buildinfo "${SCRIPT_DIR}/" 2>/dev/null || true
 
-# Copy the script to the package directory
-copy_files() {
-    echo "Copying files..."
-    cp "$SCRIPT_NAME" "$DEB_DIR/$INSTALL_PATH/"
-    chmod 755 "$DEB_DIR/$INSTALL_PATH/$SCRIPT_NAME"
-}
-
-# Build the Debian package
-build_package() {
-    echo "Building Debian package..."
-    dpkg-deb --build "$DEB_DIR"
-    mkdir -p "$OUTPUT_DIR"
-    mv "$DEB_DIR.deb" "$OUTPUT_DIR/${PKG_NAME}_${PKG_VERSION}_all.deb"
-    echo "Package built: $OUTPUT_DIR/${PKG_NAME}_${PKG_VERSION}_all.deb"
-}
-
-# Main function
-main() {
-    clean
-    prepare_package_structure
-    create_control_file
-    create_postinst_file
-    copy_files
-    build_package
-}
-
-main "$@"
+echo "Build completed successfully!"
+echo "Packages built in ${SCRIPT_DIR}:"
+cd "${SCRIPT_DIR}"
+ls -la *${VERSION}*.deb 2>/dev/null || echo "No .deb files found"
 

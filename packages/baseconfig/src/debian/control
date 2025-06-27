@@ -1,0 +1,18 @@
+Source: hifiberry-baseconfig
+Section: utils
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://hifiberry.com/os
+
+Package: hifiberry-baseconfig
+Architecture: all
+Depends: uuid
+Description: HiFiBerry base configuration script
+ This package provides the base configuration script for HiFiBerry OS.
+ It ensures that a unique UUID is generated and stored for the system
+ if one does not already exist.
+ .
+ The script generates a UUID in /etc/uuid if the file is missing or empty,
+ which is used for system identification purposes.

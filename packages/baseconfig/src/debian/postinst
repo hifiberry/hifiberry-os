@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+echo "Running baseconfig after installation..."
+/usr/sbin/baseconfig || true
+
+#DEBHELPER#
+
+exit 0
