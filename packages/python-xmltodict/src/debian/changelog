@@ -1,0 +1,7 @@
+python3-xmltodict (0.13.0-1) unstable; urgency=medium
+
+  * Initial HiFiBerry packaging of xmltodict
+  * Package Python XML to dictionary converter library
+  * Downloaded from PyPI and packaged for HiFiBerry OS
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 22 Jan 2025 12:00:00 +0000

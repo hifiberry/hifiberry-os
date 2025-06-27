@@ -1,0 +1,29 @@
+Source: python3-xmltodict
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               wget,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://pypi.org/project/xmltodict/
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: python3-xmltodict
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: Python library to convert XML to Python dictionaries
+ This package provides a Python library that converts XML documents
+ to Python dictionaries. It simplifies working with XML data by
+ providing a more Pythonic interface.
+ .
+ Features include:
+  - Simple XML to dictionary conversion
+  - Lightweight and easy to use
+  - Pure Python implementation
+ .
+ This is the Python 3 version of the package.

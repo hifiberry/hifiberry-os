@@ -3,56 +3,45 @@
 # Exit on error
 set -e
 
-# Define variables
-PACKAGE="xmltodict"
-DEB_OUTPUT_DIR="deb_dist"
-DEST_DIR="$HOME/packages"
-VERSION="latest"  # Change to a specific version if needed
+PACKAGE="python3-xmltodict"
+VERSION="0.13.0"
+DIST="bullseye"
+CHROOT="${DIST}-amd64-sbuild"
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="$(dirname $(realpath $0))/src"
+SCRIPT_DIR="$(dirname $(realpath $0))"
 
-# Function to clean up build files
-clean() {
-    echo "Cleaning up build files..."
-    rm -rf "$PACKAGE-"* build dist deb_dist *.egg-info
-    echo "Cleanup completed."
-}
+echo "Building $PACKAGE version $VERSION"
 
-# Check for --clean option
-if [[ "$1" == "--clean" ]]; then
-    clean
-    exit 0
-fi
+# Clean previous build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
-# Step 1: Download the source package from PyPI
-if [ "$VERSION" == "latest" ]; then
-    echo "Downloading the latest version of $PACKAGE from PyPI..."
-    pip download $PACKAGE --no-binary :all: --no-deps
-else
-    echo "Downloading $PACKAGE version $VERSION from PyPI..."
-    pip download $PACKAGE==$VERSION --no-binary :all: --no-deps
-fi
+# Copy source files to build directory
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
 
-# Step 2: Extract the source package
-echo "Extracting the source package..."
-TAR_FILE=$(ls $PACKAGE-*.tar.gz)
-tar -xvzf "$TAR_FILE"
-SRC_DIR=$(basename "$TAR_FILE" .tar.gz)
-cd "$SRC_DIR"
+# Change to build directory
+cd "$BUILD_DIR"
 
-# Step 3: Clean up .pyc files
-echo "Cleaning up .pyc files..."
-find . -name "*.pyc" -exec rm -f {} +
-find . -name "__pycache__" -exec rm -rf {} +
+# Build package using sbuild
+echo "Using sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    --dist="$DIST" \
+    --chroot="$CHROOT" \
+    --build-dir="$BUILD_DIR" \
+    --no-run-lintian \
+    --verbose
 
-# Step 4: Build the Debian package
-echo "Building the Debian package for $PACKAGE..."
-python3 setup.py --command-packages=stdeb.command bdist_deb
+# Move build artifacts to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
 
-# Step 5: Locate and copy the generated .deb files
-echo "Copying .deb files to $DEST_DIR..."
-mkdir -p "$DEST_DIR"
-find "$DEB_OUTPUT_DIR" -name '*.deb' -exec cp {} "$DEST_DIR" \;
-
-# Step 6: Output the result
-echo "Debian packages for $PACKAGE have been created and copied to: $DEST_DIR"
-find "$DEST_DIR" -name '*.deb'
+echo "Package built successfully"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
 
