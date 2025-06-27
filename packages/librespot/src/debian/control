@@ -25,7 +25,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libdbus-1-3,
          libglib2.0-0,
          python3-configurator (>= 1.4.2),
-         adduser
+         adduser,
+         hifiberry-pipewire
 Provides: librespot
 Conflicts: librespot
 Replaces: librespot
