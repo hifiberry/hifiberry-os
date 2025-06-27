@@ -165,8 +165,19 @@ def main():
             vi = hat_info['vendor_info']
             print("\nVendor Information (ATOM 0x01):")
             print(f"  UUID: {vi.get('uuid', 'N/A')}")
-            print(f"  Product ID: 0x{vi.get('pid', 0):04X}")
-            print(f"  Product Version: 0x{vi.get('pver', 0):04X}")
+            
+            pid = vi.get('pid')
+            if pid is not None:
+                print(f"  Product ID: 0x{pid:04X}")
+            else:
+                print("  Product ID: N/A")
+            
+            pver = vi.get('pver')
+            if pver is not None:
+                print(f"  Product Version: 0x{pver:04X}")
+            else:
+                print("  Product Version: N/A")
+                
             print(f"  Vendor: {vi.get('vendor', 'N/A')}")
             print(f"  Product: {vi.get('product', 'N/A')}")
         

@@ -17,7 +17,7 @@ except ImportError:
 class BitbangI2C:
     """Bitbanging I2C implementation using libgpiod"""
     
-    def __init__(self, chip_name: str = "gpiochip0", sda_pin: int = 0, scl_pin: int = 1, delay: float = 0.00001):
+    def __init__(self, chip_name: str = "gpiochip0", sda_pin: int = 0, scl_pin: int = 1, delay: float = 0.000005):
         """
         Initialize I2C bitbang interface
         
@@ -25,7 +25,7 @@ class BitbangI2C:
             chip_name: GPIO chip name (default: gpiochip0)
             sda_pin: SDA pin number (default: 0 - GPIO0)
             scl_pin: SCL pin number (default: 1 - GPIO1)  
-            delay: Bit delay in seconds (default: 10us)
+            delay: Bit delay in seconds (default: 5us for faster operation)
         """
         self.sda_pin = sda_pin
         self.scl_pin = scl_pin
