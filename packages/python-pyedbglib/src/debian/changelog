@@ -1,0 +1,7 @@
+python3-pyedbglib (2.24.2-1) unstable; urgency=medium
+
+  * Initial HiFiBerry packaging of pyedbglib
+  * Package Python library for EDBG communications
+  * Clone from upstream GitHub repository
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 22 Jan 2025 12:00:00 +0000

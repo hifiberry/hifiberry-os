@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	# Install the pyedbglib package
+	mkdir -p debian/python3-pyedbglib/usr/lib/python3/dist-packages/
+	cp -r pyedbglib debian/python3-pyedbglib/usr/lib/python3/dist-packages/
+
+override_dh_auto_test:
+	# Skip tests - no test suite provided
