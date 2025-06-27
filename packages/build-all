@@ -2,32 +2,46 @@
 
 set -e
 
+# Parse command line arguments
+CLEAN_MODE=false
+if [ "$1" = "--clean" ]; then
+    CLEAN_MODE=true
+    echo "Clean mode enabled - will clean and rebuild all packages"
+fi
+
 # Define the packages directory
 PACKAGES_DIR="$HOME/packages"
 
-# Step 1: Clean ~/packages directory
-echo "Cleaning $PACKAGES_DIR..."
-if [ -d "$PACKAGES_DIR" ]; then
-    find "$PACKAGES_DIR" -type f -name "*.deb" -exec rm -f {} +
-    echo "All .deb files removed from $PACKAGES_DIR."
-else
-    echo "$PACKAGES_DIR does not exist. Creating it now..."
-    mkdir -p "$PACKAGES_DIR"
-fi
-
-# Step 2: Iterate through all subdirectories
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Looking for build.sh in subdirectories of $SCRIPT_DIR..."
 
 for dir in "$SCRIPT_DIR"/*/; do
     figlet `basename $dir`
     if [ -f "$dir/build.sh" ]; then
-        echo "Found build.sh in $dir. Executing..."
+        echo "Found build.sh in $dir"
+        
+        # Check if .deb files already exist (unless cleaning)
+        if [ "$CLEAN_MODE" = false ] && ls "$dir"/*.deb 1> /dev/null 2>&1; then
+            echo "Found existing .deb files in $dir. Skipping build (use --clean to force rebuild)..."
+            echo 
+            sleep 1
+            continue
+        fi
+        
+        echo "Executing build process..."
         (
             cd "$dir"
-            ./build.sh --clean
+            chmod ugo+x ./build.sh 2>/dev/null || true
+            chmod ugo+x ./clean.sh 2>/dev/null || true
+            
+            # Run clean.sh only if clean mode is enabled or if it doesn't exist
+            if [ "$CLEAN_MODE" = true ] && [ -f clean.sh ]; then
+                echo "Running clean.sh in $dir..."
+                ./clean.sh
+            fi
+            
+            echo "Running build.sh in $dir..."
             ./build.sh
-            ./build.sh --clean
             echo 
             sleep 2
         )
