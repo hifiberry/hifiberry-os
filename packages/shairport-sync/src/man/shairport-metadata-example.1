@@ -1,0 +1,33 @@
+.TH SHAIRPORT-METADATA-EXAMPLE 1 "December 2024" "shairport-metadata-example" "User Commands"
+.SH NAME
+shairport-metadata-example \- Example metadata handler for Shairport Sync
+.SH SYNOPSIS
+.B shairport-metadata-example
+.SH DESCRIPTION
+.B shairport-metadata-example
+is an example script that demonstrates how to handle metadata from Shairport Sync.
+It can be used as a template for creating custom metadata processing scripts.
+.PP
+This script processes metadata information from AirPlay streams and can be configured
+as a metadata handler in the Shairport Sync configuration file.
+.SH CONFIGURATION
+To use this script as a metadata handler, add it to your shairport-sync configuration:
+.PP
+.RS
+metadata = {
+.RS
+enabled = "yes";
+.br
+program = "/usr/bin/shairport-metadata-example";
+.RE
+};
+.RE
+.SH FILES
+.TP
+.I /etc/shairport-sync.conf
+Main configuration file for Shairport Sync
+.SH SEE ALSO
+.BR shairport-sync (1),
+.BR shairport-sync-metadata-reader (1)
+.SH AUTHOR
+HiFiBerry team

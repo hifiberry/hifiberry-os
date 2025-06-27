@@ -1,0 +1,39 @@
+.TH NQPTP 1 "December 2024" "nqptp" "User Commands"
+.SH NAME
+nqptp \- Not Quite Precision Time Protocol daemon
+.SH SYNOPSIS
+.B nqptp
+.RI [ options ]
+.SH DESCRIPTION
+.B nqptp
+is a daemon that provides time synchronization services for Shairport Sync.
+It implements a subset of the Precision Time Protocol (PTP) to maintain
+accurate timing between AirPlay devices and the audio receiver.
+.PP
+This daemon is essential for proper audio synchronization in AirPlay 2
+implementations and should be running before starting Shairport Sync.
+.SH OPTIONS
+Run
+.B nqptp --help
+for available command line options.
+.SH FILES
+.TP
+.I /lib/systemd/system/nqptp.service
+Systemd service file for nqptp daemon
+.SH SYSTEMD INTEGRATION
+The daemon can be controlled using systemd:
+.PP
+.RS
+systemctl start nqptp
+.br
+systemctl enable nqptp
+.br
+systemctl status nqptp
+.RE
+.SH SEE ALSO
+.BR shairport-sync (1),
+.BR systemctl (1)
+.SH AUTHOR
+Mike Brady and contributors
+.PP
+This manual page was written for the HiFiBerry OS package.

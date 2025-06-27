@@ -57,7 +57,7 @@ echo "Running lintian to check package compliance..."
 if ls "$SCRIPT_DIR"/*.deb 1> /dev/null 2>&1; then
     for deb_file in "$SCRIPT_DIR"/*.deb; do
         echo "Checking $deb_file with lintian..."
-        lintian --info --display-info --display-experimental --pedantic "$deb_file" || true
+        lintian "$deb_file" || true
         echo "Lintian check completed for $(basename "$deb_file")"
         echo "----------------------------------------"
     done

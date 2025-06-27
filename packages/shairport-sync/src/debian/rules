@@ -39,28 +39,37 @@ override_dh_auto_install:
 	install -D -m755 nqptp/nqptp $(CURDIR)/debian/hifiberry-shairport/usr/bin/nqptp
 	if [ -f "nqptp/nqptp.1" ]; then \
 		install -D -m644 nqptp/nqptp.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/nqptp.1; \
+	else \
+		install -D -m644 man/nqptp.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/nqptp.1; \
 	fi
 	
 	# Install metadata reader
 	install -D -m755 metadata-reader/shairport-sync-metadata-reader $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-sync-metadata-reader
+	install -D -m644 man/shairport-sync-metadata-reader.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-sync-metadata-reader.1
 	
-	# Install custom scripts
-	install -D -m755 start-shairport.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/start-shairport.sh
-	install -D -m755 shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event.sh
-	install -D -m755 shairport-metadata-example.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-metadata-example.sh
-	install -D -m755 shairport-playpause.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-playpause.sh
+	# Install custom scripts (remove .sh extensions)
+	install -D -m755 start-shairport.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/start-shairport
+	install -D -m755 shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event
+	install -D -m755 shairport-metadata-example.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-metadata-example
+	install -D -m755 shairport-playpause.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-playpause
 	
 	# Install man pages for event scripts
-	install -D -m644 man/shairport-start.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-start.1
-	install -D -m644 man/shairport-stop.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-stop.1
+	install -D -m644 man/shairport-event-start.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event-start.1
+	install -D -m644 man/shairport-event-stop.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event-stop.1
+	install -D -m644 man/shairport-event.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event.1
+	install -D -m644 man/shairport-metadata-example.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-metadata-example.1
+	install -D -m644 man/shairport-playpause.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-playpause.1
+	install -D -m644 man/shairport-event.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event.1
+	install -D -m644 man/shairport-metadata-example.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-metadata-example.1
+	install -D -m644 man/shairport-playpause.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-playpause.1
 	
 	# Install default configuration file
 	install -D -m644 shairport-sync.conf.default $(CURDIR)/debian/hifiberry-shairport/etc/shairport-sync.conf.default
 	
-	# Create symlinks for start and stop scripts
+	# Create symlinks for start and stop scripts (these point to the event handler)
 	mkdir -p $(CURDIR)/debian/hifiberry-shairport/usr/bin/
-	ln -sf /usr/bin/shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-start
-	ln -sf /usr/bin/shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-stop
+	ln -sf /usr/bin/shairport-event $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event-start
+	ln -sf /usr/bin/shairport-event $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event-stop
 
 override_dh_auto_clean:
 	rm -rf nqptp/

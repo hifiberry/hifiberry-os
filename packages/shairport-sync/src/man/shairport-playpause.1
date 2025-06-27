@@ -1,0 +1,34 @@
+.TH SHAIRPORT-PLAYPAUSE 1 "December 2024" "shairport-playpause" "User Commands"
+.SH NAME
+shairport-playpause \- Play/pause control script for Shairport Sync
+.SH SYNOPSIS
+.B shairport-playpause
+.SH DESCRIPTION
+.B shairport-playpause
+is a control script that handles play and pause events for Shairport Sync.
+It can be used to integrate with other audio systems or perform custom actions
+when playback state changes.
+.PP
+This script is typically configured as an event handler in the Shairport Sync
+configuration file to respond to play/pause events from AirPlay clients.
+.SH CONFIGURATION
+To use this script as a play/pause handler, configure it in your shairport-sync configuration:
+.PP
+.RS
+sessioncontrol = {
+.RS
+allow_session_interruption = "yes";
+.br
+session_timeout = 120;
+.RE
+};
+.RE
+.SH FILES
+.TP
+.I /etc/shairport-sync.conf
+Main configuration file for Shairport Sync
+.SH SEE ALSO
+.BR shairport-sync (1),
+.BR shairport-event (1)
+.SH AUTHOR
+HiFiBerry team

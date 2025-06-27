@@ -1,5 +1,6 @@
 [Unit]
 Description=Shairport Sync - AirPlay Audio Receiver
+Documentation=man:shairport-sync(1) https://github.com/mikebrady/shairport-sync
 After=sound.target network.target
 Wants=nqptp.service
 After=nqptp.service 
@@ -9,7 +10,7 @@ After=pipewire.service
 Type=simple
 User=shairport-sync
 Group=shairport-sync
-ExecStart=/usr/bin/start-shairport.sh
+ExecStart=/usr/bin/start-shairport
 Restart=always
 RestartSec=2
 
