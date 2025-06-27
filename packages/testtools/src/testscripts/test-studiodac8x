@@ -7,7 +7,7 @@ MINOR=1
 sudo modprobe i2c-dev
 
 # Write firmware to controller
-sudo pymcuprog write --erase -d attiny402 -t uart -u /dev/ttyAMA0 -f /opt/test/firmware/studiodac8x-${MAJOR}.${MINOR}.hex
+sudo pymcuprog write --erase -d attiny402 -t uart -u /dev/ttyAMA0 -f /usr/share/testtools/firmware/studiodac8x-${MAJOR}.${MINOR}.hex
 sleep 2
 
 # Read back version from Microcontroller to check if the firmware was installed correctly

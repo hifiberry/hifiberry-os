@@ -1,10 +1,18 @@
-testtools (1.0.2-1) bookworm; urgency=medium
+testtools (1.0.3) bullseye; urgency=medium
+
+  * Converted to sbuild-based packaging
+  * Fixed lintian errors and warnings
+  * Moved test scripts to /usr/libexec/testtools
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Jun 2025 09:00:00 +0000
+
+testtools (1.0.2) bookworm; urgency=medium
 
   * Fix StudioDAC8x setup
 
- --  <support@hifiberry.com>  Tue, 25 Feb 2025 11:14:19 +0000
+ -- HiFiBerry <support@hifiberry.com>  Tue, 25 Feb 2025 11:14:19 +0000
 
-testtools (1.0.1-2) bookworm; urgency=medium
+testtools (1.0.1) bookworm; urgency=medium
 
   * Add pyedbglib dependency
 

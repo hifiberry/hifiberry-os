@@ -9,5 +9,5 @@ fi
 clear
 figlet Testing
 
-/opt/test/bin/active-test
+/usr/libexec/testtools/active-test
 

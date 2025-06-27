@@ -7,11 +7,29 @@ override_dh_auto_build:
 	echo "No build required"
 
 override_dh_auto_install:
-	mkdir -p debian/testtools/opt/test/bin
+	mkdir -p debian/testtools/usr/libexec/testtools
 	mkdir -p debian/testtools/usr/bin
-	mkdir -p debian/testtools/opt/test/firmware
+	mkdir -p debian/testtools/usr/share/testtools/firmware
+	mkdir -p debian/testtools/usr/share/man/man1
 	mkdir -p debian/testtools/etc/systemd/system/getty@tty1.service.d/
-	cp -r testscripts/* debian/testtools/opt/test/bin
-	cp -r bin/* debian/testtools/usr/bin
-	cp -r firmware/* debian/testtools/opt/test/firmware
+	
+	# Copy test scripts to libexec (preferred location for helper scripts)
+	cp -r testscripts/* debian/testtools/usr/libexec/testtools/
+	chmod +x debian/testtools/usr/libexec/testtools/*
+	
+	# Copy user binaries
+	cp -r bin/* debian/testtools/usr/bin/
+	chmod +x debian/testtools/usr/bin/*
+	
+	# Copy firmware files
+	cp -r firmware/* debian/testtools/usr/share/testtools/firmware/
+	
+	# Copy autologin configuration
 	cp autologin.conf debian/testtools/etc/systemd/system/getty@tty1.service.d/
+	
+	# Install manual page
+	cp man/check-rms.1 debian/testtools/usr/share/man/man1/
+
+override_dh_auto_clean:
+	find . -name "*.pyc" -delete 2>/dev/null || true
+	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true

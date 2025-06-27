@@ -8,13 +8,13 @@ systemctl enable getty@tty1.service
 systemctl daemon-reload
 
 # Screen resolution
-if ! grep -q "/opt/test/bin/set-resolution" /home/pi/.bashrc; then
-    echo "/opt/test/bin/set-resolution" >> /home/pi/.bashrc
+if ! grep -q "/usr/libexec/testtools/set-resolution" /home/pi/.bashrc; then
+    echo "/usr/libexec/testtools/set-resolution" >> /home/pi/.bashrc
 fi
 
 # Run test script
-if ! grep -q "/opt/test/bin/run-test" /home/pi/.bashrc; then
-    echo "/opt/test/bin/run-test" >> /home/pi/.bashrc
+if ! grep -q "/usr/libexec/testtools/run-test" /home/pi/.bashrc; then
+    echo "/usr/libexec/testtools/run-test" >> /home/pi/.bashrc
 fi
 
 echo "Autologin setup completed."

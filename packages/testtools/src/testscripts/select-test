@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directory containing the test scripts
-test_dir="/opt/test/bin"
+test_dir="/usr/libexec/testtools"
 
 # Get all test-XXX files from the directory
 test_files=$(ls $test_dir/test-* 2> /dev/null)
@@ -26,7 +26,7 @@ select fname in $(echo $test_files | xargs -n 1 basename | sed 's/test-//'); do
     fi
 
     # Update the active test link
-    sudo ln -sfn $test_dir/$test_script /opt/test/bin/active-test
+    sudo ln -sfn $test_dir/$test_script /usr/libexec/testtools/active-test
     echo "Activated $test_script as the current test."
 
     break  # Exit the select loop after one choice
