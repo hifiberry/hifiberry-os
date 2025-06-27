@@ -1,45 +1,71 @@
 #!/bin/bash
 
+# Exit on error
 set -e
 
-# Configuration
-VERSION="4.3.7"
-VERSION_POSTFIX=2 # 1,2,3,... unset when VERSION increases to start from 0 again
-PACKAGE_NAME="hifiberry-shairport"
-DOCKER_TAG="shairport-build-env"
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DOCKER_DIR="${SCRIPT_DIR}/shairport-docker-build"
-OUTPUT_DIR="${SCRIPT_DIR}/out"
+PACKAGE="hifiberry-shairport"
+VERSION="4.3.7.2"
+DIST="bullseye"
+CHROOT="${DIST}-amd64-sbuild"
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="$(dirname $(realpath $0))/src"
+SCRIPT_DIR="$(dirname $(realpath $0))"
 
-# Construct full version string - append VERSION_POSTFIX if it exists
-FULL_VERSION="${VERSION}"
-if [ -n "${VERSION_POSTFIX}" ]; then
-    FULL_VERSION="${VERSION}.${VERSION_POSTFIX}"
+# Parse arguments
+NO_UPDATE=false
+for arg in "$@"; do
+  case $arg in
+    --no-update)
+      NO_UPDATE=true
+      shift
+      ;;
+  esac
+done
+
+echo "Building $PACKAGE version $VERSION"
+
+# Clean previous build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+
+# Copy source files to build directory
+echo "Copying source files..."
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
+
+# Change to build directory
+cd "$BUILD_DIR"
+
+# Build package using sbuild
+echo "Using sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    --dist="$DIST" \
+    --chroot="$CHROOT" \
+    --build-dir="$BUILD_DIR" \
+    --verbose
+
+# Move build artifacts to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+
+# Run lintian on the built package
+echo "Running lintian to check package compliance..."
+if ls "$SCRIPT_DIR"/*.deb 1> /dev/null 2>&1; then
+    for deb_file in "$SCRIPT_DIR"/*.deb; do
+        echo "Checking $deb_file with lintian..."
+        lintian --info --display-info --display-experimental --pedantic "$deb_file" || true
+        echo "Lintian check completed for $(basename "$deb_file")"
+        echo "----------------------------------------"
+    done
+else
+    echo "No .deb files found to check with lintian"
 fi
 
-# Ensure output directory exists
-mkdir -p "$OUTPUT_DIR"
-
-# Build Docker image
-echo "Building Docker image for shairport-sync build environment..."
-docker build --progress=plain -t "$DOCKER_TAG" "$DOCKER_DIR"
-
-# Create package in Docker container - run in foreground to see build output
-echo "Building package in Docker container for reproducible build..."
-docker run --name shairport_build \
-    -e "SHAIRPORT_VERSION=$VERSION" \
-    -e "PACKAGE_VERSION=$FULL_VERSION" \
-    "$DOCKER_TAG"
-
-# Copy package from container after build
-echo "Copying package from container..."
-PKG_NAME="${PACKAGE_NAME}_${FULL_VERSION}-1_arm64.deb"
-docker cp "shairport_build:/out/$PKG_NAME" "$OUTPUT_DIR/"
-
-# Clean up container
-docker rm shairport_build
-
-# Show build results
-echo "Package build complete. Output available in ${OUTPUT_DIR}"
-ls -la "$OUTPUT_DIR"
+echo "Package built successfully"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
 

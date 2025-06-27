@@ -1,0 +1,72 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# Download and build NQPTP first
+	@echo "Building NQPTP..."
+	git clone https://github.com/mikebrady/nqptp.git nqptp
+	cd nqptp && git checkout 1.2.4
+	cd nqptp && autoreconf -fi && ./configure --with-systemd-startup && make
+	
+	# Download and build metadata reader
+	@echo "Building metadata reader..."
+	git clone https://github.com/mikebrady/shairport-sync-metadata-reader.git metadata-reader
+	cd metadata-reader && autoreconf -fi && ./configure && make
+	
+	# Download and configure shairport-sync
+	@echo "Downloading and configuring shairport-sync..."
+	wget https://github.com/mikebrady/shairport-sync/archive/refs/tags/4.3.7.tar.gz -O shairport-sync-4.3.7.tar.gz
+	tar -xzf shairport-sync-4.3.7.tar.gz
+	cd shairport-sync-4.3.7 && autoreconf -fi
+	cd shairport-sync-4.3.7 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --with-mqtt-client --with-dbus-interface --with-mpris-interface --with-systemd --with-avahi --with-alsa --with-soxr --with-pipe --with-stdout --with-metadata
+
+override_dh_auto_build:
+	# Build shairport-sync
+	cd shairport-sync-4.3.7 && make
+
+override_dh_auto_install:
+	# Install shairport-sync
+	cd shairport-sync-4.3.7 && sed -i '/getent group/d' Makefile && sed -i '/getent passwd/d' Makefile && sed -i '/cp \.\/scripts\/shairport-sync\.conf/d' Makefile
+	cd shairport-sync-4.3.7 && make install DESTDIR=$(CURDIR)/debian/hifiberry-shairport AM_UPDATE_INFO_DIR=no
+	
+	# Install systemd service files
+	install -D -m644 systemd/shairport.service $(CURDIR)/debian/hifiberry-shairport/usr/lib/systemd/system/shairport.service
+	install -D -m644 systemd/nqptp.service $(CURDIR)/debian/hifiberry-shairport/usr/lib/systemd/system/nqptp.service
+	
+	# Install NQPTP binary and man page
+	install -D -m755 nqptp/nqptp $(CURDIR)/debian/hifiberry-shairport/usr/bin/nqptp
+	if [ -f "nqptp/nqptp.1" ]; then \
+		install -D -m644 nqptp/nqptp.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/nqptp.1; \
+	fi
+	
+	# Install metadata reader
+	install -D -m755 metadata-reader/shairport-sync-metadata-reader $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-sync-metadata-reader
+	
+	# Install custom scripts
+	install -D -m755 start-shairport.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/start-shairport.sh
+	install -D -m755 shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event.sh
+	install -D -m755 shairport-metadata-example.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-metadata-example.sh
+	install -D -m755 shairport-playpause.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-playpause.sh
+	
+	# Install man pages for event scripts
+	install -D -m644 man/shairport-start.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-start.1
+	install -D -m644 man/shairport-stop.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-stop.1
+	
+	# Install default configuration file
+	install -D -m644 shairport-sync.conf.default $(CURDIR)/debian/hifiberry-shairport/etc/shairport-sync.conf.default
+	
+	# Create symlinks for start and stop scripts
+	mkdir -p $(CURDIR)/debian/hifiberry-shairport/usr/bin/
+	ln -sf /usr/bin/shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-start
+	ln -sf /usr/bin/shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-stop
+
+override_dh_auto_clean:
+	rm -rf nqptp/
+	rm -rf metadata-reader/
+	rm -rf shairport-sync-4.3.7/
+	rm -f shairport-sync-4.3.7.tar.gz
+
+override_dh_auto_test:
+	# Skip tests - requires audio hardware and network setup

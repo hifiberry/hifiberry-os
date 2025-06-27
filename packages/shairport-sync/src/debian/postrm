@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+# Remove users and groups on purge
+if [ "$1" = "purge" ]; then
+    # Remove runtime directory
+    rm -rf /var/run/shairport || true
+    
+    # Remove tmpfiles.d configuration
+    rm -f /usr/lib/tmpfiles.d/shairport-sync.conf || true
+    
+    # Remove users (only if they exist and have no other packages depending on them)
+    if getent passwd shairport-sync > /dev/null; then
+        deluser --quiet shairport-sync || true
+    fi
+    
+    if getent passwd nqptp > /dev/null; then
+        deluser --quiet nqptp || true
+    fi
+    
+    # Remove groups (only if they exist and are empty)
+    if getent group shairport-sync > /dev/null; then
+        delgroup --quiet shairport-sync || true
+    fi
+    
+    if getent group nqptp > /dev/null; then
+        delgroup --quiet nqptp || true
+    fi
+fi
+
+#DEBHELPER#

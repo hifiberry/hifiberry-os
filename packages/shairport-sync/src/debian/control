@@ -1,0 +1,72 @@
+Source: hifiberry-shairport
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               libssl-dev,
+               libavahi-client-dev,
+               libpopt-dev,
+               libconfig-dev,
+               libdaemon-dev,
+               libsoxr-dev,
+               avahi-daemon,
+               libplist-dev,
+               libsodium-dev,
+               libgcrypt-dev,
+               libavutil-dev,
+               libavcodec-dev,
+               libavformat-dev,
+               uuid-dev,
+               libsystemd-dev,
+               libglib2.0-dev,
+               libmosquitto-dev,
+               libasound2-dev,
+               vim-common,
+               build-essential,
+               autotools-dev,
+               autoconf,
+               automake,
+               libtool,
+               pkg-config,
+               git,
+               ca-certificates,
+               wget
+Standards-Version: 4.6.0
+Homepage: https://github.com/mikebrady/shairport-sync
+Vcs-Git: https://github.com/mikebrady/shairport-sync.git
+Vcs-Browser: https://github.com/mikebrady/shairport-sync
+
+Package: hifiberry-shairport
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libssl3,
+         libavahi-client3,
+         libpopt0,
+         libconfig9,
+         libdaemon0,
+         libsoxr0,
+         avahi-daemon,
+         libplist3,
+         libsodium23,
+         libgcrypt20,
+         libavutil56,
+         libavcodec58,
+         libavformat58,
+         uuid-dev,
+         libsystemd0,
+         libcap2-bin,
+         libglib2.0-0,
+         libmosquitto1
+Provides: shairport-sync, nqptp
+Conflicts: shairport-sync, nqptp
+Replaces: shairport-sync, nqptp
+Description: HiFiBerry AirPlay audio player with NQPTP
+ A multi-room synchronized audio player for AirPlay devices,
+ customized for HiFiBerry devices. Includes NQPTP daemon for
+ network clock synchronization required by AirPlay 2.
+ .
+ This package includes:
+  - Shairport Sync AirPlay receiver
+  - NQPTP network time synchronization daemon
+  - Metadata reader for AirPlay information
+  - Custom HiFiBerry integration scripts

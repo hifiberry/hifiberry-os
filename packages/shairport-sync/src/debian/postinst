@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+
+# Create shairport-sync group if it doesn't exist
+if ! getent group shairport-sync > /dev/null; then
+    addgroup --system shairport-sync
+fi
+
+# Create shairport-sync user if it doesn't exist
+if ! getent passwd shairport-sync > /dev/null; then
+    adduser --system --ingroup shairport-sync --no-create-home --shell /usr/sbin/nologin shairport-sync
+    usermod -a -G audio shairport-sync
+fi
+
+# Create nqptp group if it doesn't exist
+if ! getent group nqptp > /dev/null; then
+    addgroup --system nqptp
+fi
+
+# Create nqptp user if it doesn't exist
+if ! getent passwd nqptp > /dev/null; then
+    adduser --system --ingroup nqptp --no-create-home --shell /usr/sbin/nologin nqptp
+fi
+
+# Add shairport-sync user to pipewire group for PipeWire integration
+if getent group pipewire > /dev/null; then
+    usermod -a -G pipewire shairport-sync || true
+fi
+
+# Create runtime directory for shairport-sync
+if [ ! -d /var/run/shairport ]; then
+    mkdir -p /var/run/shairport
+    chown shairport-sync:shairport-sync /var/run/shairport
+    chmod 755 /var/run/shairport
+fi
+
+# Add tmpfiles.d configuration for persistent directory across reboots
+if [ -d /usr/lib/tmpfiles.d ]; then
+    cat > /usr/lib/tmpfiles.d/shairport-sync.conf <<EOF
+# Create /var/run/shairport directory at boot
+d /var/run/shairport 0755 shairport-sync shairport-sync -
+EOF
+fi
+
+# Set capabilities for nqptp
+if command -v setcap > /dev/null; then
+    setcap 'cap_net_bind_service=+ep' /usr/bin/nqptp || true
+fi
+
+# Enable and start systemd services
+if [ -x /bin/systemctl ] || [ -x /usr/bin/systemctl ]; then
+    systemctl daemon-reload || true
+    
+    # Enable and start nqptp service first
+    systemctl enable nqptp.service || true
+    systemctl start nqptp.service || true
+    
+    # Enable and start shairport service
+    systemctl enable shairport.service || true
+    systemctl start shairport.service || true
+fi
+
+#DEBHELPER#
