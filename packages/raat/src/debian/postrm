@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    purge)
+        # Remove raat user and home directory
+        if getent passwd raat >/dev/null; then
+            deluser raat || true
+        fi
+        
+        if getent group raat >/dev/null; then
+            delgroup raat || true
+        fi
+        
+        # Remove home directory
+        rm -rf /var/lib/raat || true
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

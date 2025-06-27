@@ -1,0 +1,7 @@
+hifiberry-raat (1.1.43.4-1) unstable; urgency=medium
+
+  * Initial HiFiBerry packaging of RAAT
+  * Room Assistant Audio Technology for multi-room audio
+  * Clone from HiFiBerry GitHub repository
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 22 Jan 2025 12:00:00 +0000

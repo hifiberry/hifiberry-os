@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    configure)
+        # Create raat user and group if they don't exist
+        if ! getent group raat >/dev/null; then
+            addgroup --system raat
+        fi
+        
+        if ! getent passwd raat >/dev/null; then
+            adduser --system --ingroup raat --home /var/lib/raat --shell /bin/false raat
+        fi
+        
+        # Create home directory and set permissions
+        mkdir -p /var/lib/raat
+        chown raat:raat /var/lib/raat
+        chmod 755 /var/lib/raat
+        
+        # Enable and start the service
+        systemctl daemon-reload
+        systemctl enable raat.service
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

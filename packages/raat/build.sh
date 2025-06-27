@@ -1,8 +1,17 @@
 #!/bin/bash
 
+# Exit on error
 set -e
 
-cd `dirname $0`
+PACKAGE="hifiberry-raat"
+VERSION="$(cat $(dirname $(realpath $0))/version.txt | tr -d '\n')"
+DIST="bullseye"
+CHROOT="${DIST}-amd64-sbuild"
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="$(dirname $(realpath $0))/src"
+SCRIPT_DIR="$(dirname $(realpath $0))"
+REPO_URL="https://github.com/hifiberry/raat"
+REPO_DIR="$SRC_DIR/raat"
 
 # Parse arguments
 NO_UPDATE=false
@@ -15,53 +24,65 @@ for arg in "$@"; do
   esac
 done
 
-# Read version from version.txt
-VERSION=$(cat version.txt)
-VERSION_SUFFIX=""  # Leave empty or set to a value like "1" for 1.0.0.1
+echo "Building $PACKAGE version $VERSION"
 
-if [ ! -d out ]; then
-  mkdir out
-fi
-
-cd raat-docker-build
-
-# Copy version.txt to the docker build directory
-cp ../version.txt .
-
-# Clone the RAAT repository outside of the container
-echo "Cloning the RAAT repository..."
-if [ -d "raat" ]; then
-  if [ "$NO_UPDATE" = false ]; then
-    echo "RAAT repository already exists, updating..."
-    cd raat
-    git pull
-    cd ..
-  else
-    echo "RAAT repository already exists, skipping update due to --no-update flag."
-  fi
+# Clone the repository to src/raat if it doesn't exist; otherwise, update it
+if [ ! -d "$REPO_DIR" ]; then
+    echo "Cloning repository from $REPO_URL to $REPO_DIR..."
+    git clone "$REPO_URL" "$REPO_DIR"
 else
-  git clone https://github.com/hifiberry/raat
+    if [ "$NO_UPDATE" = false ]; then
+        echo "Repository already exists at $REPO_DIR. Updating..."
+        cd "$REPO_DIR"
+        git pull
+        cd "$SCRIPT_DIR"
+    else
+        echo "Repository already exists at $REPO_DIR, skipping update due to --no-update flag."
+    fi
 fi
 
-# Build the Docker image with plain progress output
-echo "Building Docker image with the RAAT repository included..."
-docker build --progress=plain -t raat-builder .
+# Clean previous build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
-# Run Docker container in foreground mode and build the package
-echo "Starting RAAT build in Docker container version $VERSION$VERSION_SUFFIX..."
-docker run \
-  --name raat-build-container \
-  --env VERSION="$VERSION" \
-  --env VERSION_SUFFIX="$VERSION_SUFFIX" \
-  raat-builder
+# Copy source files to build directory
+echo "Copying debian/ files..."
+cp -r "$SRC_DIR/debian" "$BUILD_DIR/"
+echo "Copying configure-raat script..."
+cp "$SRC_DIR/configure-raat" "$BUILD_DIR/"
+echo "Copying raat.service..."
+cp "$SRC_DIR/raat.service" "$BUILD_DIR/"
+echo "Copying raat/ directory..."
+cp -r "$SRC_DIR/raat" "$BUILD_DIR/"
 
-# Copy the .deb files from the container to the local out directory
-echo "Copying .deb files from container..."
-docker cp raat-build-container:/out/. ../out/
+# Verify the copy worked
+echo "Contents of build directory after copy:"
+ls -la "$BUILD_DIR"
+echo "Contents of raat directory:"
+ls -la "$BUILD_DIR/raat" || echo "ERROR: raat directory not found!"
 
-# Remove the container
-docker rm raat-build-container
+# Change to build directory
+cd "$BUILD_DIR"
 
-# Display success message
-echo "Build complete. Output files are raat-docker-build/out"
+# Build package using sbuild
+echo "Using sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    --dist="$DIST" \
+    --chroot="$CHROOT" \
+    --build-dir="$BUILD_DIR" \
+    --no-run-lintian \
+    --verbose
+
+# Move build artifacts to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+
+echo "Package built successfully"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
 
