@@ -1,0 +1,19 @@
+Source: python3-pyedbglib
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               git
+Standards-Version: 4.6.0
+Homepage: https://github.com/microchip-pic-avr-tools/pyedbglib
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: python3-pyedbglib
+Architecture: all
+Depends: ${misc:Depends}
+Description: Python library for EDBG communications
+ This package provides a library and utilities for communicating with EDBG devices.
+ EDBG is a family of on-board debuggers from Microchip for their development boards.
+ .
+ This package contains the Python 3 version of the library.
