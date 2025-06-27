@@ -1,27 +1,45 @@
 #!/bin/bash
 
-# Define the destination directory for the .deb packages
-DEST_DIR=~/packages
+# Exit on error
+set -e
 
-# Create the destination directory if it doesn't already exist
-mkdir -p "$DEST_DIR"
+PACKAGE="testtools"
+VERSION="1.0.2"
+DIST="bullseye"
+CHROOT="${DIST}-amd64-sbuild"
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="$(dirname $(realpath $0))/src"
+SCRIPT_DIR="$(dirname $(realpath $0))"
 
-# Run dpkg-buildpackage to build the package
-dpkg-buildpackage -us -uc
+echo "Building $PACKAGE version $VERSION"
 
-# Check if dpkg-buildpackage was successful
-if [ $? -eq 0 ]; then
-    echo "Package build successful, moving .deb files to $DEST_DIR"
+# Clean previous build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
-    # Move all .deb files to the destination directory
-    mv ../*.deb "$DEST_DIR"
-else
-    echo "Package build failed, no files moved."
-    exit 1
-fi
+# Copy source files to build directory
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
 
-# Optional: Clean up any other artifacts that might have been created
-rm -rf debian/debhelper-build-stamp  debian/files debian/testtools debian/testtools.substvars
+# Change to build directory
+cd "$BUILD_DIR"
 
-echo "Build process complete."
+# Build package using sbuild
+echo "Using sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --dist="$DIST" \
+    --chroot="$CHROOT" \
+    --build-dir="$BUILD_DIR" \
+    --verbose
+
+# Move build artifacts to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+
+echo "Package built successfully"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
 

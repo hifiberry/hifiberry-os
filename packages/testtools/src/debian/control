@@ -1,0 +1,28 @@
+Source: testtools
+Section: utils
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.5.1
+Homepage: https://www.hifiberry.com
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+
+Package: testtools
+Architecture: all
+Depends: ${misc:Depends},
+         sox,
+         figlet,
+         systemd,
+         python3-configurator,
+         python3-pymcuprog,
+         i2c-tools,
+         python3-yaml,
+         python3-pyedbglib,
+         python3-serial
+Description: HiFiBerry hardware test tools
+ This package includes tools for HiFiBerry sound card production testing
+ including programming of the HAT EEPROM and various hardware validation
+ scripts.
+ .
+ The tools are designed for factory testing and quality assurance of
+ HiFiBerry audio hardware products.
