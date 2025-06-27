@@ -1,0 +1,7 @@
+python3-pymcuprog (3.17.3.45-1) unstable; urgency=medium
+
+  * Initial HiFiBerry packaging of pymcuprog
+  * Package Python MCU programming tool
+  * Downloaded from PyPI and packaged for HiFiBerry OS
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 22 Jan 2025 12:00:00 +0000

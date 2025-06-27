@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+
+# Configuration
+PACKAGE_VERSION = 3.17.3.45
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	rm -rf pymcuprog-source/
+	rm -f *.tar.gz *.whl
+	rm -f setup.py setup.cfg pyproject.toml
+
+override_dh_auto_configure:
+	# Download pymcuprog wheel from PyPI
+	if [ ! -d pymcuprog-source ]; then \
+		pip download pymcuprog==$(PACKAGE_VERSION) --no-deps --dest .; \
+		python3 -m wheel unpack pymcuprog-$(PACKAGE_VERSION)*.whl; \
+		mv pymcuprog-$(PACKAGE_VERSION) pymcuprog-source; \
+	fi
+
+override_dh_auto_build:
+	# Skip build - wheel already contains compiled code
+
+override_dh_auto_install:
+	# Install the unpacked wheel contents
+	mkdir -p debian/python3-pymcuprog/usr/lib/python3/dist-packages/
+	cp -r pymcuprog-source/* debian/python3-pymcuprog/usr/lib/python3/dist-packages/
+	# Install console scripts if they exist
+	if [ -d pymcuprog-source/../*/Scripts ]; then \
+		mkdir -p debian/python3-pymcuprog/usr/bin/; \
+		cp pymcuprog-source/../*/Scripts/* debian/python3-pymcuprog/usr/bin/ 2>/dev/null || true; \
+	fi
+	# Look for entry points and create console scripts
+	if [ -f pymcuprog-source/../*/METADATA ]; then \
+		grep -A10 "console_scripts" pymcuprog-source/../*/METADATA | grep "=" | while read line; do \
+			script_name=$$(echo "$$line" | cut -d'=' -f1 | tr -d ' '); \
+			if [ ! -z "$$script_name" ]; then \
+				echo "#!/usr/bin/python3" > debian/python3-pymcuprog/usr/bin/$$script_name; \
+				echo "import sys" >> debian/python3-pymcuprog/usr/bin/$$script_name; \
+				echo "from pymcuprog.main import main" >> debian/python3-pymcuprog/usr/bin/$$script_name; \
+				echo "sys.exit(main())" >> debian/python3-pymcuprog/usr/bin/$$script_name; \
+				chmod +x debian/python3-pymcuprog/usr/bin/$$script_name; \
+			fi \
+		done \
+	fi
+
+override_dh_auto_test:
+	# Skip tests - requires hardware

@@ -1,0 +1,27 @@
+Source: python3-pymcuprog
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               python3-wheel,
+               python3-pip,
+               wget,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://pypi.org/project/pymcuprog/
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: python3-pymcuprog
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         python3-serial,
+         python3-yaml
+Description: Python MCU programming tool
+ This package provides a Python tool for programming microcontrollers.
+ It supports various MCU families and programming interfaces.
+ .
+ This is the Python 3 version of the package.
