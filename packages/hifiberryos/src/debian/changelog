@@ -1,0 +1,8 @@
+hifiberryos-meta (0.1) unstable; urgency=medium
+
+  * Initial release of HiFiBerry OS meta-packages
+  * Added hbos-minimal package with basic components
+  * Added hbos-test package with minimal + testing tools
+  * Added hbos-full package with all components
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Jun 2025 12:00:00 +0000
