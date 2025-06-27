@@ -1,0 +1,32 @@
+.TH START-SQUEEZELITE 1 "June 2025" "HiFiBerry Squeezelite 2.0.0.1541" "User Commands"
+.SH NAME
+start-squeezelite \- HiFiBerry Squeezelite startup script
+.SH SYNOPSIS
+.B start-squeezelite
+.SH DESCRIPTION
+This script is used by the systemd service to start Squeezelite with HiFiBerry-specific configuration. It reads configuration from the HiFiBerry configuration database and applies appropriate audio settings.
+.PP
+The script automatically configures:
+.IP \(bu 2
+ALSA parameters optimized for HiFiBerry hardware
+.IP \(bu 2
+Idle timeout settings
+.IP \(bu 2
+Maximum sample rate limits
+.IP \(bu 2
+Volume control integration
+.IP \(bu 2
+Server connection settings
+.SH FILES
+.TP
+.I /usr/bin/start-squeezelite
+The startup script
+.TP
+.I /var/lib/squeezelite
+Squeezelite runtime directory
+.SH SEE ALSO
+.BR squeezelite (1),
+.BR config-db (1),
+.BR config-soundcard (1)
+.SH AUTHOR
+HiFiBerry <info@hifiberry.com>

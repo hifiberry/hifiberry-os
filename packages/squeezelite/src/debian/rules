@@ -8,7 +8,7 @@ override_dh_auto_configure:
 	@if [ ! -d "squeezelite" ]; then \
 		echo "Cloning squeezelite repository..."; \
 		git clone https://github.com/ralph-irving/squeezelite.git; \
-		cd squeezelite && git checkout db51a7b16934f41b72437394bf8114c3a85e0a91; \
+		cd squeezelite && git checkout 72e1fd8abfa9b2f8e9636f033247526920878718; \
 	fi
 
 override_dh_auto_build:
@@ -18,8 +18,9 @@ override_dh_auto_build:
 override_dh_auto_install:
 	# Install squeezelite binary
 	mkdir -p debian/hifiberry-squeezelite/usr/bin
-	mkdir -p debian/hifiberry-squeezelite/etc/systemd/system
+	mkdir -p debian/hifiberry-squeezelite/lib/systemd/system
 	mkdir -p debian/hifiberry-squeezelite/var/lib/squeezelite
+	mkdir -p debian/hifiberry-squeezelite/usr/share/man/man1
 	
 	# Copy squeezelite binary
 	cp squeezelite/squeezelite debian/hifiberry-squeezelite/usr/bin/
@@ -29,7 +30,11 @@ override_dh_auto_install:
 	chmod +x debian/hifiberry-squeezelite/usr/bin/start-squeezelite
 	
 	# Install systemd service
-	cp squeezelite.service debian/hifiberry-squeezelite/etc/systemd/system/
+	cp squeezelite.service debian/hifiberry-squeezelite/lib/systemd/system/
+	
+	# Install manual pages
+	cp man/squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/
+	cp man/start-squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/
 
 override_dh_auto_clean:
 	rm -rf squeezelite/

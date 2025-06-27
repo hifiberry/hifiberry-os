@@ -1,0 +1,36 @@
+.TH SQUEEZELITE 1 "June 2025" "HiFiBerry Squeezelite 2.0.0.1541" "User Commands"
+.SH NAME
+squeezelite \- Lightweight Squeezebox player for HiFiBerry
+.SH SYNOPSIS
+.B squeezelite
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+Squeezelite is a small headless squeezebox emulator for Linux designed to work with HiFiBerry audio hardware. It connects to Logitech Media Server to provide synchronized multi-room audio playback.
+.PP
+This HiFiBerry version is optimized for HiFiBerry DACs and amplifiers.
+.SH OPTIONS
+.TP
+.B \-h
+Show help message
+.TP
+.B \-s \fIserver\fR
+Connect to specified server
+.TP
+.B \-o \fIoutput\fR
+Audio output device
+.TP
+.B \-n \fIname\fR
+Player name
+.TP
+.B \-m \fImac\fR
+MAC address
+.SH FILES
+.TP
+.I /var/lib/squeezelite
+Squeezelite user home directory
+.SH SEE ALSO
+.BR start-squeezelite (1)
+.SH AUTHOR
+Ralph Irving <ralph_irving@hotmail.com>
+.br
+HiFiBerry packaging by HiFiBerry <info@hifiberry.com>

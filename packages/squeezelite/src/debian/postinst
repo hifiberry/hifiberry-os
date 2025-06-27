@@ -16,9 +16,5 @@ if [ ! -d /var/lib/squeezelite ]; then
     chown squeezelite:squeezelite /var/lib/squeezelite
 fi
 
-# Enable the Squeezelite service
-systemctl daemon-reload
-systemctl enable squeezelite.service
-
 #DEBHELPER#
 exit 0
