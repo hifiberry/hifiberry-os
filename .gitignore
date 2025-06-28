@@ -1,5 +1,7 @@
+packages/python-pyedbglib/pyedbglib
+packages/python-usagecollector/usagecollector
+packages/raat/src/raat
 packages/acr/acr
-packages/raat/raat
 packages/dsptoolkit/hifiberry-dsp/
 packages/configurator/configurator
 packages/librespot/librespot
