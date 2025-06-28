@@ -1,7 +1,0 @@
-Package: baseconfig
-Version: 1.0.0
-Section: utils
-Priority: optional
-Architecture: all
-Maintainer: HiFiBerry <support@hifiberry.com>
-Description: Base configuration script
