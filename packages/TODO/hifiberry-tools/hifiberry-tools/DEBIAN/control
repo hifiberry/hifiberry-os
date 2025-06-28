@@ -1,0 +1,8 @@
+Package: hifiberry-tools
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: HiFiBerry <support@hifiberry.com>
+Description: HiFiBerry tools
+ A custom package to install HiFiBerry tools into /usr/local/bin and link them to /opt/hifiberry/bin.
