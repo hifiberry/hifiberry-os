@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -f */*dbgsym*.deb
+cp */*.deb ~/packages
