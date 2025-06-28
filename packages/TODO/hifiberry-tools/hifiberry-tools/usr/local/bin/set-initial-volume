@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if [ -f /boot/initial-volume ]; then
+  if [ ! -d /etc/hifiberry ]; then
+    mkdir -p /etc/hifiberry
+  fi
+  mv /boot/initial-volume /etc/hifiberry/initial-volume
+fi
+
+if [ -f /etc/hifiberry/initial-volume ]; then
+  VOL=`cat /etc/hifiberry/initial-volume`
+else
+  echo /etc/hifiberry/initial-volume does not exist, not setting volume
+  exit
+fi
+
+if [ -f /etc/hifiberry.state ]; then
+  . /etc/hifiberry.state
+else
+  echo /etc/hifiberry.state does not exist, not setting volume
+  exit
+fi
+
+echo Setting $CURRENT_MIXER_CONTROL to $VOL
+amixer sset $CURRENT_MIXER_CONTROL $VOL
+
