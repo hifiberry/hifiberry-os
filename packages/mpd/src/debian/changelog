@@ -1,4 +1,4 @@
-hifiberry-mpd (0.24.3) unstable; urgency=low
+hifiberry-mpd (0.24.4) unstable; urgency=low
 
   * Initial Debian package release
   * Music Player Daemon optimized for HiFiBerry devices
