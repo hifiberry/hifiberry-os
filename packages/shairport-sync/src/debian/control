@@ -56,11 +56,12 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libcap2-bin,
          libglib2.0-0,
          libmosquitto1,
-         adduser
+         adduser,
+         hifiberry-configurator
 Provides: shairport-sync, nqptp
 Conflicts: shairport-sync, nqptp
 Replaces: shairport-sync, nqptp
-Description: HiFiBerry AirPlay audio player with NQPTP
+Description: AirPlay audio player with NQPTP (HiFiBerry build)
  A multi-room synchronized audio player for AirPlay devices,
  customized for HiFiBerry devices. Includes NQPTP daemon for
  network clock synchronization required by AirPlay 2.
