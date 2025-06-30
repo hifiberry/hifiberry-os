@@ -28,7 +28,6 @@ override_dh_auto_configure:
 		curl https://sh.rustup.rs -sSf | \
 		RUSTUP_HOME=$(RUSTUP_HOME) CARGO_HOME=$(CARGO_HOME) \
 		sh -s -- -y --no-modify-path; \
-		
 	fi
 	# Clone librespot source
 	if [ ! -d librespot-source ]; then \
