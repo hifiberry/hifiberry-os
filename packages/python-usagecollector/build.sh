@@ -4,9 +4,16 @@
 set -e
 
 PACKAGE="python3-usagecollector"
-VERSION="1.0.0"
-DIST="bullseye"
-CHROOT="${DIST}-amd64-sbuild"
+VERSION="1.0.0-1"
+DIST="${DIST:-bullseye}"
+# Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    DIST_ARG="--dist=$DIST"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+fi
 BUILD_DIR="/tmp/${PACKAGE}-build"
 SRC_DIR="$(dirname $(realpath $0))/src"
 SCRIPT_DIR="$(dirname $(realpath $0))"
@@ -14,6 +21,16 @@ REPO_URL="https://github.com/hifiberry/usagecollector"
 REPO_DIR="usagecollector"
 
 echo "Building $PACKAGE version $VERSION"
+
+# Check if changelog version matches build script version
+if [ -f "$SRC_DIR/debian/changelog" ]; then
+    CHANGELOG_VERSION=$(head -n 1 "$SRC_DIR/debian/changelog" | grep -oP '\(\K[^)]+')
+    if [ "$VERSION" != "$CHANGELOG_VERSION" ]; then
+        echo "ERROR: Version mismatch between build script ($VERSION) and changelog ($CHANGELOG_VERSION)"
+        exit 1
+    fi
+    echo "Version consistency check passed: $VERSION"
+fi
 
 # Clone the repository if it doesn't exist; otherwise, update it
 if [ ! -d "$REPO_DIR" ]; then
@@ -43,10 +60,9 @@ cd "$BUILD_DIR"
 echo "Using sbuild..."
 sbuild \
     --chroot-mode=unshare \
-    --no-clean-source \
     --enable-network \
-    --dist="$DIST" \
-    --chroot="$CHROOT" \
+    --no-clean-source \
+    $DIST_ARG \
     --build-dir="$BUILD_DIR" \
     --no-run-lintian \
     --verbose

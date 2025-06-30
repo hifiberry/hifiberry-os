@@ -1,4 +1,4 @@
-python3-pyalsaaudio (0.11.0-1) unstable; urgency=medium
+python3-pyalsaaudio (0.11.0-1) stable; urgency=medium
 
   * Initial HiFiBerry packaging of pyalsaaudio
   * Package Python ALSA bindings for HiFiBerry OS

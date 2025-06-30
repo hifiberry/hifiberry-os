@@ -5,8 +5,15 @@ set -e
 
 PACKAGE="python3-pyedbglib"
 VERSION="2.24.2"
-DIST="bullseye"
-CHROOT="${DIST}-amd64-sbuild"
+
+# Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    DIST_ARG="--dist=$DIST"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+fi
 BUILD_DIR="/tmp/${PACKAGE}-build"
 SCRIPT_DIR="$(dirname $(realpath $0))"
 REPO_URL="https://github.com/microchip-pic-avr-tools/pyedbglib.git"
@@ -42,8 +49,7 @@ sbuild \
     --chroot-mode=unshare \
     --no-clean-source \
     --enable-network \
-    --dist="$DIST" \
-    --chroot="$CHROOT" \
+    $DIST_ARG \
     --build-dir="$BUILD_DIR" \
     --no-run-lintian \
     --verbose
