@@ -4,6 +4,10 @@
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
+# Librespot version and commit configuration
+LIBRESPOT_VERSION = v0.6.0
+LIBRESPOT_COMMIT_ID = 2c425ebd0685820a59eac1a4206728acb8a24a51
+
 # Rust build configuration
 export CARGO_HOME = $(CURDIR)/debian/cargo_home
 export RUSTUP_HOME = $(CURDIR)/debian/rustup_home
@@ -24,11 +28,20 @@ override_dh_auto_configure:
 		curl https://sh.rustup.rs -sSf | \
 		RUSTUP_HOME=$(RUSTUP_HOME) CARGO_HOME=$(CARGO_HOME) \
 		sh -s -- -y --no-modify-path; \
+		
 	fi
 	# Clone librespot source
 	if [ ! -d librespot-source ]; then \
 		git clone https://github.com/librespot-org/librespot.git librespot-source; \
-		cd librespot-source && git checkout v0.6.0; \
+	fi
+	# Checkout specific commit or version
+	cd librespot-source && \
+	if [ -n "$(LIBRESPOT_COMMIT_ID)" ]; then \
+		echo "Checking out commit: $(LIBRESPOT_COMMIT_ID)"; \
+		git checkout $(LIBRESPOT_COMMIT_ID); \
+	else \
+		echo "Checking out version: $(LIBRESPOT_VERSION)"; \
+		git checkout $(LIBRESPOT_VERSION); \
 	fi
 
 override_dh_auto_build:

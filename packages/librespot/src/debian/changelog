@@ -1,3 +1,9 @@
+hifiberry-librespot (0.6.0.4) stable; urgency=low
+
+  * Use bookworm to build
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 30 Jun 2025 12:00:00 +0000
+
 hifiberry-librespot (0.6.0.3) unstable; urgency=low
 
   * Initial Debian package release
@@ -6,4 +12,3 @@ hifiberry-librespot (0.6.0.3) unstable; urgency=low
   * Includes systemd service and helper scripts
 
  -- HiFiBerry <info@hifiberry.com>  Thu, 26 Jun 2025 12:00:00 +0000
- 
