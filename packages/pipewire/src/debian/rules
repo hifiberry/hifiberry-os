@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 # Configuration
-PIPEWIRE_VERSION = 1.4.2
+PIPEWIRE_VERSION = 1.4.5
 
 %:
 	dh $@
