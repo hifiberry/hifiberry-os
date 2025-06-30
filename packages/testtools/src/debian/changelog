@@ -1,4 +1,4 @@
-testtools (1.0.3) bullseye; urgency=medium
+testtools (1.0.3) stable; urgency=medium
 
   * Converted to sbuild-based packaging
   * Fixed lintian errors and warnings
