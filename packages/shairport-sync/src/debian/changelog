@@ -1,3 +1,12 @@
+hifiberry-shairport (4.3.7.4) stable; urgency=medium
+
+  * Build on bookworm:stable
+  * Added explicit xxd build dependency for AirPlay 2 support
+  * Fixed DBus policy file location (moved to /usr/share/dbus-1/system.d/)
+  * Cleaned up copyright file to remove superfluous patterns
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Jun 2025 14:00:00 +0000
+
 hifiberry-shairport (4.3.7.3) bullseye; urgency=medium
 
   * Fixed script naming and removed .sh extensions
