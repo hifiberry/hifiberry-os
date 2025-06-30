@@ -42,6 +42,14 @@ override_dh_auto_install:
 	rm -f $(CURDIR)/debian/hifiberry-shairport/usr/lib/systemd/system/shairport-sync.service
 	rm -f $(CURDIR)/debian/hifiberry-shairport/shairport-sync.service	
 	
+	# Move DBus policy files to correct location
+	if [ -d "$(CURDIR)/debian/hifiberry-shairport/etc/dbus-1/system.d" ]; then \
+		mkdir -p $(CURDIR)/debian/hifiberry-shairport/usr/share/dbus-1/system.d/; \
+		mv $(CURDIR)/debian/hifiberry-shairport/etc/dbus-1/system.d/*.conf $(CURDIR)/debian/hifiberry-shairport/usr/share/dbus-1/system.d/; \
+		rmdir $(CURDIR)/debian/hifiberry-shairport/etc/dbus-1/system.d || true; \
+		rmdir $(CURDIR)/debian/hifiberry-shairport/etc/dbus-1 || true; \
+	fi
+	
 	# Install systemd service files
 	install -D -m644 systemd/shairport.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/shairport.service
 	install -D -m644 systemd/nqptp.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/nqptp.service
