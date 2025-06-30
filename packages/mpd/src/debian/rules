@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 # Configuration
-MPD_VERSION = 0.24.3
+MPD_VERSION = 0.24.4
 MPC_VERSION = 0.35
 
 %:

@@ -1,3 +1,9 @@
+hifiberry-mpd (0.24.4.1) stable; urgency=low
+
+  * Build on stable
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 30 Jun 2025 12:00:00 +0000
+
 hifiberry-mpd (0.24.4) unstable; urgency=low
 
   * Initial Debian package release
