@@ -39,3 +39,7 @@ override_dh_auto_clean:
 
 override_dh_auto_test:
 	# Skip tests - requires audio hardware and network setup
+
+override_dh_strip:
+	# Skip debug symbol extraction - don't create dbgsym package
+	dh_strip --no-automatic-dbgsym

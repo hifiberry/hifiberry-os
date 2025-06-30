@@ -5,11 +5,32 @@ set -e
 
 PACKAGE="hifiberry-raat"
 VERSION="$(cat $(dirname $(realpath $0))/version.txt | tr -d '\n')"
-DIST="bullseye"
-CHROOT="${DIST}-amd64-sbuild"
+
+# Version consistency check
+SCRIPT_DIR="$(dirname $(realpath $0))"
+CHANGELOG_VERSION=$(grep -m1 "^${PACKAGE}" "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+if [ "$VERSION" != "$CHANGELOG_VERSION" ]; then
+    echo "ERROR: Version mismatch!"
+    echo "  version.txt: $VERSION"
+    echo "  debian/changelog: $CHANGELOG_VERSION"
+    echo "Please update version.txt or debian/changelog to match."
+    exit 1
+fi
+echo "Version consistency check passed: $VERSION"
+
+# Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    CHROOT="${DIST}-amd64-sbuild"
+    DIST_ARG="--dist=$DIST"
+    CHROOT_ARG="--chroot=$CHROOT"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+    CHROOT_ARG=""
+fi
 BUILD_DIR="/tmp/${PACKAGE}-build"
 SRC_DIR="$(dirname $(realpath $0))/src"
-SCRIPT_DIR="$(dirname $(realpath $0))"
 REPO_URL="https://github.com/hifiberry/raat"
 REPO_DIR="$SRC_DIR/raat"
 
@@ -26,7 +47,7 @@ done
 
 echo "Building $PACKAGE version $VERSION"
 
-# Clone the repository to src/raat if it doesn't exist; otherwise, update it
+# Update the repository in src/raat if it exists; otherwise, clone it
 if [ ! -d "$REPO_DIR" ]; then
     echo "Cloning repository from $REPO_URL to $REPO_DIR..."
     git clone "$REPO_URL" "$REPO_DIR"
@@ -70,10 +91,9 @@ sbuild \
     --chroot-mode=unshare \
     --no-clean-source \
     --enable-network \
-    --dist="$DIST" \
-    --chroot="$CHROOT" \
+    $DIST_ARG \
+    $CHROOT_ARG \
     --build-dir="$BUILD_DIR" \
-    --no-run-lintian \
     --verbose
 
 # Move build artifacts to script directory

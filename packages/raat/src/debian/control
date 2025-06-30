@@ -3,14 +3,9 @@ Section: sound
 Priority: optional
 Maintainer: HiFiBerry <support@hifiberry.com>
 Build-Depends: debhelper-compat (= 13),
-               dh-python,
                python3-all,
                python3-setuptools,
                git,
-               build-essential,
-               gcc,
-               g++,
-               make,
                cmake,
                pkg-config,
                libglib2.0-dev,
@@ -22,15 +17,16 @@ Vcs-Git: https://github.com/hifiberry/raat.git
 Vcs-Browser: https://github.com/hifiberry/raat
 
 Package: hifiberry-raat
-Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends},
-         python3,
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+         adduser,
          hifiberry-pipewire,
          hifiberry-tools
 Description: RAAT for HiFiBerry
- RAAT is a Roon player for HiFiBerry devices, enabling multi-room audio playback 
- and synchronization across devices. It is designed to work seamlessly with Roon's 
- audio architecture, allowing users to enjoy high-quality audio streaming in 
- multiple rooms or zones within their home network. RAAT supports various 
- HiFiBerry hardware, including DACs and amplifiers, providing a flexible and 
- powerful solution for audiophiles and music enthusiasts.
+ RAAT is a Roon player for HiFiBerry devices, enabling multi-room audio
+ playback and synchronization across devices. It is designed to work
+ seamlessly with Roon's audio architecture, allowing users to enjoy
+ high-quality audio streaming in multiple rooms or zones within their home
+ network. RAAT supports various HiFiBerry hardware, including DACs and
+ amplifiers, providing a flexible and powerful solution for audiophiles and
+ music enthusiasts.

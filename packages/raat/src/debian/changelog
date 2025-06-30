@@ -1,4 +1,10 @@
-hifiberry-raat (1.1.43.4-1) unstable; urgency=medium
+hifiberry-raat (1.1.43.5) stable; urgency=medium
+
+  * Adapt build for bookworm:stable
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Jun 2025 12:00:00 +0000
+
+hifiberry-raat (1.1.43.4) unstable; urgency=medium
 
   * Initial HiFiBerry packaging of RAAT
   * RAAT player for HiFiBerry
