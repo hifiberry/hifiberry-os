@@ -30,7 +30,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Provides: librespot
 Conflicts: librespot
 Replaces: librespot
-Description: HiFiBerry Librespot Spotify Connect player
+Description: Librespot Spotify Connect player (HiFiBerry build)
  An open source client library for Spotify, enabling applications to use
  Spotify Connect directly without having to use the official Spotify app.
  This package provides the librespot binary optimized for HiFiBerry devices
