@@ -1,0 +1,14 @@
+# These binaries are provided by upstream RAAT and don't have manual pages
+hifiberry-raat: no-manual-page [usr/bin/configure-raat]
+hifiberry-raat: no-manual-page [usr/bin/luac]
+hifiberry-raat: no-manual-page [usr/bin/luai]
+hifiberry-raat: no-manual-page [usr/bin/raat_app]
+hifiberry-raat: no-manual-page [usr/bin/raat_null_sample]
+hifiberry-raat: no-manual-page [usr/bin/raatool]
+
+# Upstream binaries are not stripped - this is expected for RAAT binaries
+hifiberry-raat: unstripped-binary-or-object [usr/bin/luac]
+hifiberry-raat: unstripped-binary-or-object [usr/bin/luai]
+hifiberry-raat: unstripped-binary-or-object [usr/bin/raat_app]
+hifiberry-raat: unstripped-binary-or-object [usr/bin/raat_null_sample]
+hifiberry-raat: unstripped-binary-or-object [usr/bin/raatool]

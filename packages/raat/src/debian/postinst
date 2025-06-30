@@ -17,10 +17,6 @@ case "$1" in
         mkdir -p /var/lib/raat
         chown raat:raat /var/lib/raat
         chmod 755 /var/lib/raat
-        
-        # Enable and start the service
-        systemctl daemon-reload
-        systemctl enable raat.service
         ;;
 esac
 
