@@ -1,4 +1,4 @@
-hifiberry-squeezelite (2.0.0.1541) bullseye; urgency=medium
+hifiberry-squeezelite (2.0.0.1541) stable; urgency=medium
 
   * Initial sbuild-based packaging
   * Built from commit 72e1fd8abfa9b2f8e9636f033247526920878718
