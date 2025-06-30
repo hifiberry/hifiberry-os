@@ -1,4 +1,4 @@
-python3-pymcuprog (3.17.3.45-1) unstable; urgency=medium
+python3-pymcuprog (3.17.3.45-1) stable; urgency=medium
 
   * Initial HiFiBerry packaging of pymcuprog
   * Package Python MCU programming tool

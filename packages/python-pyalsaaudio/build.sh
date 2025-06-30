@@ -5,8 +5,15 @@ set -e
 
 PACKAGE="python3-pyalsaaudio"
 VERSION="0.11.0"
-DIST="bullseye"
-CHROOT="${DIST}-amd64-sbuild"
+
+# Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    DIST_ARG="--dist=$DIST"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+fi
 BUILD_DIR="/tmp/${PACKAGE}-build"
 SRC_DIR="$(dirname $(realpath $0))/src"
 SCRIPT_DIR="$(dirname $(realpath $0))"
@@ -27,10 +34,9 @@ cd "$BUILD_DIR"
 echo "Using sbuild..."
 sbuild \
     --chroot-mode=unshare \
-    --no-clean-source \
     --enable-network \
-    --dist="$DIST" \
-    --chroot="$CHROOT" \
+    --no-clean-source \
+    $DIST_ARG \
     --build-dir="$BUILD_DIR" \
     --no-run-lintian \
     --verbose

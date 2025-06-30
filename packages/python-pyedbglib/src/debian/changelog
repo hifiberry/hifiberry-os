@@ -1,4 +1,4 @@
-python3-pyedbglib (2.24.2-1) unstable; urgency=medium
+python3-pyedbglib (2.24.2-1) stable; urgency=medium
 
   * Initial HiFiBerry packaging of pyedbglib
   * Package Python library for EDBG communications
