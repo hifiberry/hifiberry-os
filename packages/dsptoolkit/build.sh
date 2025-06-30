@@ -32,10 +32,34 @@ else
     cd "$PACKAGE"
 fi
 
-# Step 2: Build using sbuild
-sbuild --chroot-mode=unshare --no-clean-source
+# Step 1.5: Version consistency check
+echo "Checking version consistency..."
+CHANGELOG_VERSION=$(head -n 1 debian/changelog | sed 's/.*(\([^)]*\)).*/\1/')
+echo "Changelog version: $CHANGELOG_VERSION"
+
+if [ -z "$CHANGELOG_VERSION" ]; then
+    echo "Error: Could not extract version from debian/changelog"
+    exit 1
+fi
+
+echo "Version check passed: $CHANGELOG_VERSION"
+
+# Remove watch file if it exists (not needed for native packages)
+rm -f debian/watch
+
+# Step 2: Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    DIST_ARG="--dist=$DIST"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+fi
+
+# Step 3: Build using sbuild
+sbuild --chroot-mode=unshare --no-clean-source $DIST_ARG
 cd ..
 
-# Step 3: Show the package
+# Step 4: Show the package
 echo "Package created:"
 ls *deb
