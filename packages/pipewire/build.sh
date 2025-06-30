@@ -4,7 +4,7 @@ set -e
 
 # Configuration
 PIPEWIRE_VERSION="1.4.5"
-VERSION_SUFFIX="1"
+VERSION_SUFFIX="2"
 PACKAGE_NAME="hifiberry-pipewire"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OUTPUT_DIR="${SCRIPT_DIR}/out"
@@ -14,6 +14,15 @@ FULL_VERSION="${PIPEWIRE_VERSION}.${VERSION_SUFFIX}"
 
 # Ensure output directory exists
 mkdir -p "$OUTPUT_DIR"
+
+# Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    DIST_ARG="--dist=$DIST"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+fi
 
 echo "Building package with sbuild..."
 
@@ -26,13 +35,23 @@ if [ "$CHANGELOG_VERSION" != "$FULL_VERSION" ]; then
     exit 1
 fi
 
+# Check if PipeWire version in rules file is consistent with build script
+RULES_PIPEWIRE_VERSION=$(grep '^PIPEWIRE_VERSION = ' debian/rules | sed 's/PIPEWIRE_VERSION = //')
+if [[ ! "$FULL_VERSION" =~ ^${RULES_PIPEWIRE_VERSION}(\.|$) ]]; then
+    echo "ERROR: PipeWire version in rules file ($RULES_PIPEWIRE_VERSION) is not compatible with package version ($FULL_VERSION)"
+    echo "Package version should start with the PipeWire version from rules file"
+    echo "Please update debian/rules or build.sh to ensure consistency"
+    exit 1
+fi
+
 # Make sure debian/rules is executable
 chmod +x debian/rules
 
 # Use sbuild to build the package
 sbuild --chroot-mode=unshare --no-clean-source --enable-network \
-       --extra-repository='deb http://deb.debian.org/debian bookworm non-free non-free-firmware' \
-       --build-dep-resolver=aspcud
+       --extra-repository='deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware' \
+       --extra-repository='deb http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware' \
+       --build-dep-resolver=apt $DIST_ARG
 
 # Go back to parent directory
 cd ..
