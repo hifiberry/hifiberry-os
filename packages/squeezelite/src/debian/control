@@ -23,7 +23,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libvorbis0a,
          libmpg123-0,
          libfaad2,
-         hifiberry-tools,
+         hifiberry-configurator,
          adduser
 Conflicts: squeezelite
 Replaces: squeezelite
