@@ -1,3 +1,21 @@
+hifiberry-raat (1.1.43.7) stable; urgency=medium
+
+  * Fixed GPIO permission errors in configure-raat script
+  * Added raat user to gpio group for hardware detection
+  * Enhanced error handling for GPIO access failures
+  * Improved fallback detection when GPIO is not accessible
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 01 Jul 2025 14:00:00 +0000
+
+hifiberry-raat (1.1.43.6) stable; urgency=medium
+
+  * Converted configure-raat script from bash to Python
+  * Added command line options for output file and verbose mode
+  * Improved hardware detection using configurator modules
+  * Enhanced error handling and configuration generation
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 01 Jul 2025 12:00:00 +0000
+
 hifiberry-raat (1.1.43.5) stable; urgency=medium
 
   * Adapt build for bookworm:stable

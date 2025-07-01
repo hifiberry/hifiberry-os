@@ -13,6 +13,16 @@ case "$1" in
             adduser --system --ingroup raat --home /var/lib/raat --shell /bin/false raat
         fi
         
+        # Add raat user to gpio group for hardware detection
+        if getent group gpio >/dev/null; then
+            usermod -a -G gpio raat || true
+        fi
+                
+        # Add raat user to audio group
+        if getent group audio >/dev/null; then
+            usermod -a -G audio raat || true
+        fi
+        
         # Create home directory and set permissions
         mkdir -p /var/lib/raat
         chown raat:raat /var/lib/raat

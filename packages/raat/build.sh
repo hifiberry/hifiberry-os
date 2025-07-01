@@ -69,12 +69,14 @@ mkdir -p "$BUILD_DIR"
 # Copy source files to build directory
 echo "Copying debian/ files..."
 cp -r "$SRC_DIR/debian" "$BUILD_DIR/"
-echo "Copying configure-raat script..."
-cp "$SRC_DIR/configure-raat" "$BUILD_DIR/"
 echo "Copying raat.service..."
 cp "$SRC_DIR/raat.service" "$BUILD_DIR/"
 echo "Copying raat/ directory..."
 cp -r "$SRC_DIR/raat" "$BUILD_DIR/"
+
+# Create configure-raat.py with version replacement
+echo "Creating configure-raat.py with version $VERSION..."
+sed "s/###MYVERSION###/$VERSION/g" "$SRC_DIR/configure-raat.py" > "$BUILD_DIR/configure-raat.py"
 
 # Verify the copy worked
 echo "Contents of build directory after copy:"
@@ -101,6 +103,10 @@ echo "Moving build artifacts..."
 mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
 mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
 mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+
+# Clean up build directory
+echo "Cleaning up build directory..."
+rm -rf "$BUILD_DIR"
 
 echo "Package built successfully"
 echo "Built packages:"

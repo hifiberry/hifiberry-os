@@ -3,6 +3,7 @@ Section: sound
 Priority: optional
 Maintainer: HiFiBerry <support@hifiberry.com>
 Build-Depends: debhelper-compat (= 13),
+               dh-python,
                python3-all,
                python3-setuptools,
                git,
@@ -18,8 +19,9 @@ Vcs-Browser: https://github.com/hifiberry/raat
 
 Package: hifiberry-raat
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
+Depends: ${misc:Depends}, ${shlibs:Depends}, ${python3:Depends},
          adduser,
+         python3,
          hifiberry-pipewire,
          hifiberry-configurator
 Description: RAAT for HiFiBerry
