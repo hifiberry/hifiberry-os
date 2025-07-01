@@ -32,6 +32,18 @@ case "$1" in
         chmod 755 /var/lib/mpd
         chmod 755 /var/lib/mpd/music
         chmod 755 /var/lib/mpd/playlists
+        
+        # Copy default configuration file if it doesn't exist
+        if [ ! -f /etc/mpd.conf ]; then
+            if [ -f /etc/mpd.conf.default ]; then
+                cp /etc/mpd.conf.default /etc/mpd.conf
+                chown root:root /etc/mpd.conf
+                chmod 644 /etc/mpd.conf
+                echo "Installed default MPD configuration to /etc/mpd.conf"
+            else
+                echo "Warning: No default MPD configuration file found at /etc/mpd.conf.default"
+            fi
+        fi
         ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)
