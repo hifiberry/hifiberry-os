@@ -5,6 +5,7 @@ HAT EEPROM interface using bitbang I2C
 
 import time
 import struct
+import random
 from typing import Optional
 
 from .bitbang_i2c import BitbangI2C
@@ -13,7 +14,7 @@ from .bitbang_i2c import BitbangI2C
 class HatEEPROM:
     """HAT EEPROM interface using bitbang I2C"""
     
-    def __init__(self, i2c_addr: int = 0x50, sda_pin: int = 0, scl_pin: int = 1):
+    def __init__(self, i2c_addr: int = 0x50, sda_pin: int = 0, scl_pin: int = 1, retry: int = 2, retry_delay: float = 1.0):
         """
         Initialize HAT EEPROM interface
         
@@ -21,9 +22,29 @@ class HatEEPROM:
             i2c_addr: I2C address (default: 0x50)
             sda_pin: SDA GPIO pin (default: 0)
             scl_pin: SCL GPIO pin (default: 1)
+            retry: Number of initialization retries (default: 2)
+            retry_delay: Delay between retries in seconds (default: 1.0)
         """
         self.i2c_addr = i2c_addr
-        self.i2c = BitbangI2C(sda_pin=sda_pin, scl_pin=scl_pin)
+        self.i2c = None
+        
+        # Try to initialize with retries
+        last_error = None
+        for attempt in range(retry + 1):  # retry + 1 gives us retry attempts plus the initial attempt
+            try:
+                self.i2c = BitbangI2C(sda_pin=sda_pin, scl_pin=scl_pin)
+                break  # Success, exit retry loop
+            except (IOError, ImportError) as e:
+                last_error = e
+                if attempt < retry:  # Don't delay after the last attempt
+                    # Randomize retry delay to avoid synchronized retry attempts
+                    randomized_delay = retry_delay * random.uniform(0.5, 1.5)
+                    time.sleep(randomized_delay)
+                continue
+        
+        # If all attempts failed, raise the last error
+        if self.i2c is None:
+            raise last_error
     
     def read_byte(self, address: int) -> Optional[int]:
         """Read a single byte from EEPROM"""
