@@ -58,4 +58,4 @@ cd ..
 
 echo "Package build completed."
 echo "Built packages:"
-ls -la src/../*.deb 2>/dev/null || echo "No .deb files found"
+ls -la *.deb 2>/dev/null || echo "No .deb files found"
