@@ -41,8 +41,13 @@ case "$1" in
             rm -f /etc/asound.conf
         fi
         
-        # Create symlink from PipeWire asound.conf
-        ln -sf /etc/asound.conf.pipewire /etc/asound.conf
+        # Copy PipeWire asound.conf
+        if [ -f /etc/asound.conf.pipewire ]; then
+            cp /etc/asound.conf.pipewire /etc/asound.conf
+            echo "Installed PipeWire ALSA configuration to /etc/asound.conf"
+        else
+            echo "Warning: /etc/asound.conf.pipewire not found"
+        fi
         
         # Copy ALSA configuration for PipeWire if available
         if [ -f /usr/share/alsa/alsa.conf.d/50-pipewire.conf ]; then
