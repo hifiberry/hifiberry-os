@@ -24,7 +24,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libssl3 | libssl1.1,
          libdbus-1-3,
          libglib2.0-0,
-         python3-configurator (>= 1.4.2),
+         hifiberry-configurator,
          adduser,
          hifiberry-pipewire
 Provides: librespot
