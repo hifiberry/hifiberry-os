@@ -38,7 +38,7 @@ Description: HiFiBerry OS testing meta-package
 Package: hbos-full
 Architecture: all
 Depends: hifiberry-baseconfig,
-         acr,
+         hifiberry-audiocontrol,
          hifiberry-configurator,
          hifiberry-eeprom,
          hifiberry-dsp,
