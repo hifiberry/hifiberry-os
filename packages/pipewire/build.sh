@@ -7,13 +7,9 @@ PIPEWIRE_VERSION="1.4.5"
 VERSION_SUFFIX="2"
 PACKAGE_NAME="hifiberry-pipewire"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTPUT_DIR="${SCRIPT_DIR}/out"
 
 # Construct full version string
 FULL_VERSION="${PIPEWIRE_VERSION}.${VERSION_SUFFIX}"
-
-# Ensure output directory exists
-mkdir -p "$OUTPUT_DIR"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
