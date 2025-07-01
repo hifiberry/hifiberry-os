@@ -21,7 +21,7 @@ Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
          adduser,
          hifiberry-pipewire,
-         hifiberry-tools
+         hifiberry-configurator
 Description: RAAT for HiFiBerry
  RAAT is a Roon player for HiFiBerry devices, enabling multi-room audio
  playback and synchronization across devices. It is designed to work
