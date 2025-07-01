@@ -3,7 +3,7 @@
 set -e
 
 # Configuration
-MPD_VERSION="0.24.4.1"
+MPD_VERSION="0.24.4.2"
 MPC_VERSION="0.35"
 PACKAGE_NAME="hifiberry-mpd"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -60,7 +60,9 @@ fi
 chmod +x debian/rules
 
 # Use sbuild to build the package
-sbuild --chroot-mode=unshare --no-clean-source --enable-network $DIST_ARG
+sbuild --chroot-mode=unshare \
+       --no-clean-source \
+       --enable-network $DIST_ARG
 
 # Go back to parent directory
 cd ..
