@@ -1,0 +1,15 @@
+Source: hifiberry-webui
+Section: misc
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper (>= 9), nodejs, npm
+Standards-Version: 3.9.6
+Homepage: https://github.com/hifiberry/hbos-ui
+
+Package: hifiberry-webui
+Architecture: all
+Depends: ${misc:Depends}, nginx | apache2 | lighttpd
+Description: HiFiBerry OS Web User Interface
+ Modern web-based user interface for HiFiBerry OS.
+ Provides a Vue.js-based frontend for configuring and
+ managing HiFiBerry audio devices and services.

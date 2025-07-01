@@ -1,0 +1,8 @@
+hifiberry-webui (1.0.0-1) unstable; urgency=low
+
+  * Initial release of HiFiBerry Web UI
+  * Vue.js-based modern web interface
+  * Configuration management for HiFiBerry devices
+  * Service management interface
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 01 Jul 2025 10:00:00 +0000
