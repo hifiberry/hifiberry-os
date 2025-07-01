@@ -10,8 +10,7 @@ from typing import Optional
 try:
     import gpiod
 except ImportError:
-    print("Error: python3-libgpiod is required. Install with: sudo apt install python3-libgpiod")
-    sys.exit(1)
+    raise ImportError("python3-libgpiod is required. Install with: sudo apt install python3-libgpiod")
 
 
 class BitbangI2C:
@@ -41,8 +40,7 @@ class BitbangI2C:
             self.scl_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
             
         except Exception as e:
-            print(f"Error initializing GPIO: {e}")
-            sys.exit(1)
+            raise IOError(f"Error initializing GPIO: {e}")
     
     def __del__(self):
         """Cleanup GPIO resources"""
