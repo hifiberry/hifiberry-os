@@ -1,7 +1,7 @@
 // IMPORTANT: This is only a default configuration template. 
 // This file is NOT used directly by Shairport Sync at runtime.
 // At startup, the system will create a runtime copy at 
-//      /var/run/shairport/shairport-sync.conf
+//      /var/lib/shairport/shairport-sync.conf
 // with system-specific settings applied.
 // Any changes made here will only take effect after a system restart.
 

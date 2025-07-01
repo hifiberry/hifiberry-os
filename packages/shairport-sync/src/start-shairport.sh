@@ -7,7 +7,7 @@
 
 # Default values
 CONFIG_FILE="/etc/shairport-sync.conf.default"
-RUNTIME_DIR="/var/run/shairport"
+RUNTIME_DIR="/var/lib/shairport"
 RUNTIME_CONFIG="${RUNTIME_DIR}/shairport-sync.conf"
 METADATA_PIPE="/tmp/shairport-sync-metadata"
 PLAYPAUSE_START="/usr/bin/shairport-start"
