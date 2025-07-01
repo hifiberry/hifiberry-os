@@ -27,19 +27,18 @@ if getent group pipewire > /dev/null; then
     usermod -a -G pipewire shairport-sync || true
 fi
 
-# Create runtime directory for shairport-sync
+# Create lib directory for shairport-sync
+if [ ! -d /var/lib/shairport ]; then
+    mkdir -p /var/lib/shairport
+    chown shairport-sync:shairport-sync /var/lib/shairport
+    chmod 755 /var/lib/shairport
+fi
+
+# Create runtime directory for shairport-sync (for backwards compatibility if needed)
 if [ ! -d /var/run/shairport ]; then
     mkdir -p /var/run/shairport
     chown shairport-sync:shairport-sync /var/run/shairport
     chmod 755 /var/run/shairport
-fi
-
-# Add tmpfiles.d configuration for persistent directory across reboots
-if [ -d /usr/lib/tmpfiles.d ]; then
-    cat > /usr/lib/tmpfiles.d/shairport-sync.conf <<EOF
-# Create /var/run/shairport directory at boot
-d /var/run/shairport 0755 shairport-sync shairport-sync -
-EOF
 fi
 
 # Set capabilities for nqptp
