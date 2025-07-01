@@ -1,3 +1,14 @@
+hifiberry-eeprom (1.3.0) stable; urgency=medium
+
+  * Enhanced error handling with proper exception raising
+  * Added retry logic for GPIO initialization with configurable parameters
+  * Randomized retry delays to prevent multi-process conflicts
+  * Replaced sys.exit() calls with IOError and ImportError exceptions
+  * Improved library compatibility for use in other applications
+  * Better handling of GPIO access failures and timing issues
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 01 Jul 2025 16:00:00 +0000
+
 hifiberry-eeprom (1.2.0) unstable; urgency=low
 
   * Refactored hateeprom into a proper Python library
