@@ -18,3 +18,4 @@ packages/*/*.build
 packages/*/*.changes
 packages/*/*.deb
 .vscode/avr_project.json
+office.txt
