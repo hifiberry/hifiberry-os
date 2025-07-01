@@ -11,7 +11,9 @@ Group=audio
 # Create the runtime directory before starting
 ExecStartPre=-/bin/mkdir -p /run/mpd
 ExecStartPre=-/bin/chown mpd:audio /run/mpd
-ExecStart=/usr/bin/mpd --no-daemon
+# Configure MPD before starting
+ExecStartPre=/usr/bin/configure-mpd
+ExecStart=/usr/bin/mpd --no-daemon /var/lib/mpd/mpd.conf
 Restart=on-failure
 RestartSec=10
 

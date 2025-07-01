@@ -41,7 +41,9 @@ Package: hifiberry-mpd
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          adduser,
-         hifiberry-pipewire
+         hifiberry-pipewire,
+         python3,
+         hifiberry-configurator
 Provides: mpd
 Conflicts: mpd
 Replaces: mpd

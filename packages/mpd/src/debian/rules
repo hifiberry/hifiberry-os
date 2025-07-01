@@ -65,6 +65,10 @@ override_dh_auto_install:
 	mkdir -p debian/hifiberry-mpd/usr/lib/systemd/system
 	cp systemd/mpd.service debian/hifiberry-mpd/usr/lib/systemd/system/
 	
+	# Install configure-mpd script
+	cp configure-mpd.py debian/hifiberry-mpd/usr/bin/configure-mpd
+	chmod +x debian/hifiberry-mpd/usr/bin/configure-mpd
+	
 	# Install default configuration file
 	mkdir -p debian/hifiberry-mpd/etc
 	cp config/mpd.conf.default debian/hifiberry-mpd/etc/
