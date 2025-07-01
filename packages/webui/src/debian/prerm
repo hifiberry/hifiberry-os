@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    remove|deconfigure)
+        # Remove the nginx site link
+        if [ -L /etc/nginx/sites-enabled/hifiberry-webui ]; then
+            rm -f /etc/nginx/sites-enabled/hifiberry-webui
+            
+            # Reload nginx if it's running
+            if systemctl is-active nginx >/dev/null 2>&1; then
+                systemctl reload nginx || true
+            fi
+        fi
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

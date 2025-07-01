@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Build the Vue.js application
+	cd hbos-ui && npm install && npm run build
+
+override_dh_auto_install:
+	# Install the built web application to /usr/share/hifiberry/webui
+	mkdir -p debian/hifiberry-webui/usr/share/hifiberry/webui
+	cp -r hbos-ui/dist/* debian/hifiberry-webui/usr/share/hifiberry/webui/
+	
+	# Install nginx configuration
+	mkdir -p debian/hifiberry-webui/etc/nginx/sites-available
+	cp debian/hifiberry-webui.nginx debian/hifiberry-webui/etc/nginx/sites-available/hifiberry-webui
+
+override_dh_auto_clean:
+	# Clean up build artifacts
+	cd hbos-ui && rm -rf node_modules dist
+	dh_auto_clean

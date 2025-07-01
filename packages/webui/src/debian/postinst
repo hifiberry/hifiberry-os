@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    configure)
+        # Enable the nginx site if nginx is installed
+        if [ -x /usr/sbin/nginx ]; then
+            # Enable the site
+            if [ -f /etc/nginx/sites-available/hifiberry-webui ]; then
+                ln -sf /etc/nginx/sites-available/hifiberry-webui /etc/nginx/sites-enabled/hifiberry-webui
+                
+                # Disable default site if it exists
+                if [ -f /etc/nginx/sites-enabled/default ]; then
+                    rm -f /etc/nginx/sites-enabled/default
+                fi
+                
+                # Test nginx configuration and reload
+                if nginx -t >/dev/null 2>&1; then
+                    systemctl reload nginx || true
+                else
+                    echo "Warning: nginx configuration test failed" >&2
+                fi
+            fi
+        fi
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
