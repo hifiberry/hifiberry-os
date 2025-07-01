@@ -46,7 +46,7 @@ Depends: hifiberry-baseconfig,
          hifiberry-mpd,
          hifiberry-pipewire,
          hifiberry-raat,
-         hifiberry-shairport-sync,
+         hifiberry-shairport,
          hifiberry-squeezelite,
 Description: HiFiBerry OS full meta-package
  This meta-package provides the complete set of HiFiBerry OS components
