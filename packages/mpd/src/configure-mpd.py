@@ -14,9 +14,9 @@ def get_hw_mixer_info():
     """Get hardware mixer information using config-soundcard"""
     try:
         # Get volume control softvol setting
-        mixer_result = subprocess.run(['config-soundcard', '--volume-control-softvol'], 
+        mixer_result = subprocess.run(['config-soundcard', '--no-eeprom', '--volume-control-softvol'], 
                                     capture_output=True, text=True)
-        hw_result = subprocess.run(['config-soundcard', '--hw'], 
+        hw_result = subprocess.run(['config-soundcard', '--no-eeprom', '--hw'], 
                                  capture_output=True, text=True)
         
         if mixer_result.returncode == 0 and hw_result.returncode == 0:
