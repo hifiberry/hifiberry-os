@@ -2,17 +2,33 @@
 
 from setuptools import setup, find_packages
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+# Long description for the package
+long_description = """
+HAT EEPROM Reader/Writer Library and CLI Tool
+
+This library provides functionality to read and write HAT EEPROM data using 
+bitbanging I2C over GPIO pins with libgpiod. Features include:
+
+- Enhanced error handling with proper exception raising
+- Retry logic for GPIO initialization with configurable parameters  
+- Randomized retry delays to prevent multi-process conflicts
+- HAT specification compliant EEPROM parsing
+- Vendor information extraction from ATOM 0x01
+- Command-line tool and Python library
+- Support for multiple EEPROM types (24C32, 24C64, 24C128, 24C256)
+
+Version 1.3.0 includes significant reliability improvements and better
+library compatibility for use in other applications.
+"""
 
 setup(
     name="hateeprom",
-    version="1.2.0",
+    version="1.3.0",
     author="HiFiBerry",
     author_email="info@hifiberry.com",
     description="HAT EEPROM Reader/Writer Library and CLI Tool",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/plain",
     url="https://github.com/hifiberry/hifiberry-os",
     packages=find_packages(),
     classifiers=[

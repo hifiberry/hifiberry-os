@@ -72,6 +72,26 @@ if data:
 - gpiod
 - libgpiod-dev
 
+## Changelog
+
+### Version 1.3.0 (July 1, 2025)
+
+**Enhanced Reliability & Error Handling:**
+- **Improved Error Handling**: Replaced `sys.exit()` calls with proper exception raising (`IOError` for GPIO failures, `ImportError` for missing dependencies)
+- **Retry Logic**: Added configurable retry mechanism for GPIO initialization with `retry` and `retry_delay` parameters
+- **Randomized Delays**: Added randomization to retry delays to prevent synchronized access conflicts between multiple processes
+- **Better Exception Types**: GPIO initialization failures now raise `IOError` instead of generic `RuntimeError` for more semantic error handling
+
+**New Features:**
+- **Configurable Retry Parameters**: `HatEEPROM(retry=2, retry_delay=1.0)` allows customization of initialization retry behavior
+- **Library-Friendly**: Can now be used as a library without risk of unexpected program termination
+- **Multi-Process Safe**: Randomized retry delays reduce conflicts when multiple processes access GPIO simultaneously
+
+**Backwards Compatibility:**
+- All existing APIs remain unchanged
+- Default behavior preserved for existing code
+- New parameters are optional with sensible defaults
+
 ## License
 
 MIT License

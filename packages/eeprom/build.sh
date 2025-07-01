@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-eeprom"
-VERSION="1.2.0"
+VERSION="1.3.0"
 DIST="${DIST:-bullseye}"
 
 # Check if DIST is set by environment variable
