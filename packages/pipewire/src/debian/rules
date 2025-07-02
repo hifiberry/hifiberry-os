@@ -13,6 +13,8 @@ override_dh_auto_clean:
 	dh_auto_clean
 	rm -rf pipewire-source/
 	rm -f *.tar.gz
+	rm -f fix-pipewire-config
+	rm -f fix-pipewire-config.py
 
 override_dh_auto_configure:
 	# Download PipeWire source

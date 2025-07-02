@@ -32,5 +32,6 @@ rm -f *.dsc
 rm -f *.tar.*
 rm -f *.changes
 rm -f *.buildinfo
+rm -f *.build
 
 echo "Clean completed."
