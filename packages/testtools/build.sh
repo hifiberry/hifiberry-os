@@ -4,7 +4,17 @@
 set -e
 
 PACKAGE="testtools"
-VERSION="1.0.3"
+SRC_DIR="$(dirname $(realpath $0))/src"
+SCRIPT_DIR="$(dirname $(realpath $0))"
+
+# Extract version from changelog
+if [ -f "$SRC_DIR/debian/changelog" ]; then
+    VERSION=$(head -n 1 "$SRC_DIR/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+    echo "Version from changelog: $VERSION"
+else
+    echo "ERROR: Changelog not found at $SRC_DIR/debian/changelog"
+    exit 1
+fi
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
@@ -19,16 +29,6 @@ SRC_DIR="$(dirname $(realpath $0))/src"
 SCRIPT_DIR="$(dirname $(realpath $0))"
 
 echo "Building $PACKAGE version $VERSION"
-
-# Check if changelog version matches build script version
-if [ -f "$SRC_DIR/debian/changelog" ]; then
-    CHANGELOG_VERSION=$(head -n 1 "$SRC_DIR/debian/changelog" | grep -oP '\(\K[^)]+')
-    if [ "$VERSION" != "$CHANGELOG_VERSION" ]; then
-        echo "ERROR: Version mismatch between build script ($VERSION) and changelog ($CHANGELOG_VERSION)"
-        exit 1
-    fi
-    echo "Version consistency check passed: $VERSION"
-fi
 
 # Clean previous build
 rm -rf "$BUILD_DIR"
