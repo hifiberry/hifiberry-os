@@ -1,20 +1,32 @@
 #!/bin/bash
 set -e
 
-# Create squeezelite user and group if they don't exist
-if ! getent group squeezelite > /dev/null; then
-    addgroup --quiet --system squeezelite
-fi
-if ! getent passwd squeezelite > /dev/null; then
-    adduser --quiet --system --ingroup squeezelite --no-create-home --home /var/lib/squeezelite squeezelite
-    usermod -a -G audio squeezelite
-fi
+case "$1" in
+    configure)
+        # Create squeezelite user and group if they don't exist
+        if ! getent group squeezelite > /dev/null; then
+            addgroup --quiet --system squeezelite
+        fi
+        if ! getent passwd squeezelite > /dev/null; then
+            adduser --quiet --system --ingroup squeezelite --no-create-home --home /var/lib/squeezelite squeezelite
+            usermod -a -G audio squeezelite
+        fi
 
-# Create home directory for squeezelite if it doesn't exist
-if [ ! -d /var/lib/squeezelite ]; then
-    mkdir -p /var/lib/squeezelite
-    chown squeezelite:squeezelite /var/lib/squeezelite
-fi
+        # Create home directory for squeezelite if it doesn't exist
+        if [ ! -d /var/lib/squeezelite ]; then
+            mkdir -p /var/lib/squeezelite
+            chown squeezelite:squeezelite /var/lib/squeezelite
+        fi
+        ;;
+    
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+    
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
 
 #DEBHELPER#
 exit 0
