@@ -27,7 +27,9 @@ case "$1" in
         mkdir -p /var/lib/mpd/playlists
         mkdir -p /run/mpd
         
-        chown -R mpd:audio /var/lib/mpd
+        chown mpd:audio /var/lib/mpd || true
+        chown mpd:audio /var/lib/mpd/music || true
+        chown mpd:audio /var/lib/mpd/playlists || true
         chown mpd:audio /run/mpd || true
         chmod 755 /var/lib/mpd
         chmod 755 /var/lib/mpd/music
