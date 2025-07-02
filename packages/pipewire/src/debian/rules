@@ -3,6 +3,9 @@
 # Configuration
 PIPEWIRE_VERSION = 1.4.5
 
+# Disable debug package creation
+export DH_OPTIONS = --no-automatic-dbgsym
+
 %:
 	dh $@
 
@@ -25,7 +28,10 @@ override_dh_auto_configure:
 		-Dsystemd-system-service=enabled \
 		-Dsystemd-user-service=disabled \
 		-Dtest=disabled \
-		-Dbuildtype=release
+		-Dbuildtype=release \
+		-Dstrip=true \
+		-Db_ndebug=true \
+		-Dsysconfdir=/etc
 
 override_dh_auto_build:
 	cd pipewire-source && meson compile -C builddir
@@ -40,6 +46,23 @@ override_dh_auto_install:
 	# Install custom WirePlumber systemd service
 	mkdir -p debian/hifiberry-pipewire/usr/lib/systemd/system
 	cp wireplumber-system.service debian/hifiberry-pipewire/usr/lib/systemd/system/
+	
+	# Install PipeWire configuration files to /etc for system-wide customization
+	mkdir -p debian/hifiberry-pipewire/etc/pipewire
+	if [ -d debian/hifiberry-pipewire/usr/share/pipewire ]; then \
+		cp -r debian/hifiberry-pipewire/usr/share/pipewire/* debian/hifiberry-pipewire/etc/pipewire/; \
+	fi
+	
+	# Rename main config file to .default for template approach
+	if [ -f debian/hifiberry-pipewire/etc/pipewire/pipewire.conf ]; then \
+		mv debian/hifiberry-pipewire/etc/pipewire/pipewire.conf debian/hifiberry-pipewire/etc/pipewire/pipewire.conf.default; \
+	fi
+	
+	# Create configuration override directory
+	mkdir -p debian/hifiberry-pipewire/etc/pipewire/pipewire.conf.d
+	
+	# Keep original files in /usr/share as fallback (PipeWire's default behavior)
+	# PipeWire will check /etc/pipewire first, then fall back to /usr/share/pipewire
 	
 	# Install ALSA configuration for PipeWire
 	mkdir -p debian/hifiberry-pipewire/etc
@@ -57,3 +80,7 @@ override_dh_auto_install:
 
 override_dh_auto_test:
 	# Skip tests - requires specific hardware and complex setup
+
+override_dh_strip:
+	# Strip symbols and disable automatic debug package creation
+	dh_strip --no-automatic-dbgsym

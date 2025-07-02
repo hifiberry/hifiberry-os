@@ -53,6 +53,18 @@ case "$1" in
         if [ -f /usr/share/alsa/alsa.conf.d/50-pipewire.conf ]; then
             cp -f /usr/share/alsa/alsa.conf.d/50-pipewire.conf /etc/alsa/conf.d/ || true
         fi
+        
+        # Initialize PipeWire configuration from default template if needed
+        if [ ! -f /etc/pipewire/pipewire.conf ] && [ -f /etc/pipewire/pipewire.conf.default ]; then
+            echo "Installing default PipeWire configuration..."
+            cp /etc/pipewire/pipewire.conf.default /etc/pipewire/pipewire.conf
+        fi
+        
+        # Fix PipeWire configuration for headless systems
+        if [ -x /usr/bin/fix-pipewire-config ]; then
+            echo "Fixing PipeWire configuration for headless system..."
+            /usr/bin/fix-pipewire-config || true
+        fi
         ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)
