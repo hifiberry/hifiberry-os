@@ -1,3 +1,13 @@
+hifiberry-squeezelite (2.0.0.1542) stable; urgency=medium
+
+  * Improved systemd service integration with debhelper compatibility
+  * Added squeezelite.service file for proper systemd management
+  * Updated postinst script for idempotent user/group creation
+  * Enhanced upgrade detection and service state preservation
+  * Refactored maintainer scripts to follow Debian best practices
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 19 Dec 2024 12:00:00 +0000
+
 hifiberry-squeezelite (2.0.0.1541) stable; urgency=medium
 
   * Initial sbuild-based packaging
