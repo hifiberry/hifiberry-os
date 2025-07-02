@@ -1,0 +1,3 @@
+# Services to enable for the shairport-sync package
+shairport.service
+nqptp.service
