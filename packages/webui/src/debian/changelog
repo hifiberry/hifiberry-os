@@ -1,4 +1,4 @@
-hifiberry-webui (1.0.0-1) unstable; urgency=low
+hifiberry-webui (0.1.0) stable; urgency=low
 
   * Initial release of HiFiBerry Web UI
   * Vue.js-based modern web interface
