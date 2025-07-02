@@ -1,21 +1,30 @@
+hifiberry-pipewire (1.4.5.4) stable; urgency=low
+
+  * Simplified headless configuration using direct config file
+  * Removed unnecessary Python script and dependency
+  * Fixed lintian errors for proper Debian policy compliance
+  * Added static override file for D-Bus and X11 modules
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 02 Jul 2025 12:00:00 +0000
+
 hifiberry-pipewire (1.4.5.3) stable; urgency=low
 
-  * Updated build script to use changelog as single source of truth for versioning
+  * Updated build script to use changelog as single source of truth
   * Improved version consistency and management
-  * Added hifiberry-pipewire.service file for debhelper-compatible systemd integration
-  * Enhanced postinst script with idempotent user/group creation and upgrade detection
+  * Added service file for debhelper-compatible systemd integration
+  * Enhanced postinst script with idempotent user/group creation
   * Improved systemd service management following Debian best practices
-  * Added pipewire group membership for better audio device access control
-  * Added fix-pipewire-config script to disable problematic D-Bus modules for headless systems
-  * Fixed PipeWire startup errors in headless environments by disabling portal, jackdbus-detect, and x11-bell modules
-  * Implemented proper configuration file management with .default template approach
-  * Added automatic backup of customized configurations during package removal
+  * Added pipewire group membership for better audio device access
+  * Added fix-pipewire-config script to disable problematic D-Bus modules
+  * Fixed PipeWire startup errors in headless environments
+  * Implemented proper configuration file management with templates
+  * Added automatic backup of customized configurations
   * Improved configuration preservation and restoration during upgrades
-  * Created /etc/pipewire/pipewire.conf.d/ directory for configuration overrides
-  * Optimized build configuration to exclude debug symbols for smaller package size
+  * Created configuration override directory for modular settings
+  * Optimized build configuration to exclude debug symbols
   * Added explicit symbol stripping and NDEBUG flag for release builds
 
- -- HiFiBerry <support@hifiberry.com>  Tue, 02 Jul 2025 12:00:00 +0000
+ -- HiFiBerry <support@hifiberry.com>  Wed, 02 Jul 2025 12:00:00 +0000
 
 hifiberry-pipewire (1.4.5.2) stable; urgency=low
 

@@ -60,11 +60,8 @@ case "$1" in
             cp /etc/pipewire/pipewire.conf.default /etc/pipewire/pipewire.conf
         fi
         
-        # Fix PipeWire configuration for headless systems
-        if [ -x /usr/bin/fix-pipewire-config ]; then
-            echo "Fixing PipeWire configuration for headless system..."
-            /usr/bin/fix-pipewire-config || true
-        fi
+        # Headless system configuration is handled by the pre-installed override file
+        echo "PipeWire headless configuration is enabled in /etc/pipewire/pipewire.conf.d/99-hifiberry-headless.conf"
         ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)

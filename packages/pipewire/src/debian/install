@@ -1,1 +1,1 @@
-fix-pipewire-config.py usr/bin/fix-pipewire-config
+99-hifiberry-headless.conf etc/pipewire/pipewire.conf.d/
