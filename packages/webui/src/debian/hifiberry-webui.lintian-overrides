@@ -1,0 +1,3 @@
+# These are built JavaScript files from Vue.js compilation, not missing source
+hifiberry-webui source: source-is-missing hbos-ui/dist/assets/index-*.js
+hifiberry-webui source: source-is-missing hbos-ui/dist/assets/index-*.css
