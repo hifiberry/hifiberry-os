@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-shairport"
-VERSION="4.3.7.6"
+VERSION="4.3.7.7"
 
 # Version consistency check
 SCRIPT_DIR="$(dirname $(realpath $0))"

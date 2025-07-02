@@ -1,3 +1,13 @@
+hifiberry-shairport (4.3.7.7) stable; urgency=medium
+
+  * Improved systemd service integration with debhelper compatibility
+  * Added both shairport-sync.service and nqptp.service files for proper management
+  * Updated postinst/prerm scripts for idempotent systemd handling
+  * Enhanced upgrade detection and service state preservation
+  * Documented all systemd integration improvements
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 19 Dec 2024 12:00:00 +0000
+
 hifiberry-shairport (4.3.7.6) stable; urgency=medium
 
   * Moved runtime files from /var/run/shairport to /var/lib/shairport
