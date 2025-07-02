@@ -3,13 +3,17 @@
 set -e
 
 # Configuration
-PIPEWIRE_VERSION="1.4.5"
-VERSION_SUFFIX="2"
 PACKAGE_NAME="hifiberry-pipewire"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Construct full version string
-FULL_VERSION="${PIPEWIRE_VERSION}.${VERSION_SUFFIX}"
+# Extract version from changelog
+cd src
+FULL_VERSION=$(head -1 debian/changelog | sed 's/.*(\([^)]*\)).*/\1/')
+echo "Version from changelog: $FULL_VERSION"
+
+# Extract PipeWire base version (everything before the last dot and suffix)
+PIPEWIRE_VERSION=$(echo "$FULL_VERSION" | sed 's/\.[^.]*$//')
+echo "PipeWire version: $PIPEWIRE_VERSION"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
@@ -22,21 +26,12 @@ fi
 
 echo "Building package with sbuild..."
 
-# Check if changelog version matches expected version
-cd src
-CHANGELOG_VERSION=$(head -1 debian/changelog | sed 's/.*(\([^)]*\)).*/\1/')
-if [ "$CHANGELOG_VERSION" != "$FULL_VERSION" ]; then
-    echo "ERROR: Changelog version ($CHANGELOG_VERSION) does not match expected version ($FULL_VERSION)"
-    echo "Please update debian/changelog manually"
-    exit 1
-fi
-
-# Check if PipeWire version in rules file is consistent with build script
+# Check if PipeWire version in rules file is consistent with changelog
 RULES_PIPEWIRE_VERSION=$(grep '^PIPEWIRE_VERSION = ' debian/rules | sed 's/PIPEWIRE_VERSION = //')
 if [[ ! "$FULL_VERSION" =~ ^${RULES_PIPEWIRE_VERSION}(\.|$) ]]; then
     echo "ERROR: PipeWire version in rules file ($RULES_PIPEWIRE_VERSION) is not compatible with package version ($FULL_VERSION)"
     echo "Package version should start with the PipeWire version from rules file"
-    echo "Please update debian/rules or build.sh to ensure consistency"
+    echo "Please update debian/rules or debian/changelog to ensure consistency"
     exit 1
 fi
 

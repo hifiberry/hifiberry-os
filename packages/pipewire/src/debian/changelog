@@ -1,3 +1,14 @@
+hifiberry-pipewire (1.4.5.3) stable; urgency=low
+
+  * Updated build script to use changelog as single source of truth for versioning
+  * Improved version consistency and management
+  * Added hifiberry-pipewire.service file for debhelper-compatible systemd integration
+  * Enhanced postinst script with idempotent user/group creation and upgrade detection
+  * Improved systemd service management following Debian best practices
+  * Added pipewire group membership for better audio device access control
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 02 Jul 2025 12:00:00 +0000
+
 hifiberry-pipewire (1.4.5.2) stable; urgency=low
 
   * Build using stable
