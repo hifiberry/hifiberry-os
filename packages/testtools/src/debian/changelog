@@ -1,3 +1,10 @@
+testtools (1.0.4) stable; urgency=medium
+
+  * Updated build script to use changelog as single source of truth for versioning
+  * Improved version consistency and management
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 02 Jul 2025 12:00:00 +0000
+
 testtools (1.0.3) stable; urgency=medium
 
   * Converted to sbuild-based packaging
