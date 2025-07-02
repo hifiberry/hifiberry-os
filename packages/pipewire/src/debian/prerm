@@ -3,9 +3,17 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        # If we're removing the package (not upgrading), restore the original asound.conf if it exists
+        # If we're removing the package (not upgrading), backup configurations
         if [ "$1" = "remove" ]; then
-            # Check if we have a symlink and a backup
+            # Backup PipeWire configuration if it exists and was customized
+            if [ -f /etc/pipewire/pipewire.conf ] && [ -f /etc/pipewire/pipewire.conf.default ]; then
+                if ! cmp -s /etc/pipewire/pipewire.conf /etc/pipewire/pipewire.conf.default; then
+                    echo "Backing up customized PipeWire configuration..."
+                    mv /etc/pipewire/pipewire.conf /etc/pipewire/pipewire.conf.bak
+                fi
+            fi
+            
+            # Check if we have a symlink and a backup for ALSA
             if [ -L /etc/asound.conf ] && [ -f /etc/asound.conf.bak ]; then
                 # Remove the symlink
                 rm -f /etc/asound.conf

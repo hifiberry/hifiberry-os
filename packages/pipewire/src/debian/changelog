@@ -6,6 +6,14 @@ hifiberry-pipewire (1.4.5.3) stable; urgency=low
   * Enhanced postinst script with idempotent user/group creation and upgrade detection
   * Improved systemd service management following Debian best practices
   * Added pipewire group membership for better audio device access control
+  * Added fix-pipewire-config script to disable problematic D-Bus modules for headless systems
+  * Fixed PipeWire startup errors in headless environments by disabling portal, jackdbus-detect, and x11-bell modules
+  * Implemented proper configuration file management with .default template approach
+  * Added automatic backup of customized configurations during package removal
+  * Improved configuration preservation and restoration during upgrades
+  * Created /etc/pipewire/pipewire.conf.d/ directory for configuration overrides
+  * Optimized build configuration to exclude debug symbols for smaller package size
+  * Added explicit symbol stripping and NDEBUG flag for release builds
 
  -- HiFiBerry <support@hifiberry.com>  Tue, 02 Jul 2025 12:00:00 +0000
 
