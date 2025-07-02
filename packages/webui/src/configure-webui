@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""
+Configure HiFiBerry Web UI integration with audiocontrol
+"""
+
+import json
+import sys
+import shutil
+import argparse
+import subprocess
+from pathlib import Path
+
+def restart_audiocontrol():
+    """Restart the audiocontrol service if it's running"""
+    try:
+        # Check if systemctl is available
+        result = subprocess.run(['which', 'systemctl'], capture_output=True, text=True)
+        if result.returncode != 0:
+            print("systemctl not found, cannot restart audiocontrol service")
+            return False
+        
+        # Check if audiocontrol service exists
+        result = subprocess.run(['systemctl', 'list-unit-files', 'audiocontrol.service'], 
+                               capture_output=True, text=True)
+        if 'audiocontrol.service' not in result.stdout:
+            print("audiocontrol.service not found")
+            return False
+        
+        # Check if service is active
+        result = subprocess.run(['systemctl', 'is-active', 'audiocontrol.service'], 
+                               capture_output=True, text=True)
+        
+        if result.stdout.strip() == 'active':
+            print("Restarting audiocontrol service...")
+            restart_result = subprocess.run(['systemctl', 'restart', 'audiocontrol.service'], 
+                                           capture_output=True, text=True)
+            if restart_result.returncode == 0:
+                print("audiocontrol service restarted successfully")
+                return True
+            else:
+                print(f"Failed to restart audiocontrol service: {restart_result.stderr}")
+                return False
+        else:
+            print("audiocontrol service is not active, no restart needed")
+            return True
+            
+    except Exception as e:
+        print(f"Error checking/restarting audiocontrol service: {e}")
+        return False
+
+CONFIG_FILE = "/etc/audiocontrol/audiocontrol.json"
+WEBUI_ROUTE = {
+    "url_path": "/ui",
+    "directory": "/usr/share/hifiberry/webui"
+}
+
+def add_webui_route():
+    """Add Web UI route to audiocontrol configuration"""
+    config_path = Path(CONFIG_FILE)
+    
+    if not config_path.exists():
+        print(f"audiocontrol configuration file not found at {CONFIG_FILE}")
+        print("The Web UI will be installed but not automatically configured")
+        return 0
+    
+    print("Adding HiFiBerry Web UI route to audiocontrol configuration...")
+    
+    try:
+        # Create backup
+        backup_path = config_path.with_suffix(".json.bak")
+        shutil.copy2(config_path, backup_path)
+        print(f"Created backup at {backup_path}")
+        
+        # Load configuration
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        
+        # Check if webserver service exists
+        if 'services' not in config or 'webserver' not in config['services']:
+            print("Warning: webserver service not found in audiocontrol configuration")
+            return 1
+        
+        # Ensure static_routes exists
+        webserver = config['services']['webserver']
+        if 'static_routes' not in webserver:
+            webserver['static_routes'] = []
+        
+        # Check if /ui route already exists
+        existing_route = None
+        for route in webserver['static_routes']:
+            if route.get('url_path') == '/ui':
+                existing_route = route
+                break
+        
+        if existing_route:
+            # Update existing route if directory is different
+            if existing_route.get('directory') != WEBUI_ROUTE['directory']:
+                existing_route['directory'] = WEBUI_ROUTE['directory']
+                print("Updated existing /ui route directory")
+                needs_save = True
+            else:
+                print("/ui route already exists and is correctly configured")
+                needs_save = False
+        else:
+            # Add new route
+            webserver['static_routes'].append(WEBUI_ROUTE)
+            print("Added /ui route to audiocontrol configuration")
+            needs_save = True
+        
+        # Save configuration if changes were made
+        if needs_save:
+            with open(config_path, 'w') as f:
+                json.dump(config, f, indent=4)
+            print("Configuration updated successfully")
+            
+            # Restart audiocontrol service
+            restart_audiocontrol()
+        
+        return 0
+        
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in configuration file: {e}")
+        return 1
+    except Exception as e:
+        print(f"Error updating audiocontrol configuration: {e}")
+        return 1
+
+def remove_webui_route():
+    """Remove Web UI route from audiocontrol configuration"""
+    config_path = Path(CONFIG_FILE)
+    
+    if not config_path.exists():
+        print(f"audiocontrol configuration file not found at {CONFIG_FILE}")
+        return 0
+    
+    print("Removing HiFiBerry Web UI route from audiocontrol configuration...")
+    
+    try:
+        # Create backup
+        backup_path = config_path.with_suffix(".json.bak")
+        shutil.copy2(config_path, backup_path)
+        print(f"Created backup at {backup_path}")
+        
+        # Load configuration
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        
+        # Check if webserver service exists
+        if 'services' not in config or 'webserver' not in config['services']:
+            print("No webserver service found in audiocontrol configuration")
+            return 0
+        
+        webserver = config['services']['webserver']
+        if 'static_routes' not in webserver:
+            print("No static routes found in webserver configuration")
+            return 0
+        
+        # Find and remove /ui route
+        original_count = len(webserver['static_routes'])
+        webserver['static_routes'] = [
+            route for route in webserver['static_routes'] 
+            if route.get('url_path') != '/ui'
+        ]
+        
+        if len(webserver['static_routes']) < original_count:
+            # Save configuration
+            with open(config_path, 'w') as f:
+                json.dump(config, f, indent=4)
+            print("Removed /ui route from audiocontrol configuration")
+            
+            # Restart audiocontrol service
+            restart_audiocontrol()
+        else:
+            print("/ui route not found in audiocontrol configuration")
+        
+        return 0
+        
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in configuration file: {e}")
+        return 1
+    except Exception as e:
+        print(f"Error updating audiocontrol configuration: {e}")
+        return 1
+
+def main():
+    """Main function with argument parsing"""
+    parser = argparse.ArgumentParser(description='Configure HiFiBerry Web UI integration with audiocontrol')
+    parser.add_argument('action', choices=['add', 'remove'], default='add', nargs='?',
+                       help='Action to perform: add (default) or remove the Web UI route')
+    
+    args = parser.parse_args()
+    
+    if args.action == 'remove':
+        return remove_webui_route()
+    else:
+        return add_webui_route()
+
+if __name__ == "__main__":
+    sys.exit(main())

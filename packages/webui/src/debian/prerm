@@ -2,6 +2,32 @@
 
 set -e
 
+case "$1" in
+    remove|purge)
+        echo "Removing Web UI integration from audiocontrol configuration"
+        # Remove the Web UI integration from audiocontrol
+        if [ -x /usr/bin/configure-webui ]; then
+            /usr/bin/configure-webui remove
+        else
+            echo "Warning: configure-webui script not found or not executable"
+        fi
+        ;;
+    
+    upgrade|deconfigure)
+        echo "Package upgrade or deconfigure - preserving Web UI configuration"
+        # Don't remove configuration during upgrades
+        ;;
+    
+    failed-upgrade)
+        # Nothing to do
+        ;;
+    
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
 #DEBHELPER#
 
 exit 0

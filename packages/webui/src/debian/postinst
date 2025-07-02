@@ -2,6 +2,43 @@
 
 set -e
 
+case "$1" in
+    configure)
+        # $2 contains the old version if this is an upgrade
+        if [ -z "$2" ]; then
+            echo "Installing Web UI integration (fresh install)"
+            action="install"
+        else
+            echo "Upgrading Web UI integration from version $2"
+            action="upgrade"
+        fi
+        
+        # Configure the Web UI integration with audiocontrol
+        # Only modify config on fresh install or if explicitly needed
+        if [ -x /usr/bin/configure-webui ]; then
+            if [ "$action" = "install" ]; then
+                echo "Adding Web UI route to audiocontrol configuration"
+                /usr/bin/configure-webui
+            else
+                echo "Upgrade detected - checking if Web UI route needs updating"
+                # For upgrades, configure-webui will only modify config if route is missing
+                /usr/bin/configure-webui
+            fi
+        else
+            echo "Warning: configure-webui script not found or not executable"
+        fi
+        ;;
+    
+    abort-upgrade|abort-remove|abort-deconfigure)
+        # Nothing to do in these cases
+        ;;
+    
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
 #DEBHELPER#
 
 exit 0

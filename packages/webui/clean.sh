@@ -15,10 +15,6 @@ fi
 
 # Remove build artifacts
 echo "Removing build artifacts..."
-rm -f src/*.deb
-rm -f src/*.build*
-rm -f src/*.changes
-rm -f src/*.dsc
-rm -f src/*.tar.*
+rm -f *.deb
 
 echo "Webui cleanup completed."
