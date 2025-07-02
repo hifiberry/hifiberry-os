@@ -1,3 +1,11 @@
+hifiberry-mpd (0.24.4.3) stable; urgency=low
+
+  * Added debhelper systemd service integration for automatic service management
+  * Improved package upgrade experience with proper service handling
+  * Enhanced maintainer scripts following Debian best practices
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 02 Jul 2025 15:00:00 +0000
+
 hifiberry-mpd (0.24.4.2) stable; urgency=low
 
   * Added configure-mpd script for automatic mixer configuration
