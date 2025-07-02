@@ -1,11 +1,17 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/hifiberry/hifiberry-os.svg)](https://GitHub.com/hifiberry/hifiberry-os/graphs/contributors/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## HiFiBerryOS Notice
+
+**The current HiFiBerryOS releases, including HiFiBerryOS and HiFiBerryOS64, are no longer maintained. No further updates, feature additions, or bug fixes will be provided.**
+
+**We are currently developing a new system, which is available in the [`hbosng` branch](https://github.com/hifiberry/hifiberry-os/tree/hbosng) of this repository. We do not provide timelines or guarantees regarding specific features or release dates.**
+
+**Due to this transition, the issue tracker has been temporarily disabled.**
+
+**For progress updates, you can follow our [blog](https://hifiberry.com/blog).**
+
 # HiFiBerryOS
-
-**The current HiFiBerryOS releases are not maintained anymore. No further updates are planned. We are working on a completely new system. You can check the hbosng branch of this repository.
-We can't and won't say what functionality will be released when. This also means, there will be no new feature implementations or bug fixes from us on the "old" HiFIBerryOR or HiFiBerryOS64 releases anymore.
-For updates on the progress, you might subscribe to our [blog](https://hifiberry.com/blog).**
-
 
 HiFiBerryOS is our version of a minimal Linux distribution optimized for audio playback. 
 The goal isn't to add as much functionality as possible, but to keep it small. Therefore, 
