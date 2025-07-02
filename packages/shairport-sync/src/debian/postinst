@@ -46,15 +46,32 @@ if command -v setcap > /dev/null; then
     setcap 'cap_net_bind_service=+ep' /usr/bin/nqptp || true
 fi
 
-# Enable and start systemd services
-if [ -d /run/systemd/system ]; then
-    # Enable nqptp service first
-    deb-systemd-helper enable nqptp.service >/dev/null || true
-    deb-systemd-invoke start nqptp.service >/dev/null || true
+# Handle systemd service management based on installation type
+case "$1" in
+    configure)
+        # Only enable/start services on fresh install or when explicitly needed
+        if [ -z "$2" ]; then
+            # Fresh installation
+            if [ -d /run/systemd/system ]; then
+                echo "Fresh installation - enabling and starting services"
+                # Enable nqptp service first (dependency for shairport)
+                systemctl --system daemon-reload >/dev/null || true
+                systemctl enable nqptp.service >/dev/null || true
+                systemctl start nqptp.service >/dev/null || true
+                
+                # Enable and start shairport service
+                systemctl enable shairport.service >/dev/null || true
+                systemctl start shairport.service >/dev/null || true
+            fi
+        else
+            # Package upgrade - let debhelper handle service management
+            echo "Package upgrade - services will be handled by debhelper"
+        fi
+        ;;
     
-    # Enable shairport service
-    deb-systemd-helper enable shairport.service >/dev/null || true
-    deb-systemd-invoke start shairport.service >/dev/null || true
-fi
+    abort-upgrade|abort-remove|abort-deconfigure)
+        # Nothing to do in these cases
+        ;;
+esac
 
 #DEBHELPER#
