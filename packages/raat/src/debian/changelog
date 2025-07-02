@@ -1,3 +1,11 @@
+hifiberry-raat (1.1.43.8) stable; urgency=medium
+
+  * Added debhelper systemd service integration for automatic service management
+  * Improved package upgrade experience with proper service handling
+  * Enhanced maintainer scripts following Debian best practices
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 02 Jul 2025 15:30:00 +0000
+
 hifiberry-raat (1.1.43.7) stable; urgency=medium
 
   * Fixed GPIO permission errors in configure-raat script
