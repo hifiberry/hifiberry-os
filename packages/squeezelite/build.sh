@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-squeezelite"
-VERSION="2.0.0.1541"
+VERSION="2.0.0.1542"
 
 # Version consistency check
 SCRIPT_DIR="$(dirname $(realpath $0))"
