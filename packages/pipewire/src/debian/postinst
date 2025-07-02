@@ -9,8 +9,20 @@ case "$1" in
         fi
         
         if ! getent passwd pipewire > /dev/null; then
-            adduser --quiet --system --ingroup pipewire --no-create-home --home /nonexistent pipewire
+            adduser --quiet --system --ingroup pipewire --home /var/lib/pipewire pipewire
             usermod -c "PipeWire System Daemon" pipewire
+        else
+            # Update home directory for existing pipewire user if it's not correct
+            if [ "$(getent passwd pipewire | cut -d: -f6)" != "/var/lib/pipewire" ]; then
+                # Check if pipewire process is running
+                if ! pgrep -u pipewire > /dev/null; then
+                    usermod -d /var/lib/pipewire pipewire
+                    echo "Updated home directory for pipewire user to /var/lib/pipewire"
+                else
+                    echo "WARNING: Cannot update pipewire user home directory while pipewire is running"
+                    echo "The home directory will be used from the service file environment variables"
+                fi
+            fi
         fi
         
         # Add pipewire user to the audio group for access to audio devices
@@ -19,10 +31,10 @@ case "$1" in
         fi
         
         # Set proper permissions for pipewire directories
-        if [ -d /var/lib/pipewire ]; then
-            chown pipewire:pipewire /var/lib/pipewire
-            chmod 755 /var/lib/pipewire
-        fi
+        mkdir -p /var/lib/pipewire /var/lib/pipewire/.local/state/wireplumber
+        chown -R pipewire:pipewire /var/lib/pipewire
+        chmod 755 /var/lib/pipewire
+        chmod -R 700 /var/lib/pipewire/.local
         
         # Create runtime directory (will be handled by systemd)
         mkdir -p /run/pipewire || true

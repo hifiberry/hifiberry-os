@@ -13,6 +13,10 @@ Group=audio
 RuntimeDirectory=pipewire
 RuntimeDirectoryMode=0755
 Environment=PIPEWIRE_RUNTIME_DIR=/run/pipewire
+Environment=HOME=/var/lib/pipewire
+Environment=XDG_RUNTIME_DIR=/run/pipewire
+Environment=XDG_STATE_HOME=/var/lib/pipewire/.local/state
+Environment=XDG_CONFIG_HOME=/etc/wireplumber
 CacheDirectory=wireplumber
 StateDirectory=wireplumber
 LogsDirectory=wireplumber

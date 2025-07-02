@@ -1,3 +1,13 @@
+hifiberry-pipewire (1.4.5.5) stable; urgency=low
+
+  * Fixed WirePlumber state directory and permissions
+  * Corrected pipewire user home directory configuration
+  * Added proper XDG directory environment variables in service file
+  * Ensured wireplumber state directories are created and owned by pipewire user
+  * Fixed installation error when pipewire process is already running
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 02 Jul 2025 17:30:00 +0000
+
 hifiberry-pipewire (1.4.5.4) stable; urgency=low
 
   * Simplified headless configuration using direct config file
@@ -5,7 +15,7 @@ hifiberry-pipewire (1.4.5.4) stable; urgency=low
   * Fixed lintian errors for proper Debian policy compliance
   * Added static override file for D-Bus and X11 modules
 
- -- HiFiBerry <support@hifiberry.com>  Wed, 02 Jul 2025 12:00:00 +0000
+ -- HiFiBerry <support@hifiberry.com>  Wed, 02 Jul 2025 13:00:00 +0000
 
 hifiberry-pipewire (1.4.5.3) stable; urgency=low
 
