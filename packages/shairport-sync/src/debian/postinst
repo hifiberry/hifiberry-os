@@ -49,22 +49,10 @@ fi
 # Handle systemd service management based on installation type
 case "$1" in
     configure)
-        # Only enable/start services on fresh install or when explicitly needed
+        # Fresh installation - debhelper will handle service enabling
         if [ -z "$2" ]; then
-            # Fresh installation
-            if [ -d /run/systemd/system ]; then
-                echo "Fresh installation - enabling and starting services"
-                # Enable nqptp service first (dependency for shairport)
-                systemctl --system daemon-reload >/dev/null || true
-                systemctl enable nqptp.service >/dev/null || true
-                systemctl start nqptp.service >/dev/null || true
-                
-                # Enable and start shairport service
-                systemctl enable shairport.service >/dev/null || true
-                systemctl start shairport.service >/dev/null || true
-            fi
+            echo "Fresh installation - services will be enabled by debhelper"
         else
-            # Package upgrade - let debhelper handle service management
             echo "Package upgrade - services will be handled by debhelper"
         fi
         ;;
