@@ -30,12 +30,17 @@ case "$1" in
         chown librespot:audio /var/lib/librespot
         chmod 775 /var/lib/librespot
 
-        # Create Event FIFO
-        mkfifo /var/lib/librespot/event_pipe || true
+        # Create Event FIFO if it doesn't exist
+        if [ ! -p /var/lib/librespot/event_pipe ]; then
+            mkfifo /var/lib/librespot/event_pipe || true
+        fi
         chmod 660 /var/lib/librespot/event_pipe || true
         chown librespot:audio /var/lib/librespot/event_pipe || true
 
-        touch /var/lib/librespot/event_pipe.lock
+        # Create lock file if it doesn't exist
+        if [ ! -f /var/lib/librespot/event_pipe.lock ]; then
+            touch /var/lib/librespot/event_pipe.lock
+        fi
         chown librespot:audio /var/lib/librespot/event_pipe.lock
         chmod 660 /var/lib/librespot/event_pipe.lock
         ;;

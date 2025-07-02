@@ -1,3 +1,19 @@
+hifiberry-librespot (0.6.0.6) stable; urgency=low
+
+  * Fixed postinst script to handle existing FIFO pipe gracefully
+  * Prevent "File exists" errors during package upgrades
+  * Improved idempotent behavior for repeated installations
+
+ -- HiFiBerry <info@hifiberry.com>  Tue, 02 Jul 2025 14:00:00 +0000
+
+hifiberry-librespot (0.6.0.5) stable; urgency=low
+
+  * Improved systemd service management with debhelper integration
+  * Enhanced postinst script with proper upgrade detection
+  * Added automatic service file for better package management
+
+ -- HiFiBerry <info@hifiberry.com>  Tue, 02 Jul 2025 12:00:00 +0000
+
 hifiberry-librespot (0.6.0.4) stable; urgency=low
 
   * Use bookworm to build
