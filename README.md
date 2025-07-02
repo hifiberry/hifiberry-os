@@ -2,13 +2,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # HiFiBerryOS
 
+**The current HiFiBerryOS releases are not maintained anymore. No further updates are planned. We are working on a completely new system. You can check the hbosng branch of this repository.
+We can't and won't say what functionality will be released when. This also means, there will be no new feature implementations or bug fixes from us on the "old" HiFIBerryOR or HiFiBerryOS64 releases anymore.
+For updates on the progress, you might subscribe to our [blog](https://hifiberry.com/blog).**
+
+
 HiFiBerryOS is our version of a minimal Linux distribution optimized for audio playback. 
 The goal isn't to add as much functionality as possible, but to keep it small. Therefore, 
 it is based on Buildroot and it's not possible to use package managers to add more 
 software.
-
-**The current HiFiBerryOS releases are not maintained anymore. No further updates are planned. We are working on a completely new system. You can check the hbosng branch of this repository.
-We can't and won't say what functionality will be released when. This also means, there will be no new feature implementations or bug fixes from us on the "old" HiFIBerryOR or HiFiBerryOS64 releases anymore.**
 
 There is a robust update mechanism that will not overwrite the system, but switch between
 the current and the new version (they run on different partitions). This is documented in more detail at [doc/updater.md](doc/updater.md).
