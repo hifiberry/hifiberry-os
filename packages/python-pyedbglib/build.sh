@@ -4,7 +4,11 @@
 set -e
 
 PACKAGE="python3-pyedbglib"
-VERSION="2.24.2"
+SCRIPT_DIR="$(dirname $(realpath $0))"
+
+# Extract version from changelog
+VERSION=$(head -1 "$SCRIPT_DIR/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+echo "Version from changelog: $VERSION"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
