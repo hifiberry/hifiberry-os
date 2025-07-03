@@ -1,0 +1,88 @@
+.TH HIFIBERRY-BASECONFIG 8 "July 2025" "HiFiBerry" "System Administration"
+.SH NAME
+hifiberry-baseconfig \- HiFiBerry base configuration management script
+.SH SYNOPSIS
+.B hifiberry-baseconfig
+[\fIOPTION\fR]...
+.SH DESCRIPTION
+.B hifiberry-baseconfig
+manages HiFiBerry system configuration by:
+.IP \[bu] 2
+Applying default config.txt settings using config-configtxt
+.IP \[bu] 2
+Enabling and starting systemd services listed in services.conf
+.IP \[bu] 2
+Overwriting configuration files based on configfiles.conf mappings
+.PP
+.B This script must be run as root.
+.PP
+The script processes two configuration files:
+.IP \[bu] 2
+.B /etc/hifiberry/services.conf
+\- Lists systemd services to enable and start
+.IP \[bu] 2
+.B /etc/hifiberry/configfiles.conf
+\- Contains mappings of target:source file pairs
+.SH OPTIONS
+.TP
+.BR \-\-services\-conf " " \fIPATH\fR
+Path to services.conf file (default: /etc/hifiberry/services.conf)
+.TP
+.BR \-\-configfiles\-conf " " \fIPATH\fR
+Path to configfiles.conf file (default: /etc/hifiberry/configfiles.conf)
+.TP
+.BR \-\-force
+Force overwrite config files without confirmation
+.TP
+.BR \-\-services\-only
+Only process services, skip config files
+.TP
+.BR \-\-config\-files\-only
+Only process config files, skip services
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose output
+.TP
+.BR \-h ", " \-\-help
+Show help message and exit
+.SH FILES
+.TP
+.I /etc/hifiberry/services.conf
+List of systemd services to enable and start. Each service name should be on a separate line. Lines starting with # are treated as comments.
+.TP
+.I /etc/hifiberry/configfiles.conf
+Configuration file mappings in the format \fBconfigfile:original\fR. The original file will overwrite the configfile when processed.
+.SH EXAMPLES
+.TP
+Run full base configuration (must be run as root):
+.B sudo hifiberry-baseconfig
+.TP
+Force overwrite all config files without prompts:
+.B sudo hifiberry-baseconfig --force
+.TP
+Only enable and start services:
+.B sudo hifiberry-baseconfig --services-only
+.TP
+Only process config file overwrites:
+.B sudo hifiberry-baseconfig --config-files-only
+.TP
+Use custom configuration files:
+.B sudo hifiberry-baseconfig --services-conf /path/to/services.conf --configfiles-conf /path/to/configfiles.conf
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 1
+Error occurred during processing
+.SH NOTES
+This script must be run as root for all operations (systemctl, file operations, and config.txt modifications).
+.PP
+When processing config files without --force, the script will prompt for confirmation before overwriting each existing file.
+.PP
+The script automatically runs \fBconfig-configtxt --default\fR to apply default config.txt settings before processing other configurations.
+.SH SEE ALSO
+.BR baseconfig (8),
+.BR systemctl (1)
+.SH AUTHOR
+HiFiBerry Support <support@hifiberry.com>

@@ -1,3 +1,33 @@
+hifiberry-baseconfig (1.1.2) stable; urgency=medium
+
+  * Removed automatic baseconfig execution during package installation
+  * Users must now manually run 'sudo baseconfig' or 'sudo hifiberry-baseconfig'
+  * Added informational message in postinst about manual configuration
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 15:00:00 +0000
+
+hifiberry-baseconfig (1.1.1) stable; urgency=medium
+
+  * Renamed base-config script to hifiberry-baseconfig for consistency
+  * Updated package installation to include hifiberry-baseconfig binary
+  * Added corresponding man page hifiberry-baseconfig(8)
+  * Maintained backward compatibility with existing baseconfig script
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 14:00:00 +0000
+
+hifiberry-baseconfig (1.1.0) stable; urgency=medium
+
+  * Added base-config script for comprehensive system configuration
+  * Automatic systemd service management from services.conf
+  * Configuration file overwrite management from configfiles.conf
+  * Added --force option to skip confirmation prompts
+  * Added volume-restore service to default enabled services
+  * Comprehensive command-line options for selective processing
+  * Added man page documentation for base-config command
+  * Configuration files installed to /etc/hifiberry/
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 12:00:00 +0000
+
 hifiberry-baseconfig (1.0.0) unstable; urgency=medium
 
   * Initial release

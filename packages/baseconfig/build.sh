@@ -1,45 +1,63 @@
 #!/bin/bash
 
+# Exit on error
 set -e
 
-# Configuration
-VERSION="1.0.0"
-PACKAGE_NAME="hifiberry-baseconfig"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC_DIR="${SCRIPT_DIR}/src"
-BUILD_DIR="/tmp/build-${PACKAGE_NAME}"
+PACKAGE="hifiberry-baseconfig"
 
-echo "Building ${PACKAGE_NAME} package..."
+# Extract version from changelog as single source of truth
+SCRIPT_DIR="$(dirname $(realpath $0))"
+VERSION=$(head -1 "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+echo "Version from changelog: $VERSION"
 
-# Ensure we have the source directory
-if [ ! -d "$SRC_DIR" ]; then
-    echo "Error: Source directory $SRC_DIR not found!"
-    exit 1
+# Check if DIST is set by environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    CHROOT="${DIST}-amd64-sbuild"
+    DIST_ARG="--dist=$DIST"
+    CHROOT_ARG="--chroot=$CHROOT"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+    CHROOT_ARG=""
 fi
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="$(dirname $(realpath $0))/src"
 
-# Clean and create build directory
+echo "Building $PACKAGE version $VERSION"
+
+# Clean previous build
 rm -rf "$BUILD_DIR"
-cp -r "$SRC_DIR" "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
+# Copy source files to build directory
+echo "Copying source files..."
+cp -r "$SRC_DIR"/* "$BUILD_DIR/"
+
+# Change to build directory
 cd "$BUILD_DIR"
 
-# Make sure debian/rules is executable
-chmod +x debian/rules
+# Build package using sbuild
+echo "Using sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    $DIST_ARG \
+    $CHROOT_ARG \
+    --build-dir="$BUILD_DIR" \
+    --verbose
 
-# Build binary packages directly
-echo "Building binary packages..."
-dpkg-buildpackage -us -uc
+# Move build artifacts to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
 
-# Move packages to script directory
-cd ..
-mv ${PACKAGE_NAME}_${VERSION}*.deb "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.dsc "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.tar.* "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.changes "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.buildinfo "${SCRIPT_DIR}/" 2>/dev/null || true
+# Clean up build directory
+echo "Cleaning up build directory..."
+rm -rf "$BUILD_DIR"
 
-echo "Build completed successfully!"
-echo "Packages built in ${SCRIPT_DIR}:"
-cd "${SCRIPT_DIR}"
-ls -la *${VERSION}*.deb 2>/dev/null || echo "No .deb files found"
+echo "Package built successfully"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
 

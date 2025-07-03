@@ -8,11 +8,15 @@ Homepage: https://hifiberry.com/os
 
 Package: hifiberry-baseconfig
 Architecture: all
-Depends: uuid
+Depends: ${misc:Depends}, python3, uuid
 Description: HiFiBerry base configuration script
  This package provides the base configuration script for HiFiBerry OS.
  It ensures that a unique UUID is generated and stored for the system
  if one does not already exist.
+ .
+ The package also includes hifiberry-baseconfig, a comprehensive Python script
+ for managing systemd services and configuration file overwrites based on
+ configuration files in /etc/hifiberry/.
  .
  The script generates a UUID in /etc/uuid if the file is missing or empty,
  which is used for system identification purposes.
