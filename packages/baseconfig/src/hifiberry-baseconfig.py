@@ -267,6 +267,71 @@ def check_root_privileges():
     return True
 
 
+def run_command(command):
+    """
+    Execute a shell command with proper logging
+    
+    Args:
+        command: Command string to execute
+        
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        logging.info(f"Executing command: {command}")
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        
+        if result.returncode != 0:
+            logging.error(f"Command failed with exit code {result.returncode}: {command}")
+            if result.stderr.strip():
+                logging.error(f"Error output: {result.stderr.strip()}")
+            return False
+        
+        if result.stdout.strip():
+            logging.info(f"Command output: {result.stdout.strip()}")
+        
+        logging.info(f"Command completed successfully: {command}")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Error executing command '{command}': {e}")
+        return False
+
+
+def handle_commands(commands_conf_path):
+    """
+    Process command.conf and execute all listed commands
+    
+    Args:
+        commands_conf_path: Path to command.conf file
+        
+    Returns:
+        Number of successfully executed commands
+    """
+    commands = read_config_file(commands_conf_path)
+    if not commands:
+        logging.warning("No commands found in command.conf")
+        return 0
+    
+    logging.info(f"Processing {len(commands)} commands from {commands_conf_path}")
+    
+    success_count = 0
+    for command in commands:
+        if run_command(command):
+            success_count += 1
+        else:
+            logging.warning(f"Command failed, continuing with remaining commands")
+    
+    logging.info(f"Successfully executed {success_count}/{len(commands)} commands")
+    return success_count
+
+
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(
@@ -275,14 +340,26 @@ def main():
     
     parser.add_argument(
         '--services-conf',
-        default='/etc/hifiberry/services.conf',
-        help='Path to services.conf file (default: /etc/hifiberry/services.conf)'
+        default='/etc/hifiberry/baseconfig/services.conf',
+        help='Path to services.conf file (default: /etc/hifiberry/baseconfig/services.conf)'
     )
     
     parser.add_argument(
         '--configfiles-conf',
-        default='/etc/hifiberry/configfiles.conf',
-        help='Path to configfiles.conf file (default: /etc/hifiberry/configfiles.conf)'
+        default='/etc/hifiberry/baseconfig/configfiles.conf',
+        help='Path to configfiles.conf file (default: /etc/hifiberry/baseconfig/configfiles.conf)'
+    )
+    
+    parser.add_argument(
+        '--commands-conf',
+        default='/etc/hifiberry/baseconfig/command.conf',
+        help='Path to command.conf file (default: /etc/hifiberry/baseconfig/command.conf)'
+    )
+    
+    parser.add_argument(
+        '--commands-conf',
+        default='/etc/hifiberry/command.conf',
+        help='Path to command.conf file (default: /etc/hifiberry/command.conf)'
     )
     
     parser.add_argument(
@@ -300,7 +377,19 @@ def main():
     parser.add_argument(
         '--config-files-only',
         action='store_true',
-        help='Only process config files, skip services'
+        help='Only process config files, skip services and commands'
+    )
+    
+    parser.add_argument(
+        '--commands-only',
+        action='store_true',
+        help='Only process commands, skip services and config files'
+    )
+    
+    parser.add_argument(
+        '--commands-only',
+        action='store_true',
+        help='Only process commands, skip services and config files'
     )
     
     parser.add_argument(
@@ -327,17 +416,24 @@ def main():
         success = False
     
     # Handle services
-    if not args.config_files_only:
+    if not args.config_files_only and not args.commands_only:
         logging.info("=== Processing Services ===")
         services_processed = handle_services(args.services_conf)
         if services_processed == 0:
             success = False
     
     # Handle config files
-    if not args.services_only:
+    if not args.services_only and not args.commands_only:
         logging.info("=== Processing Config Files ===")
         configs_processed = handle_config_files(args.configfiles_conf, args.force)
         if configs_processed == 0:
+            success = False
+    
+    # Handle commands
+    if not args.services_only and not args.config_files_only:
+        logging.info("=== Processing Commands ===")
+        commands_processed = handle_commands(args.commands_conf)
+        if commands_processed == 0:
             success = False
     
     if success:

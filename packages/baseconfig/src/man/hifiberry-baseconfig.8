@@ -13,32 +13,43 @@ Applying default config.txt settings using config-configtxt
 Enabling and starting systemd services listed in services.conf
 .IP \[bu] 2
 Overwriting configuration files based on configfiles.conf mappings
+.IP \[bu] 2
+Executing commands listed in command.conf
 .PP
 .B This script must be run as root.
 .PP
-The script processes two configuration files:
+The script processes three configuration files:
 .IP \[bu] 2
-.B /etc/hifiberry/services.conf
+.B /etc/hifiberry/baseconfig/services.conf
 \- Lists systemd services to enable and start
 .IP \[bu] 2
-.B /etc/hifiberry/configfiles.conf
+.B /etc/hifiberry/baseconfig/configfiles.conf
 \- Contains mappings of target:source file pairs
+.IP \[bu] 2
+.B /etc/hifiberry/baseconfig/command.conf
+\- Lists commands to execute during configuration
 .SH OPTIONS
 .TP
 .BR \-\-services\-conf " " \fIPATH\fR
-Path to services.conf file (default: /etc/hifiberry/services.conf)
+Path to services.conf file (default: /etc/hifiberry/baseconfig/services.conf)
 .TP
 .BR \-\-configfiles\-conf " " \fIPATH\fR
-Path to configfiles.conf file (default: /etc/hifiberry/configfiles.conf)
+Path to configfiles.conf file (default: /etc/hifiberry/baseconfig/configfiles.conf)
+.TP
+.BR \-\-commands\-conf " " \fIPATH\fR
+Path to command.conf file (default: /etc/hifiberry/baseconfig/command.conf)
 .TP
 .BR \-\-force
 Force overwrite config files without confirmation
 .TP
 .BR \-\-services\-only
-Only process services, skip config files
+Only process services, skip config files and commands
 .TP
 .BR \-\-config\-files\-only
-Only process config files, skip services
+Only process config files, skip services and commands
+.TP
+.BR \-\-commands\-only
+Only process commands, skip services and config files
 .TP
 .BR \-v ", " \-\-verbose
 Enable verbose output
@@ -47,11 +58,14 @@ Enable verbose output
 Show help message and exit
 .SH FILES
 .TP
-.I /etc/hifiberry/services.conf
+.I /etc/hifiberry/baseconfig/services.conf
 List of systemd services to enable and start. Each service name should be on a separate line. Lines starting with # are treated as comments.
 .TP
-.I /etc/hifiberry/configfiles.conf
+.I /etc/hifiberry/baseconfig/configfiles.conf
 Configuration file mappings in the format \fBconfigfile:original\fR. The original file will overwrite the configfile when processed.
+.TP
+.I /etc/hifiberry/baseconfig/command.conf
+List of commands to execute during configuration. Each command should be on a separate line. Lines starting with # are treated as comments.
 .SH EXAMPLES
 .TP
 Run full base configuration (must be run as root):
@@ -66,8 +80,11 @@ Only enable and start services:
 Only process config file overwrites:
 .B sudo hifiberry-baseconfig --config-files-only
 .TP
+Only execute commands:
+.B sudo hifiberry-baseconfig --commands-only
+.TP
 Use custom configuration files:
-.B sudo hifiberry-baseconfig --services-conf /path/to/services.conf --configfiles-conf /path/to/configfiles.conf
+.B sudo hifiberry-baseconfig --services-conf /path/to/services.conf --configfiles-conf /path/to/configfiles.conf --commands-conf /path/to/command.conf
 .SH EXIT STATUS
 .TP
 .B 0
