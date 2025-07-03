@@ -4,19 +4,11 @@
 set -e
 
 PACKAGE="hifiberry-raat"
-VERSION="$(cat $(dirname $(realpath $0))/version.txt | tr -d '\n')"
 
-# Version consistency check
+# Extract version from changelog as single source of truth
 SCRIPT_DIR="$(dirname $(realpath $0))"
-CHANGELOG_VERSION=$(grep -m1 "^${PACKAGE}" "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
-if [ "$VERSION" != "$CHANGELOG_VERSION" ]; then
-    echo "ERROR: Version mismatch!"
-    echo "  version.txt: $VERSION"
-    echo "  debian/changelog: $CHANGELOG_VERSION"
-    echo "Please update version.txt or debian/changelog to match."
-    exit 1
-fi
-echo "Version consistency check passed: $VERSION"
+VERSION=$(head -1 "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+echo "Version from changelog: $VERSION"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
