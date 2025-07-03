@@ -12,6 +12,21 @@ import removeConsole from 'vite-plugin-remove-console'
 export default defineConfig({
   base: '/ui/',
   plugins: [vue(), vueDevTools(), removeConsole()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Option 1: Remove hashes entirely (static filenames)
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name].[ext]',
+        
+        // Option 2: Use more predictable hashes (uncomment to use instead)
+        // entryFileNames: 'assets/[name].[hash:8].js',
+        // chunkFileNames: 'assets/[name].[hash:8].js',
+        // assetFileNames: 'assets/[name].[hash:8].[ext]',
+      }
+    }
+  },
   css: {
     preprocessorOptions: {
       scss: {

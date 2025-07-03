@@ -1,3 +1,11 @@
+hifiberry-webui (0.2.0) stable; urgency=medium
+
+  * Improved build system
+  * Bug fixes and improvements in UI
+  * Configured static filenames for JS/CSS assets (no cache-busting hashes)
+  
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 16:00:00 +0000
+
 hifiberry-webui (0.1.0) stable; urgency=low
 
   * Initial release of HiFiBerry Web UI
