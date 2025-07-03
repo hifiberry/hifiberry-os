@@ -1,3 +1,20 @@
+hifiberry-baseconfig (1.1.4) stable; urgency=medium
+
+  * Moved configuration files to /etc/hifiberry/baseconfig/ for better organization
+  * Updated default paths for services.conf, configfiles.conf, and command.conf
+  * Updated man page documentation to reflect new file locations
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 15:45:00 +0000
+
+hifiberry-baseconfig (1.1.3) stable; urgency=medium
+
+  * Added command.conf support for executing commands during base configuration
+  * Added configure-webui setup command to automatically configure web UI nginx integration
+  * Added --commands-conf, --commands-only command line arguments
+  * Enhanced error handling and logging for command execution
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 15:30:00 +0000
+
 hifiberry-baseconfig (1.1.2) stable; urgency=medium
 
   * Removed automatic baseconfig execution during package installation
