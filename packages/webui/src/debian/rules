@@ -4,19 +4,31 @@
 	dh $@
 
 override_dh_auto_build:
-	# Vue.js application is already built by Docker, verify both locations
-	if [ -d debian/webui-dist ]; then \
-		echo "Using pre-built Vue.js files from debian/webui-dist"; \
-		mkdir -p hbos-ui/dist; \
-		cp -r debian/webui-dist/* hbos-ui/dist/; \
-	fi
-	test -d hbos-ui/dist || (echo "Vue.js build directory not found" && exit 1)
-	test -f hbos-ui/dist/index.html || (echo "Vue.js build failed - index.html not found" && exit 1)
+	# Vue.js application should be pre-built before sbuild starts
+	# Check that the build was completed by build.sh and files are in debian/webui-dist
+	test -d debian/webui-dist || (echo "Vue.js build directory not found - run build.sh first" && exit 1)
+	test -f debian/webui-dist/index.html || (echo "Vue.js build failed - index.html not found" && exit 1)
+	echo "Using pre-built Vue.js files from debian/webui-dist/"
+	# Copy built files to expected location for packaging
+	mkdir -p hbos-ui/dist
+	cp -r debian/webui-dist/* hbos-ui/dist/
 
 override_dh_auto_install:
 	# Install the built web application to /usr/share/hifiberry/webui
 	mkdir -p debian/hifiberry-webui/usr/share/hifiberry/webui
 	cp -r hbos-ui/dist/* debian/hifiberry-webui/usr/share/hifiberry/webui/
+
+override_dh_install:
+	# Debug: Show what files exist
+	ls -la configure-webui || echo "configure-webui not found in source"
+	ls -la hifiberry-webui.nginx || echo "hifiberry-webui.nginx not found in source"
+	
+	# Use standard dh_install to process debian/install file
+	dh_install
+	
+	# Debug: Show what was installed
+	ls -la debian/hifiberry-webui/usr/sbin/ || echo "No /usr/sbin directory"
+	ls -la debian/hifiberry-webui/etc/nginx/ || echo "No /etc/nginx directory"
 	
 	# Fix file permissions for web assets
 	find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.ttf" -exec chmod 644 {} \;

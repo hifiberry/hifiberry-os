@@ -34,6 +34,10 @@ fi
 # Step 2: Build the Vue.js application using Docker
 echo "Building Vue.js application with Docker..."
 # We're already in the src directory from Step 1
+# Replace API configuration with production version before building
+echo "Using production API configuration..."
+cp api.production.ts hbos-ui/src/constants/api.ts
+echo "API configuration updated for production build"
 # Ensure dist directory exists and has correct permissions
 mkdir -p hbos-ui/dist
 docker build -t hifiberry-webui-builder .
@@ -43,44 +47,13 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$(pwd)/hbos-ui/dist:/output" hifi
 ls -la hbos-ui/dist/
 echo "Vue.js build completed successfully"
 
-# Copy dist to debian directory so dpkg-deb can find it
-echo "Copying dist directory for packaging..."
-mkdir -p debian/hifiberry-webui/usr/share/hifiberry/webui
-cp -r hbos-ui/dist/* debian/hifiberry-webui/usr/share/hifiberry/webui/
+# Copy built files to debian directory so they're included in the source package
+echo "Preparing built files for sbuild..."
+mkdir -p debian/webui-dist
+cp -r hbos-ui/dist/* debian/webui-dist/
+echo "Built files copied to debian/webui-dist/"
 
-# Install configure-webui script
-mkdir -p debian/hifiberry-webui/usr/bin
-cp configure-webui debian/hifiberry-webui/usr/bin/
-chmod 755 debian/hifiberry-webui/usr/bin/configure-webui
-
-# Fix file permissions for web assets
-find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.ttf" -exec chmod 644 {} \;
-find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.svg" -exec chmod 644 {} \;
-find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.ico" -exec chmod 644 {} \;
-find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.html" -exec chmod 644 {} \;
-find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.js" -exec chmod 644 {} \;
-find debian/hifiberry-webui/usr/share/hifiberry/webui -type f -name "*.css" -exec chmod 644 {} \;
-
-# Create DEBIAN directory and extract binary package control info
-mkdir -p debian/hifiberry-webui/DEBIAN
-
-# Extract binary package section from debian/control and add version
-# Get Maintainer from source section and binary package section
-{
-    awk '/^Maintainer:/{print}' debian/control
-    awk '/^Package:/{found=1} found{print}' debian/control | sed 's/${misc:Depends}, //g'
-} | sed "/^Package:/a Version: $VERSION" > debian/hifiberry-webui/DEBIAN/control
-
-# Copy postinst script
-cp debian/postinst debian/hifiberry-webui/DEBIAN/postinst
-chmod 755 debian/hifiberry-webui/DEBIAN/postinst
-
-# Copy prerm script  
-cp debian/prerm debian/hifiberry-webui/DEBIAN/prerm
-chmod 755 debian/hifiberry-webui/DEBIAN/prerm
-
-# Step 3: Build the Debian package using dpkg-deb
-echo "Building Debian package with dpkg-deb..."
-dpkg-deb --build debian/hifiberry-webui
-# Rename to include version in filename
-mv debian/hifiberry-webui.deb ../hifiberry-webui_${VERSION}_all.deb
+# Step 3: Build the Debian package using sbuild
+echo "Building Debian package with sbuild..."
+sbuild -d stable --chroot-mode=unshare --no-run-lintian
+# The package will be built in the parent directory automatically by sbuild

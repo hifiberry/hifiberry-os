@@ -6,26 +6,24 @@ case "$1" in
     configure)
         # $2 contains the old version if this is an upgrade
         if [ -z "$2" ]; then
-            echo "Installing Web UI integration (fresh install)"
+            echo "Installing HiFiBerry Web UI (fresh install)"
             action="install"
         else
-            echo "Upgrading Web UI integration from version $2"
+            echo "Upgrading HiFiBerry Web UI from version $2"
             action="upgrade"
         fi
         
-        # Configure the Web UI integration with audiocontrol
-        # Only modify config on fresh install or if explicitly needed
-        if [ -x /usr/bin/configure-webui ]; then
-            if [ "$action" = "install" ]; then
-                echo "Adding Web UI route to audiocontrol configuration"
-                /usr/bin/configure-webui
-            else
-                echo "Upgrade detected - checking if Web UI route needs updating"
-                # For upgrades, configure-webui will only modify config if route is missing
-                /usr/bin/configure-webui
-            fi
+        # Create necessary directories
+        mkdir -p /var/log/nginx
+        
+        # Set up HiFiBerry Web UI nginx configuration
+        if [ -x /usr/sbin/configure-webui ]; then
+            echo "Setting up HiFiBerry Web UI nginx configuration"
+            /usr/sbin/configure-webui setup || true
         else
-            echo "Warning: configure-webui script not found or not executable"
+            echo "Warning: configure-webui not found at /usr/sbin/configure-webui"
+            echo "Manual setup required: run 'sudo configure-webui setup' to enable the Web UI"
+            ls -la /usr/sbin/configure-webui || echo "File does not exist"
         fi
         ;;
     

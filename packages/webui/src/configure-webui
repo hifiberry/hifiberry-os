@@ -1,199 +1,228 @@
 #!/usr/bin/env python3
 """
-Configure HiFiBerry Web UI integration with audiocontrol
+Configure HiFiBerry Web UI with nginx include
 """
 
-import json
 import sys
-import shutil
 import argparse
 import subprocess
 from pathlib import Path
 
-def restart_audiocontrol():
-    """Restart the audiocontrol service if it's running"""
+def manage_nginx_service(action):
+    """Start, stop, restart, or check status of main nginx service"""
     try:
         # Check if systemctl is available
         result = subprocess.run(['which', 'systemctl'], capture_output=True, text=True)
         if result.returncode != 0:
-            print("systemctl not found, cannot restart audiocontrol service")
+            print("systemctl not found, cannot manage nginx service")
             return False
         
-        # Check if audiocontrol service exists
-        result = subprocess.run(['systemctl', 'list-unit-files', 'audiocontrol.service'], 
+        # Check if nginx service exists
+        result = subprocess.run(['systemctl', 'list-unit-files', 'nginx.service'], 
                                capture_output=True, text=True)
-        if 'audiocontrol.service' not in result.stdout:
-            print("audiocontrol.service not found")
+        if 'nginx.service' not in result.stdout:
+            print("nginx.service not found")
             return False
         
-        # Check if service is active
-        result = subprocess.run(['systemctl', 'is-active', 'audiocontrol.service'], 
-                               capture_output=True, text=True)
+        if action == 'status':
+            # Check if service is active
+            result = subprocess.run(['systemctl', 'is-active', 'nginx.service'], 
+                                   capture_output=True, text=True)
+            status = result.stdout.strip()
+            print(f"nginx service status: {status}")
+            return status == 'active'
         
-        if result.stdout.strip() == 'active':
-            print("Restarting audiocontrol service...")
-            restart_result = subprocess.run(['systemctl', 'restart', 'audiocontrol.service'], 
-                                           capture_output=True, text=True)
-            if restart_result.returncode == 0:
-                print("audiocontrol service restarted successfully")
+        elif action in ['start', 'stop', 'restart', 'enable', 'disable', 'reload']:
+            print(f"{action.capitalize()}ing nginx service...")
+            result = subprocess.run(['systemctl', action, 'nginx.service'], 
+                                   capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"nginx service {action}ed successfully")
                 return True
             else:
-                print(f"Failed to restart audiocontrol service: {restart_result.stderr}")
+                print(f"Failed to {action} nginx service: {result.stderr}")
                 return False
-        else:
-            print("audiocontrol service is not active, no restart needed")
-            return True
+        
+        return False
             
     except Exception as e:
-        print(f"Error checking/restarting audiocontrol service: {e}")
+        print(f"Error managing nginx service: {e}")
         return False
 
-CONFIG_FILE = "/etc/audiocontrol/audiocontrol.json"
-WEBUI_ROUTE = {
-    "url_path": "/ui",
-    "directory": "/usr/share/hifiberry/webui"
-}
+def setup_webui():
+    """Set up HiFiBerry Web UI nginx configuration"""
+    print("Setting up HiFiBerry Web UI with nginx...")
+    
+    # Check if nginx is installed
+    result = subprocess.run(['which', 'nginx'], capture_output=True, text=True)
+    if result.returncode != 0:
+        print("Error: nginx is not installed. Please install nginx first.")
+        return 1
+    
+    # Check if required files exist
+    webui_include = Path("/etc/nginx/hifiberry-webui.nginx")
+    api_include = Path("/etc/nginx/hifiberry-api.nginx")
+    webui_dir = Path("/usr/share/hifiberry/webui")
+    nginx_conf = Path("/etc/nginx/nginx.conf")
+    
+    if not webui_include.exists():
+        print(f"Error: Web UI nginx include file not found at {webui_include}")
+        return 1
+    
+    if not api_include.exists():
+        print(f"Error: API nginx include file not found at {api_include}")
+        return 1
+    
+    if not webui_dir.exists():
+        print(f"Error: Web UI files not found at {webui_dir}")
+        return 1
+    
+    if not nginx_conf.exists():
+        print(f"Error: nginx main configuration not found at {nginx_conf}")
+        return 1
+    
+    # Create or update nginx site configuration
+    sites_available = Path("/etc/nginx/sites-available")
+    sites_enabled = Path("/etc/nginx/sites-enabled")
+    
+    if sites_available.exists():
+        # Use sites-available/sites-enabled approach
+        site_config = sites_available / "hifiberry-webui"
+        site_enabled = sites_enabled / "hifiberry-webui"
+        
+        # Create site configuration with both webui and API includes
+        with open(site_config, 'w') as f:
+            f.write(f'''# HiFiBerry Web UI and API nginx site
+server {{
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    
+    # Include HiFiBerry API proxy configuration
+    include {api_include};
+    
+    # Include HiFiBerry Web UI configuration
+    include {webui_include};
+}}
+''')
+        
+        # Enable the site
+        if site_enabled.exists():
+            site_enabled.unlink()
+        site_enabled.symlink_to(site_config)
+        
+        # Disable default site if it exists
+        default_enabled = sites_enabled / "default"
+        if default_enabled.exists():
+            print("Disabling default nginx site")
+            default_enabled.unlink()
+        
+        print(f"Created nginx site configuration: {site_config}")
+        print(f"Enabled site: {site_enabled}")
+    
+    else:
+        # Fallback: modify main nginx.conf directly
+        print("Warning: sites-available not found, manual configuration required")
+        print(f"Please add 'include {api_include};' and 'include {webui_include};' to your nginx server block")
+        return 1
+    
+    # Test nginx configuration
+    result = subprocess.run(['nginx', '-t'], capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"Error: nginx configuration test failed: {result.stderr}")
+        return 1
+    
+    print("nginx configuration test passed")
+    
+    # Reload nginx to apply changes
+    if manage_nginx_service('reload'):
+        print("HiFiBerry Web UI is now available at http://localhost")
+        print("To check status: systemctl status nginx")
+        return 0
+    else:
+        return 1
 
-def add_webui_route():
-    """Add Web UI route to audiocontrol configuration"""
-    config_path = Path(CONFIG_FILE)
+def teardown_webui():
+    """Remove HiFiBerry Web UI nginx configuration"""
+    print("Removing HiFiBerry Web UI nginx configuration...")
     
-    if not config_path.exists():
-        print(f"audiocontrol configuration file not found at {CONFIG_FILE}")
-        print("The Web UI will be installed but not automatically configured")
+    sites_available = Path("/etc/nginx/sites-available")
+    sites_enabled = Path("/etc/nginx/sites-enabled")
+    
+    success = True
+    
+    # Remove site configuration
+    if sites_available.exists():
+        site_config = sites_available / "hifiberry-webui"
+        site_enabled = sites_enabled / "hifiberry-webui"
+        
+        if site_enabled.exists():
+            site_enabled.unlink()
+            print("Disabled hifiberry-webui site")
+        
+        if site_config.exists():
+            site_config.unlink()
+            print("Removed hifiberry-webui site configuration")
+        
+        # Re-enable default site if it exists
+        default_available = sites_available / "default"
+        default_enabled = sites_enabled / "default"
+        if default_available.exists() and not default_enabled.exists():
+            default_enabled.symlink_to(default_available)
+            print("Re-enabled default nginx site")
+    
+    # Reload nginx
+    if manage_nginx_service('reload'):
+        print("HiFiBerry Web UI nginx configuration removed successfully")
         return 0
-    
-    print("Adding HiFiBerry Web UI route to audiocontrol configuration...")
-    
-    try:
-        # Create backup
-        backup_path = config_path.with_suffix(".json.bak")
-        shutil.copy2(config_path, backup_path)
-        print(f"Created backup at {backup_path}")
-        
-        # Load configuration
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-        
-        # Check if webserver service exists
-        if 'services' not in config or 'webserver' not in config['services']:
-            print("Warning: webserver service not found in audiocontrol configuration")
-            return 1
-        
-        # Ensure static_routes exists
-        webserver = config['services']['webserver']
-        if 'static_routes' not in webserver:
-            webserver['static_routes'] = []
-        
-        # Check if /ui route already exists
-        existing_route = None
-        for route in webserver['static_routes']:
-            if route.get('url_path') == '/ui':
-                existing_route = route
-                break
-        
-        if existing_route:
-            # Update existing route if directory is different
-            if existing_route.get('directory') != WEBUI_ROUTE['directory']:
-                existing_route['directory'] = WEBUI_ROUTE['directory']
-                print("Updated existing /ui route directory")
-                needs_save = True
-            else:
-                print("/ui route already exists and is correctly configured")
-                needs_save = False
-        else:
-            # Add new route
-            webserver['static_routes'].append(WEBUI_ROUTE)
-            print("Added /ui route to audiocontrol configuration")
-            needs_save = True
-        
-        # Save configuration if changes were made
-        if needs_save:
-            with open(config_path, 'w') as f:
-                json.dump(config, f, indent=4)
-            print("Configuration updated successfully")
-            
-            # Restart audiocontrol service
-            restart_audiocontrol()
-        
-        return 0
-        
-    except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON in configuration file: {e}")
-        return 1
-    except Exception as e:
-        print(f"Error updating audiocontrol configuration: {e}")
+    else:
+        print("Some errors occurred during teardown")
         return 1
 
-def remove_webui_route():
-    """Remove Web UI route from audiocontrol configuration"""
-    config_path = Path(CONFIG_FILE)
+def status_webui():
+    """Show status of the HiFiBerry Web UI nginx configuration"""
+    print("HiFiBerry Web UI Status:")
+    print("=" * 30)
     
-    if not config_path.exists():
-        print(f"audiocontrol configuration file not found at {CONFIG_FILE}")
-        return 0
+    # Check nginx service status
+    if manage_nginx_service('status'):
+        print("✓ nginx service is running")
+    else:
+        print("✗ nginx service is not running")
     
-    print("Removing HiFiBerry Web UI route from audiocontrol configuration...")
+    # Check configuration files
+    include_file = Path("/etc/nginx/hifiberry-webui.nginx")
+    webui_dir = Path("/usr/share/hifiberry/webui/index.html")
+    site_config = Path("/etc/nginx/sites-available/hifiberry-webui")
+    site_enabled = Path("/etc/nginx/sites-enabled/hifiberry-webui")
     
-    try:
-        # Create backup
-        backup_path = config_path.with_suffix(".json.bak")
-        shutil.copy2(config_path, backup_path)
-        print(f"Created backup at {backup_path}")
-        
-        # Load configuration
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-        
-        # Check if webserver service exists
-        if 'services' not in config or 'webserver' not in config['services']:
-            print("No webserver service found in audiocontrol configuration")
-            return 0
-        
-        webserver = config['services']['webserver']
-        if 'static_routes' not in webserver:
-            print("No static routes found in webserver configuration")
-            return 0
-        
-        # Find and remove /ui route
-        original_count = len(webserver['static_routes'])
-        webserver['static_routes'] = [
-            route for route in webserver['static_routes'] 
-            if route.get('url_path') != '/ui'
-        ]
-        
-        if len(webserver['static_routes']) < original_count:
-            # Save configuration
-            with open(config_path, 'w') as f:
-                json.dump(config, f, indent=4)
-            print("Removed /ui route from audiocontrol configuration")
-            
-            # Restart audiocontrol service
-            restart_audiocontrol()
-        else:
-            print("/ui route not found in audiocontrol configuration")
-        
-        return 0
-        
-    except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON in configuration file: {e}")
-        return 1
-    except Exception as e:
-        print(f"Error updating audiocontrol configuration: {e}")
-        return 1
+    print(f"✓ Include file: {include_file}" if include_file.exists() else f"✗ Include file missing: {include_file}")
+    print(f"✓ Web UI files: {webui_dir.parent}" if webui_dir.exists() else f"✗ Web UI files missing: {webui_dir.parent}")
+    print(f"✓ Site config: {site_config}" if site_config.exists() else f"✗ Site config missing: {site_config}")
+    print(f"✓ Site enabled: {site_enabled}" if site_enabled.exists() else f"✗ Site not enabled: {site_enabled}")
+    
+    if site_enabled.exists():
+        print("  URL: http://localhost")
+    
+    return 0
 
 def main():
     """Main function with argument parsing"""
-    parser = argparse.ArgumentParser(description='Configure HiFiBerry Web UI integration with audiocontrol')
-    parser.add_argument('action', choices=['add', 'remove'], default='add', nargs='?',
-                       help='Action to perform: add (default) or remove the Web UI route')
+    parser = argparse.ArgumentParser(description='Configure HiFiBerry Web UI with nginx')
+    parser.add_argument('action', choices=['setup', 'remove', 'status', 'reload'], 
+                       default='setup', nargs='?',
+                       help='Action to perform (default: setup)')
     
     args = parser.parse_args()
     
     if args.action == 'remove':
-        return remove_webui_route()
-    else:
-        return add_webui_route()
+        return teardown_webui()
+    elif args.action == 'status':
+        return status_webui()
+    elif args.action == 'reload':
+        return 0 if manage_nginx_service('reload') else 1
+    else:  # setup
+        return setup_webui()
 
 if __name__ == "__main__":
     sys.exit(main())

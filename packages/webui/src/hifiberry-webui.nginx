@@ -1,0 +1,29 @@
+# HiFiBerry Web UI nginx include file
+# Include this in your existing server block with: include /etc/nginx/hifiberry-webui.conf;
+
+# Set document root for HiFiBerry Web UI
+root /usr/share/hifiberry/webui;
+index index.html;
+
+# Enable gzip compression for web assets
+gzip on;
+gzip_vary on;
+gzip_min_length 1024;
+gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+
+# Security headers
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+
+# Cache static assets with long expiry
+location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    try_files $uri =404;
+}
+
+# SPA fallback - serve index.html for all unmatched routes
+location / {
+    try_files $uri $uri/ /index.html;
+}

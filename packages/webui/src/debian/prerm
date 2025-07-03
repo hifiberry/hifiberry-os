@@ -4,17 +4,18 @@ set -e
 
 case "$1" in
     remove|purge)
-        echo "Removing Web UI integration from audiocontrol configuration"
-        # Remove the Web UI integration from audiocontrol
-        if [ -x /usr/bin/configure-webui ]; then
-            /usr/bin/configure-webui remove
+        echo "Removing HiFiBerry Web UI nginx configuration"
+        # Remove the nginx configuration
+        if [ -x /usr/sbin/configure-webui ]; then
+            /usr/sbin/configure-webui remove || true
         else
-            echo "Warning: configure-webui script not found or not executable"
+            echo "Warning: configure-webui script not found, manual cleanup required"
+            echo "Run 'sudo rm -f /etc/nginx/sites-enabled/hifiberry-webui' to manually remove"
         fi
         ;;
     
     upgrade|deconfigure)
-        echo "Package upgrade or deconfigure - preserving Web UI configuration"
+        echo "Package upgrade or deconfigure - preserving nginx configuration"
         # Don't remove configuration during upgrades
         ;;
     
