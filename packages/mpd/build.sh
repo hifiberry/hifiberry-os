@@ -3,14 +3,15 @@
 set -e
 
 # Configuration
-MPD_VERSION="0.24.4.2"
-MPC_VERSION="0.35"
 PACKAGE_NAME="hifiberry-mpd"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OUTPUT_DIR="${SCRIPT_DIR}/out"
 
-# Construct full version string
-FULL_VERSION="${MPD_VERSION}"
+# Extract version from changelog as single source of truth
+cd src
+FULL_VERSION=$(head -1 debian/changelog | sed 's/.*(\([^)]*\)).*/\1/')
+echo "Version from changelog: $FULL_VERSION"
+cd ..
 
 # Ensure output directory exists
 mkdir -p "$OUTPUT_DIR"
@@ -38,23 +39,17 @@ fi
 # Building package with sbuild
 echo "Building package with sbuild..."
 
-# Check if the changelog version matches the expected version
+# Check if MPD version in rules file is consistent with changelog version
 cd src
-CHANGELOG_VERSION=$(head -1 debian/changelog | sed 's/.*(\([^)]*\)).*/\1/')
-if [ "$CHANGELOG_VERSION" != "$FULL_VERSION" ]; then
-    echo "ERROR: Changelog version ($CHANGELOG_VERSION) does not match expected version ($FULL_VERSION)"
-    echo "Please update debian/changelog manually"
-    exit 1
-fi
-
-# Check if MPD version in rules file is consistent with build script
 RULES_MPD_VERSION=$(grep '^MPD_VERSION = ' debian/rules | sed 's/MPD_VERSION = //')
 if [[ ! "$FULL_VERSION" =~ ^${RULES_MPD_VERSION}(\.|$) ]]; then
     echo "ERROR: MPD version in rules file ($RULES_MPD_VERSION) is not compatible with package version ($FULL_VERSION)"
     echo "Package version should start with the MPD version from rules file"
-    echo "Please update debian/rules or build.sh to ensure consistency"
+    echo "Please update debian/rules or debian/changelog to ensure consistency"
     exit 1
 fi
+
+echo "Version consistency check passed: $FULL_VERSION"
 
 # Make sure debian/rules is executable
 chmod +x debian/rules
