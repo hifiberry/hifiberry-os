@@ -5,7 +5,11 @@
 
 override_dh_auto_install:
 	install -D -m 755 baseconfig debian/hifiberry-baseconfig/usr/sbin/baseconfig
+	install -D -m 755 hifiberry-baseconfig.py debian/hifiberry-baseconfig/usr/sbin/hifiberry-baseconfig
 	install -D -m 644 man/baseconfig.8 debian/hifiberry-baseconfig/usr/share/man/man8/baseconfig.8
+	install -D -m 644 man/hifiberry-baseconfig.8 debian/hifiberry-baseconfig/usr/share/man/man8/hifiberry-baseconfig.8
+	install -D -m 644 services.conf debian/hifiberry-baseconfig/etc/hifiberry/services.conf
+	install -D -m 644 configfiles.conf debian/hifiberry-baseconfig/etc/hifiberry/configfiles.conf
 
 override_dh_auto_build:
 	# No build required

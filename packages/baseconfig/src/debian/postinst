@@ -2,8 +2,8 @@
 
 set -e
 
-echo "Running baseconfig after installation..."
-/usr/sbin/baseconfig || true
+echo "HiFiBerry baseconfig package installed successfully."
+echo "You can run 'sudo baseconfig' or 'sudo hifiberry-baseconfig' to configure your system."
 
 #DEBHELPER#
 
