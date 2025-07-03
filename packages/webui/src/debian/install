@@ -1,0 +1,3 @@
+configure-webui usr/sbin/
+hifiberry-webui.nginx etc/nginx/
+hifiberry-api.nginx etc/nginx/

@@ -1,8 +1,53 @@
+hifiberry-webui (0.2.5) stable; urgency=medium
+
+  * Added nginx API proxy configuration (hifiberry-api.nginx)
+  * API requests to /api are now proxied to localhost:1080/api
+  * Updated configure-webui script to include both web UI and API configurations
+  * Added WebSocket support for real-time API features
+  * Simplified build process to always build fresh Vue.js files
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 16:30:00 +0000
+
+hifiberry-webui (0.2.4) stable; urgency=medium
+
+  * Updated API configuration for production deployment
+  * API now runs on same server at /api path instead of separate port
+  * Added automatic API URL rewriting during package build
+  * Improved integration with nginx reverse proxy setup
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 16:00:00 +0000
+
+hifiberry-webui (0.2.3) stable; urgency=medium
+
+  * Added debugging and manual installation in debian/rules to fix file installation
+  * Ensure configure-webui script is properly installed to /usr/sbin/
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 19:00:00 +0000
+
+hifiberry-webui (0.2.2) stable; urgency=medium
+
+  * Fixed configure-webui script installation and execution
+  * Updated postinst/prerm scripts for nginx integration approach
+  * Simplified packaging to rely on debian/install file
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 18:00:00 +0000
+
+hifiberry-webui (0.2.1) stable; urgency=medium
+
+  * Fixed installation of nginx configuration and systemd service files
+  * Configure-webui script now properly installs during package setup
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 17:00:00 +0000
+
 hifiberry-webui (0.2.0) stable; urgency=medium
 
   * Improved build system
   * Bug fixes and improvements in UI
-  * Configured static filenames for JS/CSS assets (no cache-busting hashes)
+  * Switched from audiocontrol integration to dedicated nginx service
+  * Added proper SPA routing support with nginx
+  * Re-enabled cache-busting hashes for optimal caching
+  * Changed from port 8080 to standard HTTP port 80
+  * Added comprehensive configure-webui management script
   
  -- HiFiBerry <support@hifiberry.com>  Thu, 03 Jul 2025 16:00:00 +0000
 

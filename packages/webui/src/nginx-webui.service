@@ -1,0 +1,25 @@
+[Unit]
+Description=HiFiBerry Web UI (nginx)
+Documentation=http://nginx.org/en/docs/
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx-webui.pid
+ExecStartPre=/usr/sbin/nginx -t -c /etc/hifiberry/nginx-webui.conf
+ExecStart=/usr/sbin/nginx -c /etc/hifiberry/nginx-webui.conf
+ExecReload=/bin/sh -c "/bin/kill -s HUP $(/bin/cat /run/nginx-webui.pid)"
+KillMode=mixed
+KillSignal=SIGTERM
+PrivateDevices=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/log/nginx /var/lib/nginx /run
+NoNewPrivileges=true
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
