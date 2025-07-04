@@ -1,3 +1,11 @@
+hifiberry-baseconfig (1.1.6) stable; urgency=medium
+
+  * Fixed duplicate argparse arguments causing ArgumentError conflicts
+  * Removed duplicate --commands-conf and --commands-only argument definitions
+  * Script now properly parses command-line arguments without conflicts
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 04 Jul 2025 14:30:00 +0000
+
 hifiberry-baseconfig (1.1.5) stable; urgency=medium
 
   * Added automatic creation of /etc/uuid file with 128-bit UUID for system identification
