@@ -8,6 +8,8 @@ hifiberry-baseconfig \- HiFiBerry base configuration management script
 .B hifiberry-baseconfig
 manages HiFiBerry system configuration by:
 .IP \[bu] 2
+Creating /etc/uuid file with a unique 128-bit UUID for system identification
+.IP \[bu] 2
 Applying default config.txt settings using config-configtxt
 .IP \[bu] 2
 Enabling and starting systemd services listed in services.conf
@@ -57,6 +59,9 @@ Enable verbose output
 .BR \-h ", " \-\-help
 Show help message and exit
 .SH FILES
+.TP
+.I /etc/uuid
+System UUID file containing a unique 128-bit identifier. Created automatically if it doesn't exist. This file is preserved across system updates to maintain consistent system identification.
 .TP
 .I /etc/hifiberry/baseconfig/services.conf
 List of systemd services to enable and start. Each service name should be on a separate line. Lines starting with # are treated as comments.

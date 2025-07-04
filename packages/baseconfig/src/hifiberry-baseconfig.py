@@ -13,6 +13,7 @@ import argparse
 import subprocess
 import logging
 import shutil
+import uuid
 from pathlib import Path
 
 
@@ -267,6 +268,38 @@ def check_root_privileges():
     return True
 
 
+def create_uuid_file():
+    """
+    Create /etc/uuid file with a unique UUID if it doesn't exist
+    
+    Returns:
+        True if successful or file already exists, False otherwise
+    """
+    uuid_file = "/etc/uuid"
+    
+    try:
+        if os.path.exists(uuid_file):
+            logging.info(f"UUID file already exists: {uuid_file}")
+            return True
+        
+        # Generate a new UUID
+        system_uuid = str(uuid.uuid4())
+        
+        # Write UUID to file
+        with open(uuid_file, 'w') as f:
+            f.write(system_uuid + '\n')
+        
+        # Set appropriate permissions (readable by all, writable by root)
+        os.chmod(uuid_file, 0o644)
+        
+        logging.info(f"Created UUID file {uuid_file} with UUID: {system_uuid}")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Error creating UUID file {uuid_file}: {e}")
+        return False
+
+
 def run_command(command):
     """
     Execute a shell command with proper logging
@@ -409,6 +442,12 @@ def main():
     
     success = True
     
+    # Create UUID file first
+    logging.info("=== Creating System UUID ===")
+    if not create_uuid_file():
+        logging.warning("UUID file creation failed, continuing with other operations")
+        success = False
+    
     # Run config-configtxt --default first
     logging.info("=== Applying Default Config.txt Settings ===")
     if not run_config_configtxt_default():
@@ -435,6 +474,11 @@ def main():
         commands_processed = handle_commands(args.commands_conf)
         if commands_processed == 0:
             success = False
+    
+    # Create /etc/uuid file
+    logging.info("=== Creating /etc/uuid File ===")
+    if not create_uuid_file():
+        success = False
     
     if success:
         logging.info("Base configuration completed successfully")
