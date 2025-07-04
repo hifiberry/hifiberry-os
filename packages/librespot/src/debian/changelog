@@ -1,3 +1,20 @@
+hifiberry-librespot (0.6.0.8) stable; urgency=low
+
+  * Enhanced startup script with Avahi daemon availability check
+  * Added 30-second wait for Avahi to become responsive when using Avahi mDNS backend
+  * Improved reliability during system startup with proper service dependency handling
+  * Added explicit --mdns-backend parameter to librespot command line options
+  * Enhanced error reporting for mDNS functionality issues
+
+ -- HiFiBerry <info@hifiberry.com>  Fri, 04 Jul 2025 16:00:00 +0000
+
+hifiberry-librespot (0.6.0.7) stable; urgency=low
+
+  * Updated librespot to commit 80c27ec476666b40aba98327b3ba52d620dd6d06
+  * Latest upstream fixes and improvements
+
+ -- HiFiBerry <info@hifiberry.com>  Thu, 03 Jul 2025 12:00:00 +0000
+
 hifiberry-librespot (0.6.0.6) stable; urgency=low
 
   * Fixed postinst script to handle existing FIFO pipe gracefully
