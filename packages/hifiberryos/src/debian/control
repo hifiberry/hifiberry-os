@@ -6,34 +6,51 @@ Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.0
 Homepage: https://hifiberry.com/os
 
-Package: hbos-minimal
-Architecture: all
-Depends: hifiberry-baseconfig,
-         hifiberry-configurator,
-         hifiberry-eeprom
-Description: HiFiBerry OS minimal meta-package
- This meta-package provides the minimal set of HiFiBerry OS components
- required for basic functionality. It includes:
- .
-  - Base configuration (hifiberry-baseconfig)
-  - Web-based configurator (hifiberry-configurator)  
-  - HAT EEPROM tools (hifiberry-eeprom)
-
 Package: hbos-test
 Architecture: all
 Depends: hifiberry-baseconfig,
          hifiberry-configurator,
          hifiberry-eeprom,
-         hifiberry-testtools
+         hifiberry-testtools,
+         hifiberry-webui
 Description: HiFiBerry OS testing meta-package
  This meta-package provides the minimal HiFiBerry OS components plus
  testing and development tools. It includes:
  .
-  - All components from hbos-minimal
+  - Base system configuration (hifiberry-baseconfig)
+  - Web-based configuration interface (hifiberry-configurator)
+  - HAT EEPROM tools and utilities (hifiberry-eeprom)
+  - Modern web interface (hifiberry-webui)
   - Testing tools and utilities (hifiberry-testtools)
  .
  This package is ideal for development, testing, and quality assurance
- environments.
+ environments where diagnostic and debugging capabilities are needed.
+
+Package: hbos-minimal
+Architecture: all
+Depends: hifiberry-baseconfig,
+         hifiberry-configurator,
+         hifiberry-eeprom,
+         hifiberry-dsp,
+         hifiberry-mpd,
+         hifiberry-audiocontrol,
+         hifiberry-pipewire,
+         hifiberry-webui
+Description: HiFiBerry OS minimal meta-package
+ This meta-package provides the minimal set of HiFiBerry OS components
+ required for basic functionality. It includes:
+ .
+  - Base system configuration and hardware detection (hifiberry-baseconfig)
+  - Web-based configuration interface (hifiberry-configurator)
+  - HAT EEPROM tools and utilities (hifiberry-eeprom)
+  - DSP toolkit for audio processing (hifiberry-dsp)
+  - Music Player Daemon (hifiberry-mpd)
+  - Audio control utilities (hifiberry-audiocontrol)
+  - PipeWire audio server (hifiberry-pipewire)
+  - Modern web interface (hifiberry-webui)
+ .
+ This package is ideal for users who want a lightweight installation with
+ essential audio functionality and web-based management.
 
 Package: hbos-full
 Architecture: all
@@ -48,9 +65,18 @@ Depends: hifiberry-baseconfig,
          hifiberry-raat,
          hifiberry-shairport,
          hifiberry-squeezelite,
+         hifiberry-webui
 Description: HiFiBerry OS full meta-package
  This meta-package provides the complete set of HiFiBerry OS components
- for full functionality. It includes all audio streaming services.
+ for full functionality. It includes all audio streaming services and
+ advanced features:
  .
- This package depends on all available HiFiBerry OS packages to provide
- a complete audio streaming and development environment.
+  - All components from hbos-minimal
+  - Spotify Connect support (hifiberry-librespot)
+  - AirPlay streaming (hifiberry-shairport)
+  - Squeezebox/Logitech Media Server support (hifiberry-squeezelite)
+  - RAAT streaming for Roon integration (hifiberry-raat)
+ .
+ This package provides the complete HiFiBerry OS experience with all
+ streaming services, advanced audio processing, and development tools
+ for a comprehensive audio streaming and management environment.
