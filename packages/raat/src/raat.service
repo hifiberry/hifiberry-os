@@ -1,15 +1,14 @@
 [Unit]
 Description=Roon
-After=network.target sound.target pipewire.service
-ConditionPathExists=!/custom/service/roon.disable
+After=network.target sound.target pipewire.service avahi-daemon.service
+ConditionPathExists=/etc/uuid
 
 [Service]
 Type=simple
 User=raat
 Group=raat
 Environment=HOME=/var/lib/raat
-ExecStartPre=/usr/bin/configure-raat
-ExecStart=/usr/bin/raat_app /var/lib/raat/hifiberry.conf
+ExecStart=/usr/bin/start-raat.sh /var/lib/raat/hifiberry.conf
 StandardOutput=journal
 Restart=always
 RestartSec=5
