@@ -1,0 +1,63 @@
+.TH CLEANUP-PACKAGES 8 "July 2025" "HiFiBerry" "System Administration"
+.SH NAME
+cleanup-packages \- remove unnecessary packages from HiFiBerry OS
+.SH SYNOPSIS
+.B cleanup-packages
+[\fIOPTION\fR]...
+.SH DESCRIPTION
+.B cleanup-packages
+removes unnecessary packages from a Debian-based HiFiBerry OS installation to reduce system size and attack surface. The script reads a list of packages from a configuration file and removes those that are currently installed.
+.PP
+By default, the script removes development tools like gcc, g++, cpp, and other packages that are typically not needed on a production HiFiBerry OS system.
+.SH OPTIONS
+.TP
+.B \-c, \-\-config \fIFILE\fR
+Use the specified configuration file instead of the default. The configuration file should contain one package name per line, with lines starting with # treated as comments.
+.TP
+.B \-n, \-\-dry-run
+Show what packages would be removed without actually removing them. This is useful for testing and verification.
+.TP
+.B \-f, \-\-force
+Skip confirmation prompts and proceed with package removal automatically.
+.TP
+.B \-v, \-\-verbose
+Enable verbose output showing detailed information about the cleanup process.
+.TP
+.B \-h, \-\-help
+Display usage information and exit.
+.SH FILES
+.TP
+.B /etc/hifiberry/baseconfig/cleanup-packages.conf
+Default configuration file containing the list of packages to remove.
+.SH EXAMPLES
+.TP
+Perform a dry run to see what would be removed:
+.B cleanup-packages --dry-run
+.TP
+Remove packages with verbose output:
+.B sudo cleanup-packages --verbose
+.TP
+Remove packages without confirmation:
+.B sudo cleanup-packages --force
+.TP
+Use a custom configuration file:
+.B sudo cleanup-packages --config /path/to/custom.conf
+.SH EXIT STATUS
+.TP
+.B 0
+Success - all operations completed successfully.
+.TP
+.B 1
+Failure - an error occurred during package removal or script execution.
+.SH NOTES
+This script must be run as root (using sudo) to remove packages.
+.PP
+The script will only attempt to remove packages that are actually installed on the system.
+.PP
+After removing packages, the script automatically runs apt-get autoremove and apt-get autoclean to clean up dependencies and package cache.
+.SH SEE ALSO
+.BR apt-get (8),
+.BR dpkg (1),
+.BR hifiberry-baseconfig (8)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>

@@ -17,6 +17,13 @@ Enabling and starting systemd services listed in services.conf
 Overwriting configuration files based on configfiles.conf mappings
 .IP \[bu] 2
 Executing commands listed in command.conf
+.IP \[bu] 2
+Configuring Avahi daemon to advertise only on physical interfaces
+.PP
+.B Additional tools included:
+.IP \[bu] 2
+.B cleanup-packages
+\- Script to remove unnecessary packages for system cleanup
 .PP
 .B This script must be run as root.
 .PP
@@ -104,7 +111,8 @@ When processing config files without --force, the script will prompt for confirm
 .PP
 The script automatically runs \fBconfig-configtxt --default\fR to apply default config.txt settings before processing other configurations.
 .SH SEE ALSO
-.BR baseconfig (8),
-.BR systemctl (1)
+.BR cleanup-packages (8),
+.BR systemctl (1),
+.BR config-avahi (8)
 .SH AUTHOR
 HiFiBerry Support <support@hifiberry.com>

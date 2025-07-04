@@ -1,3 +1,25 @@
+hifiberry-baseconfig (1.1.9) stable; urgency=medium
+
+  * Improved package cleanup safety - never force removes packages with dependencies
+  * Enhanced dependency checking to prevent removal of system-critical packages
+  * Added simulation check before actual package removal to detect conflicts
+  * Updated cleanup-packages.conf to include only safe-to-remove packages
+  * Removed rsyslog and cron from cleanup list as they may be system dependencies
+  * Improved error handling and user feedback for package cleanup operations
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 16:00:00 +0000
+
+hifiberry-baseconfig (1.1.8) stable; urgency=medium
+
+  * Added cleanup-packages script and configuration for system cleanup
+  * Removes unnecessary development packages (gcc, cpp, g++, etc.) to reduce system size
+  * Added cleanup-packages.conf configuration file for package cleanup management
+  * Includes dry-run, force, and verbose options for flexible package cleanup
+  * Automatically cleans up dependencies and package cache after removal
+  * Removed deprecated baseconfig bash script in favor of hifiberry-baseconfig
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 15:30:00 +0000
+
 hifiberry-baseconfig (1.1.7) stable; urgency=medium
 
   * Added Avahi daemon configuration to restrict advertising to physical interfaces
@@ -5,7 +27,7 @@ hifiberry-baseconfig (1.1.7) stable; urgency=medium
   * Ensures Avahi only advertises on eth* and wlan* interfaces, not virtual interfaces
   * Added hifiberry-configurator dependency for config-avahi command
 
- -- HiFiBerry <support@hifiberry.com>  Thu, 04 Jul 2025 15:00:00 +0000
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 15:00:00 +0000
 
 hifiberry-baseconfig (1.1.6) stable; urgency=medium
 
@@ -13,7 +35,7 @@ hifiberry-baseconfig (1.1.6) stable; urgency=medium
   * Removed duplicate --commands-conf and --commands-only argument definitions
   * Script now properly parses command-line arguments without conflicts
 
- -- HiFiBerry <support@hifiberry.com>  Thu, 04 Jul 2025 14:30:00 +0000
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 14:30:00 +0000
 
 hifiberry-baseconfig (1.1.5) stable; urgency=medium
 
@@ -22,7 +44,7 @@ hifiberry-baseconfig (1.1.5) stable; urgency=medium
   * Existing UUID files are preserved to maintain system identity across updates
   * Added Python uuid module dependency for UUID generation
 
- -- HiFiBerry <support@hifiberry.com>  Thu, 04 Jul 2025 12:00:00 +0000
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 12:00:00 +0000
 
 hifiberry-baseconfig (1.1.4) stable; urgency=medium
 
