@@ -30,19 +30,71 @@ Audio players are provided as standalone packages. You only need to install the 
 
 More players may be added in the future. You can also package and install your own player. However, to be visible and controllable through the WebUI, a player-specific module must be implemented for AudioControl.
 
+## Hardware Recommendations
+
+### Minimum Requirements
+
+HiFiBerryOS runs on any 64-bit Raspberry Pi (Pi 3, Pi 4, or Pi 5) with a compatible HiFiBerry HAT. The system requires:
+
+- **RAM**: 1GB minimum (2GB+ recommended for better performance)
+- **Storage**: 8GB microSD card minimum (16GB+ recommended)
+- **Network**: Ethernet or Wi-Fi connectivity
+
+### Performance Considerations
+
+**For streaming applications only:**
+- Any Pi 3, Pi 4, or Pi 5 will provide excellent performance
+- Standard microSD card storage is sufficient
+- Wi-Fi connectivity works well for most use cases
+
+**For large local music libraries (1000+ albums):**
+- **Pi 5 with SSD highly recommended** for optimal performance
+- SSD storage significantly improves library scanning and indexing
+- Ethernet connection preferred for network-attached storage (NAS) access
+- Consider Pi 4 with 4GB+ RAM as a cost-effective alternative
+
+### Storage Options
+
+- **microSD Card**: Suitable for streaming and small local libraries
+- **USB 3.0 SSD**: Best performance for large libraries and frequent database operations
+- **Network Storage**: NAS or network shares work well with sufficient network bandwidth
+
+### HiFiBerry HAT Compatibility
+
+HiFiBerryOS supports all current HiFiBerry audio HATs. No soudn cards from other manufacturers are supported.
+
 ## Installation
 
 To install HiFiBerryOS, start with [**Raspberry Pi OS Lite**](https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-legacy) and add the required packages.
 
-### Full Installation
+### Add repository
 
-Coming soon...
+Start adding the HiFiBerry debian repository:
+```
+curl -Ls https://tinyurl.com/hbosrepo | bash
+```
 
-### Minimal/Base Installation (No Players)
+### Package installation
 
-If you only need a specific player (e.g., Roon), you don’t have to install the full system. Instead, install just the base system and your desired player. This can significantly reduce the system footprint, especially for players with many dependencies.
+Install a full or minimal set of packages. The full set included all players, while the minimal comes only with mpd. This allows you to install only the players you really need.
 
-## Web User Interface
+```
+sudo apt install hbos-minimal
+```
+or
+```
+sudo apt install hbos-full
+```
+
+### Base configuration
+
+```
+sudo hifiberry-baseconfig --force
+```
+
+Then reboot
+
+## How to use
 
 The WebUI is accessible at: http://<device-ip>:1080/ui/index.html
 
