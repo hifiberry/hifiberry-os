@@ -1,3 +1,12 @@
+hifiberry-baseconfig (1.1.7) stable; urgency=medium
+
+  * Added Avahi daemon configuration to restrict advertising to physical interfaces
+  * Avahi configuration is now delegated to config-avahi command from configurator package
+  * Ensures Avahi only advertises on eth* and wlan* interfaces, not virtual interfaces
+  * Added hifiberry-configurator dependency for config-avahi command
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 04 Jul 2025 15:00:00 +0000
+
 hifiberry-baseconfig (1.1.6) stable; urgency=medium
 
   * Fixed duplicate argparse arguments causing ArgumentError conflicts

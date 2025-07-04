@@ -365,6 +365,42 @@ def handle_commands(commands_conf_path):
     return success_count
 
 
+def fix_avahi():
+    """
+    Configure Avahi daemon to only advertise on physical interfaces (eth*, wlan*)
+    
+    This function calls the config-avahi command from the configurator package
+    
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        logging.info("Configuring Avahi daemon using config-avahi")
+        result = subprocess.run(
+            ['config-avahi'],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        
+        if result.returncode != 0:
+            logging.error(f"config-avahi failed: {result.stderr.strip()}")
+            return False
+        
+        if result.stdout.strip():
+            logging.info(f"config-avahi output: {result.stdout.strip()}")
+        
+        logging.info("Avahi configuration completed successfully")
+        return True
+        
+    except FileNotFoundError:
+        logging.warning("config-avahi command not found, skipping Avahi configuration")
+        return True
+    except Exception as e:
+        logging.error(f"Error running config-avahi: {e}")
+        return False
+
+
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(
@@ -440,6 +476,12 @@ def main():
     logging.info("=== Applying Default Config.txt Settings ===")
     if not run_config_configtxt_default():
         logging.warning("config-configtxt --default failed, continuing with other operations")
+        success = False
+    
+    # Fix Avahi configuration
+    logging.info("=== Configuring Avahi Daemon ===")
+    if not fix_avahi():
+        logging.warning("Avahi configuration failed, continuing with other operations")
         success = False
     
     # Handle services
