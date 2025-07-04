@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+"""
+config-avahi - Configure Avahi daemon for HiFiBerry systems
+
+This script configures the Avahi daemon to only advertise on physical
+network interfaces (eth*, wlan*) to avoid advertising on virtual interfaces
+like Docker bridges or VPN connections.
+"""
+
+import sys
+import os
+
+# Add the configurator package to the path
+sys.path.insert(0, '/usr/lib/python3/dist-packages')
+
+try:
+    from configurator.avahi import main
+    
+    if __name__ == "__main__":
+        sys.exit(main())
+except ImportError as e:
+    print(f"Error importing configurator.avahi: {e}", file=sys.stderr)
+    print("Please ensure the configurator package is installed", file=sys.stderr)
+    sys.exit(1)
