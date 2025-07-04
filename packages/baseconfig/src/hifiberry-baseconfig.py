@@ -390,12 +390,6 @@ def main():
     )
     
     parser.add_argument(
-        '--commands-conf',
-        default='/etc/hifiberry/command.conf',
-        help='Path to command.conf file (default: /etc/hifiberry/command.conf)'
-    )
-    
-    parser.add_argument(
         '--force',
         action='store_true',
         help='Force overwrite config files without confirmation'
@@ -411,12 +405,6 @@ def main():
         '--config-files-only',
         action='store_true',
         help='Only process config files, skip services and commands'
-    )
-    
-    parser.add_argument(
-        '--commands-only',
-        action='store_true',
-        help='Only process commands, skip services and config files'
     )
     
     parser.add_argument(
