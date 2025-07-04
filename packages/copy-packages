@@ -9,11 +9,12 @@ mkdir -p ~/packages
 
 copied=0
 skipped=0
+added_to_repo=0
 
 for deb in */*.deb; do
     if [ -f "$deb" ]; then
         basename_deb=$(basename "$deb")
-        target="~/packages/$basename_deb"
+        target="$HOME/packages/$basename_deb"
         
         if [ -f "$target" ]; then
             echo "SKIPPED: $basename_deb (already exists in ~/packages)"
@@ -22,6 +23,24 @@ for deb in */*.deb; do
             cp "$deb" ~/packages/
             echo "COPIED: $basename_deb"
             copied=$((copied + 1))
+            
+            # Ask if the package should be added to the repository
+            printf "Add $basename_deb to package repository? (y/N): "
+            read -r answer
+            case "$answer" in
+                [Yy]|[Yy][Ee][Ss])
+                    echo "Adding $basename_deb to repository..."
+                    if aptly repo add hbos "$target"; then
+                        echo "SUCCESS: $basename_deb added to repository"
+                        added_to_repo=$((added_to_repo + 1))
+                    else
+                        echo "ERROR: Failed to add $basename_deb to repository"
+                    fi
+                    ;;
+                *)
+                    echo "Skipped adding $basename_deb to repository"
+                    ;;
+            esac
         fi
     fi
 done
@@ -30,3 +49,4 @@ echo ""
 echo "Summary:"
 echo "  Copied: $copied packages"
 echo "  Skipped: $skipped packages (already existed)"
+echo "  Added to repository: $added_to_repo packages"
