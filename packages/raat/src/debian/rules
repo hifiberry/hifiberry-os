@@ -25,6 +25,10 @@ override_dh_auto_install:
 	cp configure-raat.py debian/hifiberry-raat/usr/bin/configure-raat
 	chmod +x debian/hifiberry-raat/usr/bin/configure-raat
 	
+	# Install start-raat.sh wrapper script
+	cp start-raat.sh debian/hifiberry-raat/usr/bin/start-raat.sh
+	chmod +x debian/hifiberry-raat/usr/bin/start-raat.sh
+	
 	# Install RAAT binaries (excluding .a files)
 	find raat/bin/release/linux/aarch64/ -type f ! -name '*.a' -exec cp {} debian/hifiberry-raat/usr/bin/ \;
 	

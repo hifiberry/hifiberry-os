@@ -1,3 +1,21 @@
+hifiberry-raat (1.1.43.10) stable; urgency=medium
+
+  * Added Avahi daemon availability check before starting RAAT
+  * Introduced start-raat.sh wrapper script with 30-second Avahi wait functionality
+  * Improved reliability during system startup with proper mDNS service dependency handling
+  * Enhanced error reporting for mDNS functionality issues
+  * Ensures RAAT has functioning mDNS discovery capabilities before startup
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 17:00:00 +0000
+
+hifiberry-raat (1.1.43.9) stable; urgency=medium
+
+  * Added dependency on /etc/uuid file existence in systemd service
+  * Ensures system UUID is available before raat service starts
+  * Prevents service startup issues related to missing system identification
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 04 Jul 2025 14:45:00 +0000
+
 hifiberry-raat (1.1.43.8) stable; urgency=medium
 
   * Added debhelper systemd service integration for automatic service management
