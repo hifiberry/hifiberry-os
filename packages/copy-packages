@@ -1,3 +1,32 @@
 #!/bin/sh
+
+# Remove debug symbol packages
 rm -f */*dbgsym*.deb
-cp */*.deb ~/packages
+
+# Copy packages to ~/packages, but don't overwrite existing ones
+echo "Copying packages to ~/packages..."
+mkdir -p ~/packages
+
+copied=0
+skipped=0
+
+for deb in */*.deb; do
+    if [ -f "$deb" ]; then
+        basename_deb=$(basename "$deb")
+        target="~/packages/$basename_deb"
+        
+        if [ -f "$target" ]; then
+            echo "SKIPPED: $basename_deb (already exists in ~/packages)"
+            skipped=$((skipped + 1))
+        else
+            cp "$deb" ~/packages/
+            echo "COPIED: $basename_deb"
+            copied=$((copied + 1))
+        fi
+    fi
+done
+
+echo ""
+echo "Summary:"
+echo "  Copied: $copied packages"
+echo "  Skipped: $skipped packages (already existed)"
