@@ -1,6 +1,6 @@
 [Unit]
 Description=Librespot Spotify Connect Player
-After=network-online.target sound.target
+After=network-online.target sound.target avahi-daemon.service
 Wants=network-online.target
 
 [Service]

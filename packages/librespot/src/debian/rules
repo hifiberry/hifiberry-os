@@ -6,7 +6,7 @@
 
 # Librespot version and commit configuration
 LIBRESPOT_VERSION = v0.6.0
-LIBRESPOT_COMMIT_ID = 2c425ebd0685820a59eac1a4206728acb8a24a51
+LIBRESPOT_COMMIT_ID = 80c27ec476666b40aba98327b3ba52d620dd6d06
 
 # Rust build configuration
 export CARGO_HOME = $(CURDIR)/debian/cargo_home
@@ -46,7 +46,7 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	cd librespot-source && \
 	PATH="$(CARGO_HOME)/bin:$(PATH)" \
-	cargo build --release --no-default-features --features "alsa-backend with-libmdns"
+	cargo build --release --no-default-features --features "rodio-backend alsa-backend with-avahi"
 
 override_dh_auto_install:
 	# Install librespot binary
