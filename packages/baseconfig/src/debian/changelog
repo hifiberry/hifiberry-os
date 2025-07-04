@@ -1,3 +1,12 @@
+hifiberry-baseconfig (1.1.5) stable; urgency=medium
+
+  * Added automatic creation of /etc/uuid file with 128-bit UUID for system identification
+  * UUID file is created early in the configuration process if it doesn't exist
+  * Existing UUID files are preserved to maintain system identity across updates
+  * Added Python uuid module dependency for UUID generation
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 04 Jul 2025 12:00:00 +0000
+
 hifiberry-baseconfig (1.1.4) stable; urgency=medium
 
   * Moved configuration files to /etc/hifiberry/baseconfig/ for better organization
