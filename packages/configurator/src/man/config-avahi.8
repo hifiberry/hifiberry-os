@@ -1,0 +1,52 @@
+.TH CONFIG-AVAHI 8 "July 2025" "HiFiBerry" "System Administration"
+.SH NAME
+config-avahi \- configure Avahi daemon for HiFiBerry systems
+.SH SYNOPSIS
+.B config-avahi
+[\fIOPTION\fR]...
+.SH DESCRIPTION
+.B config-avahi
+configures the Avahi daemon to only advertise services on physical network interfaces (eth*, wlan*), preventing advertisement on virtual interfaces like Docker bridges, VPN connections, or other virtual network devices.
+.PP
+The script modifies /etc/avahi/avahi-daemon.conf to add the allow-interfaces directive and restarts the Avahi daemon to apply the changes.
+.SH OPTIONS
+.TP
+.B \-v, \-\-verbose
+Enable verbose output showing detailed information about the configuration process.
+.TP
+.B \-\-check-only
+Only check the current configuration without making any modifications. Returns exit code 0 if configuration is correct, 1 if it needs updating.
+.SH FILES
+.TP
+.B /etc/avahi/avahi-daemon.conf
+Main Avahi daemon configuration file that is modified by this script.
+.TP
+.B /etc/avahi/avahi-daemon.conf.backup
+Backup of the original configuration file, created before modifications.
+.SH EXIT STATUS
+.TP
+.B 0
+Success - configuration was applied successfully or was already correct.
+.TP
+.B 1
+Failure - configuration could not be applied or root privileges are required.
+.SH EXAMPLES
+.TP
+Configure Avahi daemon (requires root privileges):
+.B sudo config-avahi
+.TP
+Check current configuration without modifying:
+.B config-avahi --check-only
+.TP
+Configure with verbose output:
+.B sudo config-avahi --verbose
+.SH NOTES
+This script requires root privileges to modify the Avahi configuration and restart the daemon.
+.PP
+If the Avahi daemon is not installed, the script will exit successfully without making any changes.
+.SH SEE ALSO
+.BR avahi-daemon (8),
+.BR avahi-daemon.conf (5),
+.BR hifiberry-baseconfig (8)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>
