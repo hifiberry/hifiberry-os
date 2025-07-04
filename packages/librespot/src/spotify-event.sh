@@ -8,12 +8,13 @@
 # Log file location
 LOG_FILE="/tmp/spotify.log"
 JSON_FILE="/tmp/spotifyevent.json"
+JSON_PIPE="/var/lib/librespot/event_pipe"
 
 # Log timestamp, command line parameters, and event type
 echo "$(date): EVENT=$PLAYER_EVENT" >> "$LOG_FILE"
 
 # Dump all player event variables in JSON format
-{
+generate_json() {
     echo "{"
     echo "  \"timestamp\": \"$(date +%s)\","
     echo "  \"event\": \"$PLAYER_EVENT\","
@@ -34,7 +35,18 @@ echo "$(date): EVENT=$PLAYER_EVENT" >> "$LOG_FILE"
     done
     
     echo "}"
-} > "$JSON_FILE"
+}
+
+# Generate JSON once and store it
+JSON_DATA=$(generate_json)
+
+# Write to JSON file
+echo "$JSON_DATA" > "$JSON_FILE"
+
+# Also send JSON data to the named pipe if it exists
+if [ -p "$JSON_PIPE" ]; then
+    echo "$JSON_DATA" > "$JSON_PIPE"
+fi
 
 
 exit 0

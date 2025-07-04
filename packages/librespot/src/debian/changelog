@@ -1,3 +1,13 @@
+hifiberry-librespot (0.6.0.9) stable; urgency=low
+
+  * Enhanced spotify-event.sh script with named pipe support
+  * Added JSON event streaming to /var/lib/librespot/event_pipe for real-time event processing
+  * Refactored event handler to eliminate code duplication and improve maintainability
+  * Events are now written to both JSON file and named pipe simultaneously
+  * Improved performance by generating JSON data only once per event
+
+ -- HiFiBerry <info@hifiberry.com>  Fri, 04 Jul 2025 18:00:00 +0000
+
 hifiberry-librespot (0.6.0.8) stable; urgency=low
 
   * Enhanced startup script with Avahi daemon availability check
