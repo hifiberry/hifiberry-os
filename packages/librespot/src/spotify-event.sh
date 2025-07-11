@@ -41,7 +41,7 @@ generate_json() {
 JSON_DATA=$(generate_json)
 
 # Write to JSON file
-echo "$JSON_DATA" > "$JSON_FILE"
+echo "$JSON_DATA" >> "$JSON_FILE"
 
 # Also send JSON data to the named pipe if it exists
 if [ -p "$JSON_PIPE" ]; then
