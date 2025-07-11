@@ -16,19 +16,12 @@ PLAYPAUSE_STOP="/usr/bin/shairport-stop"
 # Function to extract version from config file
 get_airplay_version() {
   local config_file="$1"
-  local version="2"  # Default to AirPlay 2
   
-  if [ -f "$config_file" ]; then
-    # Look for version setting in general section
-    version=$(awk '/^general[[:space:]]*=/{flag=1; next} /^[[:space:]]*}[[:space:]]*;/{flag=0} flag && /version[[:space:]]*=/{gsub(/[^"]*"([^"]*)".*/, "\\1"); print; exit}' "$config_file" 2>/dev/null || echo "2")
-    
-    # If no version found or invalid, default to 2
-    if [ -z "$version" ] || ([ "$version" != "1" ] && [ "$version" != "2" ]); then
-      version="2"
-    fi
+  if [ -f "$config_file" ] && grep -q 'version = "1"' "$config_file"; then
+    echo "1"
+  else
+    echo "2"  # Default to AirPlay 2
   fi
-  
-  echo "$version"
 }
 
 # Get the pretty hostname first, then try normal hostname, and finally use HiFiBerry as fallback
