@@ -4,8 +4,10 @@
 # This script handles startup of librespot with the system's pretty hostname
 # and auto-configures audio parameters based on the detected sound card
 #
-# Version: 1.1.0
+# Version: 1.1.1
 # Changelog:
+# - v1.1.1: Fixed parameter name from --mdns-backend to --zeroconf-backend for compatibility
+#           Updated variable names to match librespot's actual command line options
 # - v1.1.0: Added Avahi daemon availability check when using Avahi as MDNS backend
 #           Waits up to 30 seconds for Avahi to become responsive
 #           Added explicit --mdns-backend parameter to librespot options
@@ -16,12 +18,12 @@ BITRATE=320
 BACKEND="rodio"
 
 # MDNS backend
-MDNS_BACKEND="avahi"
+ZEROCONF_BACKEND="avahi"
 
-# Check if Avahi daemon is running when MDNS_BACKEND is set to avahi
+# Check if Avahi daemon is running when ZEROCONF_BACKEND is set to avahi
 # This ensures Librespot has functioning mDNS capabilities before starting
 # We check both that the process exists and that it's actually responding to queries
-if [ "$MDNS_BACKEND" = "avahi" ]; then
+if [ "$ZEROCONF_BACKEND" = "avahi" ]; then
   echo "Checking if Avahi daemon is running..."
   ATTEMPTS=0
   MAX_ATTEMPTS=6  # 6 attempts x 5 seconds = 30 seconds max wait time
@@ -38,7 +40,7 @@ if [ "$MDNS_BACKEND" = "avahi" ]; then
         sleep 5
       else
         echo "Warning: Avahi daemon is not running or not responding after 30 seconds."
-        echo "Librespot may have limited mDNS functionality."
+        echo "Librespot may have limited zeroconf/mDNS functionality."
       fi
     fi
   done
@@ -64,7 +66,7 @@ LIBRESPOT_OPTS=("--name" "$PRETTY_HOSTNAME"
                 "--bitrate" "$BITRATE"
                 "--disable-audio-cache"
                 "--onevent" "$EVENT_HANDLER"
-                "--mdns-backend" "$MDNS_BACKEND")  # Explicitly set the MDNS backend
+                "--zeroconf-backend" "$ZEROCONF_BACKEND")  # Explicitly set the zeroconf backend
 
 # Try to get both mixer name and hardware index from configurator
 if command -v config-soundcard >/dev/null 2>&1; then
