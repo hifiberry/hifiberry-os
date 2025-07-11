@@ -79,8 +79,7 @@ class HatEEPROM:
             
         except Exception as e:
             self.i2c.stop_condition()  # Ensure bus is released
-            print(f"Read error at address 0x{address:04X}: {e}")
-            return None
+            raise (f"Read error at address 0x{address:04X}: {e}")
     
     def write_byte(self, address: int, data: int) -> bool:
         """Write a single byte to EEPROM"""
