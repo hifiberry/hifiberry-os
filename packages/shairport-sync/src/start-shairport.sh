@@ -13,6 +13,24 @@ METADATA_PIPE="/tmp/shairport-sync-metadata"
 PLAYPAUSE_START="/usr/bin/shairport-start"
 PLAYPAUSE_STOP="/usr/bin/shairport-stop"
 
+# Function to extract version from config file
+get_airplay_version() {
+  local config_file="$1"
+  local version="2"  # Default to AirPlay 2
+  
+  if [ -f "$config_file" ]; then
+    # Look for version setting in general section
+    version=$(awk '/^general[[:space:]]*=/{flag=1; next} /^[[:space:]]*}[[:space:]]*;/{flag=0} flag && /version[[:space:]]*=/{gsub(/[^"]*"([^"]*)".*/, "\\1"); print; exit}' "$config_file" 2>/dev/null || echo "2")
+    
+    # If no version found or invalid, default to 2
+    if [ -z "$version" ] || ([ "$version" != "1" ] && [ "$version" != "2" ]); then
+      version="2"
+    fi
+  fi
+  
+  echo "$version"
+}
+
 # Get the pretty hostname first, then try normal hostname, and finally use HiFiBerry as fallback
 PRETTY_HOSTNAME=$(hostnamectl hostname --pretty 2>/dev/null)
 if [ $? -ne 0 ] || [ -z "$PRETTY_HOSTNAME" ]; then
@@ -82,8 +100,23 @@ fi
 chmod 660 "$METADATA_PIPE"
 chown shairport-sync:audio "$METADATA_PIPE"
 
+# Determine which binary to use based on version setting
+# Check runtime config first, then fall back to original config
+if [ -f "$RUNTIME_CONFIG" ]; then
+  AIRPLAY_VERSION=$(get_airplay_version "$RUNTIME_CONFIG")
+else
+  AIRPLAY_VERSION=$(get_airplay_version "$CONFIG_FILE")
+fi
+
+if [ "$AIRPLAY_VERSION" = "1" ]; then
+  SHAIRPORT_CMD="/usr/bin/shairport"
+  echo "Using AirPlay 1 (legacy) version"
+else
+  SHAIRPORT_CMD="/usr/bin/shairport-airplay2"
+  echo "Using AirPlay 2 version"
+fi
+
 # Build shairport-sync command with options
-SHAIRPORT_CMD="/usr/bin/shairport-sync"
 SHAIRPORT_OPTS=(
   "--name=${PRETTY_HOSTNAME}"
   "--metadata-pipename=${METADATA_PIPE}"
@@ -95,6 +128,7 @@ SHAIRPORT_OPTS=(
 
 # Debug: print the command to be executed
 echo "Starting Shairport Sync with device name: $PRETTY_HOSTNAME"
+echo "AirPlay version: $AIRPLAY_VERSION"
 echo "Command: $SHAIRPORT_CMD ${SHAIRPORT_OPTS[@]}"
 
 # Run shairport-sync with the configured options

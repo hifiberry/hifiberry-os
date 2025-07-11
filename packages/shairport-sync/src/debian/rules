@@ -15,21 +15,48 @@ override_dh_auto_configure:
 	git clone https://github.com/mikebrady/shairport-sync-metadata-reader.git metadata-reader
 	cd metadata-reader && autoreconf -fi && ./configure && make
 	
-	# Download and configure shairport-sync
-	@echo "Downloading and configuring shairport-sync..."
+	# Download shairport-sync source
+	@echo "Downloading shairport-sync source..."
 	wget https://github.com/mikebrady/shairport-sync/archive/refs/tags/4.3.7.tar.gz -O shairport-sync-4.3.7.tar.gz
 	tar -xzf shairport-sync-4.3.7.tar.gz
-	cd shairport-sync-4.3.7 && autoreconf -fi
-	cd shairport-sync-4.3.7 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --with-mqtt-client --with-dbus-interface --with-mpris-interface --with-systemd --with-avahi --with-alsa --with-soxr --with-pipe --with-stdout --with-metadata
+	
+	# Create two copies for different builds
+	cp -r shairport-sync-4.3.7 shairport-sync-airplay2
+	cp -r shairport-sync-4.3.7 shairport-sync-legacy
+	
+	# Configure AirPlay 2 version
+	@echo "Configuring AirPlay 2 version..."
+	cd shairport-sync-airplay2 && autoreconf -fi
+	cd shairport-sync-airplay2 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --with-mqtt-client --with-dbus-interface --with-mpris-interface --with-systemd --with-avahi --with-alsa --with-soxr --with-pipe --with-stdout --with-metadata
+	
+	# Configure legacy version (without AirPlay 2)
+	@echo "Configuring legacy version..."
+	cd shairport-sync-legacy && autoreconf -fi
+	cd shairport-sync-legacy && ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl --with-mqtt-client --with-dbus-interface --with-mpris-interface --with-systemd --with-avahi --with-alsa --with-soxr --with-pipe --with-stdout --with-metadata
 
 override_dh_auto_build:
-	# Build shairport-sync
-	cd shairport-sync-4.3.7 && make
+	# Build AirPlay 2 version
+	@echo "Building AirPlay 2 version..."
+	cd shairport-sync-airplay2 && make
+	
+	# Build legacy version
+	@echo "Building legacy version..."
+	cd shairport-sync-legacy && make
 
 override_dh_auto_install:
-	# Install shairport-sync
-	cd shairport-sync-4.3.7 && sed -i '/getent group/d' Makefile && sed -i '/getent passwd/d' Makefile && sed -i '/cp \.\/scripts\/shairport-sync\.conf/d' Makefile
-	cd shairport-sync-4.3.7 && make install DESTDIR=$(CURDIR)/debian/hifiberry-shairport AM_UPDATE_INFO_DIR=no
+	# Install AirPlay 2 version as shairport-airplay2
+	cd shairport-sync-airplay2 && sed -i '/getent group/d' Makefile && sed -i '/getent passwd/d' Makefile && sed -i '/cp \.\/scripts\/shairport-sync\.conf/d' Makefile
+	cd shairport-sync-airplay2 && make install DESTDIR=$(CURDIR)/debian/hifiberry-shairport AM_UPDATE_INFO_DIR=no
+	# Rename the binary to shairport-airplay2
+	mv $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-sync $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-airplay2
+	
+	# Install legacy version as shairport
+	cd shairport-sync-legacy && sed -i '/getent group/d' Makefile && sed -i '/getent passwd/d' Makefile && sed -i '/cp \.\/scripts\/shairport-sync\.conf/d' Makefile
+	cd shairport-sync-legacy && make install DESTDIR=$(CURDIR)/debian/hifiberry-shairport AM_UPDATE_INFO_DIR=no bindir=/usr/bin/temp-legacy
+	# Move and rename the legacy binary to shairport
+	mv $(CURDIR)/debian/hifiberry-shairport/usr/bin/temp-legacy/shairport-sync $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport
+	# Clean up temp directory
+	rmdir $(CURDIR)/debian/hifiberry-shairport/usr/bin/temp-legacy
 	
 	# Remove any .sh scripts installed by upstream that we'll replace
 	rm -f $(CURDIR)/debian/hifiberry-shairport/usr/bin/*.sh
@@ -92,6 +119,8 @@ override_dh_auto_clean:
 	rm -rf nqptp/
 	rm -rf metadata-reader/
 	rm -rf shairport-sync-4.3.7/
+	rm -rf shairport-sync-airplay2/
+	rm -rf shairport-sync-legacy/
 	rm -f shairport-sync-4.3.7.tar.gz
 
 override_dh_auto_test:
