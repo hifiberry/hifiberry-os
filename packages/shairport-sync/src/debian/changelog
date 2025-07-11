@@ -1,3 +1,14 @@
+hifiberry-shairport (4.3.7.8) stable; urgency=medium
+
+  * Added dual AirPlay version support - builds both AirPlay 1 and AirPlay 2 binaries
+  * AirPlay 2 version installed as /usr/bin/shairport-airplay2
+  * AirPlay 1 (legacy) version installed as /usr/bin/shairport
+  * Added version configuration option in general section (version = "1" or "2")
+  * Start script automatically selects correct binary based on version setting
+  * Defaults to AirPlay 2 if no version specified for backwards compatibility
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 11 Jul 2025 15:00:00 +0000
+
 hifiberry-shairport (4.3.7.7) stable; urgency=medium
 
   * Improved systemd service integration with debhelper compatibility
@@ -6,7 +17,7 @@ hifiberry-shairport (4.3.7.7) stable; urgency=medium
   * Enhanced upgrade detection and service state preservation
   * Documented all systemd integration improvements
 
- -- HiFiBerry <support@hifiberry.com>  Thu, 19 Dec 2024 12:00:00 +0000
+ -- HiFiBerry <support@hifiberry.com>  Fri, 11 Jul 2025 12:00:00 +0000
 
 hifiberry-shairport (4.3.7.6) stable; urgency=medium
 

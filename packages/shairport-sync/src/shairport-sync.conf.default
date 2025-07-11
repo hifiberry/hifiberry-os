@@ -7,6 +7,7 @@
 
 general = {
   name = "HiFiBerry"; // This is the name the device will advertise to iTunes
+  version = "2"; // AirPlay version: "1" for legacy, "2" for AirPlay 2 (default if not specified)
   interpolation = "basic";
   output_backend = "alsa";
   mdns_backend = "avahi";
