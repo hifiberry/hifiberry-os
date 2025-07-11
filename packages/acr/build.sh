@@ -40,7 +40,7 @@ if [[ "$1" == "--clean" ]]; then
     exit 0
 fi
 
-# Step 1: Clone or update the GitHub repository
+# Clone or update the GitHub repository
 if [[ -d "$SOURCE_PACKAGE/.git" ]]; then
     echo "Updating $SOURCE_PACKAGE source from $REPO_URL..."
     cd "$SOURCE_PACKAGE"
@@ -72,7 +72,7 @@ else
     cd ..
 fi
 
-# Step 2: Create secrets.txt if it doesn't exist
+# Create secrets.txt if it doesn't exist
 cd "$SOURCE_PACKAGE"
 if [ ! -f "secrets.txt" ]; then
   if [ -f "$HOME/secrets.txt" ]; then
@@ -88,7 +88,16 @@ else
 fi
 cd ..
 
-# Step 3: Prepare source directory with correct Debian package name
+# Remove build artefacts if they exist
+RUST_BUILD_DIR="$SOURCE_PACKAGE/target"
+if [ -d $RUST_BUILD_DIR ]; then
+    echo "Removing existing Rust build directory: $RUST_BUILD_DIR"
+    rm -rf "$RUST_BUILD_DIR"
+else
+    echo "No existing Rust build directory found."
+fi
+
+# Prepare source directory with correct Debian package name
 echo "Preparing source directory for Debian packaging..."
 # Remove any existing package directory
 rm -rf "$PACKAGE"
@@ -96,7 +105,7 @@ rm -rf "$PACKAGE"
 cp -r "$SOURCE_PACKAGE" "$PACKAGE"
 cd "$PACKAGE"
 
-# Step 4: Build the Debian package
+# Build the Debian package
 echo "Building the Debian package..."
 fromdos build.sh
 chmod u+x ./build.sh
