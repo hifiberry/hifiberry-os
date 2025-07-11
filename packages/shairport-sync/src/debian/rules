@@ -2,7 +2,7 @@
 
 # Shairport Sync version configuration
 SHAIRPORT_VERSION ?= 5.0
-SHAIRPORT_COMMIT ?= 1264fc67f7c8d2de2a386c235a0d29d1252010ce
+SHAIRPORT_COMMIT ?= d40e499de56a44371976aaf2d62b0532af5b9cc9
 
 %:
 	dh $@
@@ -21,7 +21,7 @@ override_dh_auto_configure:
 	
 	# Download shairport-sync source
 	@echo "Downloading shairport-sync source (version $(SHAIRPORT_VERSION), commit $(SHAIRPORT_COMMIT))..."
-	git clone https://github.com/hifiberry/shairport-sync.git shairport-sync-$(SHAIRPORT_VERSION)
+	git clone https://github.com/mikebrady/shairport-sync.git shairport-sync-$(SHAIRPORT_VERSION)
 	cd shairport-sync-$(SHAIRPORT_VERSION) && git checkout $(SHAIRPORT_COMMIT)
 	
 	# Create two copies for different builds
