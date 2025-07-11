@@ -1,5 +1,9 @@
 #!/usr/bin/make -f
 
+# Shairport Sync version configuration
+SHAIRPORT_VERSION ?= 5.0
+SHAIRPORT_COMMIT ?= 1264fc67f7c8d2de2a386c235a0d29d1252010ce
+
 %:
 	dh $@
 
@@ -16,23 +20,23 @@ override_dh_auto_configure:
 	cd metadata-reader && autoreconf -fi && ./configure && make
 	
 	# Download shairport-sync source
-	@echo "Downloading shairport-sync source..."
-	wget https://github.com/mikebrady/shairport-sync/archive/refs/tags/4.3.7.tar.gz -O shairport-sync-4.3.7.tar.gz
-	tar -xzf shairport-sync-4.3.7.tar.gz
+	@echo "Downloading shairport-sync source (version $(SHAIRPORT_VERSION), commit $(SHAIRPORT_COMMIT))..."
+	git clone https://github.com/hifiberry/shairport-sync.git shairport-sync-$(SHAIRPORT_VERSION)
+	cd shairport-sync-$(SHAIRPORT_VERSION) && git checkout $(SHAIRPORT_COMMIT)
 	
 	# Create two copies for different builds
-	cp -r shairport-sync-4.3.7 shairport-sync-airplay2
-	cp -r shairport-sync-4.3.7 shairport-sync-legacy
+	cp -r shairport-sync-$(SHAIRPORT_VERSION) shairport-sync-airplay2
+	cp -r shairport-sync-$(SHAIRPORT_VERSION) shairport-sync-legacy
 	
 	# Configure AirPlay 2 version
 	@echo "Configuring AirPlay 2 version..."
 	cd shairport-sync-airplay2 && autoreconf -fi
-	cd shairport-sync-airplay2 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --with-mqtt-client --with-dbus-interface --with-mpris-interface --with-systemd --with-avahi --with-alsa --with-soxr --with-pipe --with-stdout --with-metadata
+	cd shairport-sync-airplay2 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --without-mqtt-client --with-dbus-interface --with-mpris-interface --with-avahi --with-alsa --without-soxr --without-pipe --without-stdout --with-metadata
 	
 	# Configure legacy version (without AirPlay 2)
 	@echo "Configuring legacy version..."
 	cd shairport-sync-legacy && autoreconf -fi
-	cd shairport-sync-legacy && ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl --with-mqtt-client --with-dbus-interface --with-mpris-interface --with-systemd --with-avahi --with-alsa --with-soxr --with-pipe --with-stdout --with-metadata
+	cd shairport-sync-legacy && ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl --without-mqtt-client --with-dbus-interface --with-mpris-interface --with-avahi --with-alsa --without-soxr --without-pipe --without-stdout --with-metadata
 
 override_dh_auto_build:
 	# Build AirPlay 2 version
@@ -118,10 +122,9 @@ override_dh_auto_install:
 override_dh_auto_clean:
 	rm -rf nqptp/
 	rm -rf metadata-reader/
-	rm -rf shairport-sync-4.3.7/
+	rm -rf shairport-sync-$(SHAIRPORT_VERSION)/
 	rm -rf shairport-sync-airplay2/
 	rm -rf shairport-sync-legacy/
-	rm -f shairport-sync-4.3.7.tar.gz
 
 override_dh_auto_test:
 	# Skip tests - requires audio hardware and network setup

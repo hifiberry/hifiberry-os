@@ -4,16 +4,24 @@
 set -e
 
 PACKAGE="hifiberry-shairport"
-VERSION="4.3.7.8"
+VERSION="5.0.0.1"  # Updated to reflect Shairport Sync 5.0
+
+# Extract Shairport Sync version from debian/rules
+SCRIPT_DIR="$(dirname $(realpath $0))"
+SHAIRPORT_VERSION=$(grep "^SHAIRPORT_VERSION" "${SCRIPT_DIR}/src/debian/rules" | sed 's/SHAIRPORT_VERSION ?= //')
+SHAIRPORT_COMMIT=$(grep "^SHAIRPORT_COMMIT" "${SCRIPT_DIR}/src/debian/rules" | sed 's/SHAIRPORT_COMMIT ?= //')
+
+echo "Building with Shairport Sync version: $SHAIRPORT_VERSION (commit: $SHAIRPORT_COMMIT)"
 
 # Version consistency check
-SCRIPT_DIR="$(dirname $(realpath $0))"
 CHANGELOG_VERSION=$(grep -m1 "^${PACKAGE}" "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
 if [ "$VERSION" != "$CHANGELOG_VERSION" ]; then
     echo "ERROR: Version mismatch!"
     echo "  build.sh VERSION: $VERSION"
     echo "  debian/changelog: $CHANGELOG_VERSION"
+    echo "  Shairport Sync version: $SHAIRPORT_VERSION"
     echo "Please update VERSION in build.sh or debian/changelog to match."
+    echo "Consider updating to reflect Shairport Sync version $SHAIRPORT_VERSION"
     exit 1
 fi
 echo "Version consistency check passed: $VERSION"

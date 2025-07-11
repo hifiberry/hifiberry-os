@@ -11,6 +11,7 @@ Build-Depends: debhelper-compat (= 13),
                libsoxr-dev,
                avahi-daemon,
                libplist-dev,
+               libplist-utils,
                libsodium-dev,
                libgcrypt-dev,
                libavutil-dev,
@@ -31,9 +32,9 @@ Build-Depends: debhelper-compat (= 13),
                ca-certificates,
                wget
 Standards-Version: 4.6.0
-Homepage: https://github.com/mikebrady/shairport-sync
-Vcs-Git: https://github.com/mikebrady/shairport-sync.git
-Vcs-Browser: https://github.com/mikebrady/shairport-sync
+Homepage: https://github.com/hifiberry/shairport-sync
+Vcs-Git: https://github.com/hifiberry/shairport-sync.git
+Vcs-Browser: https://github.com/hifiberry/shairport-sync
 
 Package: hifiberry-shairport
 Architecture: any
@@ -44,7 +45,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libconfig9,
          libdaemon0,
          libsoxr0,
-         avahi-daemon,
          libplist3,
          libsodium23,
          libgcrypt20,
@@ -55,6 +55,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libmosquitto1,
          adduser,
          hifiberry-configurator
+Suggests: avahi-daemon
 Provides: shairport-sync, nqptp
 Conflicts: shairport-sync, nqptp
 Replaces: shairport-sync, nqptp
