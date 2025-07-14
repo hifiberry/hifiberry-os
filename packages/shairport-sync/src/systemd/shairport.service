@@ -14,5 +14,13 @@ ExecStart=/usr/bin/start-shairport
 Restart=always
 RestartSec=2
 
+# Real-time scheduling permissions
+AmbientCapabilities=CAP_SYS_NICE
+CapabilityBoundingSet=CAP_SYS_NICE
+SecureBits=keep-caps
+
+# Additional permissions that might be needed
+SupplementaryGroups=audio
+
 [Install]
 WantedBy=multi-user.target

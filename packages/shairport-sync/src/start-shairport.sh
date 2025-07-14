@@ -9,9 +9,6 @@
 CONFIG_FILE="/etc/shairport-sync.conf"
 RUNTIME_DIR="/var/lib/shairport"
 RUNTIME_CONFIG="${RUNTIME_DIR}/shairport-sync.conf"
-METADATA_PIPE="/tmp/shairport-sync-metadata"
-PLAYPAUSE_START="/usr/bin/shairport-start"
-PLAYPAUSE_STOP="/usr/bin/shairport-stop"
 
 # Function to extract version from config file
 get_airplay_version() {
@@ -85,15 +82,6 @@ else
   fi
 fi
 
-# Create metadata pipe if it doesn't exist
-if [ ! -p "$METADATA_PIPE" ]; then
-  mkfifo "$METADATA_PIPE"
-fi
-
-# Set permissions for the metadata pipe to allow audio group to read
-chmod 660 "$METADATA_PIPE"
-chown shairport-sync:audio "$METADATA_PIPE"
-
 # Determine which binary to use based on version setting
 # Check runtime config first, then fall back to original config
 if [ -f "$RUNTIME_CONFIG" ]; then
@@ -113,11 +101,8 @@ fi
 # Build shairport-sync command with options
 SHAIRPORT_OPTS=(
   "--name=${PRETTY_HOSTNAME}"
-  "--metadata-pipename=${METADATA_PIPE}"
   "--configfile=${RUNTIME_CONFIG}" 
   "-g"
-  "--on-start=${PLAYPAUSE_START}"
-  "--on-stop=${PLAYPAUSE_STOP}"
 )
 
 # Debug: print the command to be executed

@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-shairport"
-VERSION="5.0.0.1"  # Updated to reflect Shairport Sync 5.0
+VERSION="5.0.0.2"  # Updated for real-time scheduling and metadata fixes
 
 # Extract Shairport Sync version from debian/rules
 SCRIPT_DIR="$(dirname $(realpath $0))"
