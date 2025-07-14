@@ -88,6 +88,11 @@ override_dh_auto_install:
 	install -D -m644 systemd/shairport.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/shairport.service
 	install -D -m644 systemd/nqptp.service $(CURDIR)/debian/hifiberry-shairport/lib/systemd/system/nqptp.service
 	
+	# Create systemd limits configuration for real-time scheduling
+	mkdir -p $(CURDIR)/debian/hifiberry-shairport/etc/security/limits.d/
+	echo "shairport-sync - rtprio 99" > $(CURDIR)/debian/hifiberry-shairport/etc/security/limits.d/shairport-sync.conf
+	echo "shairport-sync - nice -19" >> $(CURDIR)/debian/hifiberry-shairport/etc/security/limits.d/shairport-sync.conf
+	
 	# Install NQPTP binary and man page
 	install -D -m755 nqptp/nqptp $(CURDIR)/debian/hifiberry-shairport/usr/bin/nqptp
 	if [ -f "nqptp/nqptp.1" ]; then \

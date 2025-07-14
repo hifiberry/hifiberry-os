@@ -53,6 +53,12 @@ if command -v setcap > /dev/null; then
     setcap 'cap_net_bind_service=+ep' /usr/bin/nqptp || true
 fi
 
+# Set capabilities for shairport binaries to allow real-time scheduling
+if command -v setcap > /dev/null; then
+    setcap 'cap_sys_nice=+ep' /usr/bin/shairport-airplay2 || true
+    setcap 'cap_sys_nice=+ep' /usr/bin/shairport || true
+fi
+
 # Handle systemd service management based on installation type
 case "$1" in
     configure)
