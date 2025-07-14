@@ -1,6 +1,15 @@
 hifiberry-shairport (5.0.0.1) stable; urgency=medium
 
-  * Updated to use HiFiBerry fork of Shairport Sync 5.0 (commit 1264fc67f7c8d2de2a386c235a0d29d1252010ce)
+  * Updated to use HiFiBerry fork of Shairport Sync 5.0
+    (commit 1264fc67f7c8d2de2a386c235a0d29d1252010ce)
+  * Added configurable version and commit ID support in debian/rules
+  * Maintains dual AirPlay version support (AirPlay 1 and AirPlay 2 binaries)
+  * Enhanced build system for easier version management
+  * Added libplist-utils build dependency for AirPlay 2 support
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 11 Jul 2025 16:00:00 +0000-shairport (5.0.0.1) stable; urgency=medium
+
+  * Updated to Shairport Sync 5.0 (commit 1264fc67f7c8d2de2a386c235a0d29d1252010ce)
   * Added configurable version and commit ID support in debian/rules
   * Maintains dual AirPlay version support (AirPlay 1 and AirPlay 2 binaries)
   * Enhanced build system for easier version management

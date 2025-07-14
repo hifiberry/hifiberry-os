@@ -34,6 +34,13 @@ if [ ! -d /var/lib/shairport ]; then
     chmod 755 /var/lib/shairport
 fi
 
+# Create main configuration file from default if it doesn't exist
+if [ ! -f /etc/shairport-sync.conf ] && [ -f /etc/shairport-sync.conf.default ]; then
+    echo "Creating /etc/shairport-sync.conf from default template"
+    cp /etc/shairport-sync.conf.default /etc/shairport-sync.conf
+    chmod 644 /etc/shairport-sync.conf
+fi
+
 # Create runtime directory for shairport-sync (for backwards compatibility if needed)
 if [ ! -d /var/run/shairport ]; then
     mkdir -p /var/run/shairport

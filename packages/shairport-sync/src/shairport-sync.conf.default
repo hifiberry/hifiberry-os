@@ -1,9 +1,10 @@
-// IMPORTANT: This is only a default configuration template. 
-// This file is NOT used directly by Shairport Sync at runtime.
+// IMPORTANT: This is a default configuration template. 
+// During package installation, this file is copied to /etc/shairport-sync.conf
+// if that file doesn't already exist.
 // At startup, the system will create a runtime copy at 
 //      /var/lib/shairport/shairport-sync.conf
 // with system-specific settings applied.
-// Any changes made here will only take effect after a system restart.
+// Edit /etc/shairport-sync.conf to make permanent changes.
 
 general = {
   name = "HiFiBerry"; // This is the name the device will advertise to iTunes
