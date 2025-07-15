@@ -70,6 +70,10 @@ cp -r "$SRC_DIR/raat" "$BUILD_DIR/"
 echo "Creating configure-raat.py with version $VERSION..."
 sed "s/###MYVERSION###/$VERSION/g" "$SRC_DIR/configure-raat.py" > "$BUILD_DIR/configure-raat.py"
 
+# Copy start-raat.sh to build directory
+echo "Copying start-raat.sh..."
+cp "$SRC_DIR/start-raat.sh" "$BUILD_DIR/"
+
 # Verify the copy worked
 echo "Contents of build directory after copy:"
 ls -la "$BUILD_DIR"
