@@ -1,3 +1,21 @@
+hifiberry-shairport (5.0.0.4) stable; urgency=medium
+
+  * Improved postinst script ordering to create directories before adding users
+  * Fixed directory creation sequence to prevent adduser warnings
+  * Enhanced system user setup reliability during package installation
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 15 Jul 2025 08:45:00 +0000
+
+hifiberry-shairport (5.0.0.3) stable; urgency=medium
+
+  * Fixed postinst script to create missing user home directories
+  * Changed shairport-sync user home directory to /var/lib/shairport for consistency
+  * Added creation of /var/lib/nqptp directory for nqptp user
+  * Resolved adduser warnings about inaccessible home directories
+  * Improved system user setup for proper service operation
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 15 Jul 2025 08:30:00 +0000
+
 hifiberry-shairport (5.0.0.2) stable; urgency=medium
 
   * Fixed real-time scheduling permissions for audio performance
