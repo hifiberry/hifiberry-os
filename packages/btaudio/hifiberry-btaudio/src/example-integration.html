@@ -35,7 +35,7 @@
 // Create a complete interface with one line
         HiFiBerryHelpers.createPairingInterface(
             'bluetooth-interface', 
-            'http://192.168.1.100:1082'  // Your HiFiBerry IP
+            'http://192.168.1.100/api/btaudio'  // Your HiFiBerry IP via nginx
         );
 &lt;/script&gt;</code></pre>
 
@@ -61,8 +61,8 @@
             <h2>3. Custom Integration Example</h2>
             <p>For custom web applications, use the API directly:</p>
             
-            <pre><code>// Initialize the API client
-const btAPI = new HiFiBerryBluetoothAPI('http://your-hifiberry-ip:8080');
+            <pre><code>// Custom integration
+const btAPI = new HiFiBerryBluetoothAPI('http://192.168.1.100/api/btaudio');
 
 // Basic pairing workflow
 async function startPairing() {
@@ -211,7 +211,7 @@ sudo systemctl enable hifiberry-btaudio-web</code></pre>
     
     <script>
         // Example API client (will fail if service not running)
-        const exampleAPI = new HiFiBerryBluetoothAPI('http://localhost:1082');
+        const exampleAPI = new HiFiBerryBluetoothAPI('http://localhost/api/btaudio');
         
         // Demo functions for the API demonstration section
         async function testConnection() {
@@ -282,7 +282,7 @@ sudo systemctl enable hifiberry-btaudio-web</code></pre>
         // Create simple demo interface
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                HiFiBerryHelpers.createPairingInterface('simple-demo', 'http://localhost:1082');
+                HiFiBerryHelpers.createPairingInterface('simple-demo', 'http://localhost/api/btaudio');
             } catch (error) {
                 document.getElementById('simple-demo').innerHTML = 
                     '<p style="color: #dc3545;">Demo interface could not be created. Make sure the HiFiBerry service is running.</p>';

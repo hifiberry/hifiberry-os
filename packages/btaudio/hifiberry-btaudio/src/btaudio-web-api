@@ -1,0 +1,637 @@
+#!/usr/bin/env python3
+"""
+HiFiBerry Bluetooth Audio Web API
+Simple REST API for Bluetooth pairing and configuration
+"""
+
+import json
+import subprocess
+import os
+import sys
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse, parse_qs
+import threading
+import time
+
+# Add the directory containing btaudio-config to the path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Import our existing Bluetooth manager
+try:
+    # Try to import from installed location first
+    import sys
+    sys.path.insert(0, '/usr/bin')
+    from btaudio_config import BluetoothManager
+except ImportError:
+    # Fallback to local development path
+    import importlib.util
+    import os
+    
+    # Try relative path first
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(script_dir, 'btaudio-config')
+    
+    if not os.path.exists(config_path):
+        # Try absolute path
+        config_path = '/usr/bin/btaudio-config'
+    
+    if os.path.exists(config_path):
+        spec = importlib.util.spec_from_file_location("btaudio_config", config_path)
+        btaudio_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(btaudio_module)
+        BluetoothManager = btaudio_module.BluetoothManager
+    else:
+        raise ImportError("Could not find btaudio-config module")
+
+class BluetoothAPIHandler(BaseHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    def _get_bt_manager(self):
+        """Get Bluetooth manager instance"""
+        if not hasattr(self, '_bt_manager'):
+            self._bt_manager = BluetoothManager()
+        return self._bt_manager
+    
+    def _send_json_response(self, data, status_code=200):
+        """Send JSON response"""
+        self.send_response(status_code)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')  # CORS for web apps
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+        
+        response = json.dumps(data, indent=2)
+        self.wfile.write(response.encode('utf-8'))
+    
+    def _send_error_response(self, message, status_code=400):
+        """Send error response"""
+        self._send_json_response({'error': message, 'success': False}, status_code)
+    
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests"""
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+    
+    def do_GET(self):
+        """Handle GET requests"""
+        parsed_path = urlparse(self.path)
+        path = parsed_path.path
+        query_params = parse_qs(parsed_path.query)
+        
+        try:
+            if path == '/api/status':
+                # Get Bluetooth status
+                response = self._get_bluetooth_status()
+                self._send_json_response(response)
+            
+            elif path == '/api/pairing/pin':
+                # Get current PIN
+                bt_manager = self._get_bt_manager()
+                current_pin = bt_manager.load_pin_from_config()
+                self._send_json_response({
+                    'pin': current_pin,
+                    'has_pin': current_pin is not None,
+                    'success': True
+                })
+            
+            elif path == '/api/devices/paired':
+                # List paired devices
+                bt_manager = self._get_bt_manager()
+                devices = bt_manager.list_paired_devices()
+                self._send_json_response({
+                    'devices': devices,
+                    'count': len(devices),
+                    'success': True
+                })
+            
+            elif path == '/api/audio/check':
+                # Check audio configuration
+                audio_status = self._check_audio_status()
+                self._send_json_response(audio_status)
+            
+            elif path == '/':
+                # Serve basic HTML interface
+                self._serve_html_interface()
+            
+            else:
+                self._send_error_response('Endpoint not found', 404)
+                
+        except Exception as e:
+            self._send_error_response(f'Server error: {str(e)}', 500)
+    
+    def do_POST(self):
+        """Handle POST requests"""
+        parsed_path = urlparse(self.path)
+        path = parsed_path.path
+        
+        try:
+            # Read request body
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length > 0:
+                post_data = self.rfile.read(content_length)
+                try:
+                    request_data = json.loads(post_data.decode('utf-8'))
+                except json.JSONDecodeError:
+                    request_data = {}
+            else:
+                request_data = {}
+            
+            if path == '/api/pairing/pin/generate':
+                # Generate new random PIN
+                bt_manager = self._get_bt_manager()
+                new_pin = bt_manager.generate_random_pin()
+                if bt_manager.save_pin_to_config(new_pin):
+                    self._send_json_response({
+                        'pin': new_pin,
+                        'message': 'Random PIN generated and saved',
+                        'success': True
+                    })
+                else:
+                    self._send_error_response('Failed to save PIN')
+            
+            elif path == '/api/pairing/pin/set':
+                # Set custom PIN
+                pin = request_data.get('pin', '').strip()
+                
+                if not pin.isdigit() or len(pin) < 4 or len(pin) > 8:
+                    self._send_error_response('PIN must be 4-8 digits')
+                    return
+                
+                bt_manager = self._get_bt_manager()
+                if bt_manager.save_pin_to_config(pin):
+                    self._send_json_response({
+                        'pin': pin,
+                        'message': 'PIN saved successfully',
+                        'success': True
+                    })
+                else:
+                    self._send_error_response('Failed to save PIN')
+            
+            elif path == '/api/discoverable/start':
+                # Make discoverable
+                timeout = request_data.get('timeout', 0)
+                bt_manager = self._get_bt_manager()
+                if bt_manager.make_discoverable(timeout):
+                    self._send_json_response({
+                        'message': f'System is now discoverable',
+                        'timeout': timeout,
+                        'success': True
+                    })
+                else:
+                    self._send_error_response('Failed to make discoverable')
+            
+            elif path == '/api/discoverable/stop':
+                # Hide from discovery
+                bt_manager = self._get_bt_manager()
+                if bt_manager.hide_discoverable():
+                    self._send_json_response({
+                        'message': 'System is no longer discoverable',
+                        'success': True
+                    })
+                else:
+                    self._send_error_response('Failed to hide from discovery')
+            
+            elif path == '/api/audio/setup':
+                # Setup audio profiles
+                bt_manager = self._get_bt_manager()
+                if bt_manager.setup_audio_profiles():
+                    self._send_json_response({
+                        'message': 'Audio profiles configured successfully',
+                        'success': True
+                    })
+                else:
+                    self._send_error_response('Failed to setup audio profiles')
+            
+            else:
+                self._send_error_response('Endpoint not found', 404)
+                
+        except Exception as e:
+            self._send_error_response(f'Server error: {str(e)}', 500)
+    
+    def do_DELETE(self):
+        """Handle DELETE requests"""
+        parsed_path = urlparse(self.path)
+        path = parsed_path.path
+        
+        try:
+            if path.startswith('/api/devices/'):
+                # Remove device by MAC address
+                mac_address = path.split('/')[-1]
+                bt_manager = self._get_bt_manager()
+                if bt_manager.remove_device(mac_address):
+                    self._send_json_response({
+                        'message': f'Device {mac_address} removed successfully',
+                        'success': True
+                    })
+                else:
+                    self._send_error_response(f'Failed to remove device {mac_address}')
+            
+            elif path == '/api/devices/all':
+                # Remove all devices
+                bt_manager = self._get_bt_manager()
+                if bt_manager.remove_all_devices():
+                    self._send_json_response({
+                        'message': 'All paired devices removed',
+                        'success': True
+                    })
+                else:
+                    self._send_error_response('Failed to remove all devices')
+            
+            else:
+                self._send_error_response('Endpoint not found', 404)
+                
+        except Exception as e:
+            self._send_error_response(f'Server error: {str(e)}', 500)
+    
+    def _get_bluetooth_status(self):
+        """Get comprehensive Bluetooth status"""
+        try:
+            bt_manager = self._get_bt_manager()
+            if not bt_manager.adapter:
+                return {'error': 'No Bluetooth adapter found', 'success': False}
+            
+            import dbus
+            props = dbus.Interface(bt_manager.adapter, "org.freedesktop.DBus.Properties")
+            
+            powered = props.Get("org.bluez.Adapter1", "Powered")
+            discoverable = props.Get("org.bluez.Adapter1", "Discoverable")
+            pairable = props.Get("org.bluez.Adapter1", "Pairable")
+            alias = props.Get("org.bluez.Adapter1", "Alias")
+            address = props.Get("org.bluez.Adapter1", "Address")
+            
+            # Get PIN status
+            current_pin = bt_manager.load_pin_from_config()
+            
+            return {
+                'adapter': {
+                    'address': str(address),
+                    'name': str(alias),
+                    'powered': bool(powered),
+                    'discoverable': bool(discoverable),
+                    'pairable': bool(pairable)
+                },
+                'pairing': {
+                    'has_pin': current_pin is not None,
+                    'pin': current_pin if current_pin else None
+                },
+                'success': True
+            }
+            
+        except Exception as e:
+            return {'error': f'Failed to get status: {str(e)}', 'success': False}
+    
+    def _check_audio_status(self):
+        """Check audio backend status"""
+        try:
+            import subprocess
+            
+            audio_status = {
+                'pipewire_running': False,
+                'wireplumber_running': False,
+                'pulseaudio_running': False,
+                'backend': 'none'
+            }
+            
+            # Check PipeWire
+            result = subprocess.run(['pgrep', '-x', 'pipewire'], capture_output=True, timeout=5)
+            if result.returncode == 0:
+                audio_status['pipewire_running'] = True
+                audio_status['backend'] = 'pipewire'
+                
+                # Check WirePlumber
+                result = subprocess.run(['pgrep', '-x', 'wireplumber'], capture_output=True, timeout=5)
+                audio_status['wireplumber_running'] = (result.returncode == 0)
+            else:
+                # Check PulseAudio
+                result = subprocess.run(['pgrep', '-x', 'pulseaudio'], capture_output=True, timeout=5)
+                if result.returncode == 0:
+                    audio_status['pulseaudio_running'] = True
+                    audio_status['backend'] = 'pulseaudio'
+            
+            audio_status['success'] = True
+            return audio_status
+            
+        except Exception as e:
+            return {'error': f'Failed to check audio status: {str(e)}', 'success': False}
+    
+    def _serve_html_interface(self):
+        """Serve a basic HTML interface for testing"""
+        html_content = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HiFiBerry Bluetooth Audio Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        input[type="text"] { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 3px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>HiFiBerry Bluetooth Audio Control</h1>
+    
+    <div class="section">
+        <h2>System Status</h2>
+        <button onclick="getStatus()">Refresh Status</button>
+        <div id="status-display"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Pairing PIN Management</h2>
+        <button onclick="generatePin()">Generate Random PIN</button>
+        <button onclick="showCurrentPin()">Show Current PIN</button>
+        <br><br>
+        <input type="text" id="custom-pin" placeholder="Enter 4-8 digit PIN" maxlength="8">
+        <button onclick="setCustomPin()">Set Custom PIN</button>
+        <div id="pin-display"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Discoverable Mode</h2>
+        <button onclick="makeDiscoverable()">Make Discoverable (Infinite)</button>
+        <button onclick="makeDiscoverableTimeout()">Make Discoverable (2 minutes)</button>
+        <button onclick="hideDiscoverable()">Hide from Discovery</button>
+        <div id="discoverable-display"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Audio Configuration</h2>
+        <button onclick="checkAudio()">Check Audio Status</button>
+        <button onclick="setupAudio()">Setup Audio Profiles</button>
+        <div id="audio-display"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Paired Devices</h2>
+        <button onclick="listDevices()">Refresh Device List</button>
+        <button onclick="removeAllDevices()" style="background: #dc3545;">Remove All Devices</button>
+        <div id="devices-display"></div>
+    </div>
+
+    <script>
+        function apiCall(endpoint, method = 'GET', data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            return fetch(endpoint, options).then(response => response.json());
+        }
+        
+        function showMessage(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function getStatus() {
+            apiCall('/api/status').then(data => {
+                if (data.success) {
+                    const adapter = data.adapter;
+                    const pairing = data.pairing;
+                    document.getElementById('status-display').innerHTML = `
+                        <div class="status success">
+                            <h3>Adapter Status</h3>
+                            <p><strong>Address:</strong> ${adapter.address}</p>
+                            <p><strong>Name:</strong> ${adapter.name}</p>
+                            <p><strong>Powered:</strong> ${adapter.powered ? '✓ Yes' : '✗ No'}</p>
+                            <p><strong>Discoverable:</strong> ${adapter.discoverable ? '✓ Yes' : '✗ No'}</p>
+                            <p><strong>Pairable:</strong> ${adapter.pairable ? '✓ Yes' : '✗ No'}</p>
+                            <p><strong>PIN Configured:</strong> ${pairing.has_pin ? '✓ Yes' : '✗ No'}</p>
+                        </div>
+                    `;
+                } else {
+                    showMessage('status-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function generatePin() {
+            apiCall('/api/pairing/pin/generate', 'POST').then(data => {
+                if (data.success) {
+                    showMessage('pin-display', `Generated PIN: ${data.pin}`, 'success');
+                } else {
+                    showMessage('pin-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function showCurrentPin() {
+            apiCall('/api/pairing/pin').then(data => {
+                if (data.success) {
+                    if (data.has_pin) {
+                        showMessage('pin-display', `Current PIN: ${data.pin}`, 'info');
+                    } else {
+                        showMessage('pin-display', 'No PIN configured', 'info');
+                    }
+                } else {
+                    showMessage('pin-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function setCustomPin() {
+            const pin = document.getElementById('custom-pin').value;
+            if (!pin || pin.length < 4 || pin.length > 8 || !/^\\d+$/.test(pin)) {
+                showMessage('pin-display', 'PIN must be 4-8 digits', 'error');
+                return;
+            }
+            
+            apiCall('/api/pairing/pin/set', 'POST', {pin: pin}).then(data => {
+                if (data.success) {
+                    showMessage('pin-display', `PIN set to: ${data.pin}`, 'success');
+                    document.getElementById('custom-pin').value = '';
+                } else {
+                    showMessage('pin-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function makeDiscoverable() {
+            apiCall('/api/discoverable/start', 'POST', {timeout: 0}).then(data => {
+                if (data.success) {
+                    showMessage('discoverable-display', 'System is now discoverable (infinite)', 'success');
+                } else {
+                    showMessage('discoverable-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function makeDiscoverableTimeout() {
+            apiCall('/api/discoverable/start', 'POST', {timeout: 120}).then(data => {
+                if (data.success) {
+                    showMessage('discoverable-display', 'System is now discoverable for 2 minutes', 'success');
+                } else {
+                    showMessage('discoverable-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function hideDiscoverable() {
+            apiCall('/api/discoverable/stop', 'POST').then(data => {
+                if (data.success) {
+                    showMessage('discoverable-display', 'System is no longer discoverable', 'success');
+                } else {
+                    showMessage('discoverable-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function checkAudio() {
+            apiCall('/api/audio/check').then(data => {
+                if (data.success) {
+                    document.getElementById('audio-display').innerHTML = `
+                        <div class="status success">
+                            <h3>Audio Backend Status</h3>
+                            <p><strong>Active Backend:</strong> ${data.backend}</p>
+                            <p><strong>PipeWire:</strong> ${data.pipewire_running ? '✓ Running' : '✗ Not running'}</p>
+                            <p><strong>WirePlumber:</strong> ${data.wireplumber_running ? '✓ Running' : '✗ Not running'}</p>
+                            <p><strong>PulseAudio:</strong> ${data.pulseaudio_running ? '✓ Running' : '✗ Not running'}</p>
+                        </div>
+                    `;
+                } else {
+                    showMessage('audio-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function setupAudio() {
+            apiCall('/api/audio/setup', 'POST').then(data => {
+                if (data.success) {
+                    showMessage('audio-display', 'Audio profiles configured successfully', 'success');
+                } else {
+                    showMessage('audio-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function listDevices() {
+            apiCall('/api/devices/paired').then(data => {
+                if (data.success) {
+                    if (data.devices.length > 0) {
+                        let html = '<div class="status success"><h3>Paired Devices</h3>';
+                        data.devices.forEach(device => {
+                            const status = [];
+                            if (device.connected) status.push('Connected');
+                            if (device.trusted) status.push('Trusted');
+                            const statusText = status.length > 0 ? ` (${status.join(', ')})` : '';
+                            
+                            html += `
+                                <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 3px;">
+                                    <strong>${device.name}</strong><br>
+                                    Address: ${device.address}${statusText}<br>
+                                    <button onclick="removeDevice('${device.address}')" style="background: #dc3545; margin-top: 5px;">Remove</button>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        document.getElementById('devices-display').innerHTML = html;
+                    } else {
+                        showMessage('devices-display', 'No paired devices found', 'info');
+                    }
+                } else {
+                    showMessage('devices-display', `Error: ${data.error}`, 'error');
+                }
+            });
+        }
+        
+        function removeDevice(address) {
+            if (confirm(`Remove device ${address}?`)) {
+                apiCall(`/api/devices/${address}`, 'DELETE').then(data => {
+                    if (data.success) {
+                        showMessage('devices-display', `Device ${address} removed`, 'success');
+                        setTimeout(listDevices, 1000); // Refresh list after 1 second
+                    } else {
+                        showMessage('devices-display', `Error: ${data.error}`, 'error');
+                    }
+                });
+            }
+        }
+        
+        function removeAllDevices() {
+            if (confirm('Remove ALL paired devices? This cannot be undone!')) {
+                apiCall('/api/devices/all', 'DELETE').then(data => {
+                    if (data.success) {
+                        showMessage('devices-display', 'All devices removed', 'success');
+                        setTimeout(listDevices, 1000); // Refresh list after 1 second
+                    } else {
+                        showMessage('devices-display', `Error: ${data.error}`, 'error');
+                    }
+                });
+            }
+        }
+        
+        // Load status on page load
+        window.onload = function() {
+            getStatus();
+            listDevices();
+            checkAudio();
+        };
+    </script>
+</body>
+</html>
+        """
+        
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html')
+        self.end_headers()
+        self.wfile.write(html_content.encode('utf-8'))
+
+def main():
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='HiFiBerry Bluetooth Audio Web API')
+    parser.add_argument('--host', default='127.0.0.1', help='Host to bind to (default: 127.0.0.1)')
+    parser.add_argument('--port', type=int, default=1082, help='Port to bind to (default: 1082)')
+    
+    args = parser.parse_args()
+    
+    try:
+        # Initialize DBus main loop
+        import dbus.mainloop.glib
+        dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+        
+        server = HTTPServer((args.host, args.port), BluetoothAPIHandler)
+        print(f"Starting HiFiBerry Bluetooth Audio Web API on {args.host}:{args.port}")
+        print(f"Web interface available at: http://{args.host}:{args.port}/")
+        print("API endpoints:")
+        print("  GET  /api/status - Get Bluetooth adapter status")
+        print("  GET  /api/pairing/pin - Get current PIN")
+        print("  POST /api/pairing/pin/generate - Generate random PIN")
+        print("  POST /api/pairing/pin/set - Set custom PIN")
+        print("  POST /api/discoverable/start - Make discoverable")
+        print("  POST /api/discoverable/stop - Hide from discovery")
+        print("  GET  /api/devices/paired - List paired devices")
+        print("  DELETE /api/devices/{mac} - Remove device")
+        print("  DELETE /api/devices/all - Remove all devices")
+        print("  GET  /api/audio/check - Check audio status")
+        print("  POST /api/audio/setup - Setup audio profiles")
+        print("\nPress Ctrl+C to stop the server")
+        
+        server.serve_forever()
+        
+    except KeyboardInterrupt:
+        print("\nShutting down server...")
+        server.shutdown()
+        server.server_close()
+        print("Server stopped")
+
+if __name__ == "__main__":
+    main()

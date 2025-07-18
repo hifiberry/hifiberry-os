@@ -17,9 +17,13 @@ Depends: ${misc:Depends},
          python3-dbus,
          python3-gi,
          gir1.2-glib-2.0
-Description: HiFiBerry Bluetooth Audio Management
+Description: HiFiBerry Bluetooth Audio Management with Web API
  Tools and configuration for managing Bluetooth audio on HiFiBerry systems.
  This package provides utilities for configuring and managing Bluetooth
  audio connections, pairing, and audio routing. The system automatically
  becomes discoverable as a Bluetooth audio sink for devices like iPhones.
  Uses PipeWire for audio processing.
+ .
+ Includes a web-based REST API and HTML interface for remote management
+ of Bluetooth pairing, PIN codes, discoverable mode, and paired devices.
+ The web interface is available on port 1082.

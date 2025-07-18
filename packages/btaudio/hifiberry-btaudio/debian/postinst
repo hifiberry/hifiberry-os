@@ -11,6 +11,7 @@ case "$1" in
         
         # Create configuration directory if it doesn't exist
         mkdir -p /etc/hifiberry
+        mkdir -p /var/lib/hifiberry-btaudio
         
         # Generate PIN if none exists
         echo "Setting up Bluetooth security..."
@@ -66,6 +67,10 @@ case "$1" in
             echo "Bluetooth service not running. Enable and start bluetooth, then:"
             echo "  systemctl start hifiberry-btaudio"
         fi
+        # Enable and start the web API service
+        echo "Setting up Web API..."
+        systemctl enable hifiberry-btaudio-web || true
+        echo "Web interface will be available at: http://$(hostname -I | awk '{print $1}'):1082/"
         
         echo "HiFiBerry Bluetooth Audio configuration completed"
         ;;

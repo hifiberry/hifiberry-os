@@ -3,24 +3,15 @@
 %:
 	dh $@
 
-override_dh_auto_install:
-	# Create directories
-	mkdir -p debian/hifiberry-btaudio/usr/bin
-	mkdir -p debian/hifiberry-btaudio/etc/hifiberry
-	mkdir -p debian/hifiberry-btaudio/lib/systemd/system
-	
-	# Install scripts
-	cp src/btaudio-* debian/hifiberry-btaudio/usr/bin/
-	chmod +x debian/hifiberry-btaudio/usr/bin/btaudio-*
-	
-	# Install configuration files
-	cp src/*.conf debian/hifiberry-btaudio/etc/hifiberry/
-	
-	# Install systemd service
-	cp systemd/*.service debian/hifiberry-btaudio/lib/systemd/system/
-
 override_dh_auto_build:
-	# Nothing to build
+	# Make scripts executable
+	chmod +x src/btaudio-*
 
 override_dh_auto_test:
 	# Skip tests for now
+
+override_dh_installsystemd:
+	# Install systemd service for main package
+	dh_installsystemd --package=hifiberry-btaudio systemd/hifiberry-btaudio.service
+	# Install systemd service for web API
+	dh_installsystemd --package=hifiberry-btaudio debian/hifiberry-btaudio-web.service

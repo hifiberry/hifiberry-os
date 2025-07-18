@@ -1,0 +1,5 @@
+src/btaudio-config /usr/bin/
+src/btaudio-setup-audio /usr/bin/
+src/btaudio-discoverable /usr/bin/
+src/btaudio-generate-pin /usr/bin/
+src/btaudio-web-api /usr/bin/
