@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    remove|purge)
+        # Stop and disable the service
+        if [ -d /run/systemd/system ]; then
+            systemctl stop hifiberry-btaudio-web.service || true
+            systemctl disable hifiberry-btaudio-web.service || true
+            
+            # Reload systemd daemon
+            systemctl daemon-reload
+        fi
+        ;;
+    
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        ;;
+    
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
