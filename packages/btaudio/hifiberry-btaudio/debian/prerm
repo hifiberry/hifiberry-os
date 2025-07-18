@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    remove|purge)
+        echo "Removing HiFiBerry Bluetooth Audio configuration..."
+        
+        # Clean up any temporary files or configurations if needed
+        # Note: We don't disable bluetooth service as other packages might need it
+        
+        echo "HiFiBerry Bluetooth Audio cleanup completed"
+        ;;
+        
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        # Don't clean up during upgrades
+        ;;
+        
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

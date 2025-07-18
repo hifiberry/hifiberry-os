@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""
+HiFiBerry Bluetooth Audio Configuration Tool
+"""
+
+import sys
+import subprocess
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(description='HiFiBerry Bluetooth Audio Configuration')
+    parser.add_argument('--status', action='store_true', help='Show Bluetooth status')
+    parser.add_argument('--scan', action='store_true', help='Scan for devices')
+    parser.add_argument('--pair', help='Pair with device (MAC address)')
+    
+    args = parser.parse_args()
+    
+    if args.status:
+        print("Bluetooth Audio Status:")
+        try:
+            result = subprocess.run(['bluetoothctl', 'show'], capture_output=True, text=True)
+            print(result.stdout)
+        except Exception as e:
+            print(f"Error: {e}")
+    
+    elif args.scan:
+        print("Scanning for Bluetooth devices...")
+        try:
+            subprocess.run(['bluetoothctl', 'scan', 'on'])
+        except Exception as e:
+            print(f"Error: {e}")
+    
+    elif args.pair:
+        print(f"Pairing with device: {args.pair}")
+        try:
+            subprocess.run(['bluetoothctl', 'pair', args.pair])
+        except Exception as e:
+            print(f"Error: {e}")
+    
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()

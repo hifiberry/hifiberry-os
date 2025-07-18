@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    configure)
+        echo "Configuring HiFiBerry Bluetooth Audio..."
+        
+        # Ensure bluetooth service is enabled
+        systemctl enable bluetooth || true
+        
+        # Create configuration directory if it doesn't exist
+        mkdir -p /etc/hifiberry
+        
+        echo "HiFiBerry Bluetooth Audio configuration completed"
+        ;;
+        
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+        
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

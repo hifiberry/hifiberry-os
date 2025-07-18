@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	# Create directories
+	mkdir -p debian/hifiberry-btaudio/usr/bin
+	mkdir -p debian/hifiberry-btaudio/etc/hifiberry
+	
+	# Install scripts
+	cp src/btaudio-* debian/hifiberry-btaudio/usr/bin/ || true
+	
+	# Install configuration files
+	cp src/*.conf debian/hifiberry-btaudio/etc/hifiberry/ || true
+
+override_dh_auto_build:
+	# Nothing to build
+
+override_dh_auto_test:
+	# Skip tests for now

@@ -1,0 +1,20 @@
+Source: hifiberry-btaudio
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry Team <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://www.hifiberry.com
+Vcs-Git: https://github.com/hifiberry/hifiberry-btaudio.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-btaudio
+
+Package: hifiberry-btaudio
+Architecture: all
+Depends: ${misc:Depends}, 
+         bluez,
+         python3,
+         python3-dbus
+Description: HiFiBerry Bluetooth Audio Management
+ Tools and configuration for managing Bluetooth audio on HiFiBerry systems.
+ This package provides utilities for configuring and managing Bluetooth
+ audio connections, pairing, and audio routing.
