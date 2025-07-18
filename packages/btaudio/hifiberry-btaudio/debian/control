@@ -12,9 +12,14 @@ Package: hifiberry-btaudio
 Architecture: all
 Depends: ${misc:Depends}, 
          bluez,
+         hifiberry-pipewire,
          python3,
-         python3-dbus
+         python3-dbus,
+         python3-gi,
+         gir1.2-glib-2.0
 Description: HiFiBerry Bluetooth Audio Management
  Tools and configuration for managing Bluetooth audio on HiFiBerry systems.
  This package provides utilities for configuring and managing Bluetooth
- audio connections, pairing, and audio routing.
+ audio connections, pairing, and audio routing. The system automatically
+ becomes discoverable as a Bluetooth audio sink for devices like iPhones.
+ Uses PipeWire for audio processing.
