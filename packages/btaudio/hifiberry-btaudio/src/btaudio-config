@@ -190,52 +190,91 @@ class BluetoothManager:
             return False
         
         try:
-            # Get device name
+            # Get device name using the same pattern as implemented before
             device_name = self.get_device_name()
             
-            # Enable the adapter
-            self.adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
+            # Use bluetoothctl for modern BlueZ compatibility
+            import subprocess
             
-            # Set device class for audio sink (0x200414 = Audio/Video + Major Audio + Audio Device)
-            # This helps phones recognize the device as an audio sink
+            print(f"Making system discoverable as '{device_name}'...")
+            
+            # Power on
             try:
-                self.adapter.Set("org.bluez.Adapter1", "Class", dbus.UInt32(0x200414))
-                print("Set device class to Audio Sink")
+                subprocess.run(['bluetoothctl', 'power', 'on'], 
+                             capture_output=True, text=True, timeout=5, check=True)
             except Exception as e:
-                print(f"Warning: Could not set device class: {e}")
-            
-            # Set discoverable
-            self.adapter.Set("org.bluez.Adapter1", "Discoverable", dbus.Boolean(True))
-            
-            # Set discoverable timeout (0 = infinite)
-            self.adapter.Set("org.bluez.Adapter1", "DiscoverableTimeout", dbus.UInt32(timeout))
-            
-            # Set pairable
-            self.adapter.Set("org.bluez.Adapter1", "Pairable", dbus.Boolean(True))
+                print(f"Note: Could not power on via bluetoothctl: {e}")
+                # Fallback to DBus for basic power on
+                try:
+                    self.adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
+                except Exception as dbus_e:
+                    print(f"Warning: Could not power on adapter: {dbus_e}")
             
             # Set device name
-            self.adapter.Set("org.bluez.Adapter1", "Alias", dbus.String(device_name))
-            
-            # Enable A2DP profile support by ensuring proper UUIDs are advertised
             try:
-                # A2DP Sink UUID: 0000110B-0000-1000-8000-00805F9B34FB
-                # Audio Source UUID: 0000110A-0000-1000-8000-00805F9B34FB  
-                # AVRCP Target UUID: 0000110C-0000-1000-8000-00805F9B34FB
-                uuids = [
-                    "0000110B-0000-1000-8000-00805F9B34FB",  # A2DP Sink
-                    "0000110C-0000-1000-8000-00805F9B34FB",  # AVRCP Target
-                    "0000111E-0000-1000-8000-00805F9B34FB",  # HFP HF (Hands-Free)
-                ]
-                self.adapter.Set("org.bluez.Adapter1", "UUIDs", dbus.Array(uuids, signature='s'))
-                print("Configured audio profile UUIDs")
+                subprocess.run(['bluetoothctl', 'system-alias', device_name], 
+                             capture_output=True, text=True, timeout=5, check=True)
+                print(f"Device name set to '{device_name}'")
             except Exception as e:
-                print(f"Warning: Could not set UUIDs: {e}")
+                print(f"Note: Could not set device name via bluetoothctl: {e}")
+                # Fallback to DBus
+                try:
+                    self.adapter.Set("org.bluez.Adapter1", "Alias", dbus.String(device_name))
+                    print(f"Device name set to '{device_name}' (via DBus)")
+                except Exception as dbus_e:
+                    print(f"Warning: Could not set device name: {dbus_e}")
             
-            print(f"System is now discoverable as '{device_name}' (Audio Sink)")
+            # Set discoverable
+            discoverable_cmd = ['bluetoothctl', 'discoverable', 'on']
             if timeout > 0:
-                print(f"Discoverable for {timeout} seconds")
+                discoverable_cmd = ['bluetoothctl', 'discoverable-timeout', str(timeout)]
+            
+            try:
+                subprocess.run(discoverable_cmd, 
+                             capture_output=True, text=True, timeout=5, check=True)
+                print("Discoverable mode enabled")
+            except Exception as e:
+                print(f"Note: Could not set discoverable via bluetoothctl: {e}")
+                # Fallback to DBus
+                try:
+                    self.adapter.Set("org.bluez.Adapter1", "Discoverable", dbus.Boolean(True))
+                    if timeout > 0:
+                        self.adapter.Set("org.bluez.Adapter1", "DiscoverableTimeout", dbus.UInt32(timeout))
+                    print("Discoverable mode enabled (via DBus)")
+                except Exception as dbus_e:
+                    print(f"Warning: Could not set discoverable: {dbus_e}")
+            
+            # Set pairable
+            try:
+                subprocess.run(['bluetoothctl', 'pairable', 'on'], 
+                             capture_output=True, text=True, timeout=5, check=True)
+                print("Pairable mode enabled")
+            except Exception as e:
+                print(f"Note: Could not set pairable via bluetoothctl: {e}")
+                # Fallback to DBus
+                try:
+                    self.adapter.Set("org.bluez.Adapter1", "Pairable", dbus.Boolean(True))
+                    print("Pairable mode enabled (via DBus)")
+                except Exception as dbus_e:
+                    print(f"Warning: Could not set pairable: {dbus_e}")
+            
+            print("")
+            if timeout > 0:
+                print(f"System is discoverable for {timeout} seconds")
             else:
-                print("Discoverable indefinitely")
+                print("System is discoverable indefinitely")
+            
+            print("")
+            print("Note: Device class and audio UUIDs are managed by:")
+            print("  - BlueZ system configuration (/etc/bluetooth/main.conf)")
+            print("  - Audio backend (PipeWire/PulseAudio) configuration")
+            print("  - Kernel modules and drivers")
+            print("")
+            print("If devices don't see this as an audio sink:")
+            print("  1. Run: btaudio-setup-audio --setup")
+            print("  2. Check: btaudio-config --check-audio")
+            print("  3. Restart: systemctl restart hifiberry-btaudio")
+            print("  4. Check BlueZ config: /etc/bluetooth/main.conf")
             
             return True
             
@@ -445,32 +484,103 @@ class BluetoothManager:
             return False
         
         try:
-            # Enable the adapter first
-            self.adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
+            print("Configuring Bluetooth audio profiles...")
             
-            # Set device class for audio sink
-            # Class 0x200414 = Service Class: Audio (bit 21), Major Device Class: Audio/Video (0x04), Minor: Loudspeaker (0x14)
-            self.adapter.Set("org.bluez.Adapter1", "Class", dbus.UInt32(0x200414))
+            # Modern BlueZ approach: Use bluetoothctl commands instead of direct DBus
+            import subprocess
             
-            # Set UUIDs for audio profiles
-            uuids = [
-                "0000110B-0000-1000-8000-00805F9B34FB",  # A2DP Sink
-                "0000110C-0000-1000-8000-00805F9B34FB",  # AVRCP Target (media control)
-                "0000111E-0000-1000-8000-00805F9B34FB",  # HFP HF (Hands-Free Profile)
-            ]
-            self.adapter.Set("org.bluez.Adapter1", "UUIDs", dbus.Array(uuids, signature='s'))
+            device_name = self.get_device_name()
+            success_count = 0
+            total_operations = 0
             
-            print("Bluetooth audio profiles configured:")
-            print("  - A2DP Sink (receive audio from phones)")
-            print("  - AVRCP Target (media control)")
-            print("  - Device Class: Audio Sink (0x200414)")
+            # Power on the adapter
+            print("Powering on Bluetooth adapter...")
+            total_operations += 1
+            try:
+                result = subprocess.run(['bluetoothctl', 'power', 'on'], 
+                                      capture_output=True, text=True, timeout=10)
+                if result.returncode == 0:
+                    print("✓ Bluetooth adapter powered on")
+                    success_count += 1
+                else:
+                    print(f"⚠ Could not power on adapter: {result.stderr.strip()}")
+            except Exception as e:
+                print(f"⚠ Could not power on adapter: {e}")
+            
+            # Set system alias (device name)
+            print(f"Setting device name to '{device_name}'...")
+            total_operations += 1
+            try:
+                result = subprocess.run(['bluetoothctl', 'system-alias', device_name], 
+                                      capture_output=True, text=True, timeout=10)
+                if result.returncode == 0:
+                    print(f"✓ Device name set to '{device_name}'")
+                    success_count += 1
+                else:
+                    print(f"⚠ Could not set device name: {result.stderr.strip()}")
+            except Exception as e:
+                print(f"⚠ Could not set device name: {e}")
+            
+            # Enable discoverable mode
+            print("Enabling discoverable mode...")
+            total_operations += 1
+            try:
+                result = subprocess.run(['bluetoothctl', 'discoverable', 'on'], 
+                                      capture_output=True, text=True, timeout=10)
+                if result.returncode == 0:
+                    print("✓ Discoverable mode enabled")
+                    success_count += 1
+                else:
+                    print(f"⚠ Could not enable discoverable mode: {result.stderr.strip()}")
+            except Exception as e:
+                print(f"⚠ Could not enable discoverable mode: {e}")
+            
+            # Enable pairable mode
+            print("Enabling pairable mode...")
+            total_operations += 1
+            try:
+                result = subprocess.run(['bluetoothctl', 'pairable', 'on'], 
+                                      capture_output=True, text=True, timeout=10)
+                if result.returncode == 0:
+                    print("✓ Pairable mode enabled")
+                    success_count += 1
+                else:
+                    print(f"⚠ Could not enable pairable mode: {result.stderr.strip()}")
+            except Exception as e:
+                print(f"⚠ Could not enable pairable mode: {e}")
+            
             print("")
-            print("Your system should now appear as an audio device to phones/tablets")
+            print(f"Audio profile setup completed ({success_count}/{total_operations} operations successful)")
             
-            return True
+            if success_count < total_operations:
+                print("⚠ Some operations failed, but basic functionality should work")
+            
+            print("")
+            print("IMPORTANT: Device class and audio UUIDs are managed by:")
+            print("  1. BlueZ configuration (/etc/bluetooth/main.conf)")
+            print("  2. Audio backend (PipeWire/PulseAudio) with Bluetooth modules")
+            print("  3. Kernel Bluetooth and audio driver support")
+            print("")
+            print("To complete audio setup:")
+            print("  1. Configure audio backend: btaudio-setup-audio --setup")
+            print("  2. Restart Bluetooth service: sudo systemctl restart bluetooth")
+            print("  3. Check configuration: btaudio-config --check-audio")
+            print("  4. Make discoverable: btaudio-config --discoverable")
+            print("")
+            print("If devices still don't see this as an audio sink:")
+            print("  - Check BlueZ main.conf for Class and ControllerMode settings")
+            print("  - Ensure audio backend Bluetooth modules are loaded")
+            print("  - Restart both bluetooth and audio services")
+            
+            return success_count > 0
             
         except Exception as e:
             print(f"Error setting up audio profiles: {e}")
+            print("")
+            print("Alternative approach:")
+            print("1. Check BlueZ configuration: /etc/bluetooth/main.conf")
+            print("2. Set up audio backend: btaudio-setup-audio --setup")
+            print("3. Restart services: sudo systemctl restart bluetooth")
             return False
     
     def check_audio_profiles(self):
@@ -482,35 +592,52 @@ class BluetoothManager:
         try:
             props = dbus.Interface(self.adapter, "org.freedesktop.DBus.Properties")
             
-            # Get current device class
+            print("Bluetooth Audio Configuration Check")
+            print("=" * 40)
+            
+            # Check adapter basic properties
+            try:
+                powered = props.Get("org.bluez.Adapter1", "Powered")
+                discoverable = props.Get("org.bluez.Adapter1", "Discoverable")
+                pairable = props.Get("org.bluez.Adapter1", "Pairable")
+                alias = props.Get("org.bluez.Adapter1", "Alias")
+                
+                print(f"Adapter Status:")
+                print(f"  Name: {alias}")
+                print(f"  Powered: {'✓' if powered else '✗'} {powered}")
+                print(f"  Discoverable: {'✓' if discoverable else '✗'} {discoverable}")
+                print(f"  Pairable: {'✓' if pairable else '✗'} {pairable}")
+                
+            except Exception as e:
+                print(f"Could not read adapter properties: {e}")
+            
+            # Try to get device class (may not be supported in newer BlueZ)
             try:
                 device_class = props.Get("org.bluez.Adapter1", "Class")
                 device_class_hex = f"0x{device_class:06X}"
                 
-                # Check if it's an audio device class
                 is_audio_class = (device_class & 0x200000) != 0  # Audio service class bit
                 major_class = (device_class >> 8) & 0x1F
-                minor_class = (device_class >> 2) & 0x3F
                 
-                print(f"Device Class: {device_class_hex}")
-                print(f"  Audio Service Class: {'Yes' if is_audio_class else 'No'}")
+                print(f"\nDevice Class: {device_class_hex}")
+                print(f"  Audio Service Class: {'✓' if is_audio_class else '✗'}")
                 print(f"  Major Device Class: {major_class} ({'Audio/Video' if major_class == 4 else 'Other'})")
-                print(f"  Minor Device Class: {minor_class}")
                 
                 if device_class == 0x200414:
                     print("  ✓ Correctly configured as Audio Sink")
                 elif is_audio_class:
                     print("  ⚠ Audio device but not optimal for sink")
                 else:
-                    print("  ✗ Not configured as audio device")
+                    print("  ⚠ Device class may not be optimal for audio")
                 
-            except Exception as e:
-                print(f"Could not read device class: {e}")
+            except Exception:
+                print(f"\nDevice Class: Not available (managed by system)")
+                print("  Note: Modern BlueZ versions manage device class automatically")
             
-            # Get current UUIDs
+            # Try to get UUIDs (may not be settable but can be read)
             try:
                 uuids = props.Get("org.bluez.Adapter1", "UUIDs")
-                print(f"\nAdvertised UUIDs:")
+                print(f"\nAdvertised Service UUIDs:")
                 
                 audio_uuids = {
                     "0000110B-0000-1000-8000-00805F9B34FB": "A2DP Sink",
@@ -526,31 +653,51 @@ class BluetoothManager:
                     uuid_upper = str(uuid).upper()
                     if uuid_upper in audio_uuids:
                         found_audio_profiles.append(audio_uuids[uuid_upper])
-                        print(f"  ✓ {audio_uuids[uuid_upper]} ({uuid_upper})")
+                        print(f"  ✓ {audio_uuids[uuid_upper]}")
                 
                 if not found_audio_profiles:
-                    print("  ✗ No audio profiles found")
-                    print("    Try running: btaudio-config --setup-audio")
-                else:
-                    has_a2dp_sink = "A2DP Sink" in found_audio_profiles
-                    has_avrcp = "AVRCP Target" in found_audio_profiles
-                    
-                    if has_a2dp_sink and has_avrcp:
-                        print("  ✓ Audio sink properly configured")
-                    elif has_a2dp_sink:
-                        print("  ⚠ A2DP Sink found but missing AVRCP (media controls)")
-                    else:
-                        print("  ✗ Missing A2DP Sink profile")
-                        print("    Try running: btaudio-config --setup-audio")
+                    print("  Note: Audio UUIDs managed by audio backend")
                 
-            except Exception as e:
-                print(f"Could not read UUIDs: {e}")
+            except Exception:
+                print(f"\nService UUIDs: Managed by audio backend")
             
-            print("\nTroubleshooting:")
-            print("  1. Ensure Bluetooth is powered on")
+            # Check audio backend
+            print(f"\nAudio Backend Check:")
+            try:
+                import subprocess
+                
+                # Check if PipeWire is running
+                result = subprocess.run(['pgrep', '-x', 'pipewire'], capture_output=True, timeout=5)
+                if result.returncode == 0:
+                    print("  ✓ PipeWire is running")
+                    
+                    # Check WirePlumber
+                    result = subprocess.run(['pgrep', '-x', 'wireplumber'], capture_output=True, timeout=5)
+                    if result.returncode == 0:
+                        print("  ✓ WirePlumber is running")
+                    else:
+                        print("  ⚠ WirePlumber not detected")
+                else:
+                    # Check PulseAudio
+                    result = subprocess.run(['pgrep', '-x', 'pulseaudio'], capture_output=True, timeout=5)
+                    if result.returncode == 0:
+                        print("  ✓ PulseAudio is running")
+                    else:
+                        print("  ✗ No audio backend detected")
+                        
+            except Exception as e:
+                print(f"  Could not check audio backend: {e}")
+            
+            print(f"\nRecommendations:")
+            print("  1. Ensure audio backend is configured: btaudio-setup-audio --setup")
             print("  2. Make system discoverable: btaudio-config --discoverable")
-            print("  3. Set up audio profiles: btaudio-config --setup-audio")
-            print("  4. Check if PipeWire/PulseAudio Bluetooth module is loaded")
+            print("  3. Check service status: systemctl status hifiberry-btaudio")
+            print("  4. Monitor logs: journalctl -u hifiberry-btaudio -f")
+            print("")
+            print("Note: Modern Bluetooth audio relies on:")
+            print("  - Audio backend (PipeWire/PulseAudio) with Bluetooth modules")
+            print("  - Proper BlueZ configuration (/etc/bluetooth/main.conf)")
+            print("  - Kernel Bluetooth and audio driver support")
             
             return True
             

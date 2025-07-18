@@ -13,13 +13,26 @@ log() {
 
 # Function to check if PipeWire is running
 check_pipewire() {
+    # First try process check (works regardless of user/system service)
+    if pgrep -x pipewire >/dev/null 2>&1; then
+        log "PipeWire is running"
+        return 0
+    fi
+    
+    # Try system service check
+    if systemctl is-active --quiet pipewire 2>/dev/null; then
+        log "PipeWire is running"
+        return 0
+    fi
+    
+    # Also try user service check as fallback
     if systemctl --user is-active --quiet pipewire 2>/dev/null; then
         log "PipeWire is running"
         return 0
-    else
-        log "PipeWire is not running"
-        return 1
     fi
+    
+    log "PipeWire is not running"
+    return 1
 }
 
 # Function to check if PulseAudio is running  
@@ -43,13 +56,34 @@ setup_pipewire_bluetooth() {
         return 1
     fi
     
-    # Start PipeWire services if needed
-    systemctl --user start pipewire-pulse.service 2>/dev/null || true
-    systemctl --user start wireplumber.service 2>/dev/null || true
-    
-    # Enable Bluetooth in WirePlumber if it's running
-    if systemctl --user is-active --quiet wireplumber 2>/dev/null; then
-        log "WirePlumber is running, Bluetooth should be auto-enabled"
+    # Check if PipeWire is running as system or user service
+    if systemctl is-active --quiet pipewire 2>/dev/null; then
+        log "PipeWire running as system service"
+        
+        # For system PipeWire, WirePlumber might also be system service
+        if systemctl is-active --quiet wireplumber 2>/dev/null; then
+            log "WirePlumber running as system service, Bluetooth should be auto-enabled"
+        elif pgrep -x wireplumber >/dev/null 2>&1; then
+            log "WirePlumber process detected, Bluetooth should be auto-enabled"
+        else
+            log "WirePlumber not detected, trying to start as user service..."
+            systemctl --user start wireplumber.service 2>/dev/null || log "Could not start WirePlumber via systemctl"
+        fi
+    else
+        # User mode PipeWire
+        log "PipeWire running as user service"
+        
+        # Start PipeWire services if needed
+        systemctl --user start pipewire-pulse.service 2>/dev/null || true
+        systemctl --user start wireplumber.service 2>/dev/null || true
+        
+        # Enable Bluetooth in WirePlumber if it's running
+        if pgrep -x wireplumber >/dev/null 2>&1 || systemctl --user is-active --quiet wireplumber 2>/dev/null; then
+            log "WirePlumber is running, Bluetooth should be auto-enabled"
+        else
+            log "WirePlumber not detected, trying to start..."
+            systemctl --user start wireplumber.service 2>/dev/null || log "Could not start WirePlumber via systemctl"
+        fi
     fi
     
     return 0
@@ -103,9 +137,31 @@ show_audio_status() {
     
     if check_pipewire; then
         echo "Audio Backend: PipeWire"
-        systemctl --user status pipewire --no-pager -l || true
+        
+        # Show system service status if available
+        if systemctl is-active --quiet pipewire 2>/dev/null; then
+            systemctl status pipewire --no-pager -l || true
+        elif systemctl --user is-active --quiet pipewire 2>/dev/null; then
+            systemctl --user status pipewire --no-pager -l || true
+        else
+            echo "PipeWire process detected but not as systemd service"
+        fi
+        
         echo ""
-        systemctl --user status wireplumber --no-pager -l || true
+        
+        # Check WirePlumber
+        if pgrep -x wireplumber >/dev/null 2>&1; then
+            echo "WirePlumber: Running"
+            if systemctl is-active --quiet wireplumber 2>/dev/null; then
+                systemctl status wireplumber --no-pager -l || true
+            elif systemctl --user is-active --quiet wireplumber 2>/dev/null; then
+                systemctl --user status wireplumber --no-pager -l || true
+            else
+                echo "WirePlumber process detected but not as systemd service"
+            fi
+        else
+            echo "WirePlumber: Not running"
+        fi
     elif check_pulseaudio; then
         echo "Audio Backend: PulseAudio"
         if which pactl >/dev/null 2>&1; then
