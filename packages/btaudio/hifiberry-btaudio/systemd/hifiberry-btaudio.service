@@ -9,6 +9,7 @@ Type=simple
 ExecStart=/usr/bin/btaudio-discoverable
 Restart=on-failure
 RestartSec=5
+TimeoutStopSec=10
 User=root
 Group=bluetooth
 
