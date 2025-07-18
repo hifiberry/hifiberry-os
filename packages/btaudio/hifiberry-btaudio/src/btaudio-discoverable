@@ -224,6 +224,18 @@ class BluetoothDiscoverableService:
             except Exception as e:
                 print(f"Note: Could not set device class: {e}")
             
+            # Set UUIDs for audio profiles to advertise audio capabilities
+            try:
+                uuids = [
+                    "0000110B-0000-1000-8000-00805F9B34FB",  # A2DP Sink
+                    "0000110C-0000-1000-8000-00805F9B34FB",  # AVRCP Target
+                    "0000111E-0000-1000-8000-00805F9B34FB",  # HFP HF (Hands-Free)
+                ]
+                props.Set("org.bluez.Adapter1", "UUIDs", dbus.Array(uuids, signature='s'))
+                print("Audio profile UUIDs configured (A2DP Sink, AVRCP Target)")
+            except Exception as e:
+                print(f"Note: Could not set audio UUIDs: {e}")
+            
             # Setup secure pairing
             if self.setup_secure_pairing():
                 print("Secure pairing agent configured")

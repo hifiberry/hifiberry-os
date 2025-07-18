@@ -196,6 +196,14 @@ class BluetoothManager:
             # Enable the adapter
             self.adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
             
+            # Set device class for audio sink (0x200414 = Audio/Video + Major Audio + Audio Device)
+            # This helps phones recognize the device as an audio sink
+            try:
+                self.adapter.Set("org.bluez.Adapter1", "Class", dbus.UInt32(0x200414))
+                print("Set device class to Audio Sink")
+            except Exception as e:
+                print(f"Warning: Could not set device class: {e}")
+            
             # Set discoverable
             self.adapter.Set("org.bluez.Adapter1", "Discoverable", dbus.Boolean(True))
             
@@ -208,7 +216,22 @@ class BluetoothManager:
             # Set device name
             self.adapter.Set("org.bluez.Adapter1", "Alias", dbus.String(device_name))
             
-            print(f"System is now discoverable as '{device_name}'")
+            # Enable A2DP profile support by ensuring proper UUIDs are advertised
+            try:
+                # A2DP Sink UUID: 0000110B-0000-1000-8000-00805F9B34FB
+                # Audio Source UUID: 0000110A-0000-1000-8000-00805F9B34FB  
+                # AVRCP Target UUID: 0000110C-0000-1000-8000-00805F9B34FB
+                uuids = [
+                    "0000110B-0000-1000-8000-00805F9B34FB",  # A2DP Sink
+                    "0000110C-0000-1000-8000-00805F9B34FB",  # AVRCP Target
+                    "0000111E-0000-1000-8000-00805F9B34FB",  # HFP HF (Hands-Free)
+                ]
+                self.adapter.Set("org.bluez.Adapter1", "UUIDs", dbus.Array(uuids, signature='s'))
+                print("Configured audio profile UUIDs")
+            except Exception as e:
+                print(f"Warning: Could not set UUIDs: {e}")
+            
+            print(f"System is now discoverable as '{device_name}' (Audio Sink)")
             if timeout > 0:
                 print(f"Discoverable for {timeout} seconds")
             else:
@@ -414,6 +437,126 @@ class BluetoothManager:
         except Exception as e:
             print(f"Error removing all devices: {e}")
             return False
+    
+    def setup_audio_profiles(self):
+        """Setup Bluetooth audio profiles for A2DP sink"""
+        if not self.adapter:
+            print("No Bluetooth adapter found")
+            return False
+        
+        try:
+            # Enable the adapter first
+            self.adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
+            
+            # Set device class for audio sink
+            # Class 0x200414 = Service Class: Audio (bit 21), Major Device Class: Audio/Video (0x04), Minor: Loudspeaker (0x14)
+            self.adapter.Set("org.bluez.Adapter1", "Class", dbus.UInt32(0x200414))
+            
+            # Set UUIDs for audio profiles
+            uuids = [
+                "0000110B-0000-1000-8000-00805F9B34FB",  # A2DP Sink
+                "0000110C-0000-1000-8000-00805F9B34FB",  # AVRCP Target (media control)
+                "0000111E-0000-1000-8000-00805F9B34FB",  # HFP HF (Hands-Free Profile)
+            ]
+            self.adapter.Set("org.bluez.Adapter1", "UUIDs", dbus.Array(uuids, signature='s'))
+            
+            print("Bluetooth audio profiles configured:")
+            print("  - A2DP Sink (receive audio from phones)")
+            print("  - AVRCP Target (media control)")
+            print("  - Device Class: Audio Sink (0x200414)")
+            print("")
+            print("Your system should now appear as an audio device to phones/tablets")
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error setting up audio profiles: {e}")
+            return False
+    
+    def check_audio_profiles(self):
+        """Check current Bluetooth audio profile configuration"""
+        if not self.adapter:
+            print("No Bluetooth adapter found")
+            return False
+        
+        try:
+            props = dbus.Interface(self.adapter, "org.freedesktop.DBus.Properties")
+            
+            # Get current device class
+            try:
+                device_class = props.Get("org.bluez.Adapter1", "Class")
+                device_class_hex = f"0x{device_class:06X}"
+                
+                # Check if it's an audio device class
+                is_audio_class = (device_class & 0x200000) != 0  # Audio service class bit
+                major_class = (device_class >> 8) & 0x1F
+                minor_class = (device_class >> 2) & 0x3F
+                
+                print(f"Device Class: {device_class_hex}")
+                print(f"  Audio Service Class: {'Yes' if is_audio_class else 'No'}")
+                print(f"  Major Device Class: {major_class} ({'Audio/Video' if major_class == 4 else 'Other'})")
+                print(f"  Minor Device Class: {minor_class}")
+                
+                if device_class == 0x200414:
+                    print("  ✓ Correctly configured as Audio Sink")
+                elif is_audio_class:
+                    print("  ⚠ Audio device but not optimal for sink")
+                else:
+                    print("  ✗ Not configured as audio device")
+                
+            except Exception as e:
+                print(f"Could not read device class: {e}")
+            
+            # Get current UUIDs
+            try:
+                uuids = props.Get("org.bluez.Adapter1", "UUIDs")
+                print(f"\nAdvertised UUIDs:")
+                
+                audio_uuids = {
+                    "0000110B-0000-1000-8000-00805F9B34FB": "A2DP Sink",
+                    "0000110A-0000-1000-8000-00805F9B34FB": "A2DP Source", 
+                    "0000110C-0000-1000-8000-00805F9B34FB": "AVRCP Target",
+                    "0000110E-0000-1000-8000-00805F9B34FB": "AVRCP Controller",
+                    "0000111E-0000-1000-8000-00805F9B34FB": "HFP Hands-Free",
+                    "0000111F-0000-1000-8000-00805F9B34FB": "HFP Audio Gateway"
+                }
+                
+                found_audio_profiles = []
+                for uuid in uuids:
+                    uuid_upper = str(uuid).upper()
+                    if uuid_upper in audio_uuids:
+                        found_audio_profiles.append(audio_uuids[uuid_upper])
+                        print(f"  ✓ {audio_uuids[uuid_upper]} ({uuid_upper})")
+                
+                if not found_audio_profiles:
+                    print("  ✗ No audio profiles found")
+                    print("    Try running: btaudio-config --setup-audio")
+                else:
+                    has_a2dp_sink = "A2DP Sink" in found_audio_profiles
+                    has_avrcp = "AVRCP Target" in found_audio_profiles
+                    
+                    if has_a2dp_sink and has_avrcp:
+                        print("  ✓ Audio sink properly configured")
+                    elif has_a2dp_sink:
+                        print("  ⚠ A2DP Sink found but missing AVRCP (media controls)")
+                    else:
+                        print("  ✗ Missing A2DP Sink profile")
+                        print("    Try running: btaudio-config --setup-audio")
+                
+            except Exception as e:
+                print(f"Could not read UUIDs: {e}")
+            
+            print("\nTroubleshooting:")
+            print("  1. Ensure Bluetooth is powered on")
+            print("  2. Make system discoverable: btaudio-config --discoverable")
+            print("  3. Set up audio profiles: btaudio-config --setup-audio")
+            print("  4. Check if PipeWire/PulseAudio Bluetooth module is loaded")
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error checking audio profiles: {e}")
+            return False
 
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
@@ -434,6 +577,8 @@ def main():
     parser.add_argument('--list-paired', action='store_true', help='List all paired devices')
     parser.add_argument('--remove-device', help='Remove (unpair) device by MAC address')
     parser.add_argument('--remove-all', action='store_true', help='Remove all paired devices')
+    parser.add_argument('--setup-audio', action='store_true', help='Configure Bluetooth audio profiles (A2DP sink)')
+    parser.add_argument('--check-audio', action='store_true', help='Check if audio profiles are properly configured')
     
     args = parser.parse_args()
     
@@ -505,6 +650,12 @@ def main():
                 print("Operation cancelled")
         except KeyboardInterrupt:
             print("\nOperation cancelled")
+    
+    elif args.setup_audio:
+        bt_manager.setup_audio_profiles()
+    
+    elif args.check_audio:
+        bt_manager.check_audio_profiles()
     
     elif args.scan:
         print("Scanning for Bluetooth devices...")
