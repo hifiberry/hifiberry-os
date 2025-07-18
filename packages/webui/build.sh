@@ -8,11 +8,19 @@ PACKAGE="hifiberry-webui"
 REPO_URL="https://github.com/hifiberry/hbos-ui"
 SRC_DIR="src"
 
-# Check for the --clean option
-if [[ "$1" == "--clean" ]]; then
-    ./clean.sh
-    exit 0
-fi
+# Check for command line options
+NO_LINTIAN=false
+for arg in "$@"; do
+    case $arg in
+        --clean)
+            ./clean.sh
+            exit 0
+            ;;
+        --no-lintian)
+            NO_LINTIAN=true
+            ;;
+    esac
+done
 
 # Step 1: Clone or update the GitHub repository into src directory
 cd "$SRC_DIR"
@@ -34,10 +42,6 @@ fi
 # Step 2: Build the Vue.js application using Docker
 echo "Building Vue.js application with Docker..."
 # We're already in the src directory from Step 1
-# Replace API configuration with production version before building
-echo "Using production API configuration..."
-cp api.production.ts hbos-ui/src/constants/api.ts
-echo "API configuration updated for production build"
 # Ensure dist directory exists and has correct permissions
 mkdir -p hbos-ui/dist
 docker build -t hifiberry-webui-builder .
@@ -55,5 +59,20 @@ echo "Built files copied to debian/webui-dist/"
 
 # Step 3: Build the Debian package using sbuild
 echo "Building Debian package with sbuild..."
-sbuild -d stable --chroot-mode=unshare --no-run-lintian
+if [[ "$NO_LINTIAN" == true ]]; then
+    sbuild -d stable --chroot-mode=unshare --no-run-lintian
+else
+    sbuild -d stable --chroot-mode=unshare
+fi
+
 # The package will be built in the parent directory automatically by sbuild
+
+# Step 4: Clean up build artifacts
+echo "Cleaning up build artifacts..."
+cd ..
+rm -f *.build *.changes *.dsc *.tar.xz *.buildinfo
+echo "Build artifacts cleaned up"
+
+echo "Package built successfully"
+echo "Built packages:"
+ls -la *.deb 2>/dev/null || echo "No packages found"
