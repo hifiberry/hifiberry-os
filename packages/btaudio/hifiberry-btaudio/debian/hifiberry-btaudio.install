@@ -3,3 +3,7 @@ src/btaudio-setup-audio /usr/bin/
 src/btaudio-discoverable /usr/bin/
 src/btaudio-generate-pin /usr/bin/
 src/btaudio-web-api /usr/bin/
+src/hifiberry-bluetooth-api.js /usr/share/hifiberry-btaudio/
+src/example-integration.html /usr/share/hifiberry-btaudio/
+src/hifiberry-btaudio.service /usr/lib/systemd/system/
+src/hifiberry-btaudio-web.service /usr/lib/systemd/system/

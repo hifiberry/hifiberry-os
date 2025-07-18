@@ -1,0 +1,29 @@
+[Unit]
+Description=HiFiBerry Bluetooth Audio Discoverable Service
+Documentation=man:btaudio-discoverable(1)
+After=bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/btaudio-discoverable
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+User=root
+Group=bluetooth
+
+# Security settings
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=no
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+
+[Install]
+WantedBy=multi-user.target
