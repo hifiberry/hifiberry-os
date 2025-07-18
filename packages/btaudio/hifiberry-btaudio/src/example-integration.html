@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HiFiBerry Bluetooth API Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .example-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        h1, h2 { color: #333; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .api-demo { background: #e7f3ff; }
+        .integration-example { background: #f0f8f0; }
+        button { background: #007cba; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #005a87; }
+        .status-box { padding: 10px; margin: 10px 0; border-radius: 4px; background: #f8f9fa; border-left: 4px solid #007cba; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HiFiBerry Bluetooth Audio API Integration Examples</h1>
+        
+        <div class="example-section">
+            <h2>1. Quick Start - Simple Interface</h2>
+            <p>The easiest way to add Bluetooth control to your web application:</p>
+            
+            <pre><code>&lt;!-- Include the library --&gt;
+&lt;script src="hifiberry-bluetooth-api.js"&gt;&lt;/script&gt;
+
+&lt;!-- Create a container --&gt;
+&lt;div id="bluetooth-interface">&lt;/div&gt;
+
+&lt;script&gt;
+// Create a complete interface with one line
+        HiFiBerryHelpers.createPairingInterface(
+            'bluetooth-interface', 
+            'http://192.168.1.100:1082'  // Your HiFiBerry IP
+        );
+&lt;/script&gt;</code></pre>
+
+            <div id="simple-demo"></div>
+        </div>
+
+        <div class="example-section api-demo">
+            <h2>2. API Demonstration</h2>
+            <p>Test the API directly from this page:</p>
+            
+            <button onclick="testConnection()">Test Connection</button>
+            <button onclick="getSystemStatus()">Get Status</button>
+            <button onclick="generateTestPin()">Generate PIN</button>
+            <button onclick="makeTestDiscoverable()">Make Discoverable (30s)</button>
+            
+            <div id="api-results" class="status-box" style="display: none;">
+                <h4>API Results:</h4>
+                <pre id="api-output"></pre>
+            </div>
+        </div>
+
+        <div class="example-section integration-example">
+            <h2>3. Custom Integration Example</h2>
+            <p>For custom web applications, use the API directly:</p>
+            
+            <pre><code>// Initialize the API client
+const btAPI = new HiFiBerryBluetoothAPI('http://your-hifiberry-ip:8080');
+
+// Basic pairing workflow
+async function startPairing() {
+    try {
+        // Generate a random PIN
+        const pinResult = await btAPI.generateRandomPin();
+        console.log('Generated PIN:', pinResult.pin);
+        
+        // Enable pairing mode for 5 minutes
+        await btAPI.makeDiscoverable(300);
+        
+        // Show PIN to user
+        alert(`Pairing enabled! Use PIN: ${pinResult.pin}`);
+        
+        // Monitor for new devices
+        const devicePoller = btAPI.startDevicePolling((error, devices) => {
+            if (error) {
+                console.error('Device polling error:', error);
+                return;
+            }
+            
+            console.log('Paired devices:', devices.devices);
+            updateDeviceList(devices.devices);
+        });
+        
+        // Stop polling after 5 minutes
+        setTimeout(() => {
+            devicePoller.stop();
+            btAPI.hideFromDiscovery();
+        }, 300000);
+        
+    } catch (error) {
+        console.error('Pairing error:', error);
+        alert('Error starting pairing: ' + error.message);
+    }
+}
+
+// Check system status
+async function checkBluetoothStatus() {
+    try {
+        const status = await btAPI.getStatus();
+        const audio = await btAPI.checkAudio();
+        
+        return {
+            bluetooth: status,
+            audio: audio,
+            ready: status.adapter.powered && audio.backend !== 'none'
+        };
+    } catch (error) {
+        console.error('Status check error:', error);
+        return { ready: false, error: error.message };
+    }
+}
+
+// React component example
+function BluetoothControl({ hifiberryIP }) {
+    const [api] = useState(() => new HiFiBerryBluetoothAPI(`http://${hifiberryIP}:8080`));
+    const [status, setStatus] = useState(null);
+    const [devices, setDevices] = useState([]);
+    
+    useEffect(() => {
+        const statusPoller = api.startStatusPolling((error, status) => {
+            if (!error) setStatus(status);
+        });
+        
+        const devicePoller = api.startDevicePolling((error, devices) => {
+            if (!error) setDevices(devices.devices);
+        });
+        
+        return () => {
+            statusPoller.stop();
+            devicePoller.stop();
+        };
+    }, [api]);
+    
+    const handleStartPairing = async () => {
+        try {
+            await api.enablePairing({ timeout: 120 });
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    };
+    
+    return (
+        &lt;div&gt;
+            {status && (
+                &lt;div&gt;
+                    &lt;h3&gt;{status.adapter.name}&lt;/h3&gt;
+                    &lt;p&gt;Status: {status.adapter.discoverable ? 'Discoverable' : 'Hidden'}&lt;/p&gt;
+                    &lt;button onClick={handleStartPairing}&gt;Start Pairing&lt;/button&gt;
+                &lt;/div&gt;
+            )}
+            &lt;ul&gt;
+                {devices.map(device => (
+                    &lt;li key={device.address}&gt;
+                        {device.name} ({device.connected ? 'Connected' : 'Paired'})
+                    &lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    );
+}</code></pre>
+        </div>
+
+        <div class="example-section">
+            <h2>4. Configuration</h2>
+            <p>API endpoints and configuration options:</p>
+            
+            <h3>Available Endpoints:</h3>
+            <ul>
+                <li><code>GET /api/status</code> - Get Bluetooth adapter status</li>
+                <li><code>GET /api/pairing/pin</code> - Get current PIN</li>
+                <li><code>POST /api/pairing/pin/generate</code> - Generate random PIN</li>
+                <li><code>POST /api/pairing/pin/set</code> - Set custom PIN</li>
+                <li><code>POST /api/discoverable/start</code> - Make discoverable</li>
+                <li><code>POST /api/discoverable/stop</code> - Hide from discovery</li>
+                <li><code>GET /api/devices/paired</code> - List paired devices</li>
+                <li><code>DELETE /api/devices/{mac}</code> - Remove specific device</li>
+                <li><code>DELETE /api/devices/all</code> - Remove all devices</li>
+                <li><code>GET /api/audio/check</code> - Check audio backend status</li>
+                <li><code>POST /api/audio/setup</code> - Setup audio profiles</li>
+            </ul>
+
+            <h3>Installation:</h3>
+            <pre><code># Install the web API package
+sudo apt install hifiberry-btaudio-web
+
+# Start the web service
+sudo systemctl start hifiberry-btaudio-web
+
+# Enable auto-start
+sudo systemctl enable hifiberry-btaudio-web</code></pre>
+
+            <h3>Security Considerations:</h3>
+            <ul>
+                <li>The API runs on port 8080 by default</li>
+                <li>Use firewall rules to restrict access if needed</li>
+                <li>Consider using HTTPS proxy for production</li>
+                <li>PIN codes are stored securely in <code>/etc/hifiberry/btaudio.conf</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Include our library -->
+    <script src="hifiberry-bluetooth-api.js"></script>
+    
+    <script>
+        // Example API client (will fail if service not running)
+        const exampleAPI = new HiFiBerryBluetoothAPI('http://localhost:1082');
+        
+        // Demo functions for the API demonstration section
+        async function testConnection() {
+            showResults('Testing connection...');
+            try {
+                const status = await exampleAPI.getStatus();
+                showResults(JSON.stringify(status, null, 2), 'success');
+            } catch (error) {
+                showResults('Connection failed: ' + error.message + '\n\nMake sure hifiberry-btaudio-web service is running.', 'error');
+            }
+        }
+        
+        async function getSystemStatus() {
+            showResults('Getting system status...');
+            try {
+                const status = await exampleAPI.getStatus();
+                const audio = await exampleAPI.checkAudio();
+                const result = {
+                    bluetooth: status,
+                    audio: audio
+                };
+                showResults(JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResults('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function generateTestPin() {
+            showResults('Generating PIN...');
+            try {
+                const result = await exampleAPI.generateRandomPin();
+                showResults(`Generated PIN: ${result.pin}\n\n` + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResults('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function makeTestDiscoverable() {
+            showResults('Making discoverable for 30 seconds...');
+            try {
+                const result = await exampleAPI.makeDiscoverable(30);
+                showResults('System is now discoverable for 30 seconds!\n\n' + JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResults('Error: ' + error.message, 'error');
+            }
+        }
+        
+        function showResults(text, type = 'info') {
+            const resultsDiv = document.getElementById('api-results');
+            const outputPre = document.getElementById('api-output');
+            
+            resultsDiv.style.display = 'block';
+            outputPre.textContent = text;
+            
+            // Color coding
+            if (type === 'success') {
+                resultsDiv.style.borderLeftColor = '#28a745';
+                resultsDiv.style.backgroundColor = '#d4edda';
+            } else if (type === 'error') {
+                resultsDiv.style.borderLeftColor = '#dc3545';
+                resultsDiv.style.backgroundColor = '#f8d7da';
+            } else {
+                resultsDiv.style.borderLeftColor = '#007cba';
+                resultsDiv.style.backgroundColor = '#f8f9fa';
+            }
+        }
+        
+        // Create simple demo interface
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                HiFiBerryHelpers.createPairingInterface('simple-demo', 'http://localhost:1082');
+            } catch (error) {
+                document.getElementById('simple-demo').innerHTML = 
+                    '<p style="color: #dc3545;">Demo interface could not be created. Make sure the HiFiBerry service is running.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
