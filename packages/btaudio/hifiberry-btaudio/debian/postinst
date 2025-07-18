@@ -22,6 +22,10 @@ case "$1" in
         systemctl daemon-reload || true
         systemctl enable hifiberry-btaudio.service || true
         
+        # Setup audio backend
+        echo "Configuring audio backend for Bluetooth..."
+        /usr/bin/btaudio-setup-audio --setup || echo "Warning: Could not configure audio backend"
+        
         # Start the service if bluetooth is running
         if systemctl is-active --quiet bluetooth; then
             systemctl start hifiberry-btaudio.service || true
@@ -53,6 +57,11 @@ case "$1" in
             echo "  btaudio-config --discoverable"
             echo "  btaudio-config --status"
             echo "  btaudio-config --show-pin"
+            echo ""
+            echo "If phones don't see the system as an audio device:"
+            echo "  btaudio-config --check-audio"
+            echo "  btaudio-config --setup-audio"
+            echo "  btaudio-setup-audio --check"
         else
             echo "Bluetooth service not running. Enable and start bluetooth, then:"
             echo "  systemctl start hifiberry-btaudio"

@@ -1,0 +1,166 @@
+#!/bin/bash
+# HiFiBerry Bluetooth Audio Backend Setup
+# Ensures PipeWire/PulseAudio Bluetooth modules are loaded
+
+set -e
+
+SCRIPT_NAME="btaudio-setup-audio"
+
+# Function to log messages
+log() {
+    echo "[${SCRIPT_NAME}] $1"
+}
+
+# Function to check if PipeWire is running
+check_pipewire() {
+    if systemctl --user is-active --quiet pipewire 2>/dev/null; then
+        log "PipeWire is running"
+        return 0
+    else
+        log "PipeWire is not running"
+        return 1
+    fi
+}
+
+# Function to check if PulseAudio is running  
+check_pulseaudio() {
+    if pgrep -x pulseaudio >/dev/null 2>&1; then
+        log "PulseAudio is running"
+        return 0
+    else
+        log "PulseAudio is not running"
+        return 1
+    fi
+}
+
+# Function to setup PipeWire Bluetooth module
+setup_pipewire_bluetooth() {
+    log "Setting up PipeWire Bluetooth module..."
+    
+    # Check if PipeWire Bluetooth module is available
+    if ! which pw-metadata >/dev/null 2>&1; then
+        log "Warning: PipeWire utilities not found"
+        return 1
+    fi
+    
+    # Start PipeWire services if needed
+    systemctl --user start pipewire-pulse.service 2>/dev/null || true
+    systemctl --user start wireplumber.service 2>/dev/null || true
+    
+    # Enable Bluetooth in WirePlumber if it's running
+    if systemctl --user is-active --quiet wireplumber 2>/dev/null; then
+        log "WirePlumber is running, Bluetooth should be auto-enabled"
+    fi
+    
+    return 0
+}
+
+# Function to setup PulseAudio Bluetooth module
+setup_pulseaudio_bluetooth() {
+    log "Setting up PulseAudio Bluetooth module..."
+    
+    # Load Bluetooth modules
+    if which pactl >/dev/null 2>&1; then
+        # Load Bluetooth discover module
+        if ! pactl list modules | grep -q "module-bluetooth-discover"; then
+            log "Loading PulseAudio Bluetooth discover module..."
+            pactl load-module module-bluetooth-discover 2>/dev/null || log "Could not load module-bluetooth-discover"
+        else
+            log "PulseAudio Bluetooth discover module already loaded"
+        fi
+        
+        # Load Bluetooth policy module  
+        if ! pactl list modules | grep -q "module-bluetooth-policy"; then
+            log "Loading PulseAudio Bluetooth policy module..."
+            pactl load-module module-bluetooth-policy 2>/dev/null || log "Could not load module-bluetooth-policy"
+        else
+            log "PulseAudio Bluetooth policy module already loaded"
+        fi
+    else
+        log "Warning: pactl not found, cannot configure PulseAudio"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Function to check Bluetooth service
+check_bluetooth_service() {
+    if systemctl is-active --quiet bluetooth; then
+        log "Bluetooth service is running"
+        return 0
+    else
+        log "Error: Bluetooth service is not running"
+        log "Try: sudo systemctl start bluetooth"
+        return 1
+    fi
+}
+
+# Function to show audio backend status
+show_audio_status() {
+    echo ""
+    echo "=== Audio Backend Status ==="
+    
+    if check_pipewire; then
+        echo "Audio Backend: PipeWire"
+        systemctl --user status pipewire --no-pager -l || true
+        echo ""
+        systemctl --user status wireplumber --no-pager -l || true
+    elif check_pulseaudio; then
+        echo "Audio Backend: PulseAudio"
+        if which pactl >/dev/null 2>&1; then
+            echo "Loaded modules:"
+            pactl list modules | grep -E "(bluetooth|module-.*)" | head -10 || true
+        fi
+    else
+        echo "Audio Backend: None detected"
+        echo "Warning: No audio server running"
+    fi
+    
+    echo ""
+    echo "=== Bluetooth Status ==="
+    systemctl status bluetooth --no-pager -l || true
+}
+
+# Main function
+main() {
+    case "${1:-}" in
+        --check)
+            show_audio_status
+            ;;
+        --setup)
+            log "Setting up Bluetooth audio backend..."
+            
+            # Check Bluetooth service first
+            if ! check_bluetooth_service; then
+                exit 1
+            fi
+            
+            # Setup audio backend
+            if check_pipewire; then
+                setup_pipewire_bluetooth
+            elif check_pulseaudio; then
+                setup_pulseaudio_bluetooth
+            else
+                log "Warning: No known audio server detected"
+                log "Consider installing and configuring PipeWire or PulseAudio"
+                exit 1
+            fi
+            
+            log "Audio backend setup complete"
+            ;;
+        --help|*)
+            echo "Usage: $0 [--check|--setup|--help]"
+            echo ""
+            echo "Options:"
+            echo "  --check    Show current audio backend status"
+            echo "  --setup    Configure Bluetooth audio backend"
+            echo "  --help     Show this help message"
+            echo ""
+            echo "This script ensures that the audio backend (PipeWire or PulseAudio)"
+            echo "has the necessary Bluetooth modules loaded for A2DP audio sink functionality."
+            ;;
+    esac
+}
+
+main "$@"
