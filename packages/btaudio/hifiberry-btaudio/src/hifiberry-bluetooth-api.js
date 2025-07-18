@@ -4,7 +4,7 @@
  */
 
 class HiFiBerryBluetoothAPI {
-    constructor(baseUrl = 'http://localhost:1082') {
+    constructor(baseUrl = 'http://localhost/api/btaudio') {
         this.baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
         this.apiBase = this.baseUrl + '/api';
     }

@@ -2,3 +2,4 @@ configure-webui usr/sbin/
 hifiberry-webui.nginx etc/nginx/
 hifiberry-audiocontrol.nginx etc/nginx/
 hifiberry-config.nginx etc/nginx/
+hifiberry-btaudio.nginx etc/nginx/
