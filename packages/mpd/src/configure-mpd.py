@@ -8,6 +8,7 @@ import os
 import sys
 import shutil
 import subprocess
+import re
 from pathlib import Path
 
 def get_hw_mixer_info():
@@ -40,6 +41,95 @@ def get_hw_mixer_info():
         return {
             "mixer_type": "software"
         }
+
+def get_samba_mounted_dirs():
+    """Get list of Samba mounted directories"""
+    try:
+        result = subprocess.run(['config-sambamount', '--list-mounted-dirs'], 
+                               capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            # Split output by lines and filter out empty lines
+            dirs = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
+            return dirs
+        else:
+            print(f"Warning: config-sambamount failed: {result.stderr}")
+            return []
+            
+    except Exception as e:
+        print(f"Warning: Error getting Samba mounted directories: {e}")
+        return []
+
+def parse_music_directory(config_file):
+    """Parse music_directory setting from MPD config file"""
+    try:
+        with open(config_file, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith('music_directory') and not line.startswith('#'):
+                    # Extract the directory path from the line
+                    # Format: music_directory "/var/lib/mpd/music"
+                    match = re.search(r'music_directory\s+["\']([^"\']+)["\']', line)
+                    if match:
+                        return match.group(1)
+        
+        # Default fallback
+        return "/var/lib/mpd/music"
+        
+    except Exception as e:
+        print(f"Warning: Error parsing music directory: {e}")
+        return "/var/lib/mpd/music"
+
+def manage_music_symlinks(music_dir, samba_dirs):
+    """Manage symlinks in the music directory"""
+    music_path = Path(music_dir)
+    
+    # Ensure music directory exists
+    music_path.mkdir(parents=True, exist_ok=True)
+    
+    # Remove broken symlinks
+    for item in music_path.iterdir():
+        if item.is_symlink() and not item.exists():
+            print(f"Removing broken symlink: {item}")
+            try:
+                item.unlink()
+            except Exception as e:
+                print(f"Warning: Could not remove broken symlink {item}: {e}")
+    
+    # Create symlinks for Samba mounted directories
+    for samba_dir in samba_dirs:
+        samba_path = Path(samba_dir)
+        if not samba_path.exists():
+            print(f"Warning: Samba directory does not exist: {samba_dir}")
+            continue
+        
+        # Create symlink name based on the directory name
+        symlink_name = samba_path.name
+        symlink_path = music_path / symlink_name
+        
+        # Skip if symlink already exists and points to the correct location
+        if symlink_path.is_symlink() and symlink_path.resolve() == samba_path.resolve():
+            print(f"Symlink already exists: {symlink_path} -> {samba_dir}")
+            continue
+        
+        # Remove existing file/symlink if it exists
+        if symlink_path.exists() or symlink_path.is_symlink():
+            try:
+                if symlink_path.is_dir() and not symlink_path.is_symlink():
+                    shutil.rmtree(symlink_path)
+                else:
+                    symlink_path.unlink()
+                print(f"Removed existing item: {symlink_path}")
+            except Exception as e:
+                print(f"Warning: Could not remove existing item {symlink_path}: {e}")
+                continue
+        
+        # Create the symlink
+        try:
+            symlink_path.symlink_to(samba_path)
+            print(f"Created symlink: {symlink_path} -> {samba_dir}")
+        except Exception as e:
+            print(f"Warning: Could not create symlink {symlink_path}: {e}")
 
 def update_mpd_config(input_file, output_file, mixer_info):
     """Update MPD configuration with new mixer settings"""
@@ -150,6 +240,21 @@ def main():
     
     # Update configuration
     update_mpd_config(input_config, output_config, mixer_info)
+    
+    # Handle Samba mount symlinks
+    print("Managing music directory symlinks...")
+    music_dir = parse_music_directory(input_config)
+    samba_dirs = get_samba_mounted_dirs()
+    
+    print(f"Music directory: {music_dir}")
+    if samba_dirs:
+        print(f"Found {len(samba_dirs)} Samba mounted directories:")
+        for samba_dir in samba_dirs:
+            print(f"  {samba_dir}")
+    else:
+        print("No Samba mounted directories found")
+    
+    manage_music_symlinks(music_dir, samba_dirs)
     
     print("MPD configuration completed successfully")
 
