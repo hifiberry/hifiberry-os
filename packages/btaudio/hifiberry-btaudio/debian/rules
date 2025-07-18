@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+export DH_VERBOSE=1
+
 %:
 	dh $@
 
@@ -9,9 +11,3 @@ override_dh_auto_build:
 
 override_dh_auto_test:
 	# Skip tests for now
-
-override_dh_installsystemd:
-	# Install systemd service for main package
-	dh_installsystemd --package=hifiberry-btaudio systemd/hifiberry-btaudio.service
-	# Install systemd service for web API
-	dh_installsystemd --package=hifiberry-btaudio debian/hifiberry-btaudio-web.service
