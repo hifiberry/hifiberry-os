@@ -12,6 +12,52 @@ case "$1" in
         # Create configuration directory if it doesn't exist
         mkdir -p /etc/hifiberry
         
+        # Generate PIN if none exists
+        echo "Setting up Bluetooth security..."
+        if ! /usr/bin/btaudio-generate-pin --ensure-pin; then
+            echo "Warning: Could not generate Bluetooth PIN"
+        fi
+        
+        # Enable and start the HiFiBerry Bluetooth Audio service
+        systemctl daemon-reload || true
+        systemctl enable hifiberry-btaudio.service || true
+        
+        # Start the service if bluetooth is running
+        if systemctl is-active --quiet bluetooth; then
+            systemctl start hifiberry-btaudio.service || true
+            echo "HiFiBerry Bluetooth Audio service started"
+            
+            # Show the generated PIN to the user
+            if [[ -f /etc/hifiberry/btaudio.conf ]]; then
+                btaudio_pin=$(grep "^bluetooth\.pin=" /etc/hifiberry/btaudio.conf 2>/dev/null | cut -d'=' -f2)
+                if [[ -n "$btaudio_pin" ]]; then
+                    echo ""
+                    echo "=================================================="
+                    echo "  HiFiBerry Bluetooth Audio PIN: $btaudio_pin"
+                    echo "=================================================="
+                    echo "Use this PIN when pairing devices with your HiFiBerry"
+                    echo "You can change it with: btaudio-config --set-pin XXXX"
+                    echo "=================================================="
+                    echo ""
+                fi
+            fi
+            
+            echo "Your system is now discoverable for Bluetooth audio"
+            echo ""
+            echo "To manage the service:"
+            echo "  Start:   systemctl start hifiberry-btaudio"
+            echo "  Stop:    systemctl stop hifiberry-btaudio"  
+            echo "  Status:  systemctl status hifiberry-btaudio"
+            echo ""
+            echo "To configure manually:"
+            echo "  btaudio-config --discoverable"
+            echo "  btaudio-config --status"
+            echo "  btaudio-config --show-pin"
+        else
+            echo "Bluetooth service not running. Enable and start bluetooth, then:"
+            echo "  systemctl start hifiberry-btaudio"
+        fi
+        
         echo "HiFiBerry Bluetooth Audio configuration completed"
         ;;
         

@@ -4,12 +4,13 @@ set -e
 
 case "$1" in
     remove|purge)
-        echo "Removing HiFiBerry Bluetooth Audio configuration..."
+        echo "Stopping HiFiBerry Bluetooth Audio service..."
         
-        # Clean up any temporary files or configurations if needed
-        # Note: We don't disable bluetooth service as other packages might need it
+        # Stop and disable the service
+        systemctl stop hifiberry-btaudio.service || true
+        systemctl disable hifiberry-btaudio.service || true
         
-        echo "HiFiBerry Bluetooth Audio cleanup completed"
+        echo "HiFiBerry Bluetooth Audio service stopped"
         ;;
         
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
