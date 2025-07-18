@@ -61,7 +61,8 @@ def setup_webui():
     
     # Check if required files exist
     webui_include = Path("/etc/nginx/hifiberry-webui.nginx")
-    api_include = Path("/etc/nginx/hifiberry-api.nginx")
+    audiocontrol_include = Path("/etc/nginx/hifiberry-audiocontrol.nginx")
+    config_include = Path("/etc/nginx/hifiberry-config.nginx")
     webui_dir = Path("/usr/share/hifiberry/webui")
     nginx_conf = Path("/etc/nginx/nginx.conf")
     
@@ -69,8 +70,12 @@ def setup_webui():
         print(f"Error: Web UI nginx include file not found at {webui_include}")
         return 1
     
-    if not api_include.exists():
-        print(f"Error: API nginx include file not found at {api_include}")
+    if not audiocontrol_include.exists():
+        print(f"Error: Audio Control nginx include file not found at {audiocontrol_include}")
+        return 1
+    
+    if not config_include.exists():
+        print(f"Error: Config nginx include file not found at {config_include}")
         return 1
     
     if not webui_dir.exists():
@@ -90,7 +95,7 @@ def setup_webui():
         site_config = sites_available / "hifiberry-webui"
         site_enabled = sites_enabled / "hifiberry-webui"
         
-        # Create site configuration with both webui and API includes
+        # Create site configuration with all HiFiBerry includes
         with open(site_config, 'w') as f:
             f.write(f'''# HiFiBerry Web UI and API nginx site
 server {{
@@ -98,8 +103,11 @@ server {{
     listen [::]:80 default_server;
     server_name _;
     
-    # Include HiFiBerry API proxy configuration
-    include {api_include};
+    # Include HiFiBerry Audio Control API proxy configuration
+    include {audiocontrol_include};
+    
+    # Include HiFiBerry Config API proxy configuration
+    include {config_include};
     
     # Include HiFiBerry Web UI configuration
     include {webui_include};
@@ -123,7 +131,7 @@ server {{
     else:
         # Fallback: modify main nginx.conf directly
         print("Warning: sites-available not found, manual configuration required")
-        print(f"Please add 'include {api_include};' and 'include {webui_include};' to your nginx server block")
+        print(f"Please add 'include {audiocontrol_include};', 'include {config_include};' and 'include {webui_include};' to your nginx server block")
         return 1
     
     # Test nginx configuration

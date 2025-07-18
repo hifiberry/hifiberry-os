@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    purge|remove)
+        # Clean up any leftover directory structure from previous versions
+        if [ -d "/etc/nginx/sites-available/hifiberry-webui" ]; then
+            rm -rf "/etc/nginx/sites-available/hifiberry-webui"
+            echo "Cleaned up old hifiberry-webui directory"
+        fi
+        
+        if [ -d "/etc/nginx/sites-available/hifiberry-audiocontrol" ]; then
+            rm -rf "/etc/nginx/sites-available/hifiberry-audiocontrol"
+            echo "Cleaned up old hifiberry-audiocontrol directory"
+        fi
+        
+        if [ -d "/etc/nginx/sites-available/hifiberry-config" ]; then
+            rm -rf "/etc/nginx/sites-available/hifiberry-config"
+            echo "Cleaned up old hifiberry-config directory"
+        fi
+        
+        # Remove the new site configuration too
+        rm -f "/etc/nginx/sites-available/hifiberry-complete"
+        rm -f "/etc/nginx/sites-enabled/hifiberry-complete"
+        ;;
+        
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        # Don't clean up during upgrades
+        ;;
+        
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

@@ -1,3 +1,10 @@
+hifiberry-webui (0.3) stable; urgency=medium
+
+  * Split API proxy into separate service configurations
+  * Added web radio support
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 17 Jul 2025 10:00:00 +0000
+
 hifiberry-webui (0.2.5) stable; urgency=medium
 
   * Added nginx API proxy configuration (hifiberry-api.nginx)

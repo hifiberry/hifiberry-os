@@ -2,8 +2,8 @@
 # This file should be included in the main nginx server block
 
 # Proxy API requests to the backend service
-location /api {
-    proxy_pass http://localhost:1080;
+location /api/audiocontrol/ {
+    proxy_pass http://localhost:1080/api/;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

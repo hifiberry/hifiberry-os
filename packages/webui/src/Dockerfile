@@ -10,13 +10,10 @@ RUN apk add --no-cache git
 # Copy the source code
 COPY hbos-ui/ ./
 
-# Copy the custom Vite configuration for UI base path
-COPY vite.config.ui.ts ./
-
 # Install dependencies
 RUN npm install
 
-# Build the Vue.js application with custom config
-RUN npx vite build --config vite.config.ui.ts
+# Build the Vue.js application using the source vite config
+RUN npx vite build --config vite.config.ts
 
 # The built files will be in /app/dist/
