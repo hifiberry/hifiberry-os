@@ -19,5 +19,5 @@ packages/*/*.changes
 packages/*/*.deb
 .vscode/avr_project.json
 office.txt
-packages/webui/src/debian/webui-dist
+packages/webui/hbos-ui/debian/webui-dist
 packages/acr/hifiberry-audiocontrol-*
