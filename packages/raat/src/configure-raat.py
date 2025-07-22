@@ -106,9 +106,9 @@ def get_volume_control():
     """Get volume control configuration using configurator"""
     try:
         # Use configurator commands to get volume control info
-        mixer_result = subprocess.run(['config-soundcard', '--volume-control-softvol'], 
+        mixer_result = subprocess.run(['config-soundcard', '--volume-control-softvol', '--no-eeprom'], 
                                     capture_output=True, text=True)
-        hw_result = subprocess.run(['config-soundcard', '--hw'], 
+        hw_result = subprocess.run(['config-soundcard', '--hw', '--no-eeprom'], 
                                  capture_output=True, text=True)
         
         if mixer_result.returncode == 0 and hw_result.returncode == 0:
