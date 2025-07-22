@@ -54,6 +54,11 @@ echo "Version consistency check passed: $FULL_VERSION"
 # Make sure debian/rules is executable
 chmod +x debian/rules
 
+# Set environment variables to disable debug symbols
+export DEB_BUILD_OPTIONS="nostrip noautodbgsym"
+export CFLAGS="-O2 -DNDEBUG"
+export CXXFLAGS="-O2 -DNDEBUG"
+
 # Use sbuild to build the package
 sbuild --chroot-mode=unshare \
        --no-clean-source \

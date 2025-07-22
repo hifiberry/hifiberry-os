@@ -1,3 +1,9 @@
+hifiberry-mpd (0.24.4.4) stable; urgency=low
+
+  * Link SMB shares to mpd music directory
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 22 Jul 2025 12:00:00 +0000
+
 hifiberry-mpd (0.24.4.3) stable; urgency=low
 
   * Added debhelper systemd service integration for automatic service management
