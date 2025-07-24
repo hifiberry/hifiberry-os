@@ -4,7 +4,6 @@
 set -e
 
 PACKAGE="hifiberry-eeprom"
-VERSION="1.3.0"
 DIST="${DIST:-bullseye}"
 
 # Check if DIST is set by environment variable
@@ -20,17 +19,16 @@ BUILD_DIR="/tmp/${PACKAGE}-build"
 SRC_DIR="$(dirname $(realpath $0))/src"
 SCRIPT_DIR="$(dirname $(realpath $0))"
 
-echo "Building $PACKAGE version $VERSION"
-
-# Check if changelog version matches build script version
+# Extract version from changelog
 if [ -f "$SRC_DIR/debian/changelog" ]; then
-    CHANGELOG_VERSION=$(head -n 1 "$SRC_DIR/debian/changelog" | grep -oP '\(\K[^)]+')
-    if [ "$VERSION" != "$CHANGELOG_VERSION" ]; then
-        echo "ERROR: Version mismatch between build script ($VERSION) and changelog ($CHANGELOG_VERSION)"
-        exit 1
-    fi
-    echo "Version consistency check passed: $VERSION"
+    VERSION=$(head -n 1 "$SRC_DIR/debian/changelog" | grep -oP '\(\K[^)]+')
+    echo "Version extracted from changelog: $VERSION"
+else
+    echo "ERROR: Changelog file not found at $SRC_DIR/debian/changelog"
+    exit 1
 fi
+
+echo "Building $PACKAGE version $VERSION"
 
 # Clean previous build
 rm -rf "$BUILD_DIR"
