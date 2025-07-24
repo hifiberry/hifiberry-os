@@ -6,6 +6,7 @@ HAT EEPROM interface using bitbang I2C
 import time
 import struct
 import random
+import logging
 from typing import Optional
 
 from .bitbang_i2c import BitbangI2C
@@ -111,7 +112,7 @@ class HatEEPROM:
             
         except Exception as e:
             self.i2c.stop_condition()  # Ensure bus is released
-            print(f"Write error at address 0x{address:04X}: {e}")
+            logging.warn(f"Write error at address 0x{address:04X}: {e}")
             return False
     
     def read_data(self, start_addr: int, length: int) -> Optional[bytes]:
@@ -169,7 +170,7 @@ class HatEEPROM:
                 
             except Exception as e:
                 self.i2c.stop_condition()  # Ensure bus is released
-                print(f"Read error at address 0x{current_addr:04X}: {e}")
+                logging.warn(f"Read error at address 0x{current_addr:04X}: {e}")
                 return None
         
         return bytes(data)
@@ -209,7 +210,7 @@ class HatEEPROM:
         data = self.read_data(0, size)
         
         if data is None:
-            print("Failed to read EEPROM")
+            logging.warn("Failed to read EEPROM")
             return False
         
         try:
@@ -218,7 +219,7 @@ class HatEEPROM:
             print(f"EEPROM dumped to {filename}")
             return True
         except Exception as e:
-            print(f"Error writing file: {e}")
+            logging.warn(f"Error writing file: {e}")
             return False
     
     def write_eeprom(self, filename: str, offset: int = 0) -> bool:
@@ -227,7 +228,7 @@ class HatEEPROM:
             with open(filename, 'rb') as f:
                 data = f.read()
         except Exception as e:
-            print(f"Error reading file: {e}")
+            logging.warn(f"Error reading file: {e}")
             return False
         
         print(f"Writing {len(data)} bytes to EEPROM at offset 0x{offset:04X}...")
@@ -236,7 +237,7 @@ class HatEEPROM:
             print("Write completed successfully")
             return True
         else:
-            print("Write failed")
+            logging.warn("Write failed")
             return False
     
     def parse_hat_eeprom(self, data: bytes, debug: bool = False) -> dict:
@@ -314,7 +315,7 @@ class HatEEPROM:
             # Atom data length includes 2-byte CRC, so actual data is dlen-2
             if atom_dlen < 2:
                 if debug:
-                    print(f"Warning: Invalid atom data length {atom_dlen}")
+                    logging.warn(f"Invalid atom data length {atom_dlen}")
                 break
                 
             data_len = atom_dlen - 2  # Subtract CRC length
@@ -322,7 +323,7 @@ class HatEEPROM:
             # Ensure we don't read beyond the data
             if offset + 8 + atom_dlen > len(data):
                 if debug:
-                    print(f"Warning: Atom {atom_count} total length {8 + atom_dlen} exceeds available data")
+                    logging.warn(f"Atom {atom_count} total length {8 + atom_dlen} exceeds available data")
                 break
             
             # Extract atom data (excluding CRC)
@@ -390,7 +391,7 @@ class HatEEPROM:
         
         if len(atom_data) < 22:  # Minimum: 16 bytes UUID + 2 bytes PID + 2 bytes PVER + 1 byte vslen + 1 byte pslen
             if debug:
-                print(f"Warning: Vendor atom too short ({len(atom_data)} bytes), expected at least 22")
+                logging.warn(f"Vendor atom too short ({len(atom_data)} bytes), expected at least 22")
             return vendor_info
         
         # Extract UUID (16 bytes as 4 uint32_t little-endian values)
@@ -550,7 +551,7 @@ class HatEEPROM:
             atom_header_data = self.read_data(offset, 8)
             if atom_header_data is None or len(atom_header_data) < 8:
                 if debug:
-                    print(f"Warning: Failed to read atom {atom_count} header at offset {offset}")
+                    logging.warn(f"Failed to read atom {atom_count} header at offset {offset}")
                 break
             
             # Parse atom header
@@ -564,7 +565,7 @@ class HatEEPROM:
             # Validate atom data length
             if atom_dlen < 2:
                 if debug:
-                    print(f"Warning: Invalid atom data length {atom_dlen}")
+                    logging.warn(f"Invalid atom data length {atom_dlen}")
                 break
             
             data_len = atom_dlen - 2  # Subtract CRC length
@@ -573,7 +574,7 @@ class HatEEPROM:
             atom_payload = self.read_data(offset + 8, atom_dlen)
             if atom_payload is None or len(atom_payload) < atom_dlen:
                 if debug:
-                    print(f"Warning: Failed to read atom {atom_count} data at offset {offset + 8}")
+                    logging.warn(f"Failed to read atom {atom_count} data at offset {offset + 8}")
                 break
             
             # Extract atom data (excluding CRC)
