@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="hifiberry-eeprom"
-DIST="${DIST:-bullseye}"
+DIST="${DIST:-stable}"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
