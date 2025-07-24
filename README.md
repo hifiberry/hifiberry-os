@@ -96,5 +96,5 @@ Then reboot
 
 ## How to use
 
-The WebUI is accessible at: http://<device-ip>:1080/ui/index.html
+The WebUI is accessible at: http://<device-ip>:80/
 
