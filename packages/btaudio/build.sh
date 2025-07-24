@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Disabled"
+exit 0
+
 # Exit on error
 set -e
 
