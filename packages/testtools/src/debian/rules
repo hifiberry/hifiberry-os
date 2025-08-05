@@ -16,6 +16,8 @@ override_dh_auto_install:
 	# Copy test scripts to libexec (preferred location for helper scripts)
 	cp -r testscripts/* debian/testtools/usr/libexec/testtools/
 	chmod +x debian/testtools/usr/libexec/testtools/*
+	# Make scripts in subdirectories executable too
+	find debian/testtools/usr/libexec/testtools/ -type f -exec chmod +x {} \;
 	
 	# Copy user binaries
 	cp -r bin/* debian/testtools/usr/bin/

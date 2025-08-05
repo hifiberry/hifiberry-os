@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Test script for C1 hardware
+# This script calls the actual test located in the c1 subdirectory
+
+# Directory containing the C1 test scripts
+c1_dir="/usr/libexec/testtools/c1"
+
+# Check if the C1 test directory exists
+if [ ! -d "$c1_dir" ]; then
+    echo "Error: C1 test directory not found at $c1_dir"
+    exit 1
+fi
+
+# Check if the test script exists
+if [ ! -f "$c1_dir/test.sh" ]; then
+    echo "Error: C1 test script not found at $c1_dir/test.sh"
+    exit 1
+fi
+
+# Change to the C1 directory and run the test
+cd "$c1_dir"
+exec ./test.sh "$@"
