@@ -1,6 +1,0 @@
-hifiberry-btaudio (1.0.0) stable; urgency=medium
-
-  * Initial release of HiFiBerry Bluetooth Audio package
-  * Bluetooth audio configuration and management tools
-
- -- HiFiBerry Team <support@hifiberry.com>  Thu, 18 Jul 2025 00:00:00 +0000
