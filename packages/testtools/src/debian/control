@@ -11,6 +11,7 @@ Package: testtools
 Architecture: all
 Depends: ${misc:Depends},
          sox,
+         bc,
          figlet,
          systemd,
          python3-configurator,
