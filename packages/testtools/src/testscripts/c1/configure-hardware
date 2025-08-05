@@ -1,0 +1,10 @@
+#/bin/sh
+echo "Configuring AES receiver"
+i2cset -y 1 0x40 0x33 0x22 # XTI clock source (default)
+i2cset -y 1 0x40 0x34 0x81 # DIR input config power on RXIN1
+i2cset -y 1 0x40 0x40 0xc1 # power down OSC
+i2cset -y 1 0x40 0x6b 0x11 # main output to AES
+echo "Configuring AES transmitter"
+i2cset -y 1 0x40 0x6f 0x05 # DIT Standalone operation
+# User bits
+i2cset -y 1 0x40 0x63 0x85 # Professional mode, 48kHz

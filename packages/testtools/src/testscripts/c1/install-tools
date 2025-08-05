@@ -1,0 +1,21 @@
+#!/bin/bash
+sudo apt update
+sudo apt -y dist-upgrade
+sudo apt -y install git  i2c-tools
+
+# Install DSPToolkit
+for i in requests pyalsaaudio spi xmltodict rpi.gpio; do
+  sudo python3 -m pip install --break-system-packages $i
+done
+bash <(curl https://raw.githubusercontent.com/hifiberry/hifiberry-dsp/master/install-dsptoolkit)
+
+# Enable SPI, I2C and DSP
+cat /boot/firmware/config.txt | grep -v  "hifiberry-dacplusdsp" | grep -v "dtparam=spi" | grep -v "dtparam=i2c_arm" > /tmp/config.txt
+
+cat <<EOF >>/tmp/config.txt
+dtparam=i2c_arm=on
+dtparam=spi=on
+dtoverlay=hifiberry-dacplusdsp
+EOF
+
+sudo cp /tmp/config.txt /boot/firmware/config.txt

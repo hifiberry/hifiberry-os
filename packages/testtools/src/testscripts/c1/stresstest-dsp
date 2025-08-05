@@ -1,0 +1,19 @@
+#!/bin/bash
+
+for n in $(seq 1 99); do
+  printf -v num "%02d" "$n"  # Pad with zero if needed, e.g., 01, 02, ..., 99
+  echo "$num"
+  
+  pinctrl set 12 op dl
+  sleep 1
+  pinctrl set 12 op dh
+
+  ./test.sh
+  if [ $? -ne 0 ]; then
+    echo "test.sh failed at $num. Aborting."
+    exit 1
+  fi
+
+  sleep 2
+done
+
