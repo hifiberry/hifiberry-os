@@ -1,0 +1,3 @@
+pinctrl set 12 op dl
+sleep 1
+pinctrl set 12 op dh
