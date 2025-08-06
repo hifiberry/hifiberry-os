@@ -89,6 +89,10 @@ sudo apt install hbos-full
 ### Base configuration
 
 ```
+sudo config-configtxt --default-config --enable-i2c
+reboot
+sudo config-detect
+reboot
 sudo hifiberry-baseconfig --force
 ```
 
