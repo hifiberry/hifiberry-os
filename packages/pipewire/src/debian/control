@@ -8,7 +8,6 @@ Build-Depends: debhelper-compat (= 13),
                pkgconf,
                git,
                systemd,
-               systemd-dev,
                libsystemd-dev,
                libdbus-1-dev,
                libudev-dev,
@@ -33,7 +32,11 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          adduser,
          libasound2-plugins,
-         alsa-utils
+         alsa-utils,
+         libasound2 (>= 1.2.8),
+         libc6 (>= 2.36),
+         libglib2.0-0 (>= 2.80.0),
+         libsbc1 (>= 1.5)
 Provides: pipewire
 Conflicts: pipewire, pulseaudio, pipewire-bin
 Replaces: pipewire

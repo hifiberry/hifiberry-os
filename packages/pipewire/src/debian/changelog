@@ -1,3 +1,37 @@
+hifiberry-pipewire (1.4.5.10) stable; urgency=low
+
+  * Removed non-existent systemd-dev build dependency (systemd package provides systemd.pc)
+  * Fixed build failure in bookworm environment
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 14:20:00 +0000
+
+hifiberry-pipewire (1.4.5.9) stable; urgency=low
+
+  * Set bookworm (Debian 12) as default build distribution for Raspberry Pi OS compatibility
+  * Updated build script to default to bookworm instead of sbuild default
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 14:10:00 +0000
+
+hifiberry-pipewire (1.4.5.8) stable; urgency=low
+
+  * Fixed library dependencies to be compatible with Raspberry Pi OS (Debian 12/bookworm)
+  * Adjusted version requirements for libasound2, libc6, libglib2.0-0, libsbc1
+  * Ensured compatibility with older library versions available on target systems
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 14:00:00 +0000
+
+hifiberry-pipewire (1.4.5.7) stable; urgency=low
+
+  * Added WirePlumber output mode and balance filter (output-mode-filter.lua)
+  * Added 16-band biquad EQ filter for WirePlumber (bq16.lua)
+  * Reorganized package to use standard Debian tools for config file installation
+  * Moved all configuration files to configs/ directory
+  * Simplified debian/rules by removing custom installation code
+  * Added systemd-dev build dependency to fix systemd.pc detection
+  * Improved packaging consistency and maintainability
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 13:50:00 +0000
+
 hifiberry-pipewire (1.4.5.6) stable; urgency=low
 
   * Updated control file to ensure package is not installed over pipewire-bin

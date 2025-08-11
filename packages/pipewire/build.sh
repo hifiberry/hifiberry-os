@@ -20,8 +20,8 @@ if [ -n "$DIST" ]; then
     echo "Using distribution from DIST environment variable: $DIST"
     DIST_ARG="--dist=$DIST"
 else
-    echo "No DIST environment variable set, using sbuild default"
-    DIST_ARG=""
+    echo "No DIST environment variable set, using bookworm as default"
+    DIST_ARG="--dist=bookworm"
 fi
 
 echo "Building package with sbuild..."
