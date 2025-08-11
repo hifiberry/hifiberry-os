@@ -1,0 +1,100 @@
+.TH HIFIBERRY-EQ 1 "August 2025" "HiFiBerry PipeWire" "User Commands"
+.SH NAME
+hifiberry-eq \- control HiFiBerry 16-band parametric equalizer
+.SH SYNOPSIS
+.B hifiberry-eq
+.B set-band
+.I band type freq q gain
+.br
+.B hifiberry-eq
+.B disable-band
+.I band
+.br
+.B hifiberry-eq
+.B reset
+.br
+.B hifiberry-eq
+.B show
+.SH DESCRIPTION
+.B hifiberry-eq
+controls the 16-band parametric equalizer that is automatically inserted
+into the HiFiBerry PipeWire audio pipeline. The EQ provides professional-grade
+biquad filters for precise audio shaping.
+.SH COMMANDS
+.TP
+.BI "set-band " "band type freq q gain"
+Configure a specific EQ band.
+.I band
+is 1-16,
+.I type
+is the filter type,
+.I freq
+is frequency in Hz,
+.I q
+is the Q factor (0.1-30.0),
+.I gain
+is gain in dB (-20.0 to +20.0).
+.TP
+.BI "disable-band " band
+Disable a specific band (set to passthrough). Band number is 1-16.
+.TP
+.B reset
+Reset all bands to passthrough, effectively disabling the EQ.
+.TP
+.B show
+Show current EQ settings and filter node information.
+.SH FILTER TYPES
+.TP
+.B lowpass
+Low-pass filter (attenuates frequencies above cutoff)
+.TP
+.B highpass
+High-pass filter (attenuates frequencies below cutoff)
+.TP
+.B bandpass
+Band-pass filter (passes frequencies around cutoff)
+.TP
+.B lowshelf
+Low-shelf filter (boost/cut low frequencies)
+.TP
+.B highshelf
+High-shelf filter (boost/cut high frequencies)
+.TP
+.B peaking
+Peaking filter (boost/cut around specific frequency)
+.TP
+.B notch
+Notch filter (narrow attenuation at specific frequency)
+.TP
+.B allpass
+All-pass filter (phase adjustment without amplitude change)
+.TP
+.B none
+Disable filter (passthrough)
+.SH EXAMPLES
+.TP
+.B hifiberry-eq set-band 1 highpass 80 0.7 0
+Set band 1 as high-pass filter at 80Hz with Q=0.7
+.TP
+.B hifiberry-eq set-band 5 peaking 1000 2.0 3.5
+Set band 5 to boost 1kHz by 3.5dB with Q=2.0
+.TP
+.B hifiberry-eq set-band 10 lowpass 8000 1.0 0
+Set band 10 as low-pass filter at 8kHz
+.TP
+.B hifiberry-eq disable-band 3
+Disable band 3 (set to passthrough)
+.TP
+.B hifiberry-eq reset
+Reset all bands to passthrough
+.SH FILES
+.TP
+.I /etc/wireplumber/wireplumber.conf.d/51-hifiberry-eq.conf
+WirePlumber configuration that creates the 16-band EQ filter
+.SH SEE ALSO
+.BR hifiberry-output-mode (1),
+.BR pipewire (1),
+.BR wireplumber (1),
+.BR pw-cli (1)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>

@@ -1,3 +1,18 @@
 # PipeWire modules need custom RUNPATH to find each other
 # This is the standard behavior for PipeWire plugin architecture
 hifiberry-pipewire: custom-library-search-path
+
+# Expected to ship shared libraries without separate -dev packages
+hifiberry-pipewire: link-to-shared-library-in-wrong-package
+hifiberry-pipewire: package-name-doesnt-match-sonames
+
+# Missing man pages for upstream PipeWire binaries - we provide pages for our tools
+hifiberry-pipewire: no-manual-page [usr/bin/pipewire*]
+hifiberry-pipewire: no-manual-page [usr/bin/pw-*]
+hifiberry-pipewire: no-manual-page [usr/bin/spa-*]
+hifiberry-pipewire: no-manual-page [usr/bin/wireplumber]
+hifiberry-pipewire: no-manual-page [usr/bin/wpctl]
+hifiberry-pipewire: no-manual-page [usr/bin/wpexec]
+
+# JACK library compatibility library may have different linking
+hifiberry-pipewire: shared-library-lacks-prerequisites

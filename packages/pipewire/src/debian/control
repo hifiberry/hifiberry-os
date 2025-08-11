@@ -32,11 +32,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          adduser,
          libasound2-plugins,
-         alsa-utils,
-         libasound2 (>= 1.2.8),
-         libc6 (>= 2.36),
-         libglib2.0-0 (>= 2.80.0),
-         libsbc1 (>= 1.5)
+         alsa-utils
 Provides: pipewire
 Conflicts: pipewire, pulseaudio, pipewire-bin
 Replaces: pipewire
