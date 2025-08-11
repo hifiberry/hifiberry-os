@@ -1,3 +1,6 @@
-99-hifiberry-headless.conf etc/pipewire/pipewire.conf.d/
-configs/monostereobalance.lua etc/wireplumber/main.lua.d/output-mode-filter.lua
-configs/bq16.lua etc/wireplumber/main.lua.d/bq16.lua
+configs/99-hifiberry-headless.conf etc/pipewire/pipewire.conf.d/
+configs/monostereobalance.lua etc/wireplumber/main.lua.d/
+configs/bq16.lua etc/wireplumber/main.lua.d/
+configs/asound.conf.pipewire etc/
+configs/wireplumber-system.service usr/lib/systemd/system/
+configs/hifiberry-pipewire.lintian-overrides usr/share/lintian/overrides/hifiberry-pipewire

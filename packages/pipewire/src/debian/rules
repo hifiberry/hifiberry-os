@@ -38,16 +38,18 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	cd pipewire-source && meson compile -C builddir
 
+override_dh_install:
+	dh_install
+	# Rename Lua scripts to their target names
+	mv debian/hifiberry-pipewire/etc/wireplumber/main.lua.d/monostereobalance.lua \
+		debian/hifiberry-pipewire/etc/wireplumber/main.lua.d/output-mode-filter.lua
+
 override_dh_auto_install:
 	cd pipewire-source && DESTDIR=$(CURDIR)/debian/hifiberry-pipewire meson install -C builddir
 	
 	# Remove files that conflict with libspa-0.2-dev package
 	rm -rf debian/hifiberry-pipewire/usr/include/spa-0.2 || true
 	rm -f debian/hifiberry-pipewire/usr/lib/*/pkgconfig/libspa-0.2.pc || true
-	
-	# Install custom WirePlumber systemd service
-	mkdir -p debian/hifiberry-pipewire/usr/lib/systemd/system
-	cp wireplumber-system.service debian/hifiberry-pipewire/usr/lib/systemd/system/
 	
 	# Install PipeWire configuration files to /etc for system-wide customization
 	mkdir -p debian/hifiberry-pipewire/etc/pipewire
@@ -66,16 +68,8 @@ override_dh_auto_install:
 	# Keep original files in /usr/share as fallback (PipeWire's default behavior)
 	# PipeWire will check /etc/pipewire first, then fall back to /usr/share/pipewire
 	
-	# Install ALSA configuration for PipeWire
-	mkdir -p debian/hifiberry-pipewire/etc
-	cp asound.conf.pipewire debian/hifiberry-pipewire/etc/
-	
 	# Create ALSA plugin configuration directory
 	mkdir -p debian/hifiberry-pipewire/etc/alsa/conf.d
-	
-	# Install lintian overrides
-	mkdir -p debian/hifiberry-pipewire/usr/share/lintian/overrides
-	cp debian/hifiberry-pipewire.lintian-overrides debian/hifiberry-pipewire/usr/share/lintian/overrides/hifiberry-pipewire
 	
 	# Create directories for PipeWire runtime
 	mkdir -p debian/hifiberry-pipewire/var/lib/pipewire
