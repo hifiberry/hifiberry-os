@@ -1,1 +1,3 @@
 99-hifiberry-headless.conf etc/pipewire/pipewire.conf.d/
+configs/monostereobalance.lua etc/wireplumber/main.lua.d/output-mode-filter.lua
+configs/bq16.lua etc/wireplumber/main.lua.d/bq16.lua
