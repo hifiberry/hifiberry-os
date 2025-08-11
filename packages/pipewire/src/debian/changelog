@@ -1,3 +1,95 @@
+hifiberry-pipewire (1.4.5.19) bookworm; urgency=low
+
+  * Added manual pages for hifiberry-output-mode and hifiberry-eq commands
+  * Updated lintian overrides to be more specific about missing man pages
+  * Now provides documentation for HiFiBerry-specific audio control tools
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 11 Aug 2025 17:00:00 +0000
+
+hifiberry-pipewire (1.4.5.19) bookworm; urgency=low
+
+  * Fixed output mode filter configuration to use direct PipeWire module loading
+  * Improved hifiberry-output-mode script with better error handling and diagnostics
+  * Simplified filter-chain configuration for more reliable operation
+  * Added troubleshooting output when filter is not found
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 11 Aug 2025 17:00:00 +0000
+
+hifiberry-pipewire (1.4.5.18) bookworm; urgency=low
+
+  * Fixed lintian errors and warnings
+  * Corrected distribution in changelog (bookworm vs stable)
+  * Fixed lintian overrides installation path
+  * Removed hardcoded library dependencies (use ${shlibs:Depends})
+  * Added comprehensive lintian overrides for PipeWire-specific issues
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 11 Aug 2025 16:50:00 +0000
+
+hifiberry-pipewire (1.4.5.17) stable; urgency=low
+
+  * Fixed package build issues with dh_usrlocal
+  * Moved control scripts from /usr/local/bin to /usr/bin
+  * Removed deprecated --no-automatic-dbgsym options
+  * Control scripts now in standard system path
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 16:40:00 +0000
+
+hifiberry-pipewire (1.4.5.16) stable; urgency=low
+
+  * Added 16-band parametric EQ automatically inserted into audio pipeline
+  * Created hifiberry-eq script for runtime EQ control
+  * EQ filter chain automatically inserted between applications and hardware
+  * All 16 bands start as passthrough (transparent) until configured
+  * Supports all biquad filter types: lowpass, highpass, peaking, shelving, etc.
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 16:30:00 +0000
+
+hifiberry-pipewire (1.4.5.15) stable; urgency=low
+
+  * Modified output mode filter to automatically insert into default audio pipeline
+  * Uses WirePlumber rules to add filter chain to ALSA outputs automatically  
+  * Added hifiberry-output-mode script for runtime control
+  * Filter is inserted transparently - no separate sinks needed
+  * Supports stereo/mono/left/right modes via command line: hifiberry-output-mode {stereo|mono|left|right}
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 16:20:00 +0000
+
+hifiberry-pipewire (1.4.5.14) stable; urgency=low
+
+  * Added static output mode configuration without Lua scripting
+  * Created virtual sinks for mono, left-only, and right-only output modes
+  * Uses PipeWire's built-in filter-chain module with channel matrices
+  * Users can select output mode by choosing the appropriate sink in audio settings
+  * No dynamic switching - simpler and more reliable than Lua approach
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 16:10:00 +0000
+
+hifiberry-pipewire (1.4.5.13) stable; urgency=low
+
+  * Simplified package by removing complex Lua scripts and dynamic filter functionality
+  * Removed mono/stereo/balance filter and 16-band EQ - not needed for typical use
+  * Clean PipeWire installation with just essential configuration
+  * Reduced complexity and potential compatibility issues
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 15:58:00 +0000
+
+hifiberry-pipewire (1.4.5.12) stable; urgency=low
+
+  * Updated WirePlumber configuration for 0.5+ compatibility
+  * Converted Lua scripts to new component/profile configuration format
+  * Moved Lua scripts to /usr/local/share/wireplumber/scripts/
+  * Added .conf files to /etc/wireplumber/wireplumber.conf.d/
+  * Fixed "Old configuration file detected" warnings
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 15:55:00 +0000
+
+hifiberry-pipewire (1.4.5.11) stable; urgency=low
+
+  * Fixed libglib2.0-0 version requirement to match Raspberry Pi OS bookworm (2.74.6)
+  * Lowered minimum version from 2.80.0 to 2.74.0 for compatibility
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 11 Aug 2025 14:30:00 +0000
+
 hifiberry-pipewire (1.4.5.10) stable; urgency=low
 
   * Removed non-existent systemd-dev build dependency (systemd package provides systemd.pc)

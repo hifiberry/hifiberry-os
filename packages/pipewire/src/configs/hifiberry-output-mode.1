@@ -1,0 +1,46 @@
+.TH HIFIBERRY-OUTPUT-MODE 1 "August 2025" "HiFiBerry PipeWire" "User Commands"
+.SH NAME
+hifiberry-output-mode \- control HiFiBerry output channel mapping
+.SH SYNOPSIS
+.B hifiberry-output-mode
+.RI { stereo | mono | left | right }
+.SH DESCRIPTION
+.B hifiberry-output-mode
+controls the channel mapping of the HiFiBerry PipeWire output filter.
+The filter is automatically inserted into the audio pipeline and provides
+different output modes for stereo audio content.
+.SH OPTIONS
+.TP
+.B stereo
+Normal left/right stereo output (default). Left channel goes to left output,
+right channel goes to right output.
+.TP
+.B mono
+Mix left and right channels equally and send to both outputs. Both outputs
+will contain the same mono signal (L+R)/2.
+.TP
+.B left
+Send only the left channel to both outputs. Right channel input is ignored.
+.TP
+.B right
+Send only the right channel to both outputs. Left channel input is ignored.
+.SH EXAMPLES
+.TP
+.B hifiberry-output-mode stereo
+Set normal stereo operation (default)
+.TP
+.B hifiberry-output-mode mono
+Mix both channels to mono output on both speakers
+.TP
+.B hifiberry-output-mode left
+Play only left channel on both speakers
+.SH FILES
+.TP
+.I /etc/wireplumber/wireplumber.conf.d/50-hifiberry-output-modes.conf
+WirePlumber configuration that creates the output mode filter
+.SH SEE ALSO
+.BR hifiberry-eq (1),
+.BR pipewire (1),
+.BR wireplumber (1)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>

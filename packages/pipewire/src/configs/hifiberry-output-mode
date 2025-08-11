@@ -1,0 +1,68 @@
+#!/bin/bash
+# HiFiBerry Output Mode Control Script
+# Changes the channel matrix of the inserted filter
+
+set_output_mode() {
+    local mode="$1"
+    
+    # Try multiple ways to find the filter node
+    local filter_id
+    filter_id=$(pw-cli ls Node | grep -A5 "hifiberry-output-mode-filter" | grep "id:" | cut -d: -f2 | tr -d ' ')
+    
+    if [ -z "$filter_id" ]; then
+        # Try alternative search
+        filter_id=$(pw-cli ls Node | grep -B2 -A3 "HiFiBerry Output Mode" | grep "id:" | cut -d: -f2 | tr -d ' ')
+    fi
+    
+    if [ -z "$filter_id" ]; then
+        echo "Error: HiFiBerry output mode filter not found"
+        echo "Available nodes:"
+        pw-cli ls Node | grep -E "(node\.name|node\.description)" | head -10
+        echo "..."
+        echo ""
+        echo "Try restarting PipeWire services:"
+        echo "  sudo systemctl restart pipewire"
+        echo "  sudo systemctl restart wireplumber"
+        return 1
+    fi
+    
+    case "$mode" in
+        "stereo")
+            matrix="[ 1.0 0.0 0.0 1.0 ]"
+            echo "Setting stereo mode (L->L, R->R)"
+            ;;
+        "mono")
+            matrix="[ 0.5 0.5 0.5 0.5 ]"
+            echo "Setting mono mode (L+R mixed to both channels)"
+            ;;
+        "left")
+            matrix="[ 1.0 0.0 1.0 0.0 ]"
+            echo "Setting left-only mode (L to both channels)"
+            ;;
+        "right")
+            matrix="[ 0.0 1.0 0.0 1.0 ]"
+            echo "Setting right-only mode (R to both channels)"
+            ;;
+        *)
+            echo "Usage: $0 {stereo|mono|left|right}"
+            echo "Current available modes:"
+            echo "  stereo - Normal L/R stereo (default)"
+            echo "  mono   - Mix L+R to both channels"
+            echo "  left   - Left channel to both outputs"
+            echo "  right  - Right channel to both outputs"
+            return 1
+            ;;
+    esac
+    
+    pw-cli set-param "$filter_id" Props '{ filter.graph.nodes.output_mode.config.copy.matrix = '"$matrix"' }'
+    echo "Output mode changed to: $mode"
+}
+
+# Main execution
+if [ $# -eq 0 ]; then
+    echo "HiFiBerry Output Mode Control"
+    echo "Usage: $0 {stereo|mono|left|right}"
+    exit 1
+fi
+
+set_output_mode "$1"

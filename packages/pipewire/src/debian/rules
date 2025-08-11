@@ -4,7 +4,7 @@
 PIPEWIRE_VERSION = 1.4.5
 
 # Disable debug package creation
-export DH_OPTIONS = --no-automatic-dbgsym
+export DH_OPTIONS =
 
 %:
 	dh $@
@@ -40,9 +40,9 @@ override_dh_auto_build:
 
 override_dh_install:
 	dh_install
-	# Rename Lua scripts to their target names
-	mv debian/hifiberry-pipewire/etc/wireplumber/main.lua.d/monostereobalance.lua \
-		debian/hifiberry-pipewire/etc/wireplumber/main.lua.d/output-mode-filter.lua
+	# Make control scripts executable
+	chmod +x debian/hifiberry-pipewire/usr/bin/hifiberry-output-mode
+	chmod +x debian/hifiberry-pipewire/usr/bin/hifiberry-eq
 
 override_dh_auto_install:
 	cd pipewire-source && DESTDIR=$(CURDIR)/debian/hifiberry-pipewire meson install -C builddir
@@ -78,5 +78,5 @@ override_dh_auto_test:
 	# Skip tests - requires specific hardware and complex setup
 
 override_dh_strip:
-	# Strip symbols and disable automatic debug package creation
-	dh_strip --no-automatic-dbgsym
+	# Strip symbols for release builds
+	dh_strip
