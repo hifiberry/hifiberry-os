@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# No build configuration needed for config files
+
+override_dh_auto_build:
+	# No compilation needed for config files
+
+override_dh_auto_test:
+	# No tests for config files
+
+override_dh_auto_install:
+	# Files are installed via debian/install

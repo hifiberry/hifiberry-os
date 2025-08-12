@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    configure)
+        # Restart PipeWire services if they are running
+        if systemctl is-active --quiet hifiberry-pipewire; then
+            echo "Restarting PipeWire service to apply new configuration..."
+            systemctl restart hifiberry-pipewire || true
+        fi
+        
+        echo "HiFiBerry PipeWire configurations installed successfully"
+        ;;
+    
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+    
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
