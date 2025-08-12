@@ -1,3 +1,32 @@
+hifiberry-pipewire (1.4.5.22) bookworm; urgency=medium
+
+  * Fixed output mode filter connection to audio pipeline
+  * Added specific ALSA device targeting and routing configuration
+  * Filter now properly intercepts audio streams for processing
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 12:30:00 +0000
+
+hifiberry-pipewire (1.4.5.21) bookworm; urgency=medium
+
+  * Added debug output to troubleshoot filter ID detection
+  * Filter nodes are being created correctly, investigating control script
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 12:00:00 +0000
+
+hifiberry-pipewire (1.4.5.21) bookworm; urgency=medium
+
+  * Fixed node ID extraction in hifiberry-output-mode script
+  * Updated regex to match PipeWire's actual output format
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 12:00:00 +0000
+
+hifiberry-pipewire (1.4.5.20) bookworm; urgency=medium
+
+  * Fixed output mode filter installation path to PipeWire config directory
+  * Output mode configuration now correctly loads at PipeWire startup
+
+ -- HiFiBerry <info@hifiberry.com>  Sun, 11 Aug 2025 11:00:00 +0000
+
 hifiberry-pipewire (1.4.5.19) bookworm; urgency=low
 
   * Added manual pages for hifiberry-output-mode and hifiberry-eq commands
