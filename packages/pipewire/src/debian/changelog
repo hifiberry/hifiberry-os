@@ -1,3 +1,40 @@
+hifiberry-pipewire (1.4.5.26) bookworm; urgency=medium
+
+  * Extracted HiFiBerry-specific configurations to separate package
+  * Kept base ALSA configuration in main package for essential functionality
+  * HiFiBerry configurations now available as optional hifiberry-pipewire-configs package
+  * Simplified main package to focus on core PipeWire functionality
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 15:45:00 +0000
+
+hifiberry-pipewire (1.4.5.25) bookworm; urgency=medium
+
+  * Fixed build script to remove references to deleted control scripts
+  * Removed chmod commands for non-existent hifiberry-output-mode and hifiberry-eq
+  * Package now builds cleanly with simplified configuration
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 15:00:00 +0000
+
+hifiberry-pipewire (1.4.5.24) bookworm; urgency=medium
+
+  * Reorganized configs directory to mirror destination filesystem structure
+  * Added stereo balance filter for WirePlumber with runtime control
+  * Added balance-filter-chain.conf for matrix-based audio balance adjustment
+  * Filter supports full left (-1.0), center (0.0), and full right (1.0) balance
+  * Automatically targets ALSA output devices for seamless audio processing
+  * Simplified package structure with all configs under src/configs/etc/
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 14:30:00 +0000
+
+hifiberry-pipewire (1.4.5.23) bookworm; urgency=medium
+
+  * Cleaned up package after removing unused output mode and EQ functionality
+  * Removed references to deleted files: output mode scripts, EQ scripts, audio routing
+  * Simplified package to focus on core PipeWire functionality with headless support
+  * Kept output-mode-filter.conf for basic filtering capabilities
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 12 Aug 2025 14:00:00 +0000
+
 hifiberry-pipewire (1.4.5.22) bookworm; urgency=medium
 
   * Fixed output mode filter connection to audio pipeline
