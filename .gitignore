@@ -21,3 +21,7 @@ packages/*/*.deb
 office.txt
 packages/webui/hbos-ui/debian/webui-dist
 packages/acr/hifiberry-audiocontrol-*
+packages/pipewire-configs/src/debian/.debhelper/generated
+packages/pipewire-configs/src/debian/hifiberry-pipewire-configs
+packages/pipewire-configs/src/debian/files
+packages/pipewire-configs/src/debian/debhelper-build-stamp
