@@ -2,4 +2,3 @@ configs/asound.conf.pipewire etc/
 configs/hifiberry-pipewire.lintian-overrides usr/share/lintian/overrides/
 configs/wireplumber-system.service usr/lib/systemd/system/
 configs/etc/pipewire/pipewire.conf.d/99-hifiberry-headless.conf etc/pipewire/pipewire.conf.d/
-asound.conf etc/

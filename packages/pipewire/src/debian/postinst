@@ -43,20 +43,17 @@ case "$1" in
             chmod 755 /run/pipewire
         fi
         
-        # Handle asound.conf file
+        # Ensure /etc/asound.conf points to PipeWire config
         if [ -f /etc/asound.conf ] && [ ! -L /etc/asound.conf ]; then
-            # Backup existing asound.conf if it's a regular file (not a symlink)
             mv /etc/asound.conf /etc/asound.conf.bak
             echo "Backed up existing /etc/asound.conf to /etc/asound.conf.bak"
-        elif [ -L /etc/asound.conf ]; then
-            # Remove existing symlink
+        fi
+        if [ -L /etc/asound.conf ]; then
             rm -f /etc/asound.conf
         fi
-        
-        # Copy PipeWire asound.conf
         if [ -f /etc/asound.conf.pipewire ]; then
-            cp /etc/asound.conf.pipewire /etc/asound.conf
-            echo "Installed PipeWire ALSA configuration to /etc/asound.conf"
+            ln -s asound.conf.pipewire /etc/asound.conf
+            echo "Linked /etc/asound.conf -> asound.conf.pipewire"
         else
             echo "Warning: /etc/asound.conf.pipewire not found"
         fi
