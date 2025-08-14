@@ -25,5 +25,6 @@ packages/pipewire-configs/src/debian/.debhelper/generated
 packages/pipewire-configs/src/debian/hifiberry-pipewire-configs
 packages/pipewire-configs/src/debian/files
 packages/pipewire-configs/src/debian/debhelper-build-stamp
-packages/dspprofiles/dspprofiles
-packages/webui/hbos-ui
+packages/dspprofiles/dspprofiles/
+packages/webui/hbos-ui/
+packages/roomeq/roomeq/
