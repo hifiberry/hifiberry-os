@@ -1,3 +1,15 @@
+hifiberry-pipewire (1.4.5.27) bookworm; urgency=medium
+
+  * Added comprehensive audio effects processing chain (90-hifiberry-effects.conf)
+  * Integrated monostereo, balance, and 16-band parametric EQ in single filter chain
+  * Provides runtime control for stereo/mono/left-only/right-only modes
+  * Added dynamic balance control with crossfeed between channels
+  * Included 16-band peaking EQ covering 32Hz-20kHz frequency range
+  * Made effect_input.proc the default system audio sink for automatic routing
+  * All parameters adjustable at runtime via pw-cli commands
+
+ -- HiFiBerry <info@hifiberry.com>  Wed, 14 Aug 2025 10:00:00 +0000
+
 hifiberry-pipewire (1.4.5.26) bookworm; urgency=medium
 
   * Extracted HiFiBerry-specific configurations to separate package
