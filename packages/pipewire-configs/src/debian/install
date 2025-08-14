@@ -1,2 +1,0 @@
-configs/etc/wireplumber/wireplumber.conf.d/10-balance-filter.conf etc/wireplumber/wireplumber.conf.d/
-configs/etc/wireplumber/filter-chains/balance-filter-chain.conf etc/wireplumber/filter-chains/
