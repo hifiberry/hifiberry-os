@@ -1,6 +1,7 @@
 [Unit]
 Description=Librespot Spotify Connect Player
-After=network-online.target sound.target avahi-daemon.service
+# Audiocontrol provides the Spotify access token
+After=network-online.target sound.target avahi-daemon.service audiocontrol.service
 Wants=network-online.target
 
 [Service]
