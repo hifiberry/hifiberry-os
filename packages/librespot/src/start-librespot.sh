@@ -59,6 +59,12 @@ fi
 # Path to the event handler script
 EVENT_HANDLER="/usr/bin/spotify-event"
 
+# check if /usr/bin/audiocontrol_notify_librespot exists and is executable and use this as the event handler
+if [ -x /usr/bin/audiocontrol_notify_librespot ]; then
+  EVENT_HANDLER="/usr/bin/audiocontrol_notify_librespot"
+fi
+
+
 # Build basic librespot command with options
 LIBRESPOT_CMD="/usr/bin/librespot"
 LIBRESPOT_OPTS=("--name" "$PRETTY_HOSTNAME" 
@@ -67,6 +73,15 @@ LIBRESPOT_OPTS=("--name" "$PRETTY_HOSTNAME"
                 "--disable-audio-cache"
                 "--onevent" "$EVENT_HANDLER"
                 "--zeroconf-backend" "$ZEROCONF_BACKEND")  # Explicitly set the zeroconf backend
+
+# Check if we can get an access token from audiocontrol
+TOKEN=`curl http://localhost:1080/api/spotify/access_token`
+if [ $? == 0 ]; then
+  echo "Successfully obtained access token from audiocontrol, using it"
+  LIBRESPOT_OPTS+=("--access-token" "$TOKEN")
+else
+  echo "No access token available on audiocontrol"
+fi
 
 # Try to get both mixer name and hardware index from configurator
 if command -v config-soundcard >/dev/null 2>&1; then
