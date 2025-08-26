@@ -48,9 +48,7 @@ fi
 # Build steps for roomeq
 cd "$SOURCE_PACKAGE"
 echo "Building roomeq..."
-# If there's a Makefile:
-# make
-# If it's Python:
-# python3 setup.py build
-# Add packaging steps here
+./build.sh
+cd ..
+rm roomeq-dbgsym*
 echo "Build complete."
