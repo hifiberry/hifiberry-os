@@ -2,12 +2,8 @@
 set -e
 
 # Clean script for roomeq package
-cd "$(dirname "$0")/roomeq"
+cd "$(dirname "$0")"
 # Example clean command, adjust as needed
 echo "Cleaning roomeq..."
-# If there's a Makefile:
-# make clean
-# If it's Python:
-# python3 setup.py clean
-# Add cleaning steps here
+rm -f roomeq_*.build roomeq_*.buildinfo roomeq_*.changes  roomeq_*.dsc  roomeq_*.tar.gz
 echo "Clean complete."
