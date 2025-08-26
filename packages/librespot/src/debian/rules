@@ -5,8 +5,8 @@
 #export DH_VERBOSE = 1
 
 # Librespot version and commit configuration
-LIBRESPOT_VERSION = v0.6.0
-LIBRESPOT_COMMIT_ID = 80c27ec476666b40aba98327b3ba52d620dd6d06
+LIBRESPOT_VERSION = v0.7.0
+# LIBRESPOT_COMMIT_ID = dd8005183dfd29d6b7c6cb2dc9219cbdd0d03d8c
 
 # Rust build configuration
 export CARGO_HOME = $(CURDIR)/debian/cargo_home
@@ -46,7 +46,7 @@ override_dh_auto_configure:
 override_dh_auto_build:
 	cd librespot-source && \
 	PATH="$(CARGO_HOME)/bin:$(PATH)" \
-	cargo build --release --no-default-features --features "rodio-backend alsa-backend with-avahi"
+	cargo build --release --no-default-features --features "rodio-backend alsa-backend with-avahi native-tls"
 
 override_dh_auto_install:
 	# Install librespot binary

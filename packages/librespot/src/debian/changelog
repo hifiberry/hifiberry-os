@@ -1,3 +1,11 @@
+hifiberry-librespot (0.7.0.1) bookworm; urgency=medium
+
+  * Updated librespot to v0.7.0 release
+  * Latest upstream version with new features and improvements
+  * Enhanced compatibility and performance optimizations
+
+ -- HiFiBerry <info@hifiberry.com>  Tue, 26 Aug 2025 12:00:00 +0000
+
 hifiberry-librespot (0.6.0.10) stable; urgency=medium
 
   * Fixed compatibility issue with librespot command line options
