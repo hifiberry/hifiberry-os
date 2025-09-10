@@ -3,7 +3,12 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        # Let debhelper handle systemd service management
+        # Ensure system socket is disabled/removed if it exists from previous versions
+        if [ -x /bin/systemctl ] || [ -x /usr/bin/systemctl ]; then
+            systemctl stop mpd.socket 2>/dev/null || true
+            systemctl disable mpd.socket 2>/dev/null || true
+        fi
+        rm -f /etc/systemd/system/sockets.target.wants/mpd.socket || true
         ;;
     
     failed-upgrade)

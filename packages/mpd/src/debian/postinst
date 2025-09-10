@@ -1,56 +1,14 @@
 #!/bin/bash
 set -e
 
+# User-service: no system users or global config setup required.
 case "$1" in
     configure)
-        # Create mpd group if it doesn't exist
-        if ! getent group mpd > /dev/null; then
-            addgroup --quiet --system mpd
-        fi
-        
-        # Create mpd user if it doesn't exist
-        if ! getent passwd mpd > /dev/null; then
-            adduser --quiet --system --ingroup mpd --no-create-home --home /var/lib/mpd mpd
-        fi
-        
-        # Add mpd user to audio group
-        usermod -a -G audio mpd || true
-        
-        # Add mpd user to pipewire group if it exists
-        if getent group pipewire > /dev/null; then
-            usermod -a -G pipewire mpd || true
-        fi
-        
-        # Create and set permissions for MPD directories
-        mkdir -p /var/lib/mpd
-        mkdir -p /var/lib/mpd/music
-        mkdir -p /var/lib/mpd/playlists
-        mkdir -p /run/mpd
-        
-        chown mpd:audio /var/lib/mpd || true
-        chown mpd:audio /var/lib/mpd/music || true
-        chown mpd:audio /var/lib/mpd/playlists || true
-        chown mpd:audio /run/mpd || true
-        chmod 755 /var/lib/mpd
-        chmod 755 /var/lib/mpd/music
-        chmod 755 /var/lib/mpd/playlists
-        
-        # Copy default configuration file if it doesn't exist
-        if [ ! -f /etc/mpd.conf ]; then
-            if [ -f /etc/mpd.conf.default ]; then
-                cp /etc/mpd.conf.default /etc/mpd.conf
-                chown root:root /etc/mpd.conf
-                chmod 644 /etc/mpd.conf
-                echo "Installed default MPD configuration to /etc/mpd.conf"
-            else
-                echo "Warning: No default MPD configuration file found at /etc/mpd.conf.default"
-            fi
-        fi
+        :
         ;;
-    
     abort-upgrade|abort-remove|abort-deconfigure)
+        :
         ;;
-    
     *)
         echo "postinst called with unknown argument \`$1'" >&2
         exit 1
