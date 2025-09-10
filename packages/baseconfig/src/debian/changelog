@@ -1,3 +1,9 @@
+hifiberry-baseconfig (1.1.10) stable; urgency=medium
+
+  * Build for Debian 13 (trixie)
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 09 Sep 2025 16:00:00 +0000
+
 hifiberry-baseconfig (1.1.9) stable; urgency=medium
 
   * Improved package cleanup safety - never force removes packages with dependencies
