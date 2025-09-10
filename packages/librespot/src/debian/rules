@@ -5,8 +5,8 @@
 #export DH_VERBOSE = 1
 
 # Librespot version and commit configuration
-LIBRESPOT_VERSION = v0.7.0
-# LIBRESPOT_COMMIT_ID = dd8005183dfd29d6b7c6cb2dc9219cbdd0d03d8c
+LIBRESPOT_VERSION = v0.7.1
+# LIBRESPOT_COMMIT_ID = 987dfa5df2546a96d34582674a757a3dcc6036a7
 
 # Rust build configuration
 export CARGO_HOME = $(CURDIR)/debian/cargo_home
@@ -59,9 +59,9 @@ override_dh_auto_install:
 	cp spotify-event.sh debian/hifiberry-librespot/usr/bin/spotify-event
 	chmod +x debian/hifiberry-librespot/usr/bin/*
 	
-	# Install systemd service
-	mkdir -p debian/hifiberry-librespot/usr/lib/systemd/system
-	cp librespot.service debian/hifiberry-librespot/usr/lib/systemd/system/
+	# Install systemd user service
+	mkdir -p debian/hifiberry-librespot/usr/lib/systemd/user
+	cp librespot.service debian/hifiberry-librespot/usr/lib/systemd/user/
 	
 	# Install man pages
 	mkdir -p debian/hifiberry-librespot/usr/share/man/man1
