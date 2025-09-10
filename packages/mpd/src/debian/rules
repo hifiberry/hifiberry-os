@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 # Configuration
-MPD_VERSION = 0.24.4
+MPD_VERSION = 0.24.5
 MPC_VERSION = 0.35
 
 %:
@@ -60,24 +60,29 @@ override_dh_auto_install:
 	# Remove the automatically installed service files
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd.service || true
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/user/mpd.service || true
-	
-	# Install our custom systemd service file
-	mkdir -p debian/hifiberry-mpd/usr/lib/systemd/system
-	cp systemd/mpd.service debian/hifiberry-mpd/usr/lib/systemd/system/
+	# Remove socket activation and templated units we don't use
+	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd.socket || true
+	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd@.service || true
+
+	# Install our custom systemd user service file
+	mkdir -p debian/hifiberry-mpd/usr/lib/systemd/user
+	cp systemd/mpd.service debian/hifiberry-mpd/usr/lib/systemd/user/
 	
 	# Install configure-mpd script
 	cp configure-mpd.py debian/hifiberry-mpd/usr/bin/configure-mpd
 	chmod +x debian/hifiberry-mpd/usr/bin/configure-mpd
 	
-	# Install default configuration file
-	mkdir -p debian/hifiberry-mpd/etc
-	cp config/mpd.conf.default debian/hifiberry-mpd/etc/
+	# Install default configuration file to shared data dir for user bootstrap
+	mkdir -p debian/hifiberry-mpd/usr/share/mpd
+	cp config/mpd.conf.default debian/hifiberry-mpd/usr/share/mpd/mpd.conf
 	
 	# Create directories for MPD
 	mkdir -p debian/hifiberry-mpd/var/lib/mpd
 	mkdir -p debian/hifiberry-mpd/var/lib/mpd/music
 	mkdir -p debian/hifiberry-mpd/var/lib/mpd/playlists
-	
+	chmod g+rwx debian/hifiberry-mpd/var/lib/mpd
+	chmod g+rwx debian/hifiberry-mpd/var/lib/mpd/music
+
 	# Install MPC binary and man page
 	cp mpc-install/bin/mpc debian/hifiberry-mpd/usr/bin/
 	cp mpc-install/share/man/man1/mpc.1 debian/hifiberry-mpd/usr/share/man/man1/

@@ -3,18 +3,11 @@ set -e
 
 case "$1" in
     purge)
-        # Remove user and group on purge
-        if getent passwd mpd > /dev/null; then
-            deluser --quiet mpd || true
-        fi
-        
-        if getent group mpd > /dev/null; then
-            delgroup --quiet mpd || true
-        fi
-        
         # Remove directories on purge (but preserve music and playlists)
         rm -rf /run/mpd || true
         # Note: We don't remove /var/lib/mpd as it may contain user data
+    # Clean up any leftover system socket symlink from previous versions
+    rm -f /etc/systemd/system/sockets.target.wants/mpd.socket || true
         ;;
     
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
