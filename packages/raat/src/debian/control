@@ -22,7 +22,6 @@ Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, ${python3:Depends},
          adduser,
          python3,
-         hifiberry-pipewire,
          hifiberry-configurator,
          avahi-utils
 Description: RAAT for HiFiBerry

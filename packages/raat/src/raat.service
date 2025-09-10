@@ -1,18 +1,15 @@
 [Unit]
 Description=Roon
-After=network.target sound.target pipewire.service avahi-daemon.service
+After=pipewire.service
 ConditionPathExists=/etc/uuid
 
 [Service]
 Type=simple
-User=raat
-Group=raat
-Environment=HOME=/var/lib/raat
-ExecStart=/usr/bin/start-raat.sh /var/lib/raat/hifiberry.conf
+ExecStart=/usr/bin/start-raat.sh
 StandardOutput=journal
 Restart=always
 RestartSec=5
 TimeoutStopSec=10
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target

@@ -39,10 +39,21 @@ if [ "$MDNS_BACKEND" = "avahi" ]; then
   done
 fi
 
-# Configure RAAT before starting
-echo "Configuring RAAT..."
-/usr/bin/configure-raat
+# Determine config path: per-user (~/.raat) for user service, fallback to /var/lib/raat
+CONFIG_DIR="/var/lib/raat"
+if [ -n "${XDG_RUNTIME_DIR:-}" ] || [ -n "${XDG_SESSION_ID:-}" ]; then
+  # Likely running as a user service/session
+  CONFIG_DIR="$HOME/.raat"
+fi
 
-# Run the original RAAT application with all provided arguments
-echo "Starting RAAT with configuration: $@"
-exec /usr/bin/raat_app "$@"
+# Ensure config directory exists
+mkdir -p "$CONFIG_DIR"
+
+# Configure RAAT before starting (write explicit output under CONFIG_DIR)
+echo "Configuring RAAT in $CONFIG_DIR ..."
+CFG_ARG="$CONFIG_DIR/hifiberry.conf"
+RAAT_CONFIG_DIR="$CONFIG_DIR" /usr/bin/configure-raat -o "$CFG_ARG"
+
+# Start RAAT with the resolved config
+echo "Starting RAAT with config: $CFG_ARG"
+exec /usr/bin/raat_app "$CFG_ARG"
