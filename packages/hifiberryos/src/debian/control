@@ -34,8 +34,12 @@ Depends: hifiberry-baseconfig,
          hifiberry-dsp,
          hifiberry-mpd,
          hifiberry-audiocontrol,
-         hifiberry-pipewire,
-         hifiberry-webui
+         hifiberry-webui,
+         pipewire,
+         pipewire-alsa,
+         pipewire-bin,
+         pipewire-pulse,
+         wireplumber
 Description: HiFiBerry OS minimal meta-package
  This meta-package provides the minimal set of HiFiBerry OS components
  required for basic functionality. It includes:
