@@ -1,0 +1,12 @@
+#!/bin/bash
+PATH=$PATH:/usr/local/bin
+
+# Check for "snd_rpi_hifiberry_dacplusadcpro" in the output of `aplay -l`
+if ! aplay -l | grep -qi "snd_rpi_hifiberry_dacplusadcpro"; then
+    figlet "DAC/ADC notdetected"
+    exit 1
+fi
+
+reset
+figlet "DAC/ADC detected"
+
