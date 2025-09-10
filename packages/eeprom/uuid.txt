@@ -16,4 +16,5 @@ be3b8164-dd7b-48fc-ab27-79dd7c641980,StudioDAC 8x   ,hifiberry-dac8x
 7c980a0e-9d15-40af-9f40-bddfbd3aee8c,Digi2 Standard ,hifiberry-digi
 8f287583-429d-4206-a751-862264bbda63,DSP 2x4        ,hifiberry-dacplus-dsp
 c05bce95-fa8d-4cde-a7c2-827abfd49c80,Beocreate2,    ,hifiberry-dac
-
+74e7ae95-af3c-4994-8c35-f233f74a43b1,DAC3 U         ,-
+7c15a759-111e-4aee-9c83-1ca82da11013,Digi3 S        ,-

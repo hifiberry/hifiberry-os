@@ -79,11 +79,11 @@ curl -Ls https://tinyurl.com/hbosrepo | bash
 Install a full or minimal set of packages. The full set included all players, while the minimal comes only with mpd. This allows you to install only the players you really need.
 
 ```
-sudo apt install hbos-minimal
+sudo apt install -y hbos-minimal
 ```
 or
 ```
-sudo apt install hbos-full
+sudo apt install -y hbos-full
 ```
 
 ### Base configuration
