@@ -4,29 +4,25 @@ set -e
 
 case "$1" in
     configure)
-        # Create raat user and group if they don't exist
-        if ! getent group raat >/dev/null; then
-            addgroup --system raat
+        # For user service deployments, no system user is required.
+        # Keep legacy user creation for compatibility if unit is used system-wide.
+        if systemctl status raat.service >/dev/null 2>&1 && [ -d /usr/lib/systemd/system ]; then
+            if ! getent group raat >/dev/null; then
+                addgroup --system raat
+            fi
+            if ! getent passwd raat >/dev/null; then
+                adduser --system --ingroup raat --home /var/lib/raat --shell /bin/false raat
+            fi
+            if getent group gpio >/dev/null; then
+                usermod -a -G gpio raat || true
+            fi
+            if getent group audio >/dev/null; then
+                usermod -a -G audio raat || true
+            fi
+            mkdir -p /var/lib/raat
+            chown raat:raat /var/lib/raat
+            chmod 755 /var/lib/raat
         fi
-        
-        if ! getent passwd raat >/dev/null; then
-            adduser --system --ingroup raat --home /var/lib/raat --shell /bin/false raat
-        fi
-        
-        # Add raat user to gpio group for hardware detection
-        if getent group gpio >/dev/null; then
-            usermod -a -G gpio raat || true
-        fi
-                
-        # Add raat user to audio group
-        if getent group audio >/dev/null; then
-            usermod -a -G audio raat || true
-        fi
-        
-        # Create home directory and set permissions
-        mkdir -p /var/lib/raat
-        chown raat:raat /var/lib/raat
-        chmod 755 /var/lib/raat
         ;;
 esac
 

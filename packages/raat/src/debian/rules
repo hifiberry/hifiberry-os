@@ -14,12 +14,12 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	# Install RAAT components
-	mkdir -p debian/hifiberry-raat/usr/lib/systemd/system
+	mkdir -p debian/hifiberry-raat/usr/lib/systemd/user
 	mkdir -p debian/hifiberry-raat/usr/bin
 	mkdir -p debian/hifiberry-raat/var/lib/raat
 	
 	# Install systemd service file
-	cp raat.service debian/hifiberry-raat/usr/lib/systemd/system/
+	cp raat.service debian/hifiberry-raat/usr/lib/systemd/user/
 	
 	# Install configure-raat.py script
 	cp configure-raat.py debian/hifiberry-raat/usr/bin/configure-raat

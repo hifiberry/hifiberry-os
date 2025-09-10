@@ -158,10 +158,11 @@ def main():
         description="Configure RAAT server for HiFiBerry devices",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    default_out = os.path.join(os.environ.get('RAAT_CONFIG_DIR', '/var/lib/raat'), 'hifiberry.conf')
     parser.add_argument(
         '-o', '--output',
-        default='/var/lib/raat/hifiberry.conf',
-        help='Output configuration file path (default: /var/lib/raat/hifiberry.conf)'
+        default=default_out,
+        help=f'Output configuration file path (default: {default_out})'
     )
     parser.add_argument(
         '-v', '--verbose',
