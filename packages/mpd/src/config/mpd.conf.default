@@ -9,7 +9,6 @@ sticker_file		"/var/lib/mpd/sticker.sql"
 
 # For network access
 bind_to_address		"0.0.0.0"
-bind_to_address		"/run/mpd/mpd.socket"
 port			"6600"
 
 # Input
