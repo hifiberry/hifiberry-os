@@ -75,7 +75,7 @@ LIBRESPOT_OPTS=("--name" "$PRETTY_HOSTNAME"
                 "--zeroconf-backend" "$ZEROCONF_BACKEND")  # Explicitly set the zeroconf backend
 
 # Check if we can get an access token from audiocontrol
-TOKEN=`curl http://localhost:1080/api/spotify/access_token`
+TOKEN=`curl -f http://localhost:1080/api/spotify/access_token`
 if [ $? == 0 ]; then
   echo "Successfully obtained access token from audiocontrol, using it"
   LIBRESPOT_OPTS+=("--access-token" "$TOKEN")
