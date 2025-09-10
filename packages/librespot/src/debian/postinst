@@ -1,53 +1,16 @@
 #!/bin/bash
 set -e
 
+# For a user service, no system user or system directories are needed.
+# Leave any runtime setup to the user session startup script.
+
 case "$1" in
     configure)
-        # Create librespot user and group if they don't exist
-        if ! getent group librespot > /dev/null; then
-            addgroup --quiet --system librespot
-        fi
-        if ! getent passwd librespot > /dev/null; then
-            adduser --quiet --system --ingroup librespot --no-create-home --home /var/lib/librespot librespot
-        fi
-
-        # Add librespot user to audio group
-        usermod -a -G audio librespot || true
-
-        # Add librespot user to pipewire group if it exists
-        if getent group pipewire > /dev/null; then
-            usermod -a -G pipewire librespot || true
-        fi
-
-        # Create home directory for librespot if it doesn't exist
-        if [ ! -d /var/lib/librespot ]; then
-            mkdir -p /var/lib/librespot
-            chown librespot:librespot /var/lib/librespot
-        fi
-
-        # Create /var/lib/librespot directory with audio group permissions
-        mkdir -p /var/lib/librespot
-        chown librespot:audio /var/lib/librespot
-        chmod 775 /var/lib/librespot
-
-        # Create Event FIFO if it doesn't exist
-        if [ ! -p /var/lib/librespot/event_pipe ]; then
-            mkfifo /var/lib/librespot/event_pipe || true
-        fi
-        chmod 660 /var/lib/librespot/event_pipe || true
-        chown librespot:audio /var/lib/librespot/event_pipe || true
-
-        # Create lock file if it doesn't exist
-        if [ ! -f /var/lib/librespot/event_pipe.lock ]; then
-            touch /var/lib/librespot/event_pipe.lock
-        fi
-        chown librespot:audio /var/lib/librespot/event_pipe.lock
-        chmod 660 /var/lib/librespot/event_pipe.lock
+        # No actions needed for user service configuration
         ;;
-    
     abort-upgrade|abort-remove|abort-deconfigure)
+        # No actions needed for user service during these states
         ;;
-    
     *)
         echo "postinst called with unknown argument \`$1'" >&2
         exit 1

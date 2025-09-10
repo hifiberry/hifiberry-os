@@ -3,7 +3,7 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        # Let debhelper handle systemd service management
+    # No system-level service management for user units
         ;;
     
     failed-upgrade)

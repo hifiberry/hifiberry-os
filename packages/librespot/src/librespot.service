@@ -1,13 +1,10 @@
 [Unit]
-Description=Librespot Spotify Connect Player
-# Audiocontrol provides the Spotify access token
-After=network-online.target sound.target avahi-daemon.service audiocontrol.service
-Wants=network-online.target
+Description=Librespot Spotify Connect Player (user service)
+# Run after the user PipeWire session is up
+After=pipewire.service
 
 [Service]
 Type=simple
-User=librespot
-Group=audio
 Environment=RUST_BACKTRACE=1
 ExecStart=/usr/bin/start-librespot
 Restart=always
@@ -16,4 +13,4 @@ StartLimitInterval=30
 StartLimitBurst=5
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
