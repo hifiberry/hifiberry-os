@@ -54,6 +54,6 @@ echo "Configuring RAAT in $CONFIG_DIR ..."
 CFG_ARG="$CONFIG_DIR/hifiberry.conf"
 RAAT_CONFIG_DIR="$CONFIG_DIR" /usr/bin/configure-raat -o "$CFG_ARG"
 
-# Start RAAT with the resolved config
-echo "Starting RAAT with config: $CFG_ARG"
-exec /usr/bin/raat_app "$CFG_ARG"
+# Start RAAT with the resolved config and trace logging enabled
+echo "Starting RAAT with config: $CFG_ARG (trace logging enabled)"
+exec /usr/bin/raat_app --trace "$CFG_ARG"
