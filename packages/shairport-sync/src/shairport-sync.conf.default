@@ -1,8 +1,9 @@
 // IMPORTANT: This is a default configuration template. 
 // During package installation, this file is copied to /etc/shairport-sync.conf
 // if that file doesn't already exist.
-// At startup, the system will create a runtime copy at 
-//      /var/lib/shairport/shairport-sync.conf
+// At startup, the system will create a runtime copy at:
+//      /var/lib/shairport/shairport-sync.conf (for system service)
+//      ~/.shairport/shairport-sync.conf (for user service)
 // with system-specific settings applied.
 // Edit /etc/shairport-sync.conf to make permanent changes.
 
