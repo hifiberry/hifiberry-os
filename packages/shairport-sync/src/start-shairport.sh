@@ -7,7 +7,14 @@
 
 # Default values
 CONFIG_FILE="/etc/shairport-sync.conf"
-RUNTIME_DIR="/var/lib/shairport"
+# Use user-specific runtime directory for user service
+if [ -n "${XDG_RUNTIME_DIR:-}" ] || [ -n "${XDG_SESSION_ID:-}" ]; then
+  # Running as user service
+  RUNTIME_DIR="${HOME}/.shairport"
+else
+  # Fallback to system directory
+  RUNTIME_DIR="/var/lib/shairport"
+fi
 RUNTIME_CONFIG="${RUNTIME_DIR}/shairport-sync.conf"
 
 # Function to extract version from config file
@@ -104,6 +111,12 @@ SHAIRPORT_OPTS=(
   "--configfile=${RUNTIME_CONFIG}" 
   "-g"
 )
+
+# For user services, disable D-Bus features since they typically expect system bus
+if [ -n "${XDG_RUNTIME_DIR:-}" ] || [ -n "${XDG_SESSION_ID:-}" ]; then
+  echo "Running as user service - disabling D-Bus interfaces"
+  SHAIRPORT_OPTS+=("--disable-dbus-interface")
+fi
 
 # Debug: print the command to be executed
 echo "Starting Shairport Sync with device name: $PRETTY_HOSTNAME"
