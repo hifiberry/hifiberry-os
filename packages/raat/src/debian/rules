@@ -1,5 +1,10 @@
 #!/usr/bin/make -f
 
+# Disable debug symbol generation
+export DEB_BUILD_OPTIONS=nostrip
+export DEB_CFLAGS_STRIP=-g
+export DEB_CXXFLAGS_STRIP=-g
+
 %:
 	dh $@ --with python3
 

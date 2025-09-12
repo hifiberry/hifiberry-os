@@ -12,14 +12,25 @@ LIBRESPOT_VERSION = v0.7.1
 export CARGO_HOME = $(CURDIR)/debian/cargo_home
 export RUSTUP_HOME = $(CURDIR)/debian/rustup_home
 
+# Optimize Rust compilation for space efficiency and avoid /tmp
+export CARGO_BUILD_JOBS = 1
+export CARGO_INCREMENTAL = 0
+export RUST_BACKTRACE = 0
+
 %:
 	dh $@
 
 override_dh_auto_clean:
 	dh_auto_clean
 	rm -rf target/
+	rm -rf librespot-source/target/
 	rm -rf $(CARGO_HOME)
 	rm -rf $(RUSTUP_HOME)
+	rm -rf $(CURDIR)/build_tmp
+	rm -rf $(CURDIR)/build_home
+	rm -rf librespot-source/
+	find . -name "*.rlib" -delete 2>/dev/null || true
+	find . -name "*.rmeta" -delete 2>/dev/null || true
 
 override_dh_auto_configure:
 	# Install Rust if not available
@@ -42,11 +53,45 @@ override_dh_auto_configure:
 		echo "Checking out version: $(LIBRESPOT_VERSION)"; \
 		git checkout $(LIBRESPOT_VERSION); \
 	fi
+	# Create space-optimized Cargo config
+	mkdir -p librespot-source/.cargo; \
+	echo '[profile.release]' > librespot-source/.cargo/config.toml; \
+	echo 'opt-level = "s"' >> librespot-source/.cargo/config.toml; \
+	echo 'lto = true' >> librespot-source/.cargo/config.toml; \
+	echo 'codegen-units = 1' >> librespot-source/.cargo/config.toml; \
+	echo 'panic = "abort"' >> librespot-source/.cargo/config.toml; \
+	echo 'strip = true' >> librespot-source/.cargo/config.toml; \
+	echo '[build]' >> librespot-source/.cargo/config.toml; \
+	echo 'jobs = 1' >> librespot-source/.cargo/config.toml; \
+	echo 'target-dir = "target"' >> librespot-source/.cargo/config.toml
 
 override_dh_auto_build:
-	cd librespot-source && \
-	PATH="$(CARGO_HOME)/bin:$(PATH)" \
-	cargo build --release --no-default-features --features "rodio-backend alsa-backend with-avahi native-tls"
+	# Create isolated build directories
+	mkdir -p $(CURDIR)/build_workspace/tmp $(CURDIR)/build_workspace/home; \
+	# Clean any existing build artifacts first
+	rm -rf $(CURDIR)/librespot-source/target/* 2>/dev/null || true; \
+	# Create a minimal build script that forces all paths
+	echo '#!/bin/bash' > $(CURDIR)/build.sh; \
+	echo 'set -e' >> $(CURDIR)/build.sh; \
+	echo 'cd "$(CURDIR)/librespot-source"' >> $(CURDIR)/build.sh; \
+	echo 'export TMPDIR="$(CURDIR)/build_workspace/tmp"' >> $(CURDIR)/build.sh; \
+	echo 'export HOME="$(CURDIR)/build_workspace/home"' >> $(CURDIR)/build.sh; \
+	echo 'export CARGO_TARGET_DIR="$(CURDIR)/librespot-source/target"' >> $(CURDIR)/build.sh; \
+	echo 'export CARGO_BUILD_INCREMENTAL=false' >> $(CURDIR)/build.sh; \
+	echo 'export CARGO_BUILD_JOBS=1' >> $(CURDIR)/build.sh; \
+	echo 'export RUST_BACKTRACE=0' >> $(CURDIR)/build.sh; \
+	echo 'export PATH="$(CARGO_HOME)/bin:$$PATH"' >> $(CURDIR)/build.sh; \
+	echo 'echo "Using TMPDIR: $$TMPDIR"' >> $(CURDIR)/build.sh; \
+	echo 'echo "Using HOME: $$HOME"' >> $(CURDIR)/build.sh; \
+	echo 'echo "Using CARGO_TARGET_DIR: $$CARGO_TARGET_DIR"' >> $(CURDIR)/build.sh; \
+	echo 'exec cargo build --release --jobs 1 --no-default-features --features "rodio-backend alsa-backend with-avahi native-tls"' >> $(CURDIR)/build.sh; \
+	chmod +x $(CURDIR)/build.sh; \
+	# Run the build script
+	$(CURDIR)/build.sh; \
+	# Clean up intermediate files
+	find $(CURDIR)/librespot-source/target -name "*.rlib" -delete 2>/dev/null || true; \
+	find $(CURDIR)/librespot-source/target -name "*.rmeta" -delete 2>/dev/null || true; \
+	rm -rf $(CURDIR)/build_workspace $(CURDIR)/build.sh
 
 override_dh_auto_install:
 	# Install librespot binary
@@ -71,3 +116,9 @@ override_dh_auto_install:
 
 override_dh_auto_test:
 	# Skip tests - requires network access and specific hardware
+
+override_dh_strip:
+	# Disable debug symbol generation completely
+	dh_strip --no-automatic-dbgsym
+	# Also remove any debug directories that might have been created
+	rm -rf $(CURDIR)/debian/hifiberry-librespot/usr/lib/debug
