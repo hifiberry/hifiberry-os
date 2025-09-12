@@ -6,9 +6,6 @@ Before=initial-volume.service
 
 [Service]
 Type=simple
-Environment=HOME=/var/lib/squeezelite
-User=squeezelite
-Group=audio
 ExecStartPre=-/usr/bin/config-volume --store
 ExecStart=/usr/bin/start-squeezelite
 ExecStartPost=sleep 2
@@ -19,4 +16,4 @@ RestartSec=5
 TimeoutStopSec=5
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target

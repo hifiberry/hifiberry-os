@@ -18,7 +18,7 @@ Vcs-Git: https://github.com/ralph-irving/squeezelite.git
 Package: hifiberry-squeezelite
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         libflac12,
+         libflac14 | libflac12,
          libmad0,
          libvorbis0a,
          libmpg123-0,

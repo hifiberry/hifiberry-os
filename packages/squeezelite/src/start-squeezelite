@@ -1,6 +1,16 @@
 #!/bin/sh
 ARGS="-o default -M HiFiBerry"
 
+# Create user-specific runtime directory for squeezelite if running as user service
+if [ -n "${XDG_RUNTIME_DIR:-}" ] || [ -n "${XDG_SESSION_ID:-}" ]; then
+  # Running as user service
+  RUNTIME_DIR="${HOME}/.squeezelite"
+  mkdir -p "$RUNTIME_DIR"
+else
+  # Fallback to system directory
+  RUNTIME_DIR="/var/lib/squeezelite"
+fi
+
 # Get the ALSA parameters
 ALSAPARAMS=$(config-db --get squeezelite.alsaparams 2>/dev/null)
 if [ $? -eq 0 ] && [ -n "$ALSAPARAMS" ]; then
