@@ -1,5 +1,10 @@
 #!/usr/bin/make -f
 
+# Disable debug symbol generation
+export DEB_BUILD_OPTIONS=nostrip
+export DEB_CFLAGS_STRIP=-g
+export DEB_CXXFLAGS_STRIP=-g
+
 %:
 	dh $@
 
@@ -18,8 +23,7 @@ override_dh_auto_build:
 override_dh_auto_install:
 	# Install squeezelite binary
 	mkdir -p debian/hifiberry-squeezelite/usr/bin
-	mkdir -p debian/hifiberry-squeezelite/lib/systemd/system
-	mkdir -p debian/hifiberry-squeezelite/var/lib/squeezelite
+	mkdir -p debian/hifiberry-squeezelite/usr/lib/systemd/user
 	mkdir -p debian/hifiberry-squeezelite/usr/share/man/man1
 	
 	# Copy squeezelite binary
@@ -29,8 +33,8 @@ override_dh_auto_install:
 	cp start-squeezelite debian/hifiberry-squeezelite/usr/bin/
 	chmod +x debian/hifiberry-squeezelite/usr/bin/start-squeezelite
 	
-	# Install systemd service
-	cp squeezelite.service debian/hifiberry-squeezelite/lib/systemd/system/
+	# Install systemd user service
+	cp squeezelite.service debian/hifiberry-squeezelite/usr/lib/systemd/user/
 	
 	# Install manual pages
 	cp man/squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/
@@ -42,3 +46,9 @@ override_dh_auto_clean:
 
 override_dh_auto_test:
 	# Skip tests - requires audio hardware
+
+override_dh_strip:
+	# Disable debug symbol generation completely
+	dh_strip --no-automatic-dbgsym
+	# Also remove any debug directories that might have been created
+	rm -rf $(CURDIR)/debian/hifiberry-squeezelite/usr/lib/debug
