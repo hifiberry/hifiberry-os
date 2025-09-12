@@ -4,6 +4,11 @@
 SHAIRPORT_VERSION ?= 5.0
 SHAIRPORT_COMMIT ?= d40e499de56a44371976aaf2d62b0532af5b9cc9
 
+# Disable debug symbol generation
+export DEB_BUILD_OPTIONS=nostrip
+export DEB_CFLAGS_STRIP=-g
+export DEB_CXXFLAGS_STRIP=-g
+
 %:
 	dh $@
 
