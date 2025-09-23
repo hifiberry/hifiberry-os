@@ -1,11 +1,15 @@
 #!/bin/sh
 
+# Configuration variables
+PACKAGE_DIR="$HOME/packages/trixie"
+APTLY_REPO="hbos-trixie"
+
 # Remove debug symbol packages
 rm -f */*dbgsym*.deb
 
-# Copy packages to ~/packages, but don't overwrite existing ones
-echo "Copying packages to ~/packages..."
-mkdir -p ~/packages
+# Copy packages to package directory, but don't overwrite existing ones
+echo "Copying packages to $PACKAGE_DIR..."
+mkdir -p "$PACKAGE_DIR"
 
 copied=0
 skipped=0
@@ -14,13 +18,13 @@ added_to_repo=0
 for deb in */*.deb; do
     if [ -f "$deb" ]; then
         basename_deb=$(basename "$deb")
-        target="$HOME/packages/$basename_deb"
+        target="$PACKAGE_DIR/$basename_deb"
         
         if [ -f "$target" ]; then
-            echo "SKIPPED: $basename_deb (already exists in ~/packages)"
+            echo "SKIPPED: $basename_deb (already exists in $PACKAGE_DIR)"
             skipped=$((skipped + 1))
         else
-            cp "$deb" ~/packages/
+            cp "$deb" "$PACKAGE_DIR/"
             echo "COPIED: $basename_deb"
             copied=$((copied + 1))
             
@@ -30,7 +34,7 @@ for deb in */*.deb; do
             case "$answer" in
                 [Yy]|[Yy][Ee][Ss])
                     echo "Adding $basename_deb to repository..."
-                    if aptly repo add hbos "$target"; then
+                    if aptly repo add "$APTLY_REPO" "$target"; then
                         echo "SUCCESS: $basename_deb added to repository"
                         added_to_repo=$((added_to_repo + 1))
                     else
