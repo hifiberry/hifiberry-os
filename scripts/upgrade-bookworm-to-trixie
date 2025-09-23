@@ -1,0 +1,280 @@
+#!/bin/bash
+#
+# upgrade-bookworm-to-trixie - Upgrade HiFiBerry OS from Debian Bookworm to Trixie
+#
+# This script performs a major version upgrade from Debian 12 (Bookworm) to Debian 13 (Trixie)
+# WARNING: This is a significant upgrade that may require manual intervention
+#
+
+set -e  # Exit on any error
+
+# Color output for better readability
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+# Function to check if running as root
+check_root() {
+    if [ "$EUID" -ne 0 ]; then
+        log_error "This script must be run as root (use sudo)"
+        exit 1
+    fi
+}
+
+# Function to check current Debian version
+check_current_version() {
+    if [ ! -f /etc/debian_version ]; then
+        log_error "This does not appear to be a Debian system"
+        exit 1
+    fi
+    
+    local version=$(cat /etc/debian_version)
+    log_info "Current Debian version: $version"
+    
+    # Check if we're on Bookworm (12.x)
+    if ! echo "$version" | grep -q "^12\." ; then
+        log_warning "This script is designed for Debian 12 (Bookworm) to Debian 13 (Trixie) upgrade"
+        log_warning "Current version: $version"
+        echo -n "Continue anyway? [y/N]: "
+        read -r response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            log_info "Upgrade cancelled"
+            exit 0
+        fi
+    fi
+}
+
+# Function to create backup of important configuration files
+create_backup() {
+    local backup_dir="/root/hbos-upgrade-backup-$(date +%Y%m%d-%H%M%S)"
+    log_info "Creating backup in $backup_dir"
+    
+    mkdir -p "$backup_dir"
+    
+    # Backup critical system files
+    cp -r /etc/apt "$backup_dir/" 2>/dev/null || true
+    cp /etc/fstab "$backup_dir/" 2>/dev/null || true
+    cp /etc/hosts "$backup_dir/" 2>/dev/null || true
+    cp /etc/hostname "$backup_dir/" 2>/dev/null || true
+    cp -r /etc/systemd "$backup_dir/" 2>/dev/null || true
+    cp -r /boot/config.txt "$backup_dir/" 2>/dev/null || true
+    
+    # Backup HiFiBerry specific configs
+    cp -r /etc/hifiberry* "$backup_dir/" 2>/dev/null || true
+    
+    # Create list of installed packages
+    dpkg --get-selections > "$backup_dir/installed-packages.txt"
+    
+    log_success "Backup created in $backup_dir"
+    echo "$backup_dir" > /tmp/hbos-upgrade-backup-location
+}
+
+# Function to update sources.list for Trixie
+update_sources_list() {
+    log_info "Updating APT sources for Trixie"
+    
+    # Backup current sources
+    cp /etc/apt/sources.list /etc/apt/sources.list.bookworm.bak
+    
+    # Update main sources.list
+    sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+    
+    # Update sources.list.d files
+    if [ -d /etc/apt/sources.list.d ]; then
+        find /etc/apt/sources.list.d -name "*.list" -exec sed -i 's/bookworm/trixie/g' {} \;
+    fi
+    
+    # Handle HiFiBerry repository if present
+    if [ -f /etc/apt/sources.list.d/hifiberry.list ]; then
+        log_info "Updating HiFiBerry repository configuration"
+        # Note: This may need adjustment based on actual HiFiBerry repo structure
+        sed -i 's/bookworm/trixie/g' /etc/apt/sources.list.d/hifiberry.list
+    fi
+    
+    log_success "APT sources updated for Trixie"
+}
+
+# Function to perform the upgrade
+perform_upgrade() {
+    log_info "Starting upgrade process..."
+    
+    # Update package lists
+    log_info "Updating package lists..."
+    apt update
+    
+    # Upgrade APT and dpkg first
+    log_info "Upgrading package management tools..."
+    apt install -y apt dpkg
+    
+    # Perform minimal upgrade first
+    log_info "Performing minimal upgrade..."
+    apt upgrade -y
+    
+    # Full distribution upgrade
+    log_info "Performing full distribution upgrade..."
+    log_warning "This may take a long time and require user interaction..."
+    
+    # Use DEBIAN_FRONTEND=noninteractive for automated upgrades where possible
+    export DEBIAN_FRONTEND=noninteractive
+    
+    # Perform the distribution upgrade
+    apt full-upgrade -y
+    
+    log_success "Distribution upgrade completed"
+}
+
+# Function to clean up after upgrade
+cleanup_post_upgrade() {
+    log_info "Performing post-upgrade cleanup..."
+    
+    # Remove obsolete packages
+    apt autoremove -y
+    
+    # Clean package cache
+    apt autoclean
+    
+    # Update package database
+    apt update
+    
+    log_success "Post-upgrade cleanup completed"
+}
+
+# Function to verify upgrade
+verify_upgrade() {
+    log_info "Verifying upgrade..."
+    
+    local new_version=$(cat /etc/debian_version)
+    log_info "New Debian version: $new_version"
+    
+    if echo "$new_version" | grep -q "^13\." ; then
+        log_success "Successfully upgraded to Debian 13 (Trixie)"
+    else
+        log_warning "Version check inconclusive. Please verify manually."
+    fi
+    
+    # Check for broken packages
+    local broken=$(dpkg --audit | wc -l)
+    if [ "$broken" -eq 0 ]; then
+        log_success "No broken packages found"
+    else
+        log_warning "Found $broken potentially broken packages. Run 'dpkg --audit' to check."
+    fi
+}
+
+# Function to update HiFiBerry specific components
+update_hifiberry_components() {
+    log_info "Updating HiFiBerry specific components..."
+    
+    # Update HiFiBerry packages if available
+    if command -v hifiberry-setup >/dev/null 2>&1; then
+        log_info "Updating HiFiBerry configuration..."
+        # Add specific HiFiBerry update commands here
+    fi
+    
+    # Rebuild any kernel modules if needed
+    if [ -d /lib/modules/$(uname -r) ]; then
+        log_info "Rebuilding kernel modules..."
+        depmod -a
+    fi
+    
+    log_success "HiFiBerry components updated"
+}
+
+# Function to display post-upgrade notes
+show_post_upgrade_notes() {
+    echo ""
+    log_info "=== POST-UPGRADE NOTES ==="
+    echo ""
+    log_warning "Please review the following after the upgrade:"
+    echo "1. Reboot the system to ensure all changes take effect"
+    echo "2. Test audio functionality and HiFiBerry hardware"
+    echo "3. Check system logs for any errors: journalctl -xe"
+    echo "4. Verify network connectivity and services"
+    echo "5. Update any custom configurations if needed"
+    echo ""
+    
+    if [ -f /tmp/hbos-upgrade-backup-location ]; then
+        local backup_dir=$(cat /tmp/hbos-upgrade-backup-location)
+        log_info "Backup location: $backup_dir"
+        echo "Keep this backup until you've verified everything works correctly."
+    fi
+    
+    echo ""
+    log_info "If you encounter issues, you can:"
+    echo "- Check /var/log/apt/history.log for upgrade details"
+    echo "- Restore from backup if necessary"
+    echo "- Consult HiFiBerry documentation"
+    echo ""
+}
+
+# Main upgrade process
+main() {
+    echo ""
+    log_info "=== HiFiBerry OS Upgrade: Bookworm to Trixie ==="
+    echo ""
+    
+    # Preliminary checks
+    check_root
+    check_current_version
+    
+    # Confirmation prompt
+    log_warning "This will upgrade your system from Debian Bookworm to Trixie"
+    log_warning "This is a major upgrade that may take significant time"
+    log_warning "Ensure you have a backup and stable power supply"
+    echo ""
+    echo -n "Do you want to continue? [y/N]: "
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        log_info "Upgrade cancelled"
+        exit 0
+    fi
+    
+    echo ""
+    log_info "Starting upgrade process..."
+    
+    # Perform upgrade steps
+    create_backup
+    update_sources_list
+    perform_upgrade
+    update_hifiberry_components
+    cleanup_post_upgrade
+    verify_upgrade
+    
+    echo ""
+    log_success "=== UPGRADE COMPLETED ==="
+    show_post_upgrade_notes
+    
+    echo ""
+    echo -n "Reboot now? [Y/n]: "
+    read -r reboot_response
+    if [[ ! "$reboot_response" =~ ^[Nn]$ ]]; then
+        log_info "Rebooting system..."
+        reboot
+    else
+        log_info "Please reboot manually when ready"
+    fi
+}
+
+# Handle script interruption
+trap 'log_error "Upgrade interrupted! System may be in inconsistent state."; exit 1' INT TERM
+
+# Run main function
+main "$@"
