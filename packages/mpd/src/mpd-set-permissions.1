@@ -1,0 +1,54 @@
+.TH MPD-SET-PERMISSIONS 1 "September 2025" "hifiberry-mpd" "User Commands"
+.SH NAME
+mpd-set-permissions \- set ACL permissions for MPD directories
+.SH SYNOPSIS
+.B mpd-set-permissions
+.I username
+.SH DESCRIPTION
+.B mpd-set-permissions
+sets Access Control List (ACL) permissions for MPD directories to allow a specific user to read and write to MPD's data directories. This is useful when multiple users need access to MPD's music library and playlists.
+.PP
+The script configures ACL permissions for the following directories:
+.RS
+.IP \(bu 2
+/var/lib/mpd
+.IP \(bu 2
+/var/lib/mpd/music
+.IP \(bu 2
+/var/lib/mpd/playlists
+.RE
+.PP
+The script sets both regular ACL permissions and default ACL permissions so that new files and directories inherit the correct permissions.
+.SH ARGUMENTS
+.TP
+.I username
+The name of the user to grant read/write access to MPD directories. The user must exist on the system.
+.SH EXAMPLES
+.TP
+Grant MPD directory access to user 'alice':
+.B mpd-set-permissions alice
+.SH DEPENDENCIES
+This script requires the
+.B acl
+package to be installed, which provides the
+.BR setfacl (1)
+and
+.BR getfacl (1)
+commands.
+.SH FILES
+.TP
+.I /var/lib/mpd
+Main MPD data directory
+.TP
+.I /var/lib/mpd/music
+MPD music library directory
+.TP
+.I /var/lib/mpd/playlists
+MPD playlists directory
+.SH SEE ALSO
+.BR mpd (1),
+.BR setfacl (1),
+.BR getfacl (1),
+.BR configure-mpd (1)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>

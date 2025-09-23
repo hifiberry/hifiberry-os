@@ -1,0 +1,23 @@
+.TH CONFIGURE-MPD 1 "September 2025" "hifiberry-mpd" "User Commands"
+.SH NAME
+configure-mpd \- configure MPD for HiFiBerry devices
+.SH SYNOPSIS
+.B configure-mpd
+.SH DESCRIPTION
+.B configure-mpd
+is a utility script that configures the Music Player Daemon (MPD) for optimal operation on HiFiBerry devices. It sets up device-specific audio output configurations and other HiFiBerry-related settings.
+.PP
+This script is typically run automatically during system configuration but can also be executed manually to reconfigure MPD settings.
+.SH FILES
+.TP
+.I /usr/share/mpd/mpd.conf
+Default MPD configuration template
+.TP
+.I ~/.config/mpd/mpd.conf
+User-specific MPD configuration file
+.SH SEE ALSO
+.BR mpd (1),
+.BR mpc (1),
+.BR mpd-set-permissions (1)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>
