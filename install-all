@@ -1,6 +1,52 @@
+#!/bin/bash
+
+# Check that script is not running as root
+if [ "$EUID" -eq 0 ]; then
+    echo "Error: This script should not be run as root"
+    echo "Please run this script as the normal user that will be used to run the music players"
+    echo "The script will use 'sudo' when elevated privileges are needed"
+    exit 1
+fi
+
+# Check if running Debian 13/Trixie
+if [ ! -f /etc/debian_version ]; then
+    echo "Error: This script requires Debian"
+    exit 1
+fi
+
+debian_version=$(cat /etc/debian_version)
+if ! echo "$debian_version" | grep -q "^13\." && ! grep -q "trixie" /etc/os-release 2>/dev/null; then
+    echo "Error: This script requires Debian 13 (Trixie)"
+    echo "Current version: $debian_version"
+    exit 1
+fi
+
+echo "Detected Debian 13/Trixie - proceeding with installation"
+
+# Add HiFiBerry repository if not already present
+if ! grep -q "debianrepo.hifiberry.com" /etc/apt/sources.list.d/hifiberry.list 2>/dev/null; then
+    echo "Adding HiFiBerry repository..."
+    echo "deb [signed-by=/usr/share/keyrings/hifiberry-archive-keyring.gpg] http://debianrepo.hifiberry.com trixie main" | sudo tee /etc/apt/sources.list.d/hifiberry.list
+    wget -O- "https://keys.openpgp.org/vks/v1/by-fingerprint/4192E989F186E770B273F98B7997FC464E443CFA" | gpg --dearmor | sudo tee /usr/share/keyrings/hifiberry-archive-keyring.gpg > /dev/null
+else
+    echo "HiFiBerry repository already configured"
+fi
+
 sudo apt update -y
-sudo apt install -y hifiberry-pipewire 
-sudo apt install -y python3-hifiberrydsp python3-configurator python3-audiocontrol2 hifiberry-raat
+sudo apt install -y hbos-minimal
 
 # Base configuration
- sudo config-configtxt --default-config
+sudo config-configtxt --default-config
+
+# Check if $USER is set, otherwise set it
+if [ -z "$USER" ]; then
+    echo "USER environment variable is not set, defaulting to 'hifiberry'"
+    USER=`whoami`
+fi
+
+# Write current username to /etc/hifiberry.user
+echo "$USER" | sudo tee /etc/hifiberry.user
+
+# Linger for current user
+echo "Enabling linger for user $USER"
+sudo loginctl enable-linger "$USER"
