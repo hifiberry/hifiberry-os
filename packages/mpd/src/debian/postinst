@@ -4,7 +4,14 @@ set -e
 # User-service: no system users or global config setup required.
 case "$1" in
     configure)
-        :
+        # Ensure MPD directories exist with proper permissions and group ownership
+        mkdir -p /var/lib/mpd
+        mkdir -p /var/lib/mpd/music
+        mkdir -p /var/lib/mpd/playlists
+        
+        # Set group ownership to audio and make directories group-writable
+        chgrp audio /var/lib/mpd /var/lib/mpd/music /var/lib/mpd/playlists
+        chmod g+rwx /var/lib/mpd /var/lib/mpd/music /var/lib/mpd/playlists
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
         :

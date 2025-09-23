@@ -4,7 +4,7 @@ set -e
 case "$1" in
     remove|upgrade|deconfigure)
         # Ensure system socket is disabled/removed if it exists from previous versions
-        if [ -x /bin/systemctl ] || [ -x /usr/bin/systemctl ]; then
+        if command -v systemctl >/dev/null 2>&1; then
             systemctl stop mpd.socket 2>/dev/null || true
             systemctl disable mpd.socket 2>/dev/null || true
         fi

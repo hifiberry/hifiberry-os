@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# mpd-set-permissions - Set ACL permissions for MPD directories
+# Usage: mpd-set-permissions <username>
+
+set -e
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <username>" >&2
+    echo "Sets ACL permissions for the specified user to write to MPD directories" >&2
+    exit 1
+fi
+
+USERNAME="$1"
+
+# Check if user exists
+if ! id "$USERNAME" >/dev/null 2>&1; then
+    echo "Error: User '$USERNAME' does not exist" >&2
+    exit 1
+fi
+
+# Check if ACL tools are available
+if ! command -v setfacl >/dev/null 2>&1; then
+    echo "Error: setfacl command not found. Please install acl package:" >&2
+    echo "  apt-get install acl" >&2
+    exit 1
+fi
+
+# MPD directories that need write access
+MPD_DIRS=(
+    "/var/lib/mpd"
+    "/var/lib/mpd/music"
+    "/var/lib/mpd/playlists"
+)
+
+echo "Setting ACL permissions for user '$USERNAME' on MPD directories..."
+
+for dir in "${MPD_DIRS[@]}"; do
+    if [ ! -d "$dir" ]; then
+        echo "Creating directory: $dir"
+        mkdir -p "$dir"
+        # Set basic permissions and group ownership
+        chgrp audio "$dir"
+        chmod g+rwx "$dir"
+    fi
+    
+    echo "Setting ACL for $dir"
+    # Give user read, write, and execute permissions
+    setfacl -m "u:${USERNAME}:rwx" "$dir"
+    
+    # Set default ACL so new files/directories inherit permissions
+    setfacl -m "d:u:${USERNAME}:rwx" "$dir"
+    
+    # Also ensure the audio group has write access
+    setfacl -m "g:audio:rwx" "$dir"
+    setfacl -m "d:g:audio:rwx" "$dir"
+done
+
+echo "ACL permissions set successfully for user '$USERNAME'"
+echo ""
+echo "Current ACL permissions:"
+for dir in "${MPD_DIRS[@]}"; do
+    echo "=== $dir ==="
+    getfacl "$dir" 2>/dev/null || echo "Could not read ACL for $dir"
+    echo ""
+done
