@@ -2,12 +2,40 @@
 
 set -e
 
+CHROOT_ARCH=${1:-arm64}
+VERSION=bookworm
+CHROOT_NAME=$CHROOT_ARCH-$VERSION-hifiberry-sbuild
+CHROOT_DIR=/srv/chroot/${CHROOT_NAME}
+MIRROR=http://deb.debian.org/debian
+
 # Parse command line arguments
 CLEAN_MODE=false
 if [ "$1" = "--clean" ]; then
     CLEAN_MODE=true
     echo "Clean mode enabled - will clean and rebuild all packages"
 fi
+
+# Check if architecture is supported
+if [ -z "$CHROOT_ARCH" ]; then
+    echo "Usage: $0 <arch: armhf|arm64>"
+    echo "Default architecture is arm64"
+    exit 1
+fi
+
+# --- Restrict architecture to armhf or arm64 ---
+if [ "$CHROOT_ARCH" != "armhf" ] && [ "$CHROOT_ARCH" != "arm64" ]; then
+    echo "Error: architecture must be either 'armhf' or 'arm64'"
+    exit 1
+fi
+
+sudo mkdir -p $CHROOT_DIR
+
+sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
+    --arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
+sudo cp /usr/bin/qemu-aarch64-static ${CHROOT_DIR}/usr/bin/
+sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
+sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
+    ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
 # Define the packages directory
 PACKAGES_DIR="$HOME/packages"
@@ -41,7 +69,7 @@ for dir in "$SCRIPT_DIR"/*/; do
             fi
             
             echo "Running build.sh in $dir..."
-            ./build.sh
+            ./build.sh $CHROOT_ARCH
             echo 
             sleep 2
         )
