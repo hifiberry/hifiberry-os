@@ -2,40 +2,50 @@
 
 set -e
 
-CHROOT_ARCH=${1:-arm64}
+SUFFIX=-hifiberry-sbuild
+CHROOT_ARCH=arm64
 VERSION=bookworm
-CHROOT_NAME=$CHROOT_ARCH-$VERSION-hifiberry-sbuild
-CHROOT_DIR=/srv/chroot/${CHROOT_NAME}
 MIRROR=http://deb.debian.org/debian
+CLEAN_MODE=false
 
 # Parse command line arguments
-CLEAN_MODE=false
-if [ "$1" = "--clean" ]; then
-    CLEAN_MODE=true
-    echo "Clean mode enabled - will clean and rebuild all packages"
-fi
+for arg in "$@"; do
+    case "$arg" in
+        --clean)
+            CLEAN_MODE=true
+            echo "Clean mode enabled - will clean and rebuild all packages"
+            ;;
+        amd64|arm64|armhf)
+            CHROOT_ARCH="$arg"
+            ;;
+        *)
+            echo "Warning: unknown argument '$arg' ignored"
+            ;;
+    esac
+done
 
-# Check if architecture is supported
-if [ -z "$CHROOT_ARCH" ]; then
-    echo "Usage: $0 <arch: armhf|arm64>"
-    echo "Default architecture is arm64"
+# Check architecture
+if [ "$CHROOT_ARCH" != "amd64" ] && [ "$CHROOT_ARCH" != "arm64" ] && [ "$CHROOT_ARCH" != "armhf" ]; then
+    echo "Error: architecture must be 'amd64', 'arm64', or 'armhf'"
     exit 1
 fi
 
-# --- Restrict architecture to armhf or arm64 ---
-if [ "$CHROOT_ARCH" != "armhf" ] && [ "$CHROOT_ARCH" != "arm64" ]; then
-    echo "Error: architecture must be either 'armhf' or 'arm64'"
-    exit 1
+mkdir -p ~/.cache/sbuild
+
+#Check if the tarball does already exists, in that case we do not have to create a new one.
+TARBALL_PATH="$HOME/.cache/sbuild/$VERSION-$CHROOT_ARCH.tar.zst"
+
+if [ ! -f "$TARBALL_PATH" ]; then
+	echo "Creating Tarball for version: $VERSION, architecture: $CHROOT_ARCH"
+	mmdebstrap \
+  		--arch=$CHROOT_ARCH \
+  		--include=ca-certificates \
+  		--skip=output/dev \
+  		--variant=buildd \
+  		bookworm \
+  		~/.cache/sbuild/$VERSION-$CHROOT_ARCH.tar.zst \
+  		$MIRROR
 fi
-
-sudo mkdir -p $CHROOT_DIR
-
-sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
-    --arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
-sudo cp /usr/bin/qemu-aarch64-static ${CHROOT_DIR}/usr/bin/
-sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
-sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
-    ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
 # Define the packages directory
 PACKAGES_DIR="$HOME/packages"
@@ -70,7 +80,7 @@ for dir in "$SCRIPT_DIR"/*/; do
             
             echo "Running build.sh in $dir..."
             ./build.sh $CHROOT_ARCH
-            echo 
+            echo
             sleep 2
         )
     else

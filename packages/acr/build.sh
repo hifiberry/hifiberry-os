@@ -5,7 +5,8 @@ set -e
 
 # Define variables
 SOURCE_PACKAGE="acr"
-REPO_URL="https://github.com/hifiberry/acr"
+#REPO_URL="https://github.com/hifiberry/acr"
+REPO_URL="https://github.com/LarsGrootkarzijn/acr.git"
 DEB_OUTPUT_DIR="deb_dist"
 DEST_DIR="$HOME/packages"
 
@@ -112,7 +113,7 @@ chmod u+x ./build.sh
 # Check that we're in the right directory and call the ACR build script
 if [ -f "./build.sh" ] && [ -f "./Cargo.toml" ]; then
     echo "Calling ACR build script from directory: $(pwd)"
-    ./build.sh
+    ./build.sh $1
 else
     echo "Error: Not in correct ACR package directory or missing build files"
     echo "Current directory: $(pwd)"
