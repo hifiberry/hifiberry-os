@@ -1,3 +1,11 @@
+hifiberry-mpd (0.24.5.3) stable; urgency=low
+
+  * Enhanced ACL permissions management for audio group access
+  * Improved directory ownership handling for /var/lib/mpd
+  * Refined mpd-set-permissions script with better error handling
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Sep 2025 14:00:00 +0000
+
 hifiberry-mpd (0.24.5.2) stable; urgency=low
 
   * Add mpd-set-permissions script for ACL management

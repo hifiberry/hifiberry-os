@@ -1,3 +1,11 @@
+hifiberry-squeezelite (2.0.0.1543) stable; urgency=medium
+
+  * Enhanced systemd service reliability and integration
+  * Improved maintainer script robustness and error handling
+  * Better service state management during package operations
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Sep 2025 14:00:00 +0000
+
 hifiberry-squeezelite (2.0.0.1542) stable; urgency=medium
 
   * Improved systemd service integration with debhelper compatibility

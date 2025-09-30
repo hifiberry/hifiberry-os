@@ -3,7 +3,7 @@
 set -e
 
 # Configuration
-VERSION="0.3"
+VERSION="0.4"
 PACKAGE_NAME="hifiberryos-meta"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="${SCRIPT_DIR}/src"

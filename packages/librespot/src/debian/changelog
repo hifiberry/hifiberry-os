@@ -1,3 +1,11 @@
+hifiberry-librespot (0.7.1.3) stable; urgency=medium
+
+  * Optimized build process to avoid /tmp usage with custom TMPDIR configuration
+  * Enhanced sbuild integration with /var/tmp for better disk space management
+  * Improved Rust compilation process with custom temporary directory handling
+
+ -- HiFiBerry <info@hifiberry.com>  Mon, 30 Sep 2025 14:00:00 +0000
+
 hifiberry-librespot (0.7.1.2) stable; urgency=medium
 
   * Convert systemd unit to a per-user service (installed under /usr/lib/systemd/user)

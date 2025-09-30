@@ -1,3 +1,11 @@
+hifiberry-shairport (5.0.0.5) stable; urgency=medium
+
+  * Further enhanced postinst script reliability and error handling
+  * Improved user and directory management during package operations
+  * Better integration with systemd service management
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Sep 2025 14:00:00 +0000
+
 hifiberry-shairport (5.0.0.4) stable; urgency=medium
 
   * Improved postinst script ordering to create directories before adding users
