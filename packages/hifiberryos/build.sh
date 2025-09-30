@@ -3,11 +3,11 @@
 set -e
 
 # Configuration
-VERSION="0.2"
+VERSION="0.3"
 PACKAGE_NAME="hifiberryos-meta"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="${SCRIPT_DIR}/src"
-BUILD_DIR="/tmp/build-${PACKAGE_NAME}"
+BUILD_DIR="${SCRIPT_DIR}/build-${PACKAGE_NAME}"
 
 echo "Building HiFiBerry OS meta-packages..."
 
