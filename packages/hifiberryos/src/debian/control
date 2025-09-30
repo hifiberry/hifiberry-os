@@ -59,17 +59,22 @@ Description: HiFiBerry OS minimal meta-package
 Package: hbos-full
 Architecture: all
 Depends: hifiberry-baseconfig,
-         hifiberry-audiocontrol,
          hifiberry-configurator,
          hifiberry-eeprom,
          hifiberry-dsp,
-         hifiberry-librespot,
+         hifiberry-dspprofiles,
          hifiberry-mpd,
-         hifiberry-pipewire,
+         hifiberry-audiocontrol,
+         hifiberry-webui,
+         pipewire,
+         pipewire-alsa,
+         pipewire-bin,
+         pipewire-pulse,
+         wireplumber,
+         hifiberry-librespot,
          hifiberry-raat,
          hifiberry-shairport,
-         hifiberry-squeezelite,
-         hifiberry-webui
+         hifiberry-squeezelite
 Description: HiFiBerry OS full meta-package
  This meta-package provides the complete set of HiFiBerry OS components
  for full functionality. It includes all audio streaming services and
