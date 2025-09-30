@@ -28,3 +28,4 @@ packages/pipewire-configs/src/debian/debhelper-build-stamp
 packages/dspprofiles/dspprofiles/
 packages/webui/hbos-ui/
 packages/roomeq/roomeq/
+packages/librespot/sbuild_workspace
