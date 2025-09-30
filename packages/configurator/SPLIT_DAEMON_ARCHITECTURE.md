@@ -5,15 +5,15 @@
 The HiFiBerry configuration system has been split into two separate daemons to resolve PipeWire permission issues:
 
 1. **Root Daemon** (`config-server`) - Handles system configuration that requires root privileges
-2. **User Daemon** (`hifiberry-pipewire-daemon`) - Handles PipeWire operations in user session
+2. **User Daemon** (`config-server-user`) - Handles PipeWire operations in user session
 
 ## Architecture
 
 ```
 ┌─────────────────────┐    HTTP API     ┌──────────────────────────┐
 │   Root Daemon       │ ──────────────> │   User Daemon            │
-│   (config-server)   │    (port 8081)  │   (pipewire-daemon)      │
-│   Port: 8080        │                 │   Port: 8081             │
+│   (config-server)   │    (port 1082)  │   (pipewire-daemon)      │
+│   Port: 8080        │                 │   Port: 1082             │
 │   User: root        │                 │   User: configured user  │
 └─────────────────────┘                 └──────────────────────────┘
          │                                          │
@@ -40,10 +40,10 @@ The HiFiBerry configuration system has been split into two separate daemons to r
   - Package management
   - Proxies PipeWire requests to user daemon
 
-### User Daemon (hifiberry-pipewire-daemon)
-- **Location**: `/usr/bin/hifiberry-pipewire-daemon`
-- **Service**: `hifiberry-pipewire-daemon.service` (user service)
-- **Port**: 8081 (configurable via environment)
+### User Daemon (config-server-user)
+- **Location**: `/usr/bin/config-server-user`
+- **Service**: `config-server-user.service` (user service)
+- **Port**: 1082 (configurable via environment)
 - **Runs as**: configured user (from `/etc/hifiberry.user`)
 - **Responsibilities**:
   - All PipeWire operations (volume, mixing, balance, etc.)
@@ -86,11 +86,11 @@ Add or update the pipewire section:
 su - matuschd
 
 # Enable and start the user daemon
-systemctl --user enable hifiberry-pipewire-daemon.service
-systemctl --user start hifiberry-pipewire-daemon.service
+systemctl --user enable config-server-user.service
+systemctl --user start config-server-user.service
 
 # Check status
-systemctl --user status hifiberry-pipewire-daemon.service
+systemctl --user status config-server-user.service
 ```
 
 ### 4. Start Root Daemon
@@ -114,7 +114,7 @@ Examples:
 - `GET /api/v1/pipewire/monostereo` - Get monostereo mode
 - `POST /api/v1/pipewire/balance` - Set balance
 
-### User Daemon (Port 8081) - Internal API
+### User Daemon (Port 1082) - Internal API
 The user daemon exposes its own API but this is primarily for internal communication:
 
 - `GET /api/v1/volume/controls` - List volume controls
@@ -127,7 +127,7 @@ The user daemon exposes its own API but this is primarily for internal communica
 ## Environment Variables
 
 ### User Daemon
-- `PIPEWIRE_DAEMON_PORT` - Port for user daemon (default: 8081)
+- `PIPEWIRE_DAEMON_PORT` - Port for user daemon (default: 1082)
 - `PIPEWIRE_DAEMON_HOST` - Host for user daemon (default: 127.0.0.1)
 
 ## Troubleshooting
@@ -135,14 +135,14 @@ The user daemon exposes its own API but this is primarily for internal communica
 ### Check User Daemon Status
 ```bash
 # As the configured user
-systemctl --user status hifiberry-pipewire-daemon.service
-journalctl --user -u hifiberry-pipewire-daemon.service -f
+systemctl --user status config-server-user.service
+journalctl --user -u config-server-user.service -f
 ```
 
 ### Check Communication
 ```bash
 # Test user daemon directly
-curl http://127.0.0.1:8081/api/v1/health
+curl http://127.0.0.1:1082/api/v1/health
 
 # Test via root daemon proxy
 curl http://127.0.0.1:8080/api/v1/pipewire/controls
