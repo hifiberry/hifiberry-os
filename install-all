@@ -16,9 +16,55 @@ fi
 
 debian_version=$(cat /etc/debian_version)
 if ! echo "$debian_version" | grep -q "^13\." && ! grep -q "trixie" /etc/os-release 2>/dev/null; then
-    echo "Error: This script requires Debian 13 (Trixie)"
-    echo "Current version: $debian_version"
-    exit 1
+    echo "Current Debian version: $debian_version"
+    echo "This script requires Debian 13 (Trixie)"
+    
+    # Check if we're on a compatible version for upgrade
+    if echo "$debian_version" | grep -q "^12\." || grep -q "bookworm" /etc/os-release 2>/dev/null; then
+        echo "You appear to be running Debian 12 (Bookworm)"
+        echo "Would you like to upgrade to Debian 13 (Trixie)? [y/N]"
+        read -r response
+        
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+            echo "Starting upgrade to Debian 13 (Trixie)..."
+            
+            # Backup sources.list
+            sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
+            
+            # Update sources.list to point to trixie
+            echo "Updating package sources to Trixie..."
+            sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+            sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list.d/*.list 2>/dev/null || true
+            
+            # Update package lists
+            echo "Updating package lists..."
+            sudo apt update
+            
+            # Perform minimal upgrade first
+            echo "Performing minimal upgrade..."
+            sudo apt upgrade -y
+            
+            # Perform full distribution upgrade
+            echo "Performing distribution upgrade..."
+            sudo apt full-upgrade -y
+            
+            # Clean up
+            echo "Cleaning up..."
+            sudo apt autoremove -y
+            sudo apt autoclean
+            
+            echo "Upgrade to Debian 13 (Trixie) completed!"
+            echo "Please reboot your system and run this script again."
+            exit 0
+        else
+            echo "Upgrade declined. Exiting."
+            exit 1
+        fi
+    else
+        echo "Automatic upgrade is only supported from Debian 12 (Bookworm)"
+        echo "Please manually upgrade to Debian 13 (Trixie) and run this script again"
+        exit 1
+    fi
 fi
 
 echo "Detected Debian 13/Trixie - proceeding with installation"
