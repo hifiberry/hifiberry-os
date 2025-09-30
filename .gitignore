@@ -30,3 +30,4 @@ packages/webui/hbos-ui/
 packages/roomeq/roomeq/
 packages/librespot/sbuild_workspace
 packages/librespot/sbuild_tmp
+packages/hifiberryos/build-hifiberryos-meta
