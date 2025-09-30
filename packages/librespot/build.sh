@@ -1,8 +1,5 @@
 #!/bin/bash
-
 set -e
-
-
 
 # Building package with sbuild
 echo "Building package with sbuild..."
@@ -14,7 +11,14 @@ chmod +x debian/rules
 
 # Create a build directory in the current location instead of /tmp
 BUILD_DIR="$(pwd)/../sbuild_workspace"
+SBUILD_TMPDIR="/var/tmp/sbuild_tmp"
 mkdir -p "$BUILD_DIR"
+mkdir -p "$SBUILD_TMPDIR"
+
+# Set TMPDIR for sbuild to use /var/tmp
+export TMPDIR="$SBUILD_TMPDIR"
+
+echo "Using TMPDIR: $TMPDIR for sbuild"
 
 # Use sbuild to build the package with custom build directory
 if [ -z "$DIST" ]; then
@@ -26,8 +30,9 @@ fi
 # Go back to parent directory
 cd ..
 
-# Clean up the sbuild workspace to save space
+# Clean up the sbuild workspaces to save space
 rm -rf "$BUILD_DIR" 2>/dev/null || true
+rm -rf "$SBUILD_TMPDIR" 2>/dev/null || true
 
 echo "Package build completed."
 echo "Built packages:"
