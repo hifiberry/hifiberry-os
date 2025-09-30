@@ -1,3 +1,34 @@
+hifiberryos-meta (0.4) unstable; urgency=medium
+
+  * Updated hifiberry-audiocontrol to 0.6.11:
+    - Added REST endpoints to pause/stop all players with fallback support
+    - Updated API documentation for new endpoints
+    - Improved volume control initialization with retry mechanism
+  * Updated hifiberry-librespot to 0.7.1.2:
+    - Converted to per-user systemd service architecture
+    - Migrated from system service to user session runtime
+    - Enhanced integration with user pipewire service
+    - Build optimizations to avoid /tmp usage
+  * Updated hifiberry-mpd to 0.24.5.2:
+    - Added mpd-set-permissions script for ACL management
+    - Fixed MPD directory permissions and audio group ownership
+    - Added manual pages for custom scripts
+    - Enhanced systemctl integration in maintainer scripts
+  * Updated hifiberry-raat to 1.1.43.14:
+    - Migrated to systemd user service from system service
+    - Updated for Debian 13 Trixie compatibility
+    - Enhanced hardware detection with --no-eeprom flag support
+  * Updated hifiberry-shairport to 5.0.0.4:
+    - Improved postinst script ordering for directory creation
+    - Enhanced system user setup reliability during installation
+    - Fixed directory creation sequence to prevent warnings
+  * Updated hifiberry-squeezelite to 2.0.0.1542:
+    - Improved systemd service integration with debhelper
+    - Enhanced upgrade detection and service state preservation
+    - Refactored maintainer scripts following Debian best practices
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Sep 2025 14:00:00 +0000
+
 hifiberryos-meta (0.3) unstable; urgency=medium
 
   * Update packages
