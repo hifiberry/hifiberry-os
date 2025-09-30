@@ -1,3 +1,9 @@
+hifiberryos-meta (0.3) unstable; urgency=medium
+
+  * Update packages
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Sep 2025 12:00:00 +0000
+
 hifiberryos-meta (0.2) unstable; urgency=medium
 
   * Updated package dependencies and configurations
