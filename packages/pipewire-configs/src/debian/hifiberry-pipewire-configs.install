@@ -1,0 +1,2 @@
+etc/pipewire/pipewire.conf.d/90-hifiberry-effects.conf
+etc/pipewire/pipewire.conf.d/99-hifiberry-headless.conf

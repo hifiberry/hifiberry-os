@@ -1,0 +1,24 @@
+Source: hifiberry-pipewire-configs
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://hifiberry.com/os
+
+Package: hifiberry-pipewire-configs
+Architecture: all
+Depends: ${misc:Depends}, pipewire
+Recommends: pipewire-pulse, wireplumber
+Description: HiFiBerry PipeWire configuration files
+ This package provides PipeWire configuration files optimized for HiFiBerry
+ audio systems and headless environments.
+ .
+ Included configurations:
+  - 90-hifiberry-effects.conf: Advanced audio processing with parametric EQ,
+    balance control, and mono/stereo conversion
+  - 99-hifiberry-headless.conf: Optimized configuration for headless systems
+    without D-Bus session or X11 dependencies
+ .
+ These configurations enhance audio quality and provide advanced DSP features
+ while maintaining compatibility with headless and embedded audio systems.

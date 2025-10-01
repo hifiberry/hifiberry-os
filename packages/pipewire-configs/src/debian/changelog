@@ -1,0 +1,15 @@
+hifiberry-pipewire-configs (1.0.0) stable; urgency=medium
+
+  * Initial release of HiFiBerry PipeWire configuration package
+  * Added 90-hifiberry-effects.conf with advanced audio processing:
+    - 16-band parametric EQ for left and right channels
+    - Balance control with crossfeed capabilities
+    - Mono/stereo conversion options
+    - Virtual sink for audio effects processing
+  * Added 99-hifiberry-headless.conf for headless systems:
+    - Disables D-Bus session dependencies
+    - Disables X11 bell module
+    - Optimized for embedded and server environments
+  * Extracted from legacy pipewire package for modular installation
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 01 Oct 2025 16:00:00 +0000

@@ -32,6 +32,7 @@ Depends: hifiberry-configurator,
          hifiberry-mpd,
          hifiberry-audiocontrol,
          hifiberry-webui,
+         hifiberry-pipewire-configs,
          pipewire,
          pipewire-alsa,
          pipewire-bin,
@@ -46,7 +47,7 @@ Description: HiFiBerry OS minimal meta-package
   - DSP toolkit for audio processing (hifiberry-dsp)
   - Music Player Daemon (hifiberry-mpd)
   - Audio control utilities (hifiberry-audiocontrol)
-  - PipeWire audio server (hifiberry-pipewire)
+  - PipeWire audio server with optimized configurations (hifiberry-pipewire-configs)
   - Modern web interface (hifiberry-webui)
  .
  This package is ideal for users who want a lightweight installation with
@@ -61,6 +62,7 @@ Depends: hifiberry-configurator,
          hifiberry-mpd,
          hifiberry-audiocontrol,
          hifiberry-webui,
+         hifiberry-pipewire-configs,
          pipewire,
          pipewire-alsa,
          pipewire-bin,
@@ -75,7 +77,7 @@ Description: HiFiBerry OS full meta-package
  for full functionality. It includes all audio streaming services and
  advanced features:
  .
-  - All components from hbos-minimal
+  - All components from hbos-minimal (including PipeWire configurations)
   - Spotify Connect support (hifiberry-librespot)
   - AirPlay streaming (hifiberry-shairport)
   - Squeezebox/Logitech Media Server support (hifiberry-squeezelite)
