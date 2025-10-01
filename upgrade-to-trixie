@@ -1,0 +1,182 @@
+#!/bin/bash
+
+# Upgrade script from Debian 12 (Bookworm) to Debian 13 (Trixie)
+
+# Check that script is not running as root
+if [ "$EUID" -eq 0 ]; then
+    echo "Error: This script should not be run as root"
+    echo "Please run this script as a normal user"
+    echo "The script will use 'sudo' when elevated privileges are needed"
+    exit 1
+fi
+
+# Check if running Debian
+if [ ! -f /etc/debian_version ]; then
+    echo "Error: This script requires Debian"
+    exit 1
+fi
+
+debian_version=$(cat /etc/debian_version)
+
+# Check if already on Debian 13/Trixie
+if echo "$debian_version" | grep -q "^13\." || grep -q "trixie" /etc/os-release 2>/dev/null; then
+    echo "Already running Debian 13 (Trixie)"
+    echo "Current version: $debian_version"
+    exit 0
+fi
+
+# Check if we're on a compatible version for upgrade
+if ! echo "$debian_version" | grep -q "^12\." && ! grep -q "bookworm" /etc/os-release 2>/dev/null; then
+    echo "Error: This upgrade script only supports upgrading from Debian 12 (Bookworm)"
+    echo "Current version: $debian_version"
+    echo "Please manually upgrade to Debian 13 (Trixie)"
+    exit 1
+fi
+
+echo "Current Debian version: $debian_version"
+echo "This script will upgrade your system from Debian 12 (Bookworm) to Debian 13 (Trixie)"
+echo ""
+echo "WARNING: This is a major system upgrade that may take considerable time"
+echo "and could potentially cause issues if interrupted."
+echo ""
+echo "Please ensure:"
+echo "- You have a stable internet connection"
+echo "- Your system has sufficient disk space"
+echo "- You have time to complete the upgrade without interruption"
+echo ""
+echo "Would you like to proceed with the upgrade? [y/N]"
+read -r response
+
+if [[ ! "$response" =~ ^[Yy]$ ]]; then
+    echo "Upgrade cancelled by user"
+    exit 0
+fi
+
+echo "Starting upgrade to Debian 13 (Trixie)..."
+
+# Backup sources.list
+echo "Backing up current package sources..."
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%Y%m%d_%H%M%S)
+
+# Update sources.list to point to trixie
+echo "Updating package sources to Trixie..."
+sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list.d/*.list 2>/dev/null || true
+
+# Update package lists
+echo "Updating package lists..."
+if ! sudo apt update; then
+    echo "Error: Failed to update package lists"
+    echo "Restoring original sources.list..."
+    sudo cp /etc/apt/sources.list.backup.* /etc/apt/sources.list 2>/dev/null || true
+    exit 1
+fi
+
+# Perform minimal upgrade first
+echo "Performing minimal upgrade..."
+if ! sudo apt upgrade -y; then
+    echo "Error: Minimal upgrade failed"
+    echo "Please check the errors above and try again"
+    exit 1
+fi
+
+echo ""
+echo "Minimal upgrade completed successfully."
+echo "A reboot is recommended before continuing with the full distribution upgrade."
+echo "This helps resolve library conflicts and ensures a clean upgrade process."
+echo ""
+echo "Would you like to reboot now and continue the upgrade after reboot? [Y/n]"
+read -r reboot_response
+
+if [[ ! "$reboot_response" =~ ^[Nn]$ ]]; then
+    echo ""
+    echo "Creating upgrade continuation script..."
+    cat > /tmp/continue-trixie-upgrade.sh << 'EOF'
+#!/bin/bash
+echo "Continuing Debian 13 (Trixie) upgrade after reboot..."
+
+# Perform full distribution upgrade
+echo "Performing distribution upgrade..."
+echo "This may take a long time and will require user interaction for some packages..."
+if ! sudo apt full-upgrade -y; then
+    echo "ERROR: Distribution upgrade failed"
+    echo "Please check the errors above and resolve manually"
+    exit 1
+fi
+
+# Clean up
+echo "Cleaning up..."
+sudo apt autoremove -y
+sudo apt autoclean
+
+# Verify upgrade
+new_version=$(cat /etc/debian_version)
+echo ""
+echo "Upgrade completed!"
+echo "Current version: $new_version"
+echo ""
+
+if echo "$new_version" | grep -q "^13\." || grep -q "trixie" /etc/os-release 2>/dev/null; then
+    echo "SUCCESS: Successfully upgraded to Debian 13 (Trixie)"
+    echo ""
+    echo "You can now run the HiFiBerry OS installation:"
+    echo "  ./install-all"
+else
+    echo "WARNING: Upgrade may not have completed successfully"
+    echo "Please check your system status manually"
+fi
+
+# Clean up this script
+rm -f /tmp/continue-trixie-upgrade.sh
+EOF
+    
+    chmod +x /tmp/continue-trixie-upgrade.sh
+    
+    echo "After reboot, run the following command to continue the upgrade:"
+    echo "  /tmp/continue-trixie-upgrade.sh"
+    echo ""
+    echo "Rebooting in 10 seconds... (Press Ctrl+C to cancel)"
+    sleep 10
+    sudo reboot
+    exit 0
+fi
+
+# If user chose not to reboot, continue with full upgrade
+echo ""
+echo "Continuing with full upgrade without reboot..."
+
+# Perform full distribution upgrade
+echo "Performing distribution upgrade..."
+echo "This may take a long time and will require user interaction for some packages..."
+if ! sudo apt full-upgrade -y; then
+    echo "ERROR: Distribution upgrade failed"
+    echo "Please check the errors above and resolve manually"
+    echo "You may need to reboot and try again to resolve library conflicts"
+    exit 1
+fi
+
+# Clean up
+echo "Cleaning up..."
+sudo apt autoremove -y
+sudo apt autoclean
+
+# Verify upgrade
+new_version=$(cat /etc/debian_version)
+echo ""
+echo "Upgrade completed!"
+echo "Previous version: $debian_version"
+echo "Current version: $new_version"
+echo ""
+
+if echo "$new_version" | grep -q "^13\." || grep -q "trixie" /etc/os-release 2>/dev/null; then
+    echo "SUCCESS: Successfully upgraded to Debian 13 (Trixie)"
+    echo ""
+    echo "IMPORTANT: Please reboot your system to complete the upgrade:"
+    echo "  sudo reboot"
+    echo ""
+    echo "After reboot, you can run the HiFiBerry OS installation:"
+    echo "  ./install-all"
+else
+    echo "WARNING: Upgrade may not have completed successfully"
+    echo "Please check your system status manually"
+fi
