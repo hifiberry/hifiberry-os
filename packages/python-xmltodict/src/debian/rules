@@ -16,11 +16,11 @@ override_dh_auto_configure:
 	# Download xmltodict source from PyPI
 	if [ ! -d xmltodict-source ]; then \
 		if command -v pip3 >/dev/null 2>&1; then \
-			pip3 download xmltodict --no-binary :all: --no-deps --dest .; \
+			pip3 download xmltodict==1.0.2 --no-binary :all: --no-deps --dest .; \
 		elif command -v pip >/dev/null 2>&1; then \
-			pip download xmltodict --no-binary :all: --no-deps --dest .; \
+			pip download xmltodict==1.0.2 --no-binary :all: --no-deps --dest .; \
 		else \
-			wget "https://files.pythonhosted.org/packages/source/x/xmltodict/xmltodict-0.13.0.tar.gz" -O "xmltodict-0.13.0.tar.gz"; \
+			wget "https://files.pythonhosted.org/packages/source/x/xmltodict/xmltodict-1.0.2.tar.gz" -O "xmltodict-1.0.2.tar.gz"; \
 		fi; \
 		TARFILE=$$(ls xmltodict-*.tar.gz | head -n1); \
 		tar -xzf "$$TARFILE"; \
