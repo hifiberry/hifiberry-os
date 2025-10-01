@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# No configuration needed
+
+override_dh_auto_build:
+	# No build needed
+
+override_dh_auto_test:
+	# No tests
+
+override_dh_auto_install:
+	# Files are copied by dh_installfiles based on package.install
