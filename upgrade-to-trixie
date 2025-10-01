@@ -91,7 +91,7 @@ read -r reboot_response
 if [[ ! "$reboot_response" =~ ^[Nn]$ ]]; then
     echo ""
     echo "Creating upgrade continuation script..."
-    cat > /tmp/continue-trixie-upgrade.sh << 'EOF'
+    cat > ~/continue-trixie-upgrade.sh << 'EOF'
 #!/bin/bash
 echo "Continuing Debian 13 (Trixie) upgrade after reboot..."
 
@@ -127,13 +127,13 @@ else
 fi
 
 # Clean up this script
-rm -f /tmp/continue-trixie-upgrade.sh
+rm -f ~/continue-trixie-upgrade.sh
 EOF
     
-    chmod +x /tmp/continue-trixie-upgrade.sh
+    chmod +x ~/continue-trixie-upgrade.sh
     
     echo "After reboot, run the following command to continue the upgrade:"
-    echo "  /tmp/continue-trixie-upgrade.sh"
+    echo "  ~/continue-trixie-upgrade.sh"
     echo ""
     echo "Rebooting in 10 seconds... (Press Ctrl+C to cancel)"
     sleep 10
