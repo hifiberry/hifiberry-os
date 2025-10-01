@@ -8,8 +8,7 @@ Homepage: https://hifiberry.com/os
 
 Package: hbos-test
 Architecture: all
-Depends: hifiberry-baseconfig,
-         hifiberry-configurator,
+Depends: hifiberry-configurator,
          hifiberry-eeprom,
          hifiberry-testtools,
          hifiberry-webui
@@ -17,8 +16,7 @@ Description: HiFiBerry OS testing meta-package
  This meta-package provides the minimal HiFiBerry OS components plus
  testing and development tools. It includes:
  .
-  - Base system configuration (hifiberry-baseconfig)
-  - Web-based configuration interface (hifiberry-configurator)
+  - Base system configuration and web interface (hifiberry-configurator)
   - HAT EEPROM tools and utilities (hifiberry-eeprom)
   - Modern web interface (hifiberry-webui)
   - Testing tools and utilities (hifiberry-testtools)
@@ -28,8 +26,7 @@ Description: HiFiBerry OS testing meta-package
 
 Package: hbos-minimal
 Architecture: all
-Depends: hifiberry-baseconfig,
-         hifiberry-configurator,
+Depends: hifiberry-configurator,
          hifiberry-eeprom,
          hifiberry-dsp,
          hifiberry-mpd,
@@ -44,8 +41,7 @@ Description: HiFiBerry OS minimal meta-package
  This meta-package provides the minimal set of HiFiBerry OS components
  required for basic functionality. It includes:
  .
-  - Base system configuration and hardware detection (hifiberry-baseconfig)
-  - Web-based configuration interface (hifiberry-configurator)
+  - Base system configuration and web interface (hifiberry-configurator)
   - HAT EEPROM tools and utilities (hifiberry-eeprom)
   - DSP toolkit for audio processing (hifiberry-dsp)
   - Music Player Daemon (hifiberry-mpd)
@@ -58,8 +54,7 @@ Description: HiFiBerry OS minimal meta-package
 
 Package: hbos-full
 Architecture: all
-Depends: hifiberry-baseconfig,
-         hifiberry-configurator,
+Depends: hifiberry-configurator,
          hifiberry-eeprom,
          hifiberry-dsp,
          hifiberry-dspprofiles,
