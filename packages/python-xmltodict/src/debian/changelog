@@ -1,3 +1,11 @@
+python3-xmltodict (1.0.2-1) unstable; urgency=medium
+
+  * Updated to xmltodict version 1.0.2 from PyPI
+  * Fixed build configuration to download correct version
+  * Enhanced package reliability and compatibility
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 30 Sep 2025 14:45:00 +0000
+
 python3-xmltodict (0.13.0-1) unstable; urgency=medium
 
   * Initial HiFiBerry packaging of xmltodict
