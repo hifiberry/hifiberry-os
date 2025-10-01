@@ -37,7 +37,9 @@ Depends: hifiberry-configurator,
          pipewire-alsa,
          pipewire-bin,
          pipewire-pulse,
-         wireplumber
+         wireplumber,
+         i2c-tools,
+         sox
 Description: HiFiBerry OS minimal meta-package
  This meta-package provides the minimal set of HiFiBerry OS components
  required for basic functionality. It includes:
@@ -71,7 +73,9 @@ Depends: hifiberry-configurator,
          hifiberry-librespot,
          hifiberry-raat,
          hifiberry-shairport,
-         hifiberry-squeezelite
+         hifiberry-squeezelite,
+         i2c-tools,
+         sox
 Description: HiFiBerry OS full meta-package
  This meta-package provides the complete set of HiFiBerry OS components
  for full functionality. It includes all audio streaming services and
