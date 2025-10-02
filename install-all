@@ -78,3 +78,16 @@ echo "$USER" | sudo tee /etc/hifiberry.user
 # Linger for current user
 echo "Enabling linger for user $USER"
 sudo loginctl enable-linger "$USER"
+
+# Configure user manager to forward logs to system journal
+echo "Configuring user manager to forward logs to system journal..."
+sudo mkdir -p /etc/systemd/user.conf.d
+sudo tee /etc/systemd/user.conf.d/journal.conf > /dev/null <<EOF
+[Manager]
+DefaultStandardOutput=journal
+DefaultStandardError=journal
+EOF
+
+# Reload the systemd user manager
+echo "Reloading systemd user manager..."
+systemctl --user daemon-reexec
