@@ -30,11 +30,22 @@ fi
 # Go back to parent directory
 cd ..
 
+# Move build artifacts before cleaning up
+echo "Looking for build artifacts..."
+find "$BUILD_DIR" -name "*.deb" -exec cp {} . \; 2>/dev/null || true
+find "$BUILD_DIR" -name "*.changes" -exec cp {} . \; 2>/dev/null || true
+find "$BUILD_DIR" -name "*.buildinfo" -exec cp {} . \; 2>/dev/null || true
+
+# Also check if artifacts are in the source directory
+find src -maxdepth 1 -name "*.deb" -exec mv {} . \; 2>/dev/null || true
+find src -maxdepth 1 -name "*.changes" -exec mv {} . \; 2>/dev/null || true
+find src -maxdepth 1 -name "*.buildinfo" -exec mv {} . \; 2>/dev/null || true
+
 # Clean up the sbuild workspaces to save space
 rm -rf "$BUILD_DIR" 2>/dev/null || true
 rm -rf "$SBUILD_TMPDIR" 2>/dev/null || true
 
 echo "Package build completed."
 echo "Built packages:"
-ls -la src/../*.deb 2>/dev/null || echo "No .deb files found"
+ls -la *.deb 2>/dev/null || echo "No .deb files found"
 
