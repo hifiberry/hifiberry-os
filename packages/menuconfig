@@ -1,0 +1,77 @@
+#!/bin/bash
+
+#Defaults
+BASE_DIR="./"
+CONFIG_FILE=".config"
+
+declare -A PKG_NAME
+declare -A PKG_DESC
+declare -A ENABLED
+packages=()
+
+#Load packages from info.conf
+for dir in "$BASE_DIR"/*/; do
+    [ -d "$dir" ] || continue
+    info_file="$dir/info.conf"
+    [ -f "$info_file" ] || continue
+    source "$info_file"
+    [ -z "$ID" ] || [ -z "$NAME" ] && continue
+    PKG_NAME["$ID"]="$NAME"
+    PKG_DESC["$ID"]="${DESC:-No description available}"
+    packages+=("$ID")
+done
+
+[ ${#packages[@]} -eq 0 ] && { echo "No valid packages found"; exit 0; }
+
+#Load existing config
+[[ -f "$CONFIG_FILE" ]] && while IFS='=' read -r key value; do
+    [[ "$key" =~ ^CONFIG_ ]] || continue
+    id="${key#CONFIG_}"
+    id="${id}"
+    [[ "$value" == "y" ]] && ENABLED["$id"]=1
+done < "$CONFIG_FILE"
+
+#Menu
+while true; do
+    menu_items=()
+    for id in "${packages[@]}"; do
+        state="[ ]"
+        [[ ${ENABLED[$id]} ]] && state="[x]"
+        menu_items+=("$id" "$state ${PKG_NAME[$id]}")
+    done
+
+    CHOICE=$(dialog --stdout \
+        --title "Menuconfig" \
+        --ok-label "Toggle" \
+        --extra-button --extra-label "Description" \
+        --cancel-label "Save & Exit" \
+        --menu "Use arrow keys to select:" 25 80 15 \
+        "${menu_items[@]}")
+    RET=$?
+    clear
+
+    case $RET in
+        0)
+            # Toggle selection
+            [[ ${ENABLED[$CHOICE]} ]] && unset ENABLED[$CHOICE] || ENABLED["$CHOICE"]=1
+            ;;
+        3)
+            # Show description of highlighted package
+            [ -n "$CHOICE" ] && dialog --msgbox "${PKG_NAME[$CHOICE]}\n\n${PKG_DESC[$CHOICE]}" 15 70
+            ;;
+        1|255)
+            break
+            ;;
+    esac
+done
+
+# Save .config
+echo "# Auto-generated configuration" > "$CONFIG_FILE"
+for id in "${!ENABLED[@]}"; do
+    echo "CONFIG_${id^^}=y" >> "$CONFIG_FILE"
+done
+
+clear
+
+echo "Configuration saved to $CONFIG_FILE:"
+cat "$CONFIG_FILE"

@@ -3,11 +3,53 @@
 # Exit on error
 set -e
 
+#Defaults
+ARCH="arm64"
 PACKAGE="hifiberry-baseconfig"
 
 # Extract version from changelog as single source of truth
 SCRIPT_DIR="$(dirname $(realpath $0))"
 VERSION=$(head -1 "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+
+#Help message
+print_help() {
+    cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+Options:
+  --arch <arch>    Target architecture (default: arm64, supported: arm64)
+  --help           Show this help message and exit
+  --dist <dist>    Target distribution
+EOF
+}
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --arch=*)
+            ARCH="${1#*=}"
+            shift
+            ;;
+        --help)
+            print_help
+            exit 0
+            ;;
+        --dist=*)
+ 	    DIST="${1#*=}"
+	    shift
+	    ;;
+        *)
+            echo "Error: unknown option $1" >&2
+            print_help
+            exit 1
+            ;;
+    esac
+done
+
+if [ "$ARCH" != "arm64" ]; then
+    echo "Error: architecture not supported." >&2
+    exit 1
+fi
+
 echo "Version from changelog: $VERSION"
 
 # Check if DIST is set by environment variable
@@ -42,6 +84,7 @@ echo "Using sbuild..."
 sbuild \
     --chroot-mode=unshare \
     --no-clean-source \
+    --arch=$ARCH \
     $DIST_ARG \
     $CHROOT_ARG \
     --build-dir="$BUILD_DIR" \

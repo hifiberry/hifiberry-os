@@ -2,91 +2,132 @@
 
 set -e
 
-SUFFIX=-hifiberry-sbuild
-CHROOT_ARCH=arm64
-VERSION=bookworm
+#Defaults
+ARCH=arm64
+VERSION=stable
 MIRROR=http://deb.debian.org/debian
 CLEAN_MODE=false
+CHROOT_TARBALL_LOCATION=$HOME/.cache/sbuild
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/.config"
+
+print_help() {
+    cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Options:
+  --arch=<arch>  Target architecture (default: arm64, supported: arm64)
+  --help         Show this help message and exit
+  --clean        Clean and rebuild all packages
+EOF
+    exit 0
+}
+
+#Mapping ID and Folder/Name from info.conf
+declare -A ID_TO_FOLDER
+declare -A ID_TO_NAME
+
+for dir in "$SCRIPT_DIR"/*/; do
+    [ -d "$dir" ] || continue
+    info_file="$dir/info.conf"
+    [ -f "$info_file" ] || continue
+    source "$info_file"
+    [ -z "$ID" ] || [ -z "$NAME" ] && continue
+
+    ID_TO_FOLDER["$ID"]="$dir"
+    ID_TO_NAME["$ID"]="$NAME"
+done
+
+enabled_packages=()
+enabled_names=()
+
+#Mapping .config file name to folder and name.
+if [[ -f "$CONFIG_FILE" ]]; then
+    while IFS='=' read -r key value; do
+        [[ "$key" =~ ^CONFIG_ ]] || continue
+        [[ "$value" == "y" ]] || continue
+        id="${key#CONFIG_}"
+
+        enabled_packages+=("$id")
+        enabled_names+=("${ID_TO_NAME[$id]}")
+    done < "$CONFIG_FILE"
+else
+    echo "No .config file found. Exiting."
+    exit 1
+fi
 
 # Parse command line arguments
-for arg in "$@"; do
-    case "$arg" in
-        --clean)
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --arch=*)
+            ARCH="${1#*=}"
+            shift
+	    ;;
+        --help)
+            print_help
+            exit 0
+            ;;
+	--clean)
             CLEAN_MODE=true
             echo "Clean mode enabled - will clean and rebuild all packages"
-            ;;
-        amd64|arm64|armhf)
-            CHROOT_ARCH="$arg"
+            shift
             ;;
         *)
-            echo "Warning: unknown argument '$arg' ignored"
+            echo "Error: unknown option $1" >&2
+            print_help
+            exit 1
             ;;
     esac
 done
 
 # Check architecture
-if [ "$CHROOT_ARCH" != "amd64" ] && [ "$CHROOT_ARCH" != "arm64" ] && [ "$CHROOT_ARCH" != "armhf" ]; then
-    echo "Error: architecture must be 'amd64', 'arm64', or 'armhf'"
+if [ "$ARCH" != "arm64" ]; then
+    echo "Error: architecture not supported" >&2
     exit 1
 fi
 
-mkdir -p ~/.cache/sbuild
-
 #Check if the tarball does already exists, in that case we do not have to create a new one.
-TARBALL_PATH="$HOME/.cache/sbuild/$VERSION-$CHROOT_ARCH.tar.zst"
-
+TARBALL_PATH="$CHROOT_TARBALL_LOCATION/$VERSION-$ARCH.tar.zst"
 if [ ! -f "$TARBALL_PATH" ]; then
-	echo "Creating Tarball for version: $VERSION, architecture: $CHROOT_ARCH"
+	echo "Creating Tarball for version: $VERSION, architecture: $ARCH"
 	mmdebstrap \
-  		--arch=$CHROOT_ARCH \
+  		--arch=$ARCH \
   		--include=ca-certificates \
   		--skip=output/dev \
   		--variant=buildd \
-  		bookworm \
-  		~/.cache/sbuild/$VERSION-$CHROOT_ARCH.tar.zst \
+  		stable \
+  		$TARBALL_PATH \
   		$MIRROR
 fi
 
-# Define the packages directory
-PACKAGES_DIR="$HOME/packages"
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Looking for build.sh in subdirectories of $SCRIPT_DIR..."
+echo
 
-for dir in "$SCRIPT_DIR"/*/; do
-    figlet `basename $dir`
+for id in "${enabled_packages[@]}"; do
+    dir="${ID_TO_FOLDER[$id]}"
+    name="${enabled_names[$id]}"
+    [ -z "$dir" ] && continue
+
+    echo $CLEAN_MODE
+    # Check if .deb files already exist
+    if [ "$CLEAN_MODE" != true ] && ls "$dir"/*.deb 1> /dev/null 2>&1; then
+        echo "Found existing .deb file for $name in $dir. Skipping build (use --clean to force rebuild)."
+        echo
+        sleep 1
+        continue
+    fi
+
+    echo "Building $name in folder $dir"
+    echo
+
     if [ -f "$dir/build.sh" ]; then
-        echo "Found build.sh in $dir"
-        
-        # Check if .deb files already exist (unless cleaning)
-        if [ "$CLEAN_MODE" = false ] && ls "$dir"/*.deb 1> /dev/null 2>&1; then
-            echo "Found existing .deb files in $dir. Skipping build (use --clean to force rebuild)..."
-            echo 
-            sleep 1
-            continue
-        fi
-        
-        echo "Executing build process..."
         (
             cd "$dir"
-            chmod ugo+x ./build.sh 2>/dev/null || true
-            chmod ugo+x ./clean.sh 2>/dev/null || true
-            
-            # Run clean.sh only if clean mode is enabled or if it doesn't exist
-            if [ "$CLEAN_MODE" = true ] && [ -f clean.sh ]; then
-                echo "Running clean.sh in $dir..."
-                ./clean.sh
-            fi
-            
-            echo "Running build.sh in $dir..."
-            ./build.sh $CHROOT_ARCH
-            echo
-            sleep 2
+            chmod +x ./build.sh 2>/dev/null || true
+            [ "$CLEAN_MODE" = true ] && [ -f clean.sh ] && ./clean.sh
+            ./build.sh --arch=$ARCH
         )
-    else
-        echo "No build.sh found in $dir. Skipping..."
     fi
 done
 
 echo "All builds completed."
-
