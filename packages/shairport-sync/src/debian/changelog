@@ -1,3 +1,17 @@
+hifiberry-shairport (5.0.0.7) stable; urgency=medium
+
+  * Fixed binary stripping to resolve lintian unstripped-binary errors
+  * Updated build dependency from obsolete pkg-config to pkgconf
+  * Improved package compliance with Debian packaging standards
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 06 Oct 2025 16:00:00 +0000
+
+hifiberry-shairport (5.0.0.6) stable; urgency=medium
+
+  * correct libplist dependency version
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 6 Oct 2025 14:00:00 +0000
+
 hifiberry-shairport (5.0.0.5) stable; urgency=medium
 
   * Further enhanced postinst script reliability and error handling

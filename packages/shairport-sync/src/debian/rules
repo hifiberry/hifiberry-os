@@ -4,11 +4,6 @@
 SHAIRPORT_VERSION ?= 5.0
 SHAIRPORT_COMMIT ?= d40e499de56a44371976aaf2d62b0532af5b9cc9
 
-# Disable debug symbol generation
-export DEB_BUILD_OPTIONS=nostrip
-export DEB_CFLAGS_STRIP=-g
-export DEB_CXXFLAGS_STRIP=-g
-
 %:
 	dh $@
 
@@ -140,7 +135,5 @@ override_dh_auto_test:
 	# Skip tests - requires audio hardware and network setup
 
 override_dh_strip:
-	# Disable debug symbol generation completely
+	# Strip binaries but don't create separate debug symbol packages
 	dh_strip --no-automatic-dbgsym
-	# Also remove any debug directories that might have been created
-	rm -rf $(CURDIR)/debian/hifiberry-shairport/usr/lib/debug
