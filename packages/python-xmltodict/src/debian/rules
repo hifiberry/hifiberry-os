@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 
 export PYBUILD_NAME=xmltodict
-export PYBUILD_DIR=xmltodict-source
 
 %:
 	dh $@ --with python3 --buildsystem=pybuild
@@ -26,13 +25,33 @@ override_dh_auto_configure:
 		tar -xzf "$$TARFILE"; \
 		SRCDIR=$$(basename "$$TARFILE" .tar.gz); \
 		mv "$$SRCDIR" xmltodict-source; \
+		if [ ! -f xmltodict-source/setup.py ] && [ -f xmltodict-source/pyproject.toml ]; then \
+			echo "Creating setup.py from pyproject.toml for Bullseye compatibility..."; \
+			cd xmltodict-source && \
+			echo 'from setuptools import setup, find_packages' > setup.py && \
+			echo '' >> setup.py && \
+			echo 'setup(' >> setup.py && \
+			echo '    name="xmltodict",' >> setup.py && \
+			echo '    version="1.0.2",' >> setup.py && \
+			echo '    description="XML to Python dict converter",' >> setup.py && \
+			echo '    py_modules=["xmltodict"],' >> setup.py && \
+			echo '    python_requires=">=3.6",' >> setup.py && \
+			echo '    classifiers=[' >> setup.py && \
+			echo '        "Development Status :: 5 - Production/Stable",' >> setup.py && \
+			echo '        "Intended Audience :: Developers",' >> setup.py && \
+			echo '        "License :: OSI Approved :: MIT License",' >> setup.py && \
+			echo '        "Programming Language :: Python :: 3",' >> setup.py && \
+			echo '    ],' >> setup.py && \
+			echo ')' >> setup.py && \
+			cd ..; \
+		fi; \
 	fi
 
 override_dh_auto_build:
-	dh_auto_build
+	cd xmltodict-source && python3 setup.py build
 
 override_dh_auto_install:
-	dh_auto_install
+	cd xmltodict-source && python3 setup.py install --root=$(CURDIR)/debian/python3-xmltodict --install-layout=deb
 
 override_dh_auto_test:
 	# Skip tests - no test suite provided
