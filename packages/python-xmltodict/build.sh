@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="python3-xmltodict"
-VERSION="0.13.0-1"
+VERSION="1.0.2-1"
 DIST="${DIST:-bullseye}"
 
 # Check if DIST is set by environment variable
