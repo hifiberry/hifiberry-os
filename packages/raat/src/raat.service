@@ -10,6 +10,9 @@ StandardOutput=journal
 Restart=always
 RestartSec=5
 TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=raat
 
 [Install]
 WantedBy=default.target
