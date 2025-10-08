@@ -76,6 +76,16 @@ curl -Ls https://tinyurl.com/hbosrepo | bash
 
 ### Package installation
 
+The install-all script will install the minimal base packages:
+
+```
+curl -Ls https://raw.githubusercontent.com/hifiberry/hifiberry-os/refs/heads/hbosng/install-all | bash
+```
+
+### Install all players
+
+The minimal image only uses 
+
 Install a full or minimal set of packages. The full set included all players, while the minimal comes only with mpd. This allows you to install only the players you really need.
 
 ```
