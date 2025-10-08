@@ -46,6 +46,12 @@ if [ -n "${XDG_RUNTIME_DIR:-}" ] || [ -n "${XDG_SESSION_ID:-}" ]; then
   CONFIG_DIR="$HOME/.raat"
 fi
 
+# Check if /var/lib/raat is writable for metadata pipe functionality
+if [ ! -w "/var/lib/raat" ] && [ ! -w "/var/lib" ]; then
+  echo "Error: /var/lib/raat is not writable by the current user"
+  echo "Error: metadata pipe won't be available"
+fi
+
 # Ensure config directory exists
 mkdir -p "$CONFIG_DIR"
 

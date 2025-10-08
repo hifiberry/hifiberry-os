@@ -22,6 +22,16 @@ case "$1" in
             mkdir -p /var/lib/raat
             chown raat:raat /var/lib/raat
             chmod 755 /var/lib/raat
+        else
+            # For user service deployments, create /var/lib/raat with audio group access
+            # This is needed for metadata pipe functionality even in user service mode
+            mkdir -p /var/lib/raat
+            if getent group audio >/dev/null; then
+                chgrp audio /var/lib/raat
+                chmod 775 /var/lib/raat
+            else
+                chmod 755 /var/lib/raat
+            fi
         fi
         ;;
 esac
