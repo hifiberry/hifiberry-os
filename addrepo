@@ -1,4 +1,28 @@
 #!/bin/bash
-echo "deb [signed-by=/usr/share/keyrings/hifiberry-archive-keyring.gpg] http://debianrepo.hifiberry.com bookworm main" | sudo tee /etc/apt/sources.list.d/hifiberry.list
-wget -O- "https://keys.openpgp.org/vks/v1/by-fingerprint/4192E989F186E770B273F98B7997FC464E443CFA" | gpg --dearmor | sudo tee /usr/share/keyrings/hifiberry-archive-keyring.gpg > /dev/null
-sudo apt update
+
+# Check if running Debian
+if [ ! -f /etc/debian_version ]; then
+    echo "Error: This script requires Debian 12 (bookworm) or 13 (trixie)"
+    exit 1
+fi
+
+
+# Determine OS version
+if [ -f /etc/os-release ]; then
+   . /etc/os-release
+else
+   echo "File /etc/os-release not found. Could not determine OS version."
+   exit 1
+fi
+
+
+# Add repo only when running bookworm or trixie
+if [ $VERSION_CODENAME == "bookworm" ] || [ $VERSION_CODENAME == "trixie" ]; then
+   echo "deb [signed-by=/usr/share/keyrings/hifiberry-archive-keyring.gpg] http://debianrepo.hifiberry.com $(echo "$VERSION_CODENAME") main" | sudo tee /etc/apt/sources.list.d/hifiberry.list
+   wget -O- "https://keys.openpgp.org/vks/v1/by-fingerprint/4192E989F186E770B273F98B7997FC464E443CFA" | gpg --dearmor | sudo tee /usr/share/keyrings/hifiberry-archive-keyring.gpg > /dev/null
+   sudo apt update
+else
+   echo "Error: This script requires Debian 12 (bookworm) or 13 (trixie)"
+   echo "You are running $NAME, version $VERSION"
+   exit 1
+fi
