@@ -1,0 +1,64 @@
+.TH START-RAAT 1 "October 2025" "HiFiBerry OS" "User Commands"
+.SH NAME
+start-raat \- start RAAT (Roon Advanced Audio Transport) service
+.SH SYNOPSIS
+.B start-raat
+.SH DESCRIPTION
+.B start-raat
+is a wrapper script that starts the RAAT (Roon Advanced Audio Transport) service
+with proper configuration and environment setup for HiFiBerry devices.
+.PP
+The script performs the following operations:
+.IP \(bu 2
+Checks if Avahi daemon is running and waits up to 30 seconds for it to become available
+.IP \(bu 2
+Determines the appropriate configuration directory (per-user or system-wide)
+.IP \(bu 2
+Checks write permissions for /var/lib/raat for metadata pipe functionality
+.IP \(bu 2
+Creates necessary configuration directories
+.IP \(bu 2
+Runs configure-raat to generate the RAAT configuration
+.IP \(bu 2
+Starts the RAAT application with trace logging enabled
+.SH CONFIGURATION
+The script uses different configuration directories depending on the runtime environment:
+.TP
+.B User service mode
+Configuration stored in ~/.raat
+.TP
+.B System service mode
+Configuration stored in /var/lib/raat
+.SH FILES
+.TP
+.I ~/.raat/
+Per-user RAAT configuration directory
+.TP
+.I /var/lib/raat/
+System-wide RAAT configuration directory
+.TP
+.I /var/lib/raat/hifiberry.conf
+Generated RAAT configuration file
+.SH ENVIRONMENT
+.TP
+.B XDG_RUNTIME_DIR
+If set, indicates user service mode
+.TP
+.B XDG_SESSION_ID
+If set, indicates user service mode
+.SH DEPENDENCIES
+.TP
+.B avahi-daemon
+Required for mDNS functionality
+.TP
+.B configure-raat
+Configuration generator script
+.TP
+.B raat_app
+The main RAAT application binary
+.SH SEE ALSO
+.BR configure-raat (1),
+.BR systemctl (1),
+.BR avahi-daemon (8)
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>
