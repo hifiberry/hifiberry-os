@@ -8,7 +8,7 @@ Build-Depends: debhelper-compat (= 13),
                python3-setuptools,
                git,
                cmake,
-               pkg-config,
+               pkgconf,
                libglib2.0-dev,
                libasound2-dev,
                ca-certificates

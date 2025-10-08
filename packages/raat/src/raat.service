@@ -5,7 +5,7 @@ ConditionPathExists=/etc/uuid
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/start-raat.sh
+ExecStart=/usr/bin/start-raat
 StandardOutput=journal
 Restart=always
 RestartSec=5
