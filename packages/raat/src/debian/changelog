@@ -1,3 +1,16 @@
+hifiberry-raat (1.1.43.18) stable; urgency=medium
+
+  * Moved pause-all to /bin
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Oct 2025 16:00:00 +0000
+ 
+ hifiberry-raat (1.1.43.17) stable; urgency=medium
+
+  * Added proper existence and executable checks for pause command
+  * Improved error handling and logging for missing pause script
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 08 Oct 2025 16:00:00 +0000
+
 hifiberry-raat (1.1.43.16) stable; urgency=medium
 
   * Improved check on pause-all and meta data pipe
