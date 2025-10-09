@@ -6,7 +6,7 @@ Wants=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/nqptp -v
+ExecStart=/usr/bin/start-nqptp
 Restart=on-failure
 RestartSec=5
 
