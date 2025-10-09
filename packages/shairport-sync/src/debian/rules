@@ -102,12 +102,14 @@ override_dh_auto_install:
 	
 	# Install custom scripts (remove .sh extensions)
 	install -D -m755 start-shairport.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/start-shairport
+	install -D -m755 start-nqptp.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/start-nqptp
 	install -D -m755 shairport-event.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event
 	install -D -m755 shairport-metadata-example.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-metadata-example
 	install -D -m755 shairport-playpause.sh $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-playpause
 	
 	# Install man pages for event scripts
 	install -D -m644 man/start-shairport.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/start-shairport.1
+	install -D -m644 man/start-nqptp.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/start-nqptp.1
 	install -D -m644 man/shairport-event-start.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event-start.1
 	install -D -m644 man/shairport-event-stop.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event-stop.1
 	install -D -m644 man/shairport-event.1 $(CURDIR)/debian/hifiberry-shairport/usr/share/man/man1/shairport-event.1

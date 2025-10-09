@@ -1,3 +1,13 @@
+hifiberry-shairport (5.0.0.9) stable; urgency=medium
+
+  * Added user validation to NQPTP daemon startup
+  * Created start-nqptp script with user authorization check
+  * Updated NQPTP systemd service to use start-nqptp wrapper script
+  * Added manual page for start-nqptp script
+  * Improved security consistency between Shairport and NQPTP services
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 09 Oct 2025 23:00:00 +0000
+
 hifiberry-shairport (5.0.0.8) stable; urgency=medium
 
   * Changed systemd unit to use Restart=on-failure instead of Restart=always
