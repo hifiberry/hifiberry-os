@@ -7,7 +7,7 @@ After=pipewire.service
 Type=simple
 Environment=RUST_BACKTRACE=1
 ExecStart=/usr/bin/start-librespot
-Restart=always
+Restart=on-failure
 RestartSec=10
 StartLimitInterval=30
 StartLimitBurst=5
