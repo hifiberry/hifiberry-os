@@ -13,6 +13,22 @@
 # MDNS backend - RAAT uses Avahi for mDNS discovery
 MDNS_BACKEND="avahi"
 
+# User validation check
+# Allow running as root, or as the user specified in /etc/hifiberry.user
+CURRENT_USER=$(whoami)
+if [ "$CURRENT_USER" != "root" ]; then
+    if [ -f "/etc/hifiberry.user" ]; then
+        AUTHORIZED_USER=$(cat /etc/hifiberry.user 2>/dev/null | tr -d '\n\r ')
+        if [ "$CURRENT_USER" != "$AUTHORIZED_USER" ]; then
+            echo "Error: not starting raat, this should run as user $AUTHORIZED_USER"
+            exit 0
+        fi
+    else
+        echo "Error: not starting raat, /etc/hifiberry.user not found and not running as root"
+        exit 0
+    fi
+fi
+
 # Check if Avahi daemon is running when MDNS_BACKEND is set to avahi
 # This ensures RAAT has functioning mDNS capabilities before starting
 # We check both that the process exists and that it's actually responding to queries
