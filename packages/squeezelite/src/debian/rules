@@ -1,10 +1,5 @@
 #!/usr/bin/make -f
 
-# Disable debug symbol generation
-export DEB_BUILD_OPTIONS=nostrip
-export DEB_CFLAGS_STRIP=-g
-export DEB_CXXFLAGS_STRIP=-g
-
 %:
 	dh $@
 
@@ -17,8 +12,8 @@ override_dh_auto_configure:
 	fi
 
 override_dh_auto_build:
-	# Build squeezelite
-	cd squeezelite && $(MAKE)
+	# Build squeezelite with debug symbols for proper stripping
+	cd squeezelite && $(MAKE) CFLAGS="-g -O2"
 
 override_dh_auto_install:
 	# Install squeezelite binary
@@ -28,6 +23,9 @@ override_dh_auto_install:
 	
 	# Copy squeezelite binary
 	cp squeezelite/squeezelite debian/hifiberry-squeezelite/usr/bin/
+	
+	# Strip the binary explicitly
+	strip debian/hifiberry-squeezelite/usr/bin/squeezelite
 	
 	# Copy start script
 	cp start-squeezelite debian/hifiberry-squeezelite/usr/bin/
@@ -48,7 +46,4 @@ override_dh_auto_test:
 	# Skip tests - requires audio hardware
 
 override_dh_strip:
-	# Disable debug symbol generation completely
-	dh_strip --no-automatic-dbgsym
-	# Also remove any debug directories that might have been created
-	rm -rf $(CURDIR)/debian/hifiberry-squeezelite/usr/lib/debug
+	dh_strip
