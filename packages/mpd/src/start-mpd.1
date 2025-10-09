@@ -1,0 +1,48 @@
+.TH start-mpd 1 "9 October 2025" "HiFiBerry" "HiFiBerry Audio Tools"
+.SH NAME
+start-mpd \- Start Music Player Daemon with user validation
+.SH SYNOPSIS
+.B start-mpd
+.SH DESCRIPTION
+The
+.B start-mpd
+script is the startup wrapper for the Music Player Daemon (MPD) in HiFiBerry OS.
+It performs user validation before starting MPD to ensure proper authorization.
+
+The script first validates that the current user is authorized to run MPD by checking:
+.IP \(bu 2
+If running as root, start is allowed unconditionally
+.IP \(bu 2
+If running as a non-root user, the username must match the authorized user specified in /etc/hifiberry.user
+
+If authorization fails, the script exits with code 0 to prevent systemd restart attempts.
+
+After successful authorization, the script:
+.IP \(bu 2
+Calls configure-mpd to ensure proper MPD configuration
+.IP \(bu 2
+Starts MPD with the user-specific configuration file
+
+.SH FILES
+.TP
+.I /etc/hifiberry.user
+Contains the username authorized to run HiFiBerry services
+.TP
+.I ~/.etc/mpd.conf
+User-specific MPD configuration file
+
+.SH EXIT STATUS
+.TP
+.B 0
+Success, or authorization failure (to prevent systemd restart)
+.TP
+.B 1
+Configuration or startup error
+
+.SH SEE ALSO
+.BR configure-mpd (1),
+.BR mpd (1),
+.BR mpd.conf (5)
+
+.SH AUTHOR
+HiFiBerry <support@hifiberry.com>

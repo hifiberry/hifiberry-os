@@ -1,3 +1,34 @@
+hifiberry-mpd (0.24.5.7) stable; urgency=low
+
+  * Fixed unstripped-binary lintian errors by using debugoptimized build
+  * Added explicit strip commands for mpd and mpc binaries
+  * Ensured debug symbols are available for proper stripping
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Oct 2025 21:30:00 +0000
+
+hifiberry-mpd (0.24.5.6) stable; urgency=low
+
+  * Fixed lintian unstripped-binary errors by ensuring proper stripping
+  * Removed embedded documentation to fix JavaScript library warnings
+  * Fixed maintainer script systemctl calls to use deb-systemd-helper
+  * Fixed changelog line length warnings
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Oct 2025 21:00:00 +0000
+
+hifiberry-mpd (0.24.5.5) stable; urgency=low
+
+  * Created separate start-mpd script for user validation and service startup
+  * Added user validation check - only allow running as root or user in
+    /etc/hifiberry.user
+  * Updated systemd service to use start-mpd wrapper script instead of
+    direct MPD execution
+  * Added manual page for start-mpd script
+  * Exit with code 0 to prevent systemd restart attempts on authorization
+    failure
+  * Improved service architecture consistency with other HiFiBerry services
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Oct 2025 20:00:00 +0000
+
 hifiberry-mpd (0.24.5.3) stable; urgency=low
 
   * Enhanced ACL permissions management for audio group access
