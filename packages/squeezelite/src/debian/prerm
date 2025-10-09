@@ -1,5 +1,0 @@
-#!/bin/bash
-set -e
-
-#DEBHELPER#
-exit 0

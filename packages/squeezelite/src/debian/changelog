@@ -1,3 +1,13 @@
+hifiberry-squeezelite (2.0.0.1545) stable; urgency=medium
+
+  * Changed systemd unit to use Restart=on-failure instead of always
+  * Added user validation check to start-squeezelite script
+  * Only allow running as root or user specified in /etc/hifiberry.user
+  * Exit with code 0 to prevent systemd restart attempts on failure
+  * Removed empty prerm maintainer script
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Oct 2025 22:00:00 +0000
+
 hifiberry-squeezelite (2.0.0.1543) stable; urgency=medium
 
   * Enhanced systemd service reliability and integration

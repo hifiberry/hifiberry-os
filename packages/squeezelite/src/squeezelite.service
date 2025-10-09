@@ -11,7 +11,7 @@ ExecStart=/usr/bin/start-squeezelite
 ExecStartPost=sleep 2
 ExecStartPost=-/usr/bin/config-volume --restore
 StandardOutput=journal
-Restart=always
+Restart=on-failure
 RestartSec=5
 TimeoutStopSec=5
 
