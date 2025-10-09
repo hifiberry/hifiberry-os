@@ -112,11 +112,6 @@ SHAIRPORT_OPTS=(
   "-g"
 )
 
-# For user services, disable D-Bus features since they typically expect system bus
-if [ -n "${XDG_RUNTIME_DIR:-}" ] || [ -n "${XDG_SESSION_ID:-}" ]; then
-  echo "Running as user service - disabling D-Bus interfaces"
-  SHAIRPORT_OPTS+=("--disable-dbus-interface")
-fi
 
 # Debug: print the command to be executed
 echo "Starting Shairport Sync with device name: $PRETTY_HOSTNAME"
