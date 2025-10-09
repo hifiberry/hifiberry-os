@@ -4,9 +4,15 @@ set -e
 case "$1" in
     remove|upgrade|deconfigure)
         # Ensure system socket is disabled/removed if it exists from previous versions
+        if command -v deb-systemd-helper >/dev/null 2>&1; then
+            deb-systemd-helper mask mpd.socket >/dev/null 2>&1 || true
+        fi
         if command -v systemctl >/dev/null 2>&1; then
-            systemctl stop mpd.socket 2>/dev/null || true
-            systemctl disable mpd.socket 2>/dev/null || true
+            systemctl stop mpd.socket >/dev/null 2>&1 || true
+        fi
+        if command -v deb-systemd-helper >/dev/null 2>&1; then
+            deb-systemd-helper disable mpd.socket >/dev/null 2>&1 || true
+            deb-systemd-helper unmask mpd.socket >/dev/null 2>&1 || true
         fi
         rm -f /etc/systemd/system/sockets.target.wants/mpd.socket || true
         ;;

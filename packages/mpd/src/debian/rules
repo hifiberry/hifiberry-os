@@ -21,7 +21,7 @@ override_dh_auto_configure:
 		mv "mpc-$(MPC_VERSION)" mpc-source; \
 	fi
 	cd mpc-source && mkdir -p build
-	cd mpc-source/build && meson setup --prefix="$(CURDIR)/mpc-install" --buildtype=release ..
+	cd mpc-source/build && meson setup --prefix="$(CURDIR)/mpc-install" --buildtype=debugoptimized ..
 	cd mpc-source/build && ninja && ninja install
 	
 	# Download MPD source
@@ -33,7 +33,7 @@ override_dh_auto_configure:
 	
 	# Configure MPD using meson directly
 	cd mpd-source && mkdir -p build
-	cd mpd-source/build && meson setup --buildtype=release \
+	cd mpd-source/build && meson setup --buildtype=debugoptimized \
 		-Dalsa=enabled \
 		-Dsystemd=enabled \
 		-Dtest=false \
@@ -60,6 +60,9 @@ override_dh_auto_install:
 	# Install MPD from build directory
 	cd mpd-source/build && DESTDIR=$(CURDIR)/debian/hifiberry-mpd ninja install
 	
+	# Remove embedded documentation to avoid JavaScript library warnings
+	rm -rf debian/hifiberry-mpd/usr/share/doc/mpd || true
+	
 	# Remove the automatically installed service files
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd.service || true
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/user/mpd.service || true
@@ -74,6 +77,10 @@ override_dh_auto_install:
 	# Install configure-mpd script
 	cp configure-mpd.py debian/hifiberry-mpd/usr/bin/configure-mpd
 	chmod +x debian/hifiberry-mpd/usr/bin/configure-mpd
+	
+	# Install start-mpd script
+	cp start-mpd.sh debian/hifiberry-mpd/usr/bin/start-mpd
+	chmod +x debian/hifiberry-mpd/usr/bin/start-mpd
 	
 	# Install mpd-set-permissions script
 	cp mpd-set-permissions debian/hifiberry-mpd/usr/bin/mpd-set-permissions
@@ -95,8 +102,13 @@ override_dh_auto_install:
 	cp mpc-install/bin/mpc debian/hifiberry-mpd/usr/bin/
 	cp mpc-install/share/man/man1/mpc.1 debian/hifiberry-mpd/usr/share/man/man1/
 	
+	# Strip binaries explicitly to ensure they are stripped
+	strip debian/hifiberry-mpd/usr/bin/mpd
+	strip debian/hifiberry-mpd/usr/bin/mpc
+	
 	# Install manual pages for our custom scripts
 	cp configure-mpd.1 debian/hifiberry-mpd/usr/share/man/man1/
+	cp start-mpd.1 debian/hifiberry-mpd/usr/share/man/man1/
 	cp mpd-set-permissions.1 debian/hifiberry-mpd/usr/share/man/man1/
 	
 override_dh_auto_test:

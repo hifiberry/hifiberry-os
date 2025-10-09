@@ -6,9 +6,7 @@ Wants=network.target
 
 [Service]
 Type=simple
-# Ensure user config exists and has proper mixer settings
-ExecStartPre=/usr/bin/configure-mpd
-ExecStart=/usr/bin/mpd --no-daemon %h/etc/mpd.conf
+ExecStart=/usr/bin/start-mpd
 Restart=on-failure
 RestartSec=10
 
