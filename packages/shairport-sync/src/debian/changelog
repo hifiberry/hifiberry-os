@@ -1,3 +1,12 @@
+hifiberry-shairport (5.0.0.8) stable; urgency=medium
+
+  * Changed systemd unit to use Restart=on-failure instead of Restart=always
+  * Added user validation check to start-shairport script
+  * Only allow running as root or the user specified in /etc/hifiberry.user
+  * Exit with code 0 to prevent systemd restart attempts on authorization failure
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 09 Oct 2025 19:30:00 +0000
+
 hifiberry-shairport (5.0.0.7) stable; urgency=medium
 
   * Fixed binary stripping to resolve lintian unstripped-binary errors
