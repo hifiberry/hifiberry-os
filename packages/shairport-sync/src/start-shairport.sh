@@ -5,6 +5,22 @@
 # as the AirPlay device name
 #
 
+# User validation check
+# Allow running as root, or as the user specified in /etc/hifiberry.user
+CURRENT_USER=$(whoami)
+if [ "$CURRENT_USER" != "root" ]; then
+    if [ -f "/etc/hifiberry.user" ]; then
+        AUTHORIZED_USER=$(cat /etc/hifiberry.user 2>/dev/null | tr -d '\n\r ')
+        if [ "$CURRENT_USER" != "$AUTHORIZED_USER" ]; then
+            echo "Error: not starting shairport-sync, this should run as user $AUTHORIZED_USER"
+            exit 0
+        fi
+    else
+        echo "Error: not starting shairport-sync, /etc/hifiberry.user not found and not running as root"
+        exit 0
+    fi
+fi
+
 # Default values
 CONFIG_FILE="/etc/shairport-sync.conf"
 # Use user-specific runtime directory for user service
