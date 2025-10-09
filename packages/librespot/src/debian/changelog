@@ -1,3 +1,15 @@
+hifiberry-librespot (0.7.1.5) stable; urgency=medium
+
+  * Changed systemd unit to use Restart=on-failure instead of always
+  * Added user validation check to start-librespot script
+  * Only allow running as root or user specified in /etc/hifiberry.user
+  * Exit with code 0 to prevent systemd restart attempts on failure
+  * Improved service architecture consistency with other HiFiBerry services
+  * Removed empty prerm maintainer script
+  * Fixed changelog formatting issues
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Oct 2025 23:30:00 +0000
+
 hifiberry-librespot (0.7.1.3) stable; urgency=medium
 
   * Optimized build process to avoid /tmp usage with custom TMPDIR configuration
