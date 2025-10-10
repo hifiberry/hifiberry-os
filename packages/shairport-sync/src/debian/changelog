@@ -1,3 +1,11 @@
+hifiberry-shairport (5.0.0.10) stable; urgency=medium
+
+  * Added sound card detection check to start-shairport script
+  * Shairport-Sync will not start if no sound card is detected by config-soundcard
+  * Exits with code 0 to prevent systemd restart attempts when no audio hardware
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 10 Oct 2025 08:30:00 +0000
+
 hifiberry-shairport (5.0.0.9) stable; urgency=medium
 
   * Added user validation to NQPTP daemon startup

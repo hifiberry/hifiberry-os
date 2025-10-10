@@ -1,3 +1,11 @@
+hifiberry-squeezelite (2.0.0.1546) stable; urgency=medium
+
+  * Added sound card detection check to start-squeezelite script
+  * Squeezelite will not start if no sound card is detected by config-soundcard
+  * Exits with code 0 to prevent systemd restart attempts when no audio hardware
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 10 Oct 2025 08:30:00 +0000
+
 hifiberry-squeezelite (2.0.0.1545) stable; urgency=medium
 
   * Changed systemd unit to use Restart=on-failure instead of always

@@ -29,6 +29,14 @@ if [ "$CURRENT_USER" != "root" ]; then
     fi
 fi
 
+# Sound card detection check
+echo "Checking for sound card..."
+if ! /usr/bin/config-soundcard --detect >/dev/null 2>&1; then
+    echo "No sound card detected, not starting librespot"
+    exit 0
+fi
+echo "Sound card detected successfully."
+
 # Set default values for librespot
 BITRATE=320
 BACKEND="rodio"
