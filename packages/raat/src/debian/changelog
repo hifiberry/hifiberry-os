@@ -1,3 +1,11 @@
+hifiberry-raat (1.1.43.20) stable; urgency=medium
+
+  * Added sound card detection check to start-raat script
+  * RAAT will not start if no sound card is detected by config-soundcard
+  * Exits with code 0 to prevent systemd restart attempts when no audio hardware
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 10 Oct 2025 08:00:00 +0000
+
 hifiberry-raat (1.1.43.19) stable; urgency=medium
 
   * Changed systemd unit to use Restart=on-failure instead of Restart=always
