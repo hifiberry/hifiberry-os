@@ -29,6 +29,14 @@ if [ "$CURRENT_USER" != "root" ]; then
     fi
 fi
 
+# Sound card detection check
+echo "Checking for sound card..."
+if ! /usr/bin/config-soundcard --detect >/dev/null 2>&1; then
+    echo "No sound card detected, not starting raat"
+    exit 0
+fi
+echo "Sound card detected successfully."
+
 # Check if Avahi daemon is running when MDNS_BACKEND is set to avahi
 # This ensures RAAT has functioning mDNS capabilities before starting
 # We check both that the process exists and that it's actually responding to queries
