@@ -30,25 +30,82 @@ class BitbangI2C:
         self.scl_pin = scl_pin
         self.delay = delay
         
+        # Detect gpiod version and use appropriate API
+        self._detect_gpiod_version()
+        
         try:
-            self.chip = gpiod.Chip(chip_name)
-            self.sda_line = self.chip.get_line(sda_pin)
-            self.scl_line = self.chip.get_line(scl_pin)
+            # Handle both chip name and full device path
+            if chip_name.startswith('/dev/'):
+                chip_path = chip_name
+            else:
+                chip_path = f"/dev/{chip_name}"
             
-            # Configure pins as outputs with pull-up (open drain simulation)
-            self.sda_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
-            self.scl_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
+            self.chip = gpiod.Chip(chip_path)
             
+            if self.use_new_api:
+                self._init_new_api()
+            else:
+                self._init_old_api()
+                
         except Exception as e:
             raise IOError(f"Error initializing GPIO: {e}")
+    
+    def _detect_gpiod_version(self):
+        """Detect which gpiod API version to use"""
+        # Check for new API methods (gpiod 2.x)
+        # The key difference is that new API doesn't have get_line method on Chip
+        # and has LineSettings, request_lines function
+        try:
+            # Try to create a test chip to check available methods
+            test_chip = gpiod.Chip('/dev/gpiochip0')
+            self.use_new_api = not hasattr(test_chip, 'get_line')
+            test_chip.close()
+        except:
+            # Fallback: check for new API classes and functions
+            self.use_new_api = (
+                hasattr(gpiod, 'LineSettings') and 
+                hasattr(gpiod, 'request_lines')
+            )
+    
+    def _init_new_api(self):
+        """Initialize using new gpiod API (2.x)"""
+        # Configure both pins as outputs with initial high state
+        settings = gpiod.LineSettings(
+            direction=gpiod.line.Direction.OUTPUT,
+            output_value=gpiod.line.Value.ACTIVE
+        )
+        
+        # Create line configuration dictionary
+        line_config = {
+            self.sda_pin: settings,
+            self.scl_pin: settings
+        }
+        
+        self.line_request = self.chip.request_lines(
+            consumer="hateeprom",
+            config=line_config
+        )
+    
+    def _init_old_api(self):
+        """Initialize using old gpiod API (1.x)"""
+        self.sda_line = self.chip.get_line(self.sda_pin)
+        self.scl_line = self.chip.get_line(self.scl_pin)
+        
+        # Configure pins as outputs with pull-up (open drain simulation)
+        self.sda_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
+        self.scl_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
     
     def __del__(self):
         """Cleanup GPIO resources"""
         try:
-            if hasattr(self, 'sda_line'):
-                self.sda_line.release()
-            if hasattr(self, 'scl_line'):
-                self.scl_line.release()
+            if self.use_new_api:
+                if hasattr(self, 'line_request'):
+                    self.line_request.release()
+            else:
+                if hasattr(self, 'sda_line'):
+                    self.sda_line.release()
+                if hasattr(self, 'scl_line'):
+                    self.scl_line.release()
             if hasattr(self, 'chip'):
                 self.chip.close()
         except:
@@ -60,34 +117,83 @@ class BitbangI2C:
     
     def _sda_high(self):
         """Set SDA high (release - pull-up takes over)"""
-        self.sda_line.set_value(1)
+        if self.use_new_api:
+            self.line_request.set_value(self.sda_pin, gpiod.line.Value.ACTIVE)
+        else:
+            self.sda_line.set_value(1)
         self._delay()
     
     def _sda_low(self):
         """Set SDA low"""
-        self.sda_line.set_value(0)
+        if self.use_new_api:
+            self.line_request.set_value(self.sda_pin, gpiod.line.Value.INACTIVE)
+        else:
+            self.sda_line.set_value(0)
         self._delay()
     
     def _scl_high(self):
         """Set SCL high (release - pull-up takes over)"""
-        self.scl_line.set_value(1)
+        if self.use_new_api:
+            self.line_request.set_value(self.scl_pin, gpiod.line.Value.ACTIVE)
+        else:
+            self.scl_line.set_value(1)
         self._delay()
     
     def _scl_low(self):
         """Set SCL low"""
-        self.scl_line.set_value(0)
+        if self.use_new_api:
+            self.line_request.set_value(self.scl_pin, gpiod.line.Value.INACTIVE)
+        else:
+            self.scl_line.set_value(0)
         self._delay()
     
     def _read_sda(self) -> bool:
         """Read SDA pin state"""
-        # Reconfigure as input to read
-        self.sda_line.release()
-        self.sda_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_IN)
-        value = self.sda_line.get_value()
-        # Reconfigure back as output
-        self.sda_line.release()
-        self.sda_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
-        return bool(value)
+        if self.use_new_api:
+            # For new API, we need to reconfigure the line as input temporarily
+            # Release current request and create a new one for reading
+            self.line_request.release()
+            
+            # Create input configuration
+            input_settings = gpiod.LineSettings(direction=gpiod.line.Direction.INPUT)
+            input_config = {self.sda_pin: input_settings}
+            
+            # Request SDA line as input
+            input_request = self.chip.request_lines(
+                consumer="hateeprom-read",
+                config=input_config
+            )
+            
+            # Read the value
+            value = input_request.get_value(self.sda_pin) == gpiod.line.Value.ACTIVE
+            
+            # Release input request
+            input_request.release()
+            
+            # Restore original output configuration
+            output_settings = gpiod.LineSettings(
+                direction=gpiod.line.Direction.OUTPUT,
+                output_value=gpiod.line.Value.ACTIVE
+            )
+            output_config = {
+                self.sda_pin: output_settings,
+                self.scl_pin: output_settings
+            }
+            self.line_request = self.chip.request_lines(
+                consumer="hateeprom",
+                config=output_config
+            )
+            
+            return value
+        else:
+            # Old API - reconfigure as input to read
+            self.sda_line.release()
+            self.sda_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_IN)
+            value = self.sda_line.get_value()
+            # Reconfigure back as output
+            self.sda_line.release()
+            self.sda_line.request(consumer="hateeprom", type=gpiod.LINE_REQ_DIR_OUT, default_val=1)
+            return bool(value)
     
     def start_condition(self):
         """Generate I2C start condition"""
