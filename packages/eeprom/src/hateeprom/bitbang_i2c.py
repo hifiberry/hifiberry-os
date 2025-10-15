@@ -16,7 +16,7 @@ except ImportError:
 class BitbangI2C:
     """Bitbanging I2C implementation using libgpiod"""
     
-    def __init__(self, chip_name: str = "gpiochip0", sda_pin: int = 0, scl_pin: int = 1, delay: float = 0.000005):
+    def __init__(self, chip_name: str = "gpiochip0", sda_pin: int = 0, scl_pin: int = 1, delay: float = 0.000010):
         """
         Initialize I2C bitbang interface
         
@@ -24,11 +24,14 @@ class BitbangI2C:
             chip_name: GPIO chip name (default: gpiochip0)
             sda_pin: SDA pin number (default: 0 - GPIO0)
             scl_pin: SCL pin number (default: 1 - GPIO1)  
-            delay: Bit delay in seconds (default: 5us for faster operation)
+            delay: Bit delay in seconds (default: 10us for reliable operation)
         """
         self.sda_pin = sda_pin
         self.scl_pin = scl_pin
         self.delay = delay
+        # Additional delays for I2C timing requirements
+        self.setup_delay = delay * 0.6  # Data setup time before SCL rise
+        self.hold_delay = delay * 0.4   # Data hold time after SCL fall
         
         # Detect gpiod version and use appropriate API
         self._detect_gpiod_version()
@@ -115,13 +118,21 @@ class BitbangI2C:
         """Small delay for I2C timing"""
         time.sleep(self.delay)
     
+    def _setup_delay(self):
+        """Data setup time before SCL transition"""
+        time.sleep(self.setup_delay)
+    
+    def _hold_delay(self):
+        """Data hold time after SCL transition"""
+        time.sleep(self.hold_delay)
+    
     def _sda_high(self):
         """Set SDA high (release - pull-up takes over)"""
         if self.use_new_api:
             self.line_request.set_value(self.sda_pin, gpiod.line.Value.ACTIVE)
         else:
             self.sda_line.set_value(1)
-        self._delay()
+        self._setup_delay()  # Allow signal to stabilize
     
     def _sda_low(self):
         """Set SDA low"""
@@ -129,7 +140,7 @@ class BitbangI2C:
             self.line_request.set_value(self.sda_pin, gpiod.line.Value.INACTIVE)
         else:
             self.sda_line.set_value(0)
-        self._delay()
+        self._setup_delay()  # Allow signal to stabilize
     
     def _scl_high(self):
         """Set SCL high (release - pull-up takes over)"""
@@ -137,7 +148,7 @@ class BitbangI2C:
             self.line_request.set_value(self.scl_pin, gpiod.line.Value.ACTIVE)
         else:
             self.scl_line.set_value(1)
-        self._delay()
+        self._delay()  # Clock high time
     
     def _scl_low(self):
         """Set SCL low"""
@@ -145,7 +156,7 @@ class BitbangI2C:
             self.line_request.set_value(self.scl_pin, gpiod.line.Value.INACTIVE)
         else:
             self.scl_line.set_value(0)
-        self._delay()
+        self._hold_delay()  # Data hold time after clock fall
     
     def _read_sda(self) -> bool:
         """Read SDA pin state"""
@@ -197,32 +208,50 @@ class BitbangI2C:
     
     def start_condition(self):
         """Generate I2C start condition"""
+        # Ensure both lines are high initially (idle state)
         self._sda_high()
         self._scl_high()
-        self._sda_low()
-        self._scl_low()
+        
+        # Start condition: SDA falls while SCL is high
+        self._sda_low()   # SDA goes low first
+        self._delay()     # Hold time for start condition
+        self._scl_low()   # Then SCL goes low
     
     def stop_condition(self):
         """Generate I2C stop condition"""
+        # Ensure SDA is low before stop
         self._sda_low()
-        self._scl_high()
-        self._sda_high()
+        
+        # Stop condition: SCL rises first, then SDA rises
+        self._scl_high()  # SCL goes high first
+        self._delay()     # Setup time for stop condition  
+        self._sda_high()  # Then SDA goes high
     
     def write_bit(self, bit: bool):
-        """Write a single bit"""
+        """Write a single bit with proper I2C timing"""
+        # Ensure SCL is low before changing SDA
+        # (should already be low from previous operation)
+        
+        # Set data bit while SCL is low
         if bit:
             self._sda_high()
         else:
             self._sda_low()
-        self._scl_high()
-        self._scl_low()
+        
+        # Clock the bit: SCL high then low
+        self._scl_high()  # Data is sampled on SCL rising edge
+        self._scl_low()   # Complete the clock cycle
     
     def read_bit(self) -> bool:
-        """Read a single bit"""
-        self._sda_high()  # Release SDA for slave to drive
+        """Read a single bit with proper I2C timing"""
+        # Release SDA for slave to drive (set as input/high)
+        self._sda_high()
+        
+        # Clock the bit: SCL high to sample data
         self._scl_high()
-        bit = self._read_sda()
-        self._scl_low()
+        bit = self._read_sda()  # Sample data while SCL is high
+        self._scl_low()         # Complete the clock cycle
+        
         return bit
     
     def write_byte(self, byte: int) -> bool:
@@ -232,11 +261,14 @@ class BitbangI2C:
         Returns:
             True if ACK received, False if NACK
         """
+        # Send 8 data bits, MSB first
         for i in range(7, -1, -1):
-            self.write_bit((byte >> i) & 1)
+            bit = (byte >> i) & 1
+            self.write_bit(bool(bit))
         
-        # Read ACK bit
-        return not self.read_bit()  # ACK is low
+        # Read ACK/NACK bit (9th clock cycle)
+        ack_bit = self.read_bit()
+        return not ack_bit  # ACK is low (0), NACK is high (1)
     
     def read_byte(self, ack: bool = True) -> int:
         """
@@ -249,10 +281,13 @@ class BitbangI2C:
             Byte value read
         """
         byte = 0
-        for i in range(8):
-            byte = (byte << 1) | (1 if self.read_bit() else 0)
         
-        # Send ACK/NACK
-        self.write_bit(not ack)  # ACK is low, NACK is high
+        # Read 8 data bits, MSB first
+        for i in range(8):
+            bit = self.read_bit()
+            byte = (byte << 1) | (1 if bit else 0)
+        
+        # Send ACK/NACK (9th clock cycle)
+        self.write_bit(not ack)  # ACK is low (0), NACK is high (1)
         
         return byte
