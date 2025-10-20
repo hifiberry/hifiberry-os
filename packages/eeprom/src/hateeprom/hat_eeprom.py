@@ -9,7 +9,11 @@ import random
 import logging
 from typing import Optional
 
-from .bitbang_i2c import BitbangI2C
+try:
+    from .bitbang_i2c import I2CClient
+except ImportError:
+    # Handle direct execution
+    from bitbang_i2c import I2CClient
 
 
 class HatEEPROM:
@@ -33,7 +37,7 @@ class HatEEPROM:
         last_error = None
         for attempt in range(retry + 1):  # retry + 1 gives us retry attempts plus the initial attempt
             try:
-                self.i2c = BitbangI2C(sda_pin=sda_pin, scl_pin=scl_pin)
+                self.i2c = I2CClient(sda_pin=sda_pin, scl_pin=scl_pin)
                 break  # Success, exit retry loop
             except (IOError, ImportError) as e:
                 last_error = e
@@ -50,77 +54,36 @@ class HatEEPROM:
     def read_byte(self, address: int) -> Optional[int]:
         """Read a single byte from EEPROM"""
         try:
-            # Start condition
-            self.i2c.start_condition()
-            
-            # Write device address + write bit
-            if not self.i2c.write_byte(self.i2c_addr << 1):
-                raise Exception("Device not responding")
-            
-            # Write memory address (16-bit for 24C32)
-            if not self.i2c.write_byte((address >> 8) & 0xFF):
-                raise Exception("Address high byte NACK")
-            if not self.i2c.write_byte(address & 0xFF):
-                raise Exception("Address low byte NACK")
-            
-            # Repeated start
-            self.i2c.start_condition()
-            
-            # Write device address + read bit
-            if not self.i2c.write_byte((self.i2c_addr << 1) | 1):
-                raise Exception("Read address NACK")
-            
-            # Read data byte
-            data = self.i2c.read_byte(ack=False)  # NACK to end read
-            
-            # Stop condition
-            self.i2c.stop_condition()
-            
-            return data
+            value, success = self.i2c.read_eeprom_byte(self.i2c_addr, address)
+            if success:
+                return value
+            else:
+                raise Exception("EEPROM read failed")
             
         except Exception as e:
-            self.i2c.stop_condition()  # Ensure bus is released
-            raise (f"Read error at address 0x{address:04X}: {e}")
+            raise Exception(f"Read error at address 0x{address:04X}: {e}")
     
     def write_byte(self, address: int, data: int) -> bool:
         """Write a single byte to EEPROM"""
         try:
-            # Start condition
-            self.i2c.start_condition()
-            
-            # Write device address + write bit
-            if not self.i2c.write_byte(self.i2c_addr << 1):
-                raise Exception("Device not responding")
-            
-            # Write memory address (16-bit for 24C32)
-            if not self.i2c.write_byte((address >> 8) & 0xFF):
-                raise Exception("Address high byte NACK")
-            if not self.i2c.write_byte(address & 0xFF):
-                raise Exception("Address low byte NACK")
-            
-            # Write data byte
-            if not self.i2c.write_byte(data):
-                raise Exception("Data byte NACK")
-            
-            # Stop condition
-            self.i2c.stop_condition()
-            
-            # Wait for write cycle to complete (typical 5ms for EEPROM)
-            time.sleep(0.01)
-            
-            return True
-            
+            success = self.i2c.write_eeprom_byte(self.i2c_addr, address, data)
+            if success:
+                # Wait for write cycle to complete (typical 5ms for EEPROM)
+                time.sleep(0.01)
+                return True
+            else:
+                logging.warning(f"Write error at address 0x{address:04X}: NACK received")
+                return False
+                
         except Exception as e:
-            self.i2c.stop_condition()  # Ensure bus is released
-            logging.warn(f"Write error at address 0x{address:04X}: {e}")
+            logging.warning(f"Write error at address 0x{address:04X}: {e}")
             return False
     
     def read_data(self, start_addr: int, length: int) -> Optional[bytes]:
-        """Read multiple bytes from EEPROM using optimized page reads"""
+        """Read multiple bytes from EEPROM using optimized sequential reads"""
         data = bytearray()
         
         # Read in chunks to optimize I2C transactions
-        # Most EEPROMs support sequential reads
         remaining = length
         current_addr = start_addr
         
@@ -129,48 +92,26 @@ class HatEEPROM:
             chunk_size = min(32, remaining)
             
             try:
-                # Start condition
-                self.i2c.start_condition()
+                chunk_data, success = self.i2c.read_eeprom_sequential(self.i2c_addr, current_addr, chunk_size)
                 
-                # Write device address + write bit
-                if not self.i2c.write_byte(self.i2c_addr << 1):
-                    raise Exception("Device not responding")
-                
-                # Write memory address (16-bit)
-                if not self.i2c.write_byte((current_addr >> 8) & 0xFF):
-                    raise Exception("Address high byte NACK")
-                if not self.i2c.write_byte(current_addr & 0xFF):
-                    raise Exception("Address low byte NACK")
-                
-                # Repeated start for read
-                self.i2c.start_condition()
-                
-                # Write device address + read bit
-                if not self.i2c.write_byte((self.i2c_addr << 1) | 1):
-                    raise Exception("Read address NACK")
-                
-                # Read multiple bytes sequentially
-                chunk_data = bytearray()
-                for i in range(chunk_size):
-                    # Send ACK for all bytes except the last one
-                    ack = (i < chunk_size - 1)
-                    byte_data = self.i2c.read_byte(ack=ack)
-                    chunk_data.append(byte_data)
-                
-                # Stop condition
-                self.i2c.stop_condition()
+                if not success:
+                    logging.warning(f"Read error at address 0x{current_addr:04X}")
+                    return None
                 
                 data.extend(chunk_data)
-                current_addr += chunk_size
-                remaining -= chunk_size
+                current_addr += len(chunk_data)
+                remaining -= len(chunk_data)
                 
                 # Progress indicator for large reads
                 if length > 100 and (current_addr - start_addr) % 128 == 0:
                     print(f"Read progress: {current_addr - start_addr}/{length} bytes")
                 
+                # If we got less data than expected, the EEPROM might be smaller
+                if len(chunk_data) < chunk_size:
+                    break
+                
             except Exception as e:
-                self.i2c.stop_condition()  # Ensure bus is released
-                logging.warn(f"Read error at address 0x{current_addr:04X}: {e}")
+                logging.warning(f"Read error at address 0x{current_addr:04X}: {e}")
                 return None
         
         return bytes(data)
@@ -626,42 +567,10 @@ class HatEEPROM:
         try:
             # Try to read a single byte from address 0
             # This is a non-destructive way to test communication
-            self.i2c.start_condition()
-            
-            # Write device address + write bit
-            if not self.i2c.write_byte(self.i2c_addr << 1):
-                self.i2c.stop_condition()
-                return False
-            
-            # Write memory address 0x0000
-            if not self.i2c.write_byte(0x00):
-                self.i2c.stop_condition()
-                return False
-            if not self.i2c.write_byte(0x00):
-                self.i2c.stop_condition()
-                return False
-            
-            # Repeated start for read
-            self.i2c.start_condition()
-            
-            # Write device address + read bit
-            if not self.i2c.write_byte((self.i2c_addr << 1) | 1):
-                self.i2c.stop_condition()
-                return False
-            
-            # Read one byte (don't care about the value)
-            self.i2c.read_byte(ack=False)  # NACK to end read
-            
-            # Stop condition
-            self.i2c.stop_condition()
-            
-            return True
+            _, success = self.i2c.read_eeprom_byte(self.i2c_addr, 0x0000)
+            return success
             
         except Exception:
-            try:
-                self.i2c.stop_condition()  # Ensure bus is released
-            except:
-                pass
             return False
     
     def short_info(self, debug: bool = False) -> dict:
@@ -734,3 +643,92 @@ class HatEEPROM:
             return f"ERROR{separator}{info.get('error', 'Unknown error')}"
         
         return f"{info['vendor']}{separator}{info['product']}{separator}{info['uuid']}"
+
+
+def main():
+    """Simple command line interface for HAT EEPROM operations"""
+    import argparse
+    import sys
+    
+    parser = argparse.ArgumentParser(description='HAT EEPROM Tool')
+    parser.add_argument('--sda', type=int, default=0, help='SDA pin number (default: 0)')
+    parser.add_argument('--scl', type=int, default=1, help='SCL pin number (default: 1)')
+    parser.add_argument('--addr', type=lambda x: int(x, 0), default=0x50, help='I2C address (default: 0x50)')
+    
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+    
+    # Detect command
+    detect_parser = subparsers.add_parser('detect', help='Detect if HAT EEPROM is available')
+    detect_parser.add_argument('--quiet', '-q', action='store_true', help='Quiet mode')
+    
+    # Info command
+    info_parser = subparsers.add_parser('info', help='Display HAT vendor information')
+    info_parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    
+    # Short info command
+    shortinfo_parser = subparsers.add_parser('shortinfo', help='Display HAT info as vendor:product:uuid')
+    shortinfo_parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    
+    # Dump command
+    dump_parser = subparsers.add_parser('dump', help='Dump EEPROM to file')
+    dump_parser.add_argument('filename', help='Output filename')
+    dump_parser.add_argument('--size', type=int, default=4096, help='Size in bytes (default: 4096)')
+    
+    args = parser.parse_args()
+    
+    if not args.command:
+        parser.print_help()
+        return 1
+    
+    try:
+        # Initialize HAT EEPROM
+        hat = HatEEPROM(i2c_addr=args.addr, sda_pin=args.sda, scl_pin=args.scl)
+        
+        if args.command == 'detect':
+            if not args.quiet:
+                print(f"Checking for HAT EEPROM at address 0x{args.addr:02X}...")
+            
+            if hat.is_available():
+                if not args.quiet:
+                    print("HAT EEPROM detected and responding")
+                return 0
+            else:
+                if not args.quiet:
+                    print("No HAT EEPROM detected or device not responding")
+                return 1
+        
+        elif args.command == 'info':
+            info = hat.short_info(debug=args.debug)
+            
+            if not info['success']:
+                print(f"Error: {info.get('error', 'Failed to read HAT info')}")
+                return 1
+            
+            print("HAT Vendor Information:")
+            print(f"  UUID: {info['uuid']}")
+            if info['pid'] is not None:
+                print(f"  Product ID: 0x{info['pid']:04X}")
+            if info['pver'] is not None:
+                print(f"  Product Version: 0x{info['pver']:04X}")
+            print(f"  Vendor: {info['vendor']}")
+            print(f"  Product: {info['product']}")
+        
+        elif args.command == 'shortinfo':
+            result = hat.format_short_info(separator=':', debug=args.debug)
+            print(result)
+        
+        elif args.command == 'dump':
+            success = hat.dump_eeprom(args.filename, args.size)
+            if not success:
+                return 1
+        
+        return 0
+    
+    except Exception as e:
+        print(f"Error: {e}")
+        return 1
+
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main())
