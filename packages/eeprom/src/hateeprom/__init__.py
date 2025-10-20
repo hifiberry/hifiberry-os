@@ -9,9 +9,9 @@ HAT EEPROMs are typically 24C32 (4KB) I2C devices at address 0x50.
 They contain device tree overlay information and HAT identification data.
 """
 
-from .bitbang_i2c import BitbangI2C
+from .bitbang_i2c import I2CClient
 from .hat_eeprom import HatEEPROM
 
 __version__ = "1.2.0"
 __author__ = "HiFiBerry"
-__all__ = ['BitbangI2C', 'HatEEPROM']
+__all__ = ['I2CClient', 'HatEEPROM']
