@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Disabled"
-exit 0
+# Bluetooth Audio metapackage build script
+# This builds a metapackage that ensures all necessary Bluetooth audio components are installed
 
 # Exit on error
 set -e

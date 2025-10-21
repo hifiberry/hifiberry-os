@@ -9,7 +9,7 @@ Homepage: https://hifiberry.com/os
 Package: hifiberry-pipewire-configs
 Architecture: all
 Depends: ${misc:Depends}, pipewire
-Recommends: pipewire-pulse, wireplumber
+Recommends: pipewire-pulse, wireplumber, bluez
 Description: HiFiBerry PipeWire configuration files
  This package provides PipeWire configuration files optimized for HiFiBerry
  audio systems and headless environments.
@@ -19,6 +19,8 @@ Description: HiFiBerry PipeWire configuration files
     balance control, and mono/stereo conversion
   - 99-hifiberry-headless.conf: Optimized configuration for headless systems
     without D-Bus session or X11 dependencies
+  - 99-hifiberry-bluetooth.conf: Bluetooth audio configuration with automatic
+    profile connection for HFP, HSP, and A2DP profiles
  .
  These configurations enhance audio quality and provide advanced DSP features
  while maintaining compatibility with headless and embedded audio systems.

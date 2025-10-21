@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    configure)
+        echo "Configuring HiFiBerry Bluetooth Audio metapackage..."
+        
+        # Ensure bluetooth service is enabled
+        systemctl enable bluetooth || true
+        
+        # Start bluetooth if not running
+        if ! systemctl is-active --quiet bluetooth; then
+            systemctl start bluetooth || true
+        fi
+        
+        echo "HiFiBerry Bluetooth Audio metapackage configured successfully."
+        echo "All required Bluetooth audio dependencies have been installed:"
+        echo "  - libspa-0.2-bluetooth (SPA Bluetooth support)"
+        echo "  - bluez (Bluetooth stack)"
+        echo "  - pipewire (Modern audio processing)"
+        echo "  - pipewire-pulse (PulseAudio compatibility)"
+        echo "  - pipewire-alsa (ALSA compatibility)"
+        echo "  - wireplumber (Session management)"
+        echo ""
+        echo "Your system is now ready for Bluetooth audio functionality."
+        ;;
+        
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+        
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
