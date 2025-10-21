@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# This is a metapackage - nothing to build
+
+override_dh_auto_test:
+	# This is a metapackage - no tests needed
+
+override_dh_auto_install:
+	# This is a metapackage - no files to install

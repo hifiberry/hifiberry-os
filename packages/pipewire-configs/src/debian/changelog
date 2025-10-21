@@ -1,3 +1,13 @@
+hifiberry-pipewire-configs (1.0.1) stable; urgency=medium
+
+  * Added 99-hifiberry-bluetooth.conf for Bluetooth audio configuration
+  * Enables automatic connection of Bluetooth audio profiles (HFP, HSP, A2DP)
+  * Supports both sink and source profiles for comprehensive Bluetooth audio
+  * Uses HiFiBerry-specific filename to avoid conflicts with other packages
+  * Added bluez to recommended dependencies
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 11 Oct 2025 09:00:00 +0000
+
 hifiberry-pipewire-configs (1.0.0) stable; urgency=medium
 
   * Initial release of HiFiBerry PipeWire configuration package

@@ -1,0 +1,153 @@
+#!/bin/bash
+
+# HiFiBerry Bluetooth Audio PIN Generator
+# This script generates a random PIN for Bluetooth pairing
+
+CONFIG_FILE="/etc/hifiberry/btaudio.conf"
+
+generate_pin() {
+    # Generate a random 4-digit PIN
+    printf "%04d" $((RANDOM % 9000 + 1000))
+}
+
+ensure_pin_exists() {
+    # Create config directory if it doesn't exist
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    
+    # Check if PIN already exists in config
+    if [[ -f "$CONFIG_FILE" ]] && grep -q "^bluetooth\.pin=" "$CONFIG_FILE"; then
+        # Extract existing PIN
+        existing_pin=$(grep "^bluetooth\.pin=" "$CONFIG_FILE" | cut -d'=' -f2)
+        if [[ "$existing_pin" =~ ^[0-9]{4,8}$ ]]; then
+            echo "PIN already exists: $existing_pin"
+            return 0
+        fi
+    fi
+    
+    # Generate new PIN
+    new_pin=$(generate_pin)
+    
+    # Add or update PIN in config file
+    if [[ -f "$CONFIG_FILE" ]]; then
+        # Replace existing PIN line or add new one
+        if grep -q "^bluetooth\.pin=" "$CONFIG_FILE"; then
+            sed -i "s/^bluetooth\.pin=.*/bluetooth.pin=$new_pin/" "$CONFIG_FILE"
+        else
+            echo "bluetooth.pin=$new_pin" >> "$CONFIG_FILE"
+        fi
+    else
+        # Create new config file with PIN
+        cat > "$CONFIG_FILE" << EOF
+# HiFiBerry Bluetooth Audio Configuration
+# This file contains default configuration for Bluetooth audio
+# Uses PipeWire for audio processing
+
+# Enable A2DP sink (receive audio from phones/tablets)
+bluetooth.a2dp.enabled=true
+
+# Audio backend (pipewire)
+audio.backend=pipewire
+
+# Make system discoverable automatically
+bluetooth.discoverable=true
+
+# Device name shown to other devices (leave empty to use hostname)
+bluetooth.device_name=
+
+# Discoverable timeout (0 = infinite, >0 = seconds)
+bluetooth.discoverable_timeout=0
+
+# PIN code for secure pairing (4-8 digits, leave empty for passkey confirmation)
+bluetooth.pin=$new_pin
+
+# Secure pairing mode: DisplayYesNo, DisplayOnly, KeyboardDisplay, NoInputNoOutput
+bluetooth.pairing_mode=DisplayYesNo
+
+# Default audio codec preference (best quality first)
+bluetooth.codec.preference=aptx,aac,sbc
+
+# Auto-connect to known devices
+bluetooth.auto_connect=true
+
+# Auto-accept pairing from new devices (security consideration)
+bluetooth.auto_pair=false
+
+# Maximum number of remembered devices
+bluetooth.max_devices=10
+
+# Audio sink device class (helps phones recognize as audio device)
+bluetooth.device_class=0x200414
+EOF
+    fi
+    
+    # Set proper permissions
+    chmod 644 "$CONFIG_FILE"
+    
+    echo "Generated new PIN: $new_pin"
+    return 0
+}
+
+show_help() {
+    echo "HiFiBerry Bluetooth Audio PIN Generator"
+    echo ""
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --ensure-pin      Ensure a PIN exists, generate if needed"
+    echo "  --generate        Generate a new random PIN"
+    echo "  --show            Show current PIN"
+    echo "  --help            Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  $0 --ensure-pin   # Generate PIN only if none exists"
+    echo "  $0 --generate     # Generate new PIN (replaces existing)"
+    echo "  $0 --show         # Show current PIN"
+}
+
+show_pin() {
+    if [[ -f "$CONFIG_FILE" ]]; then
+        local pin=$(grep "^bluetooth\.pin=" "$CONFIG_FILE" 2>/dev/null | cut -d'=' -f2)
+        if [[ -n "$pin" ]]; then
+            echo "Current PIN: $pin"
+        else
+            echo "No PIN configured"
+        fi
+    else
+        echo "No configuration file found"
+    fi
+}
+
+# Main script
+case "$1" in
+    --ensure-pin)
+        ensure_pin_exists
+        ;;
+    --generate)
+        new_pin=$(generate_pin)
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        
+        if [[ -f "$CONFIG_FILE" ]]; then
+            if grep -q "^bluetooth\.pin=" "$CONFIG_FILE"; then
+                sed -i "s/^bluetooth\.pin=.*/bluetooth.pin=$new_pin/" "$CONFIG_FILE"
+            else
+                echo "bluetooth.pin=$new_pin" >> "$CONFIG_FILE"
+            fi
+        else
+            echo "bluetooth.pin=$new_pin" > "$CONFIG_FILE"
+        fi
+        
+        chmod 644 "$CONFIG_FILE"
+        echo "Generated new PIN: $new_pin"
+        ;;
+    --show)
+        show_pin
+        ;;
+    --help|"")
+        show_help
+        ;;
+    *)
+        echo "Error: Unknown option $1"
+        show_help
+        exit 1
+        ;;
+esac
