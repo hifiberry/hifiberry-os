@@ -40,28 +40,17 @@ if [[ -d "$PACKAGE/.git" ]]; then
             echo "Please resolve conflicts manually or use --clean to start fresh"
         fi
     fi
+    cd ..
 else
     echo "Cloning $PACKAGE source from $REPO_URL..."
     git clone "$REPO_URL" "$PACKAGE"
-    cd "$PACKAGE"
 fi
 
-# Check if debian directory exists, if not copy from packaging/ppa/
-if [ ! -d "debian" ]; then
-    if [ -d "packaging/ppa/debian" ]; then
-        echo "Copying debian packaging from packaging/ppa/..."
-        cp -r packaging/ppa/debian .
-    else
-        echo "Error: No debian/ directory found in the repository"
-        echo "This package may need manual Debian packaging setup"
-        exit 1
-    fi
-fi
+# Copy our custom debian directory to the source
+echo "Copying debian packaging files..."
+cp -r debian "$PACKAGE/"
 
-# Update distribution in changelog from bionic to stable
-if [ -f "debian/changelog" ]; then
-    sed -i 's/) bionic;/) stable;/g' debian/changelog
-fi
+cd "$PACKAGE"
 
 # Version consistency check
 echo "Checking version consistency..."
@@ -89,7 +78,7 @@ fi
 
 # Build using sbuild
 echo "Building with sbuild..."
-sbuild --chroot-mode=unshare --no-clean-source $DIST_ARG
+sbuild --chroot-mode=unshare --enable-network --no-clean-source $DIST_ARG
 
 cd ..
 

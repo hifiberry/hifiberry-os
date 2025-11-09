@@ -1,0 +1,48 @@
+.TH SONGREC 1 "November 2025" "songrec 0.4.3" "User Commands"
+.SH NAME
+songrec \- open-source Shazam client for Linux
+.SH SYNOPSIS
+.B songrec
+.RI [ OPTIONS ]
+.RI [ FILE ]
+.SH DESCRIPTION
+SongRec is an open-source Shazam client for Linux, written in Rust.
+It allows you to recognize songs from audio files or from the microphone.
+.PP
+When launched without arguments, SongRec starts the graphical user interface.
+When a filename is provided, it recognizes the song from that audio file.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Display help information
+.TP
+.B \-V, \-\-version
+Display version information
+.TP
+.I FILE
+Audio file to recognize (when provided, runs in CLI mode)
+.SH FEATURES
+.IP \(bu 2
+Recognize audio from arbitrary audio files
+.IP \(bu 2
+Recognize audio from the microphone
+.IP \(bu 2
+GUI and command line interface for file recognition
+.IP \(bu 2
+History of recognized songs, exportable to CSV
+.IP \(bu 2
+Continuous song detection from microphone with device selection
+.SH EXAMPLES
+.TP
+Launch GUI:
+.B songrec
+.TP
+Recognize song from file:
+.B songrec /path/to/audio/file.mp3
+.SH AUTHOR
+Written by Marin M.
+.SH HOMEPAGE
+https://github.com/marin-m/SongRec
+.SH COPYRIGHT
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
