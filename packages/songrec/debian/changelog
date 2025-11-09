@@ -1,0 +1,215 @@
+songrec (0.4.3) stable; urgency=low
+
+  * Prevent missing application icon when running (PR #163)
+  * Quit the application when doing Ctrl+Q (issue #181)
+  * Change Flatpak permission from --device=dri to --device=all
+    to fix audio input source selection with PipeWire (issue #177)
+  * Fix Context menu in Favourites window (PR #179, issue #178)
+  * Minor code refactoring (PR #153) and bug fixes (issue #159)
+  * Remove "Play Shazam lure" button (issue #170)
+  * Update Slovak translation (issue #23)
+  * Update Portuguese translation (PR #172)
+  * Update rodio crate dependency to drop minimp3 requirement
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 29 Sep 2024 14:38:07 +0200
+
+songrec (0.4.2) stable; urgency=low
+
+  * Add a Catalan translation (thanks to @pgiuli in issue #23)
+  * Make the UI more clear so that it is visible that we are toggling the recognition from the speakers rather than the microphone when the monitor mode is on (see issue #149)
+  * Fix a bug that had certain strings to be mistakenly copied at the bad places in the internationalized versions of the application, due to the fuzzy mode of msgmerge/gettext
+  * Update the Dutch translation (thanks to @Vistaus in PR #150)
+  * Update compilation instructions in the README.md file
+  * Allow to compile the app with the libpulse and MPRIS module enabled on non-Linux UNIX systems such as BSD (see issue #152)
+  * Possibly improve the compatibility of the recognize-from-speakers feature
+
+ -- Marin <marin-m@users.noreply.github.com>  Mon, 22 Jan 2024 13:52:00 +0100
+
+songrec (0.4.1) stable; urgency=low
+
+  * Add a Korean translation (thanks to @MarongHappy in PR #146)
+  * Re-integrate MPRIS compatibility code in the default builds, with an opt-in GUI option
+  * Add a simple preference window and an about dialog
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 14 Jan 2024 14:32:00 +0100
+
+songrec (0.4.0+2) stable; urgency=low
+
+  * Fix the `libpulse` dependency into `libpulse0` in the Debian package specification.
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 24 Dec 2023 18:21:00 +0100
+
+songrec (0.4.0+1) stable; urgency=low
+
+  * Add the missing `libpulse` dependency in the Debian package specificaiton.
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 24 Dec 2023 09:30:00 +0100
+
+songrec (0.4.0) stable; urgency=low
+
+  * Use `libpulse` (when available) for displaying the list of selectable audio input devices by default, instead of `alsalib` for listing audio inputs and `pactl` for switching to a monitor mode device, so that the list of devices displays correct values on PipeWire/PulseAudio-based systems.
+  * Make the dependencies over `libpulse` and DBus MPRIS fully optional, through Cargo features.
+  * Disable MPRIS signalling in default builds, as it may interfer inopportunely with media keys control from other media players (as submitted in issue #89)
+  * Fix build issues on non-Linux platforms (thanks to pull request #144 from @dotX12)
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 24 Dec 2023 08:24:00 +0100
+
+songrec (0.3.3) stable; urgency=low
+
+  * Add a Favourite songs list in the interface (thanks to pull request #123 from @damonhayhurst)
+  * Add a Spanish UI translation (as submitted by @Swyter in issue #23)
+  * Add a German UI translation (as submitted in issue #23)
+  * Update the Italian UI translation (thanks to pull request #133 from @M0Rf30)
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 15 Oct 2023 14:41:23 +0200
+
+songrec (0.3.2+4) stable; urgency=low
+
+  * Additionally build the package for the any architecture supported by recent Ubuntu releases (try to build for all supported architectures on Launchpad PPA).
+
+ -- Marin <marin-m@users.noreply.github.com>  Wed, 7 Sep 2022 15:15:00 +0200
+
+songrec (0.3.2+3) stable; urgency=low
+
+  * Additionally build the package for the any architecture supported by recent Ubuntu releases.
+
+ -- Marin <marin-m@users.noreply.github.com>  Wed, 7 Sep 2022 13:18:00 +0200
+
+songrec (0.3.2+2) stable; urgency=low
+
+  * Additionally build the package for the AMD64/AArch64 architecture.
+
+ -- Marin <marin-m@users.noreply.github.com>  Wed, 7 Sep 2022 09:22:00 +0200
+
+songrec (0.3.2+1) stable; urgency=low
+
+  * Accept depending of the `libssl3` package instead of `libssl1.1`, in order to ensure packaging compatibility with Ubuntu 22.04 LTS and above.
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 1 Jul 2022 19:57:00 +0200
+
+songrec (0.3.2) stable; urgency=low
+
+  * Add a checkbox into the graphical interface in order to disable or enable system notifications whenever recognizing a song (thanks to @damonhayhurst).
+  * Fix the bug that previously caused the Firefox user interface menus to blink on Linux after the "Search on YouTube" feature has been used (thanks to @ducaton).
+  * Update the French translation.
+  * Add safety checks in order to prevent potential crashes when handling corrupt configuration files or invalid audio devices.
+  * Change the path of the files saving user interface-related preferences in order to update a deprecated Rust crate (this may create a symbolic link from `~/.local/share/songrec` towards an preexisting `~/.local/share/SongRec` directory under Linux).
+
+ -- Marin <marin-m@users.noreply.github.com>  Tue, 26 May 2022 12:17:00 +0200
+
+songrec (0.3.1) stable; urgency=low
+
+  * Fix the behavior of the new `recognize` command, when recognizing from a file.
+  * Add album artwork, if it exists, to the desktop notification when a song is recognized (thanks to @damonhayhurst).
+  * Update the Dutch translation (thanks to @Vistaus).
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 22 Apr 2022 09:02:00 +0200
+
+songrec (0.3.0) stable; urgency=low
+
+  * Introduce a new command-line interface allowing to use microphone recognition from the command line, with the `recognize` and `listen` commands (thanks to @Hummer12007), keeping older command backwards compatibility.
+  * Update the CSV export format in order to introduce new "`track_key`", "`release_year`" and "`genre`" columns (thanks to @tyd), where `track_key` is an identifier internal to the Shazam database.
+  * Allow exposing song metadata through the standard DBus MPRIS interface (thanks to @Hummer12007).
+  * Improve source code structure in order to split the dual CLI/GUI parts from the core thread communication and fingerprinting parts and from other platform-dependant utility code.
+  * Update certain dependent crates to more recent minor versions, among other possible things in order to accept a higher LibreSSL version.
+  * Add the program version without the program help output (see the `-h` or `-V`, `--version` options).
+  * Add a Polish translation (thanks to @qarmin).
+  * Update the French translation according to recent changes.
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 26 Dec 2021 16:26:00 +0100
+
+songrec (0.2.1) stable; urgency=low
+
+  * Don't crash when there is no input device available on the host machine.
+  * Update the Dutch translation.
+
+ -- Marin <marin-m@users.noreply.github.com>  Mon, 04 Oct 2021 07:12:00 +0200
+
+songrec (0.2.0) stable; urgency=low
+
+  * Add Japanese and Italian translations.
+  * Fix PipeWire compatibility.
+  * Add support for a possible XDG action for recognizing from a file.
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 27 Aug 2021 09:37:00 +0200
+ 
+songrec (0.1.9) stable; urgency=low
+
+  * Add French and Dutch translations.
+  * Ensure that only one window of SongRec is present.
+  * Avoid to display "No match for this song" when multiple instances of SongRec would be displayed and one would be closed.
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 20 Aug 2021 07:17:00 +0200
+ 
+songrec (0.1.8) stable; urgency=low
+
+  * Include a "Cargo.lock" file in the project so that it can be accepted in certain packaging systems that require freezing Rust dependencies to a known subversion.
+  * Change the locale sent in HTTP requests to avoid to display internationalized song titles, in certain cases.
+  * Fix a minor typo in the algorithm implementation that shouldn't impact recognition.
+  * Improve portability.
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 01 Jun 2021 14:38:00 +0200
+
+songrec (0.1.7) stable; urgency=low
+
+  * Display a clean "Shazam servers are not reachable, are you connected?" message on the GUI when the computer has been offline, rather than showing low-level errors.
+  * Improve cross-platform support.
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 09 Apr 2021 07:15:00 +0200
+
+songrec (0.1.6) stable; urgency=low
+
+  * Try to decode input files with FFMpeg when it is available on the target system, in order to support more audio and video formats when recognizing from a file.
+
+ -- Marin <marin-m@users.noreply.github.com>  Tue, 30 Mar 2021 09:46:00 +0200
+
+songrec (0.1.5) stable; urgency=low
+
+  * The song recognition history now has a right-click context menu that allows to copy the name of the songs, artists, tracks or albums, or to search previously recognized songs on YouTube.
+  * It is now possible to select the name of the last recognized song so that it can be copy-pasted somewhere easily.
+
+ -- Marin <marin-m@users.noreply.github.com>  Fri, 26 Mar 2021 14:35:00 +0100
+
+songrec (0.1.4) stable; urgency=low
+
+  * Add the ability to recognize songs from your speakers rather than your microphone, through a checkbox that will be visible when the functionality is available, on compatible PulseAudio setups.
+
+ -- Marin <marin-m@users.noreply.github.com>  Tue, 23 Feb 2021 18:37:00 +0100
+
+songrec (0.1.3) stable; urgency=low
+
+  * Make the application fully responsive for mobile devices using GtkFlowBox, thanks to @a33k.
+
+ -- Marin <marin-m@users.noreply.github.com>  Thu, 11 Feb 2021 04:01:00 +0100
+
+songrec (0.1.2~3) stable; urgency=low
+
+  * Correct Debian packaging for upload on Launchpad (make it x86_64-only).
+
+ -- Marin <marin-m@users.noreply.github.com>  Sat, 07 Nov 2020 08:55:00 +0100
+
+songrec (0.1.2~2) stable; urgency=low
+
+  * Correct Debian packaging for upload on Launchpad.
+
+ -- Marin <marin-m@users.noreply.github.com>  Sat, 07 Nov 2020 08:24:00 +0100
+
+songrec (0.1.2) stable; urgency=low
+
+  * Use GtkFileChooserNative so that the application is able to graphically pick files through Flatpak without requiring further file system permissions.
+
+ -- Marin <marin-m@users.noreply.github.com>  Mon, 02 Nov 2020 14:20:00 +0100
+
+songrec (0.1.2) stable; urgency=low
+
+  * Add Flatpak packaging scripts and assets.
+  * Ensure that generated song lures don't last too long enough in certain cases.
+  * Remove the dash in the long application ID as it was incompatible with Flatpak.
+
+ -- Marin <marin-m@users.noreply.github.com>  Sun, 01 Nov 2020 21:21:00 +0100
+
+songrec (0.1.0) stable; urgency=medium
+
+  * Initial crates.io release
+
+ -- Marin <marin-m@users.noreply.github.com>  Wed, 07 Oct 2020 13:23:00 +0200
