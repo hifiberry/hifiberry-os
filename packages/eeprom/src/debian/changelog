@@ -1,3 +1,9 @@
+hifiberry-eeprom (1.3.5) stable; urgency=medium
+
+  * EEPROM size check to avoid excessive reads 
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 12 Dec 2025 12:00:00 +0000
+
 hifiberry-eeprom (1.3.4) stable; urgency=medium
 
   * Re-implemented Bitbang I2C
