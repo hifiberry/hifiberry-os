@@ -82,6 +82,11 @@ class HatEEPROM:
     def read_data(self, start_addr: int, length: int) -> Optional[bytes]:
         """Read multiple bytes from EEPROM using optimized sequential reads"""
         data = bytearray()
+
+        # Validate site, if length > 4096, abort
+        if length > 4096:
+            logging.warning(f"Read length {length} exceeds maximum EEPROM size")
+            return None
         
         # Read in chunks to optimize I2C transactions
         remaining = length
