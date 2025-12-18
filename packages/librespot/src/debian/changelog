@@ -1,3 +1,10 @@
+hifiberry-librespot (0.8.0.1) stable; urgency=medium
+
+  * Updated librespot to v0.8.0 release
+  * Latest upstream version with new features and improvements
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 17 Dec 2025 12:00:00 +0000
+
 hifiberry-librespot (0.7.1.6) stable; urgency=medium
 
   * Added sound card detection check to start-librespot script
