@@ -1,3 +1,10 @@
+hifiberry-pipewire-configs (1.0.3) stable; urgency=medium
+
+  * Added 99-force-effect-filter.conf to force audio streams through effect processing
+  * Updated for Debian Trixie compatibility
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 18 Dec 2025 09:00:00 +0000
+
 hifiberry-pipewire-configs (1.0.1) stable; urgency=medium
 
   * Added 99-hifiberry-bluetooth.conf for Bluetooth audio configuration
