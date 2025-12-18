@@ -5,7 +5,7 @@
 #export DH_VERBOSE = 1
 
 # Librespot version and commit configuration
-LIBRESPOT_VERSION = v0.7.1
+LIBRESPOT_VERSION = v0.8.0
 # LIBRESPOT_COMMIT_ID = 987dfa5df2546a96d34582674a757a3dcc6036a7
 
 # Rust build configuration
