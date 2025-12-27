@@ -61,7 +61,7 @@ HiFiBerryOS runs on any 64-bit Raspberry Pi (Pi 3, Pi 4, or Pi 5) with a compati
 
 ### HiFiBerry HAT Compatibility
 
-HiFiBerryOS supports all current HiFiBerry audio HATs. No soudn cards from other manufacturers are supported.
+HiFiBerryOS supports all current HiFiBerry audio HATs. No sound cards from other manufacturers are supported.
 
 ## Installation
 
