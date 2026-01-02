@@ -1,0 +1,5 @@
+hifiberry-analoginput (1.0.0) stable; urgency=medium
+
+  * Initial release of HiFiBerry Analog Input Service
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 02 Jan 2026 12:00:00 +0000

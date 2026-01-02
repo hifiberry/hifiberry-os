@@ -1,0 +1,18 @@
+Source: hifiberry-analoginput
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13), 
+               dh-sequence-python3,
+               python3-all,
+               python3-setuptools,
+Standards-Version: 4.1.4
+Homepage: https://www.hifiberry.com/
+
+Package: hifiberry-analoginput
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire
+Description: HiFiBerry analog input management service
+ Manages analog input functionality for HiFiBerry audio systems.
+ This service handles analog input configuration and routing by
+ connecting ALSA ADC nodes to effect_input.proc using PipeWire.
