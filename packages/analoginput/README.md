@@ -40,10 +40,10 @@ hifiberry-analoginput connect -v
 The service can be controlled via systemd as a user service:
 
 ```bash
-systemctl --user start hifiberry-analoginput
-systemctl --user stop hifiberry-analoginput
-systemctl --user status hifiberry-analoginput
-systemctl --user enable hifiberry-analoginput  # Enable at login
+systemctl --user start analoginput
+systemctl --user stop analoginput
+systemctl --user status analoginput
+systemctl --user enable analoginput  # Enable at login
 ```
 
 ## Requirements

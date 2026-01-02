@@ -15,7 +15,7 @@ setup(
     ],
     data_files=[
         ('/usr/lib/systemd/user', [
-            'systemd/hifiberry-analoginput.service'
+            'systemd/analoginput.service'
         ]),
     ],
     entry_points={

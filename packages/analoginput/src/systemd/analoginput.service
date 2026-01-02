@@ -3,11 +3,10 @@ Description=HiFiBerry Analog Input Service
 After=pipewire.service
 
 [Service]
-Type=simple
+Type=oneshot
+RemainAfterExit=yes
 ExecStart=/usr/bin/hifiberry-analoginput connect
 ExecStop=/usr/bin/hifiberry-analoginput disconnect
-Restart=on-failure
-RestartSec=5
 
 [Install]
 WantedBy=default.target
