@@ -107,13 +107,11 @@ def connect():
             # pw-link returns non-zero if link already exists
             if "File exists" in res.stderr:
                 info(f"Already connected {ch}: {src} -> {dst}")
+                created_any = True
             else:
                 print(f"Failed to connect {ch}", file=sys.stderr)
                 print(res.stderr.strip(), file=sys.stderr)
                 sys.exit(1)
-
-    if not created_any:
-        sys.exit(1)
 
     sys.exit(0)
 
@@ -141,7 +139,7 @@ def disconnect():
             info(f"No link for {ch}")
 
     if not removed_any:
-        sys.exit(1)
+        info("No links were connected")
 
     sys.exit(0)
 
