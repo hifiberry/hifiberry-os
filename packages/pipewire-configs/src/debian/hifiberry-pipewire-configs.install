@@ -1,4 +1,6 @@
 etc/pipewire/pipewire.conf.d/90-hifiberry-effects.conf
+etc/pipewire/pipewire.conf.d/91-riaa.conf
 etc/pipewire/pipewire.conf.d/99-hifiberry-headless.conf
+etc/xdg/wireplumber/wireplumber.conf.d/91-hide-midi-ui.conf
 etc/xdg/wireplumber/wireplumber.conf.d/99-hifiberry-bluetooth.conf
 etc/xdg/wireplumber/wireplumber.conf.d/99-force-effect-filter.conf
