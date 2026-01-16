@@ -1,3 +1,12 @@
+hifiberry-pipewire-configs (1.0.4) stable; urgency=medium
+
+  * Added 91-riaa.conf with RIAA equalization curve for vinyl playback
+  * RIAA filter operates at 96 kHz with separate left/right channel processing
+  * Includes highpass, peaking, and high-shelf filters to match RIAA standard
+  * Added 91-hide-midi-ui.conf to hide MIDI devices from graph UIs
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 16 Jan 2026 09:00:00 +0000
+
 hifiberry-pipewire-configs (1.0.3) stable; urgency=medium
 
   * Added 99-force-effect-filter.conf to force audio streams through effect processing
