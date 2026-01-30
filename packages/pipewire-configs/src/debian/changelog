@@ -1,3 +1,12 @@
+hifiberry-pipewire-configs (1.0.5) stable; urgency=medium
+
+  * Removed 90-hifiberry-effects.conf (replaced by speakereq package)
+  * Removed 91-riaa.conf (replaced by speakereq package)
+  * Removed 99-force-effect-filter.conf (replaced by speakereq package)
+  * Added speakereq as dependency for audio processing features
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 30 Jan 2026 10:00:00 +0000
+
 hifiberry-pipewire-configs (1.0.4) stable; urgency=medium
 
   * Added 91-riaa.conf with RIAA equalization curve for vinyl playback

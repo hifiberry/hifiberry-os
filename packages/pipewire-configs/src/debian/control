@@ -8,21 +8,18 @@ Homepage: https://hifiberry.com/os
 
 Package: hifiberry-pipewire-configs
 Architecture: all
-Depends: ${misc:Depends}, pipewire
+Depends: ${misc:Depends}, pipewire, speakereq
 Recommends: pipewire-pulse, wireplumber, bluez
 Description: HiFiBerry PipeWire configuration files
  This package provides PipeWire configuration files optimized for HiFiBerry
  audio systems and headless environments.
  .
  Included configurations:
-  - 90-hifiberry-effects.conf: Advanced audio processing with parametric EQ,
-    balance control, and mono/stereo conversion
-  - 91-riaa.conf: RIAA equalization curve for vinyl playback at 96 kHz
   - 91-hide-midi-ui.conf: Hide MIDI devices from graph UIs (WirePlumber)
   - 99-hifiberry-headless.conf: Optimized configuration for headless systems
     without D-Bus session or X11 dependencies
   - 99-hifiberry-bluetooth.conf: Bluetooth audio configuration with automatic
     profile connection for HFP, HSP, and A2DP profiles
  .
- These configurations enhance audio quality and provide advanced DSP features
- while maintaining compatibility with headless and embedded audio systems.
+ Audio processing features are provided by the speakereq package.
+ These configurations maintain compatibility with headless and embedded audio systems.
