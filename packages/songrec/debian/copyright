@@ -6,6 +6,10 @@ Files: *
 Copyright: 2020 Marin <marin-m@users.noreply.github.com>
 License: GPL-3.0+
 
+Files: packaging/rootfs/usr/share/metainfo/com.github.marinm.songrec.metainfo.xml
+Copyright: 2020 Marin <marin-m@users.noreply.github.com>
+License: CC0-1.0
+
 License: GPL-3.0+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -22,4 +26,22 @@ License: GPL-3.0+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+License: CC0-1.0
+ Statement of Purpose
+ .
+ The laws of most jurisdictions throughout the world automatically confer
+ exclusive Copyright and Related Rights (defined below) upon the creator and
+ subsequent owner(s) (each and all, an "owner") of an original work of
+ authorship and/or a database (each, a "Work").
+ .
+ Certain owners wish to permanently relinquish those rights to a Work for the
+ purpose of contributing to a commons of creative, cultural and scientific
+ works ("Commons") that the public can reliably and without fear of later
+ claims of infringement build upon, modify, incorporate in other works, reuse
+ and redistribute as freely as possible in any form whatsoever and for any
+ purposes, including without limitation commercial purposes.
+ .
+ For the full text of the CC0 1.0 Universal license, please visit:
+ https://creativecommons.org/publicdomain/zero/1.0/legalcode
 
