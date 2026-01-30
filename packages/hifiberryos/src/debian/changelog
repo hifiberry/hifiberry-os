@@ -1,3 +1,9 @@
+hifiberryos-meta (0.5) unstable; urgency=medium
+
+  * Added dependency to pipewire configs
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 30 Jan 2026 12:00:00 +0000
+
 hifiberryos-meta (0.4) unstable; urgency=medium
 
   * Updated hifiberry-audiocontrol to 0.6.11:
