@@ -14,13 +14,7 @@ override_dh_auto_clean:
 override_dh_auto_configure:
 	# Download xmltodict source from PyPI
 	if [ ! -d xmltodict-source ]; then \
-		if command -v pip3 >/dev/null 2>&1; then \
-			pip3 download xmltodict==1.0.2 --no-binary :all: --no-deps --dest .; \
-		elif command -v pip >/dev/null 2>&1; then \
-			pip download xmltodict==1.0.2 --no-binary :all: --no-deps --dest .; \
-		else \
-			wget "https://files.pythonhosted.org/packages/source/x/xmltodict/xmltodict-1.0.2.tar.gz" -O "xmltodict-1.0.2.tar.gz"; \
-		fi; \
+		wget "https://files.pythonhosted.org/packages/source/x/xmltodict/xmltodict-1.0.2.tar.gz" -O "xmltodict-1.0.2.tar.gz"; \
 		TARFILE=$$(ls xmltodict-*.tar.gz | head -n1); \
 		tar -xzf "$$TARFILE"; \
 		SRCDIR=$$(basename "$$TARFILE" .tar.gz); \
