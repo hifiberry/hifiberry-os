@@ -67,6 +67,21 @@ sbuild --chroot-mode=unshare \
 # Go back to parent directory
 cd ..
 
+# Clean up build artifacts except the final .deb package
+echo "Cleaning up build artifacts..."
+find . -maxdepth 1 -name "*.build" -delete
+find . -maxdepth 1 -name "*.buildinfo" -delete
+find . -maxdepth 1 -name "*.changes" -delete
+find . -maxdepth 1 -name "*.dsc" -delete
+
+# Keep only the most recent .deb file
+LATEST_DEB=$(ls -t ${PACKAGE_NAME}_*.deb 2>/dev/null | head -1)
+if [ -n "$LATEST_DEB" ]; then
+    # Remove all .deb files except the latest one
+    ls -t ${PACKAGE_NAME}_*.deb | tail -n +2 | xargs -r rm -f
+    echo "Kept latest package: $LATEST_DEB"
+fi
+
 echo "Package build completed."
 echo "Built packages:"
-ls -la src/../*.deb 2>/dev/null || echo "No .deb files found"
+ls -la ${PACKAGE_NAME}_*.deb 2>/dev/null || echo "No .deb files found"

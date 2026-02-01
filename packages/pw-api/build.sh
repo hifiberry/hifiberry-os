@@ -4,8 +4,8 @@
 set -e
 
 # Define variables
-PACKAGE="speakereq"
-REPO_URL="https://github.com/hifiberry/speakereq"
+PACKAGE="pipewire-api"
+REPO_URL="https://github.com/hifiberry/pipewire-api.git"
 
 # Function to clean up build and downloaded files
 clean() {
@@ -37,15 +37,14 @@ echo "Building $PACKAGE Debian package..."
 make deb
 
 # Remove debug symbols packages
-rm -f ../ladspa-speakereq-dbgsym*.deb
 rm -f ../pipewire-api-dbgsym*.deb
 
 # Step 3: Move built packages back to package directory
 cd ..
-mv $PACKAGE_*.deb . 2>/dev/null || true
-mv $PACKAGE_*.build . 2>/dev/null || true
-mv $PACKAGE_*.buildinfo . 2>/dev/null || true
-mv $PACKAGE_*.changes . 2>/dev/null || true
+mv pipewire-api_*.deb . 2>/dev/null || true
+mv pipewire-api_*.build . 2>/dev/null || true
+mv pipewire-api_*.buildinfo . 2>/dev/null || true
+mv pipewire-api_*.changes . 2>/dev/null || true
 
 echo "Package build completed."
 echo "Built packages:"

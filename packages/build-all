@@ -24,7 +24,6 @@ for dir in "$SCRIPT_DIR"/*/; do
         if [ "$CLEAN_MODE" = false ] && ls "$dir"/*.deb 1> /dev/null 2>&1; then
             echo "Found existing .deb files in $dir. Skipping build (use --clean to force rebuild)..."
             echo 
-            sleep 1
             continue
         fi
         
