@@ -37,7 +37,7 @@ echo "Building $PACKAGE Debian package..."
 make deb
 
 # Remove debug symbols package
-rm -f ../$PACKAGE-dbgsym*.deb
+rm -f ../ladspa-speakereq-dbgsym*.deb
 
 # Step 3: Move built packages back to package directory
 cd ..

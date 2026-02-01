@@ -1,3 +1,12 @@
+hifiberry-pipewire-configs (1.0.6) stable; urgency=medium
+
+  * Added ladspa-riaa package as dependency
+  * Added ladspa-speakereq package as dependency
+  * Added pipewire-api package as dependency
+  * Removed old speakereq dependency (renamed to ladspa-speakereq)
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 31 Jan 2026 12:40:00 +0000
+
 hifiberry-pipewire-configs (1.0.5) stable; urgency=medium
 
   * Removed 90-hifiberry-effects.conf (replaced by speakereq package)

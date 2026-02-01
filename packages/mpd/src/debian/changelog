@@ -1,3 +1,11 @@
+hifiberry-mpd (0.24.8.1) stable; urgency=low
+
+  * Updated to MPD v0.24.8 from upstream
+  * Latest upstream release with bug fixes and improvements
+  * Includes fixes from v0.24.6, v0.24.7, and v0.24.8
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 01 Feb 2026 12:00:00 +0000
+
 hifiberry-mpd (0.24.5.7) stable; urgency=low
 
   * Fixed unstripped-binary lintian errors by using debugoptimized build

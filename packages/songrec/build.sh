@@ -24,22 +24,8 @@ fi
 if [[ -d "$PACKAGE/.git" ]]; then
     echo "Updating $PACKAGE source from $REPO_URL..."
     cd "$PACKAGE"
-    # Stash any local changes before pulling
-    if git diff --quiet && git diff --cached --quiet; then
-        echo "No local changes detected, pulling updates..."
-        git pull
-    else
-        echo "Local changes detected, stashing before pull..."
-        git stash push -m "Build script auto-stash $(date)"
-        git pull
-        echo "Attempting to restore stashed changes..."
-        if git stash pop; then
-            echo "Successfully restored local changes"
-        else
-            echo "Warning: Conflicts detected when restoring changes"
-            echo "Please resolve conflicts manually or use --clean to start fresh"
-        fi
-    fi
+    # Fetch all tags and updates
+    git fetch --all --tags
     cd ..
 else
     echo "Cloning $PACKAGE source from $REPO_URL..."
@@ -62,6 +48,17 @@ if [ -z "$CHANGELOG_VERSION" ]; then
     exit 1
 fi
 
+# Checkout the correct version tag if specified
+if [ -n "$CHANGELOG_VERSION" ]; then
+    echo "Checking out version tag $CHANGELOG_VERSION..."
+    if git rev-parse "refs/tags/$CHANGELOG_VERSION" >/dev/null 2>&1; then
+        git checkout "$CHANGELOG_VERSION"
+        echo "Checked out tag $CHANGELOG_VERSION"
+    else
+        echo "Warning: Tag $CHANGELOG_VERSION not found, using current HEAD"
+    fi
+fi
+
 echo "Version check passed: $CHANGELOG_VERSION"
 
 # Remove watch file if it exists (not needed for native packages)
@@ -81,6 +78,24 @@ echo "Building with sbuild..."
 sbuild --chroot-mode=unshare --enable-network --no-clean-source $DIST_ARG
 
 cd ..
+
+# Clean up the debian directory from the git submodule
+rm -rf "$PACKAGE/debian"
+
+# Clean up build artifacts except the final .deb package
+echo "Cleaning up build artifacts..."
+find . -maxdepth 1 -name "*.build" -delete
+find . -maxdepth 1 -name "*.buildinfo" -delete
+find . -maxdepth 1 -name "*.changes" -delete
+find . -maxdepth 1 -name "*.dsc" -delete
+
+# Keep only the most recent .deb file
+LATEST_DEB=$(ls -t songrec_*.deb 2>/dev/null | head -1)
+if [ -n "$LATEST_DEB" ]; then
+    # Remove all .deb files except the latest one
+    ls -t songrec_*.deb | tail -n +2 | xargs -r rm -f
+    echo "Kept latest package: $LATEST_DEB"
+fi
 
 # Show the package
 echo "Package created:"

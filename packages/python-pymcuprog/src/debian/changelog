@@ -1,3 +1,15 @@
+python3-pymcuprog (3.19.4.61-1) stable; urgency=medium
+
+  * Updated to pymcuprog v3.19.4.61 from PyPI
+  * Implement context management for Backend (with statement support)
+  * Add support for SAMD21 XPRO, AVR EB boot-row, dsPIC33AK512MPS506
+  * Accept hex numbers (0x prefix) in read/write size specifications
+  * Fix reads not aligned with USB chunk size (512 bytes)
+  * Fix chip-erase-locked-device handling
+  * Fix incorrect SRAM start address for AVR32SD32
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 01 Feb 2026 12:00:00 +0000
+
 python3-pymcuprog (3.17.3.45-1) stable; urgency=medium
 
   * Initial HiFiBerry packaging of pymcuprog

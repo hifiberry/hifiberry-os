@@ -1,0 +1,75 @@
+Package Version Check - Generated on 2026-02-01
+================================================================
+LAST UPDATE: 2026-02-01 - Updates applied to changelogs and build scripts
+
+UPSTREAM PACKAGES (External Sources):
+
+librespot: UP TO DATE - Local v0.8.0.1 / Upstream v0.8.0 (GitHub: librespot-org/librespot)
+  └─ Status: OK (local version appears to be a patch on v0.8.0)
+
+mpd: UPDATED - Local v0.24.8.1 / Upstream v0.24.8 (GitHub: MusicPlayerDaemon/MPD)
+  └─ Status: Changelog updated, debian/rules updated to v0.24.8
+  └─ Action: Run build.sh to compile new version
+
+shairport-sync: VERSION MISMATCH - Local v5.0.0.10 / Upstream v4.3.7 (GitHub: mikebrady/shairport-sync)
+  └─ Status: UNEXPECTED - Local version (5.x) is higher than upstream (4.x)
+  └─ Action: Verify if local is using development branch or custom fork
+
+squeezelite: UNKNOWN - Local v2.0.0.1546 (GitHub: ralph-irving/squeezelite)
+  └─ Status: No releases or tags available on GitHub to compare
+  └─ Action: Check commit history manually
+
+songrec: UPDATED - Local v0.5.0 / Upstream v0.5.0 (GitHub: marin-m/SongRec)
+  └─ Status: Changelog updated, build script updated to checkout v0.5.0 tag
+  └─ Action: Run build.sh to compile new version
+
+PYTHON PACKAGES (PyPI):
+
+python-pyalsaaudio: UP TO DATE - Local v0.11.0 (PyPI verification blocked)
+  └─ Status: Could not verify latest version due to PyPI bot detection
+  └─ Action: Manually check pypi.org/project/pyalsaaudio if needed
+
+python-xmltodict: UP TO DATE - Local v1.0.2 / Upstream v1.0.2 (PyPI)
+  └─ Status: OK (latest version, released September 2025)
+
+python-pyedbglib: UPDATED - Local v2.24.2.18 / Upstream v2.24.2.18 (PyPI)
+  └─ Status: Changelog updated to v2.24.2.18-1
+  └─ Action: Run build.sh to compile new version (build script auto-updates from git)
+
+python-pymcuprog: UPDATED - Local v3.19.4.61 / Upstream v3.19.4.61 (PyPI)
+  └─ Status: Changelog and build script updated to v3.19.4.61-1
+  └─ Action: Run build.sh to compile new version
+
+HIFIBERRY PACKAGES (Developed In-House):
+
+hifiberry-audiocontrol (acr): v0.6.15 - Internal package
+hifiberry-bluetooth: v1.0.0 - Internal package
+hifiberry-configurator: v2.12 - Internal package
+hifiberry-webui: v0.16.0 - Internal package
+hifiberry-dsptoolkit: Internal package
+hifiberry-baseconfig: v1.1.10 - Internal package
+
+================================================================
+SUMMARY:
+
+UPDATES APPLIED (changelogs and build scripts updated):
+- mpd: v0.24.5.7 → v0.24.8.1 ✓
+- songrec: v0.4.3 → v0.5.0 ✓
+- python-pymcuprog: v3.17.3.45 → v3.19.4.61 ✓
+- python-pyedbglib: v2.24.2 → v2.24.2.18 ✓
+
+NEXT STEPS:
+To build the updated packages, run:
+  cd /home/matuschd/hifiberry-os/packages/mpd && ./build.sh
+  cd /home/matuschd/hifiberry-os/packages/songrec && ./build.sh
+  cd /home/matuschd/hifiberry-os/packages/python-pymcuprog && ./build.sh
+  cd /home/matuschd/hifiberry-os/packages/python-pyedbglib && ./build.sh
+
+UNCHANGED PACKAGES:
+
+INVESTIGATE:
+- shairport-sync: Local version 5.0.0.10 vs upstream 4.3.7 (version mismatch)
+- squeezelite: No upstream version information available
+- python-pyalsaaudio: Could not verify latest version (currently v0.11.0)
+
+================================================================

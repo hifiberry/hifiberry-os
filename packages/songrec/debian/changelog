@@ -1,3 +1,20 @@
+songrec (0.5.0) stable; urgency=medium
+
+  * Update to upstream version 0.5.0
+  * Fixed issue with Gnome 47's restrictions on loading custom CSS (Issue #191)
+  * Fixed icon showing on older versions of GTK (Issue #190)
+  * Added Swedish translation (PR #192)
+  * Added Traditional Chinese translation (PR #193, #206)
+  * Added Bulgarian translation (PR #197)
+  * Added Russian translation (PR #204)
+  * Added Asturian translation (PR #208)
+  * Updated German, Portuguese, Brazilian Portuguese, and Polish translations
+  * Improved Wayland compatibility for audio source selection
+  * Fixed panic handling when server returns non-JSON response
+  * Updated various dependencies to latest versions
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 01 Feb 2026 20:00:00 +0000
+
 songrec (0.4.3) stable; urgency=low
 
   * Prevent missing application icon when running (PR #163)

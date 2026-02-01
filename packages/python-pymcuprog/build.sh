@@ -4,7 +4,7 @@
 set -e
 
 PACKAGE="python3-pymcuprog"
-VERSION="3.17.3.45-1"
+VERSION="3.19.4.61-1"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then
@@ -51,11 +51,26 @@ sbuild \
     --no-run-lintian \
     --verbose
 
-# Move build artifacts to script directory
-echo "Moving build artifacts..."
+# Move only the .deb to script directory, discard other build artifacts
+echo "Moving package file..."
 mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
-mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
-mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+
+# Clean up build directory
+cd "$SCRIPT_DIR"
+rm -rf "$BUILD_DIR"
+
+# Clean up old artifacts in script directory
+echo "Cleaning up old build artifacts..."
+find "$SCRIPT_DIR" -maxdepth 1 -name "${PACKAGE}_*.buildinfo" -delete
+find "$SCRIPT_DIR" -maxdepth 1 -name "${PACKAGE}_*.changes" -delete
+
+# Keep only the most recent .deb file
+LATEST_DEB=$(ls -t "$SCRIPT_DIR"/${PACKAGE}_*.deb 2>/dev/null | head -1)
+if [ -n "$LATEST_DEB" ]; then
+    # Remove all .deb files except the latest one
+    ls -t "$SCRIPT_DIR"/${PACKAGE}_*.deb | tail -n +2 | xargs -r rm -f
+    echo "Kept latest package: $(basename $LATEST_DEB)"
+fi
 
 echo "Package built successfully"
 echo "Built packages:"
