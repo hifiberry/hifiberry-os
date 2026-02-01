@@ -88,6 +88,8 @@ find . -maxdepth 1 -name "*.build" -delete
 find . -maxdepth 1 -name "*.buildinfo" -delete
 find . -maxdepth 1 -name "*.changes" -delete
 find . -maxdepth 1 -name "*.dsc" -delete
+find . -maxdepth 1 -name "*.tar.gz" -delete
+find . -maxdepth 1 -name "*.tar.xz" -delete
 
 # Keep only the most recent .deb file
 LATEST_DEB=$(ls -t songrec_*.deb 2>/dev/null | head -1)
