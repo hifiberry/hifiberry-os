@@ -33,4 +33,4 @@ packages/librespot/sbuild_tmp
 packages/hifiberryos/build-hifiberryos-meta
 packages/eeprom/src/hateeprom/__pycache__
 packages/analoginput/build
-packages/.vscode/settings.json
+packages/.vscode
