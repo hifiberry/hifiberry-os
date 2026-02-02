@@ -91,6 +91,3 @@ EOF
 # Reload the systemd user manager
 echo "Reloading systemd user manager..."
 systemctl --user daemon-reexec
-
-# Baeconfig - enable daemons
- sudo hifiberry-baseconfig
