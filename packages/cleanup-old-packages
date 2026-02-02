@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""
+Clean up old .deb package files, keeping only the latest version of each package.
+
+This script scans all subdirectories for .deb files, groups them by package name,
+and removes all but the most recent version based on file modification time.
+"""
+
+import os
+import sys
+import re
+from pathlib import Path
+from collections import defaultdict
+from datetime import datetime
+
+
+def parse_package_name(filename):
+    """
+    Extract package name from .deb filename.
+    Format: packagename_version_arch.deb
+    Returns: (package_name, version, arch) or None if parsing fails
+    """
+    match = re.match(r'^(.+?)_([0-9][^_]*)_([^_]+)\.deb$', filename)
+    if match:
+        return match.group(1), match.group(2), match.group(3)
+    return None
+
+
+def find_deb_files(base_dir):
+    """Find all .deb files in subdirectories."""
+    deb_files = []
+    for root, dirs, files in os.walk(base_dir):
+        for filename in files:
+            if filename.endswith('.deb'):
+                filepath = os.path.join(root, filename)
+                deb_files.append(filepath)
+    return deb_files
+
+
+def group_by_package(deb_files):
+    """Group .deb files by package name."""
+    packages = defaultdict(list)
+    
+    for filepath in deb_files:
+        filename = os.path.basename(filepath)
+        parsed = parse_package_name(filename)
+        
+        if parsed:
+            package_name, version, arch = parsed
+            # Get file modification time
+            mtime = os.path.getmtime(filepath)
+            packages[package_name].append({
+                'path': filepath,
+                'version': version,
+                'arch': arch,
+                'mtime': mtime,
+                'filename': filename
+            })
+        else:
+            print(f"Warning: Could not parse package name from: {filename}")
+    
+    return packages
+
+
+def cleanup_old_packages(base_dir, dry_run=False):
+    """
+    Remove old package versions, keeping only the latest.
+    
+    Args:
+        base_dir: Base directory to scan
+        dry_run: If True, only print what would be deleted
+    """
+    deb_files = find_deb_files(base_dir)
+    
+    if not deb_files:
+        print("No .deb files found.")
+        return
+    
+    print(f"Found {len(deb_files)} .deb file(s)\n")
+    
+    packages = group_by_package(deb_files)
+    
+    total_removed = 0
+    total_kept = 0
+    total_size_freed = 0
+    
+    for package_name, versions in sorted(packages.items()):
+        if len(versions) <= 1:
+            print(f"[OK] {package_name}: Only 1 version, keeping it")
+            total_kept += 1
+            continue
+        
+        # Sort by modification time (newest first)
+        versions.sort(key=lambda x: x['mtime'], reverse=True)
+        
+        latest = versions[0]
+        old_versions = versions[1:]
+        
+        print(f"\n{package_name}:")
+        print(f"  KEEP:   {latest['filename']} ({datetime.fromtimestamp(latest['mtime']).strftime('%Y-%m-%d %H:%M:%S')})")
+        
+        for old in old_versions:
+            size = os.path.getsize(old['path'])
+            size_mb = size / (1024 * 1024)
+            date_str = datetime.fromtimestamp(old['mtime']).strftime('%Y-%m-%d %H:%M:%S')
+            
+            if dry_run:
+                print(f"  REMOVE: {old['filename']} ({date_str}, {size_mb:.2f} MB) [DRY RUN]")
+            else:
+                try:
+                    os.remove(old['path'])
+                    print(f"  REMOVE: {old['filename']} ({date_str}, {size_mb:.2f} MB)")
+                    total_size_freed += size
+                    total_removed += 1
+                except Exception as e:
+                    print(f"  ERROR:  {old['filename']} - {e}")
+        
+        total_kept += 1
+    
+    print(f"\n{'='*60}")
+    print(f"Summary:")
+    print(f"  Packages kept:    {total_kept}")
+    print(f"  Packages removed: {total_removed}")
+    if not dry_run and total_size_freed > 0:
+        print(f"  Space freed:      {total_size_freed / (1024 * 1024):.2f} MB")
+    print(f"{'='*60}")
+
+
+def main():
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description='Clean up old .deb packages, keeping only the latest version of each'
+    )
+    parser.add_argument(
+        'directory',
+        nargs='?',
+        default='.',
+        help='Base directory to scan (default: current directory)'
+    )
+    parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Show what would be deleted without actually deleting'
+    )
+    
+    args = parser.parse_args()
+    
+    base_dir = os.path.abspath(args.directory)
+    
+    if not os.path.isdir(base_dir):
+        print(f"Error: Directory not found: {base_dir}")
+        sys.exit(1)
+    
+    print(f"Scanning directory: {base_dir}")
+    if args.dry_run:
+        print("DRY RUN MODE - No files will be deleted\n")
+    else:
+        print("WARNING: This will delete old package files!\n")
+        response = input("Continue? [y/N]: ")
+        if response.lower() != 'y':
+            print("Cancelled.")
+            sys.exit(0)
+    
+    print()
+    cleanup_old_packages(base_dir, dry_run=args.dry_run)
+
+
+if __name__ == '__main__':
+    main()
