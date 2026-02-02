@@ -7,6 +7,36 @@ set -e
 PACKAGE="pipewire-api"
 REPO_URL="https://github.com/hifiberry/pipewire-api.git"
 
+# Function to check version consistency
+check_version_consistency() {
+    echo "Checking version consistency..."
+    
+    # Get version from Cargo.toml
+    local cargo_version=$(grep -E '^version\s*=\s*"[^"]*"' pipewire-api/Cargo.toml | head -1 | sed -E 's/^version\s*=\s*"([^"]*)"/\1/')
+    
+    # Get version from VERSION file
+    local version_file=$(cat pipewire-api/VERSION | tr -d '\n')
+    
+    # Get version from debian/changelog (extract X.Y.Z from X.Y.Z-N format)
+    local debian_version=$(head -1 pipewire-api/debian/changelog | sed -E 's/^[^(]*\(([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+    
+    echo "  Cargo.toml version:     $cargo_version"
+    echo "  VERSION file:           $version_file"
+    echo "  debian/changelog:       $debian_version"
+    
+    # Check if all versions match
+    if [[ "$cargo_version" != "$debian_version" ]] || [[ "$version_file" != "$debian_version" ]]; then
+        echo "ERROR: Version mismatch detected!"
+        echo "  Cargo.toml:     $cargo_version"
+        echo "  VERSION file:   $version_file"
+        echo "  debian/changelog: $debian_version"
+        echo "Please update all version files to match debian/changelog"
+        exit 1
+    fi
+    
+    echo "✓ All versions consistent: $debian_version"
+}
+
 # Function to clean up build and downloaded files
 clean() {
     echo "Cleaning up build and downloaded files..."
@@ -32,8 +62,13 @@ else
     cd "$PACKAGE"
 fi
 
+# Check version consistency before building
+cd ..
+check_version_consistency
+
 # Step 2: Build Debian package using make deb
 echo "Building $PACKAGE Debian package..."
+cd "$PACKAGE"
 make deb
 
 # Remove debug symbols packages
