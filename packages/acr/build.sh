@@ -26,6 +26,26 @@ extract_version() {
     fi
 }
 
+# Check version consistency between Cargo.toml and debian/changelog
+check_version_consistency() {
+    if [[ -f "Cargo.toml" ]] && [[ -f "debian/changelog" ]]; then
+        CARGO_VERSION=$(grep -m1 '^version = ' Cargo.toml | sed 's/version = "\([^"]*\)"/\1/')
+        DEBIAN_VERSION=$(grep -m1 "^hifiberry-audiocontrol (" "debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+        
+        if [[ "$CARGO_VERSION" != "$DEBIAN_VERSION" ]]; then
+            echo "ERROR: Version mismatch detected!"
+            echo "  Cargo.toml version:      $CARGO_VERSION"
+            echo "  debian/changelog version: $DEBIAN_VERSION"
+            echo ""
+            echo "Please update Cargo.toml version to match debian/changelog"
+            exit 1
+        fi
+        echo "Version check passed: $CARGO_VERSION"
+    else
+        echo "Warning: Could not check version consistency (missing Cargo.toml or debian/changelog)"
+    fi
+}
+
 # Function to clean up build and downloaded files
 clean() {
     echo "Cleaning up build and downloaded files..."
@@ -62,6 +82,7 @@ if [[ -d "$SOURCE_PACKAGE/.git" ]]; then
     fi
     # Extract version from changelog now that we're in the correct directory
     extract_version
+    check_version_consistency
     cd ..
 else
     echo "Cloning $SOURCE_PACKAGE source from $REPO_URL..."
@@ -69,6 +90,7 @@ else
     cd "$SOURCE_PACKAGE"
     # Extract version from changelog now that we're in the correct directory
     extract_version
+    check_version_consistency
     cd ..
 fi
 
