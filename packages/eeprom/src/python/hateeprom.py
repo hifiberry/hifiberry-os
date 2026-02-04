@@ -311,6 +311,18 @@ class HatEEPROM:
             print("Write failed")
             return False
     
+    def clear_eeprom(self, size: int = 4096) -> bool:
+        """Clear entire EEPROM by writing zeros"""
+        print(f"Clearing EEPROM ({size} bytes)...")
+        zeros = bytes([0] * size)
+        
+        if self.write_data(0, zeros):
+            print("EEPROM cleared successfully")
+            return True
+        else:
+            print("Clear failed")
+            return False
+    
     def parse_hat_eeprom(self, data: bytes) -> dict:
         """
         Parse HAT EEPROM data according to HAT specification
@@ -552,6 +564,11 @@ def main():
     info_parser = subparsers.add_parser('info', help='Display HAT information from EEPROM')
     info_parser.add_argument('--size', type=int, help='EEPROM size in bytes (default: auto-detect from type)')
     
+    # Clear command
+    clear_parser = subparsers.add_parser('clear', help='Clear entire EEPROM (WARNING: destructive operation)')
+    clear_parser.add_argument('--size', type=int, help='EEPROM size in bytes (default: auto-detect from type)')
+    clear_parser.add_argument('--yes', '-y', action='store_true', help='Skip confirmation prompts')
+    
     args = parser.parse_args()
     
     if not args.command:
@@ -683,6 +700,31 @@ def main():
                 if len(atom['data']) > 32:
                     hex_data += '...'
                 print(f"  Data: {hex_data}")
+    
+    elif args.command == 'clear':
+        clear_size = args.size if args.size else eeprom_size
+        
+        if not args.yes:
+            print("\n" + "=" * 70)
+            print("WARNING: This will PERMANENTLY ERASE the HAT EEPROM!")
+            print("This will make your HiFiBerry sound card UNUSABLE!")
+            print("You will need to reprogram the EEPROM to use the card again.")
+            print("=" * 70)
+            
+            response1 = input("\nDo you want to do this? (type 'yes' to continue): ")
+            if response1.lower() != 'yes':
+                print("Operation cancelled.")
+                return 0
+            
+            response2 = input("\nDo you REALLY want to erase the EEPROM? (type 'YES' in capitals): ")
+            if response2 != 'YES':
+                print("Operation cancelled.")
+                return 0
+            
+            print("")
+        
+        if not eeprom.clear_eeprom(clear_size):
+            return 1
     
     return 0
 
