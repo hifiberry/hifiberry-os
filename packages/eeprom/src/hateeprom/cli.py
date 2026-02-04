@@ -192,6 +192,15 @@ def main():
     shortinfo_parser = subparsers.add_parser('shortinfo', help='Display HAT info in short format: vendor:product:uuid')
     shortinfo_parser.add_argument('--debug', action='store_true', help='Enable debug output for atom parsing')
     
+    # Clear command
+    clear_parser = subparsers.add_parser('clear', help='Clear entire EEPROM (WARNING: destructive operation)')
+    clear_parser.add_argument('--size', type=int, help='EEPROM size in bytes (default: auto-detect from type)')
+    clear_parser.add_argument('--yes', '-y', action='store_true', help='Skip confirmation prompts')
+    
+    # List command
+    list_parser = subparsers.add_parser('list', help='List available EEPROM template files')
+    list_parser.add_argument('--path', default='/usr/share/hifiberry-eeprom', help='Directory to search (default: /usr/share/hifiberry-eeprom)')
+    
     args = parser.parse_args()
     
     if not args.command:
@@ -262,9 +271,39 @@ def main():
             return 1
     
     elif args.command == 'flash':
+        import os
+        
+        # Check if file exists, if not try the standard EEPROM directory
+        filename = args.filename
+        if not os.path.isfile(filename):
+            # Try in the standard location
+            standard_path = os.path.join('/usr/share/hifiberry-eeprom', filename)
+            if os.path.isfile(standard_path):
+                filename = standard_path
+                print(f"Using template from {filename}")
+            else:
+                # Also try with .eep extension if not provided
+                if not filename.endswith('.eep'):
+                    filename_with_ext = filename + '.eep'
+                    standard_path_with_ext = os.path.join('/usr/share/hifiberry-eeprom', filename_with_ext)
+                    if os.path.isfile(standard_path_with_ext):
+                        filename = standard_path_with_ext
+                        print(f"Using template from {filename}")
+                    else:
+                        print(f"Error: File not found: {args.filename}")
+                        print(f"Also checked: {standard_path}")
+                        print(f"Also checked: {standard_path_with_ext}")
+                        print(f"\nUse 'hateeprom list' to see available templates")
+                        return 1
+                else:
+                    print(f"Error: File not found: {args.filename}")
+                    print(f"Also checked: {standard_path}")
+                    print(f"\nUse 'hateeprom list' to see available templates")
+                    return 1
+        
         # Read file first to check size
         try:
-            with open(args.filename, 'rb') as f:
+            with open(filename, 'rb') as f:
                 file_data = f.read()
         except Exception as e:
             print(f"Error reading file: {e}")
@@ -275,7 +314,7 @@ def main():
             print(f"Error: Flash operation would exceed EEPROM size ({eeprom_size} bytes for {args.type})")
             return 1
         
-        if not eeprom.write_eeprom(args.filename, args.offset):
+        if not eeprom.write_eeprom(filename, args.offset):
             return 1
     
     elif args.command == 'detect':
@@ -379,6 +418,94 @@ def main():
         # Use the library's short_info method for consistency
         result = eeprom.format_short_info(separator=':', debug=args.debug)
         print(result)
+    
+    elif args.command == 'clear':
+        clear_size = args.size if args.size else eeprom_size
+        
+        if not args.yes:
+            print("\n" + "=" * 70)
+            print("WARNING: This will PERMANENTLY ERASE the HAT EEPROM!")
+            print("This will make your HiFiBerry sound card UNUSABLE!")
+            print("You will need to reprogram the EEPROM to use the card again.")
+            print("=" * 70)
+            
+            response1 = input("\nDo you want to do this? (type 'yes' to continue): ")
+            if response1.lower() != 'yes':
+                print("Operation cancelled.")
+                return 0
+            
+            response2 = input("\nDo you REALLY want to erase the EEPROM? (type 'YES' in capitals): ")
+            if response2 != 'YES':
+                print("Operation cancelled.")
+                return 0
+            
+            print("")
+        
+        # Clear the EEPROM by writing zeros
+        print(f"Clearing {clear_size} bytes of EEPROM...")
+        zero_data = bytes([0xFF] * min(clear_size, 256))  # Write in chunks
+        
+        for offset in range(0, clear_size, len(zero_data)):
+            chunk_size = min(len(zero_data), clear_size - offset)
+            if not eeprom.write_data(offset, zero_data[:chunk_size]):
+                print(f"Error: Failed to clear EEPROM at offset {offset}")
+                return 1
+            
+            # Show progress
+            progress = ((offset + chunk_size) * 100) // clear_size
+            print(f"\rProgress: {progress}%", end='', flush=True)
+        
+        print("\nEEPROM cleared successfully")
+    
+    elif args.command == 'list':
+        import os
+        import glob
+        
+        eep_dir = args.path
+        if not os.path.isdir(eep_dir):
+            print(f"Error: Directory not found: {eep_dir}")
+            return 1
+        
+        # Find all .eep files
+        eep_files = glob.glob(os.path.join(eep_dir, '*.eep'))
+        
+        if not eep_files:
+            print(f"No .eep files found in {eep_dir}")
+            return 1
+        
+        # Sort files alphabetically
+        eep_files.sort()
+        
+        print(f"Available EEPROM template files in {eep_dir}:\n")
+        
+        # Display files with optional description from corresponding .txt file
+        for eep_file in eep_files:
+            basename = os.path.basename(eep_file)
+            name_without_ext = os.path.splitext(basename)[0]
+            txt_file = os.path.join(eep_dir, name_without_ext + '.txt')
+            
+            # Try to read first line of .txt file as description
+            description = None
+            if os.path.isfile(txt_file):
+                try:
+                    with open(txt_file, 'r') as f:
+                        first_line = f.readline().strip()
+                        if first_line and not first_line.startswith('#'):
+                            description = first_line
+                        elif first_line.startswith('#'):
+                            # Remove leading # and whitespace
+                            description = first_line.lstrip('#').strip()
+                except:
+                    pass
+            
+            # Print file with optional description
+            if description:
+                print(f"  {basename:<30} - {description}")
+            else:
+                print(f"  {basename}")
+        
+        print(f"\nTotal: {len(eep_files)} template(s)")
+        print(f"\nTo flash a template: hateeprom flash {eep_dir}/<filename>")
     
     return 0
 
