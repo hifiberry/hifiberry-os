@@ -23,7 +23,7 @@ library compatibility for use in other applications.
 
 setup(
     name="hateeprom",
-    version="1.3.0",
+    version="1.3.8",
     author="HiFiBerry",
     author_email="info@hifiberry.com",
     description="HAT EEPROM Reader/Writer Library and CLI Tool",
