@@ -62,3 +62,11 @@ echo "Building the Debian package..."
 chmod u+x ./build-deb.sh
 ./build-deb.sh
 echo "Debian package build completed."
+
+# Step 4: Clean up build artifacts (keep only .deb files)
+echo "Cleaning up build artifacts..."
+cd ..
+rm -f *.build *.buildinfo *.changes *.dsc *.tar.gz
+echo "Build artifacts cleaned up"
+echo "Built packages:"
+ls -lh *.deb
