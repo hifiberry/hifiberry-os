@@ -1,6 +1,7 @@
 [Unit]
 Description=Roon
-After=pipewire.service
+After=sound.target pipewire.service
+Wants=sound.target
 ConditionPathExists=/etc/uuid
 
 [Service]
