@@ -15,6 +15,12 @@ PACKAGES_DIR="$HOME/packages"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Looking for build.sh in subdirectories of $SCRIPT_DIR..."
 
+if [ -f "${SCRIPT_DIR}/../scripts/sbuild" ]; then
+    echo "Cross-compile detected, adding sbuild cross-compile to PATH."
+    export PATH="${SCRIPT_DIR}/../scripts:${PATH}"
+fi
+
+
 for dir in "$SCRIPT_DIR"/*/; do
     figlet `basename $dir`
     if [ -f "$dir/build.sh" ]; then

@@ -1,0 +1,41 @@
+#!/bin/bash
+set -euo pipefail
+
+ARCH="arm64"
+DIST="bookworm"
+MIRROR="http://deb.debian.org/debian"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --arch)
+            ARCH="$2"
+            shift 2
+            ;;
+        --dist)
+            DIST="$2"
+            shift 2
+            ;;
+        *)
+            echo "Usage: $0 [--arch ARCH] [--dist DIST]"
+            exit 1
+            ;;
+    esac
+done
+
+CHROOT_DIR="/srv/chroot/${DIST}-${ARCH}-hifiberry-sbuild"
+
+echo "Using ARCH=${ARCH} DIST=${DIST}"
+echo "CHROOT directory: ${CHROOT_DIR}"
+
+# === Create CHROOT ===
+sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
+    --arch=${ARCH} ${DIST} ${CHROOT_DIR} ${MIRROR}
+
+sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
+sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
+
+echo "Creating CHROOT with sbuild-createchroot"
+sudo sbuild-createchroot --arch=${ARCH} --foreign --setup-only \
+    ${DIST} ${CHROOT_DIR} ${MIRROR}
+
+echo "CHROOT setup complete!"

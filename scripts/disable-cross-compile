@@ -1,0 +1,40 @@
+#!/bin/bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SBUILD=$SCRIPT_DIR/sbuild
+
+echo "Remove sbuild wrapper"
+
+rm -f $SBUILD
+
+echo "Cleaning all hifiberry chroots"
+
+for CHROOT_DIR in /srv/chroot/*hifiberry*; do
+    [ -d "$CHROOT_DIR" ] || continue
+
+    CHROOT_NAME=$(basename "$CHROOT_DIR")
+    echo "Processing chroot: $CHROOT_NAME"
+
+    sudo schroot --all-sessions --list | grep "$CHROOT_NAME" | while read -r session; do
+        echo "Ending session: $session"
+        sudo schroot --end-session --session-name="$session" || true
+    done || true
+
+    if mount | grep -q "$CHROOT_DIR"; then
+        echo "Unmounting leftover mounts..."
+        sudo umount -lf "$CHROOT_DIR/proc" 2>/dev/null || true
+        sudo umount -lf "$CHROOT_DIR/sys" 2>/dev/null || true
+        sudo umount -lf "$CHROOT_DIR/dev" 2>/dev/null || true
+    fi
+
+    echo "Removing chroot directory: $CHROOT_DIR"
+    sudo rm -rf "$CHROOT_DIR"
+
+    echo "Removing schroot config files for $CHROOT_NAME"
+    sudo rm -f /etc/schroot/chroot.d/${CHROOT_NAME}-* 2>/dev/null || true
+
+    echo "Cleanup complete for $CHROOT_NAME"
+done
+
+echo "All hifiberry chroots cleaned."
