@@ -30,20 +30,18 @@ done
 
 CHROOT_TARBALL="$CHROOT_TARBALL_LOCATION/$DIST-$ARCH-hifiberry.tar.zst"
 
-INIT_SCRIPT="#!/usr/bin/env bash
+INIT_SCRIPT=$(cat <<EOF
+#!/usr/bin/env bash
 
-export ARCH=${ARCH}
-export DIST=${DIST}
+export ARCH=$ARCH
 
-echo Building for ARCH=${ARCH} DIST=${DIST}
+echo "Building for ARCH=${ARCH}"
 
-exec /usr/bin/sbuild --chroot-mode=unshare \\
-                     --chroot=${DIST}-${ARCH}-hifiberry \\
-                     --enable-network \\
-                     --no-clean-source \\
+exec /usr/bin/sbuild --chroot=${DIST}-${ARCH}-hifiberry \\
                      --arch=${ARCH} \\
-                     --dist=${DIST}
-"
+                     "\$@"
+EOF
+)
 
 echo "$INIT_SCRIPT" > $OUTPUT_FILE
 chmod +x $OUTPUT_FILE
