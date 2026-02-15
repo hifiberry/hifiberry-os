@@ -3,38 +3,38 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SBUILD=$SCRIPT_DIR/sbuild
+CLEAN_CHROOT=false
+CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
 
-echo "Remove sbuild wrapper"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --clean-chroot)
+            CLEAN_CHROOT=true
+            shift
+            ;;
+        *)
+            echo "Usage: $0 [--clean_chroot]"
+            exit 1
+            ;;
+    esac
+done
+
+echo "Removing sbuild wrapper for cross-compile"
 
 rm -f $SBUILD
 
-echo "Cleaning all hifiberry chroots"
+if [ "$CLEAN_CHROOT" = true ]; then
+    echo "Clean Chroot option set, Cleaning all hifiberry chroots"
 
-for CHROOT_DIR in /srv/chroot/*hifiberry*; do
-    [ -d "$CHROOT_DIR" ] || continue
+    for CHROOT in $CHROOT_TARBALL_LOCATION/*hifiberry*; do
+        rm $CHROOT
 
-    CHROOT_NAME=$(basename "$CHROOT_DIR")
-    echo "Processing chroot: $CHROOT_NAME"
+        echo "Cleanup complete for $CHROOT"
+    done
 
-    sudo schroot --all-sessions --list | grep "$CHROOT_NAME" | while read -r session; do
-        echo "Ending session: $session"
-        sudo schroot --end-session --session-name="$session" || true
-    done || true
+    echo "All hifiberry chroots cleaned."
+else
+    echo "Clean chroot not set, skipping chroot cleanup."
+fi
 
-    if mount | grep -q "$CHROOT_DIR"; then
-        echo "Unmounting leftover mounts..."
-        sudo umount -lf "$CHROOT_DIR/proc" 2>/dev/null || true
-        sudo umount -lf "$CHROOT_DIR/sys" 2>/dev/null || true
-        sudo umount -lf "$CHROOT_DIR/dev" 2>/dev/null || true
-    fi
-
-    echo "Removing chroot directory: $CHROOT_DIR"
-    sudo rm -rf "$CHROOT_DIR"
-
-    echo "Removing schroot config files for $CHROOT_NAME"
-    sudo rm -f /etc/schroot/chroot.d/${CHROOT_NAME}-* 2>/dev/null || true
-
-    echo "Cleanup complete for $CHROOT_NAME"
-done
-
-echo "All hifiberry chroots cleaned."
+echo "All Done"

@@ -4,6 +4,10 @@ set -euo pipefail
 ARCH="arm64"
 DIST="bookworm"
 MIRROR="http://deb.debian.org/debian"
+CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
+CLEAN_CHROOT=false
+
+mkdir -p "$CHROOT_TARBALL_LOCATION"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -15,6 +19,10 @@ while [[ $# -gt 0 ]]; do
             DIST="$2"
             shift 2
             ;;
+        --clean-chroot)
+            CLEAN_CHROOT=true
+            shift
+            ;;
         *)
             echo "Usage: $0 [--arch ARCH] [--dist DIST]"
             exit 1
@@ -22,20 +30,25 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-CHROOT_DIR="/srv/chroot/${DIST}-${ARCH}-hifiberry-sbuild"
+CHROOT_TARBALL="$CHROOT_TARBALL_LOCATION/$DIST-$ARCH-hifiberry.tar.zst"
 
-echo "Using ARCH=${ARCH} DIST=${DIST}"
-echo "CHROOT directory: ${CHROOT_DIR}"
+echo "===================================="
+echo "ARCH = $ARCH"
+echo "DIST = $DIST"
+echo "CHROOT_TARBALL = $CHROOT_TARBALL"
+echo "===================================="
 
-# === Create CHROOT ===
-sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
-    --arch=${ARCH} ${DIST} ${CHROOT_DIR} ${MIRROR}
-
-sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
-sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
-
-echo "Creating CHROOT with sbuild-createchroot"
-sudo sbuild-createchroot --arch=${ARCH} --foreign --setup-only \
-    ${DIST} ${CHROOT_DIR} ${MIRROR}
-
-echo "CHROOT setup complete!"
+if [ -f "$CHROOT_TARBALL" ] && [ "$CLEAN_CHROOT" = false ]; then
+    echo "CHROOT directory already exists: $CHROOT_TARBALL, skipping creation of new chroot"
+else
+    echo "Creating CHROOT $CHROOT_TARBALL"
+    echo "Creating mmdebstrap tarball..."
+    sudo mmdebstrap $DIST \
+                    $CHROOT_TARBALL \
+                    $MIRROR \
+                    --arch=$ARCH \
+                    --include=ca-certificates \
+                    --mode=unshare \
+                    --skip=output/dev \
+                    --variant=buildd
+fi
