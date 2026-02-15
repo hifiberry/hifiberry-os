@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-mkdir -p "~/.hifiberry"
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_FILE=$SCRIPT_DIR/sbuild
 ARCH=arm64
 DIST=bookworm
+CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
+CLEAN_CHROOT=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -17,35 +17,43 @@ while [[ $# -gt 0 ]]; do
             DIST="$2"
             shift 2
             ;;
+        --clean-chroot)
+            CLEAN_CHROOT=true
+            shift
+            ;;
         *)
-            echo "Usage: $0 [--arch ARCH] [--dist DIST]"
+            echo "Usage: $0 [--arch ARCH] [--dist DIST] [--clean-chroot]"
             exit 1
             ;;
     esac
 done
 
-CHROOT_DIR="/srv/chroot/${DIST}-${ARCH}-hifiberry-sbuild"
+CHROOT_TARBALL="$CHROOT_TARBALL_LOCATION/$DIST-$ARCH-hifiberry.tar.zst"
 
-read -r -d '' INIT_SCRIPT << EOF
-#!/usr/bin/env bash
+INIT_SCRIPT="#!/usr/bin/env bash
 
-export ARCH="$ARCH"
-export DIST="$DIST"
+export ARCH=${ARCH}
+export DIST=${DIST}
 
-echo "Building for ARCH=\$ARCH DIST=\$DIST"
+echo Building for ARCH=${ARCH} DIST=${DIST}
 
-exec /usr/bin/sbuild --arch="\$ARCH" --dist="\$DIST" --no-clean-source
-EOF
+exec /usr/bin/sbuild --chroot-mode=unshare \\
+                     --chroot=${DIST}-${ARCH}-hifiberry \\
+                     --enable-network \\
+                     --no-clean-source \\
+                     --arch=${ARCH} \\
+                     --dist=${DIST}
+"
 
-echo "$INIT_SCRIPT" > "$OUTPUT_FILE"
-chmod +x "$OUTPUT_FILE"
+echo "$INIT_SCRIPT" > $OUTPUT_FILE
+chmod +x $OUTPUT_FILE
 
-echo "sbuild wrapper complete."
-echo ""
+echo sbuild wrapper complete.
+echo 
 
-if [ -d "$CHROOT_DIR" ]; then
-    	echo "CHROOT directory already exists: $CHROOT_DIR"
+if [ -f "$CHROOT_TARBALL" ] && [ "$CLEAN_CHROOT" = false ]; then
+    	echo "CHROOT directory already exists: $CHROOT_TARBALL, skipping creation of new chroot"
 else
-    	echo "Creating CHROOT directory: $CHROOT_DIR"
+    	echo "Creating CHROOT $CHROOT_TARBALL"
     	source ${SCRIPT_DIR}/create-chroot --arch $ARCH --dist $DIST
 fi
