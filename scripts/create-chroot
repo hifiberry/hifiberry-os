@@ -43,7 +43,7 @@ if [ -f "$CHROOT_TARBALL" ] && [ "$CLEAN_CHROOT" = false ]; then
 else
     echo "Creating CHROOT $CHROOT_TARBALL"
     echo "Creating mmdebstrap tarball..."
-    sudo mmdebstrap $DIST \
+    mmdebstrap $DIST \
                     $CHROOT_TARBALL \
                     $MIRROR \
                     --arch=$ARCH \
