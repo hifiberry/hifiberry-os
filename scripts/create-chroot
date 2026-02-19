@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ARCH="arm64"
-DIST="bookworm"
+DIST="trixie"
 MIRROR="http://deb.debian.org/debian"
 CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
 CLEAN_CHROOT=false
