@@ -31,15 +31,16 @@ done
 
 CHROOT_TARBALL="$CHROOT_TARBALL_LOCATION/$DIST-$ARCH-hifiberry.tar.zst"
 
-INIT_SCRIPT=$(cat <<'EOF'
+INIT_SCRIPT=$(cat <<EOF
 #!/usr/bin/env bash
+set -euo pipefail
 
-export ARCH=$ARCH
-DIST=$DIST
+export ARCH="$ARCH"
+export DIST="$DIST"
 
 filtered=()
-while [[ $# -gt 0 ]]; do
-    case "$1" in
+while [[ \$# -gt 0 ]]; do
+    case "\$1" in
         --arch=*|--chroot=*|-c=*)
             shift
             ;;
@@ -47,19 +48,20 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         *)
-            filtered+=("$1")
+            filtered+=("\$1")
             shift
             ;;
     esac
 done
 
-echo "${filtered[@]}"
+echo "\${filtered[@]}"
 
-exec /usr/bin/sbuild --chroot=${DIST}-${ARCH}-hifiberry \
-                     --arch=${ARCH} \
-                     "${filtered[@]}"
+exec /usr/bin/sbuild --chroot=\${DIST}-\${ARCH}-hifiberry \\
+                     --arch=\${ARCH} \\
+                     "\${filtered[@]}"
 EOF
 )
+
 
 echo "$INIT_SCRIPT" > $OUTPUT_FILE
 chmod +x $OUTPUT_FILE
