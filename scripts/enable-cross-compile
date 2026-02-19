@@ -40,10 +40,10 @@ DIST=$DIST
 filtered=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --arch=*|--chroot=*)
+        --arch=*|--chroot=*|-c=*)
             shift
             ;;
-        --arch|--chroot)
+        --arch|--chroot|-c)
             shift 2
             ;;
         *)
@@ -53,12 +53,13 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+echo "${filtered[@]}"
+
 exec /usr/bin/sbuild --chroot=${DIST}-${ARCH}-hifiberry \
                      --arch=${ARCH} \
                      "${filtered[@]}"
 EOF
 )
-
 
 echo "$INIT_SCRIPT" > $OUTPUT_FILE
 chmod +x $OUTPUT_FILE
