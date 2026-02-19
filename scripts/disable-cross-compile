@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         *)
-            echo "Usage: $0 [--clean_chroot]"
+            echo "Usage: $0 [--clean-chroot]"
             exit 1
             ;;
     esac
