@@ -2,6 +2,10 @@
 
 set -e
 
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
+
 # Configuration
 PACKAGE_NAME="hifiberry-mpd"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
