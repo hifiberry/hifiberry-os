@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OUTPUT_FILE=$SCRIPT_DIR/sbuild
+ARCH=arm64
+DIST=trixie
+CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
+CLEAN_CHROOT=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --arch)
+            ARCH="$2"
+            shift 2
+            ;;
+        --dist)
+            DIST="$2"
+            shift 2
+            ;;
+        --clean-chroot)
+            CLEAN_CHROOT=true
+            shift
+            ;;
+        *)
+            echo "Usage: $0 [--arch ARCH] [--dist DIST] [--clean-chroot]"
+            exit 1
+            ;;
+    esac
+done
+
+CHROOT_TARBALL="$CHROOT_TARBALL_LOCATION/$DIST-$ARCH-hifiberry.tar.zst"
+
+INIT_SCRIPT=$(cat <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+
+export ARCH="$ARCH"
+export DIST="$DIST"
+
+filtered=()
+while [[ \$# -gt 0 ]]; do
+    case "\$1" in
+        --arch=*|--chroot=*|-c=*)
+            shift
+            ;;
+        --arch|--chroot|-c)
+            shift 2
+            ;;
+        *)
+            filtered+=("\$1")
+            shift
+            ;;
+    esac
+done
+
+echo "\${filtered[@]}"
+
+exec /usr/bin/sbuild --chroot=\${DIST}-\${ARCH}-hifiberry \\
+                     --arch=\${ARCH} \\
+                     "\${filtered[@]}"
+EOF
+)
+
+
+echo "$INIT_SCRIPT" > $OUTPUT_FILE
+chmod +x $OUTPUT_FILE
+
+echo sbuild wrapper complete.
+echo 
+
+if [ -f "$CHROOT_TARBALL" ] && [ "$CLEAN_CHROOT" = false ]; then
+    	echo "CHROOT directory already exists: $CHROOT_TARBALL, skipping creation of new chroot"
+else
+    	echo "Creating CHROOT $CHROOT_TARBALL"
+    	source ${SCRIPT_DIR}/create-chroot --arch $ARCH --dist $DIST
+fi

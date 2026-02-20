@@ -35,3 +35,4 @@ packages/eeprom/src/hateeprom/__pycache__
 packages/analoginput/build
 packages/.vscode
 packages/.ai-context.md
+scripts/sbuild

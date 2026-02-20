@@ -1,0 +1,40 @@
+#!/bin/bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SBUILD=$SCRIPT_DIR/sbuild
+CLEAN_CHROOT=false
+CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --clean-chroot)
+            CLEAN_CHROOT=true
+            shift
+            ;;
+        *)
+            echo "Usage: $0 [--clean-chroot]"
+            exit 1
+            ;;
+    esac
+done
+
+echo "Removing sbuild wrapper for cross-compile"
+
+rm -f $SBUILD
+
+if [ "$CLEAN_CHROOT" = true ]; then
+    echo "Clean Chroot option set, Cleaning all hifiberry chroots"
+
+    for CHROOT in $CHROOT_TARBALL_LOCATION/*hifiberry*; do
+        rm $CHROOT
+
+        echo "Cleanup complete for $CHROOT"
+    done
+
+    echo "All hifiberry chroots cleaned."
+else
+    echo "Clean chroot not set, skipping chroot cleanup."
+fi
+
+echo "All Done"

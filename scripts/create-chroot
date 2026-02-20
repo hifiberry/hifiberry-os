@@ -1,0 +1,54 @@
+#!/bin/bash
+set -euo pipefail
+
+ARCH="arm64"
+DIST="trixie"
+MIRROR="http://deb.debian.org/debian"
+CHROOT_TARBALL_LOCATION="$HOME/.cache/sbuild"
+CLEAN_CHROOT=false
+
+mkdir -p "$CHROOT_TARBALL_LOCATION"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --arch)
+            ARCH="$2"
+            shift 2
+            ;;
+        --dist)
+            DIST="$2"
+            shift 2
+            ;;
+        --clean-chroot)
+            CLEAN_CHROOT=true
+            shift
+            ;;
+        *)
+            echo "Usage: $0 [--arch ARCH] [--dist DIST]"
+            exit 1
+            ;;
+    esac
+done
+
+CHROOT_TARBALL="$CHROOT_TARBALL_LOCATION/$DIST-$ARCH-hifiberry.tar.zst"
+
+echo "===================================="
+echo "ARCH = $ARCH"
+echo "DIST = $DIST"
+echo "CHROOT_TARBALL = $CHROOT_TARBALL"
+echo "===================================="
+
+if [ -f "$CHROOT_TARBALL" ] && [ "$CLEAN_CHROOT" = false ]; then
+    echo "CHROOT directory already exists: $CHROOT_TARBALL, skipping creation of new chroot"
+else
+    echo "Creating CHROOT $CHROOT_TARBALL"
+    echo "Creating mmdebstrap tarball..."
+    mmdebstrap $DIST \
+                    $CHROOT_TARBALL \
+                    $MIRROR \
+                    --arch=$ARCH \
+                    --include=ca-certificates \
+                    --mode=unshare \
+                    --skip=output/dev \
+                    --variant=buildd
+fi
