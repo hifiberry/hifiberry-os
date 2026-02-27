@@ -2,6 +2,10 @@
 
 The next-generation HiFiBerryOS is a complete rewrite, now based on a standard Debian distribution. It uses Debian packages to install tools, audio players, and the user interface, making it more flexible and modular.
 
+## Documentation
+
+- [Add your own player](docs/add-your-own-player.md)
+
 ## Architecture
 
 The system is composed of several core components:
