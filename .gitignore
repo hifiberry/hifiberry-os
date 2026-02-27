@@ -38,3 +38,4 @@ packages/.ai-context.md
 packages/.claude/
 scripts/sbuild
 CLAUDE.md
+.claude
