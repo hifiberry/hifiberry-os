@@ -1,3 +1,10 @@
+hifiberry-squeezelite (2.0.0.1558) stable; urgency=medium
+
+  * Fix ACR player registration format in postinst
+  * Write valid lms configuration to /etc/audiocontrol/players.d/squeezelite.json
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Feb 2026 21:20:00 +0000
+
 hifiberry-squeezelite (2.0.0.1557) stable; urgency=medium
 
   * Convert to community plugin using external players mechanism

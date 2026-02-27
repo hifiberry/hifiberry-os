@@ -57,11 +57,16 @@ CONFEOF
             mkdir -p "$ACR_PLAYERS_D"
             cat > "$ACR_PLAYERS_D/squeezelite.json" <<'ACREOF'
 {
-    "squeezelite": {
-        "name": "squeezelite",
+    "lms": {
         "enable": true,
-        "supports_api_events": true,
-        "capabilities": ["killable"]
+        "server": null,
+        "port": 9000,
+        "autodiscovery": true,
+        "player_name": null,
+        "player_mac": [],
+        "reconnection_interval": 30,
+        "polling_interval": 30,
+        "enable_library": false
     }
 }
 ACREOF
