@@ -25,10 +25,13 @@ override_dh_auto_build:
 override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/songrec
 	cp -ra $(CURDIR)/packaging/rootfs/usr $(CURDIR)/debian/songrec/
-	
-	mkdir -p $(CURDIR)/debian/songrec/usr/share/songrec
-	cp -ra $(CURDIR)/translations $(CURDIR)/debian/songrec/usr/share/songrec/
-	
+
+	# Install translations to /usr/share/locale (changed in 0.5.0+)
+	if [ -d "$(CURDIR)/translations" ]; then \
+		mkdir -p $(CURDIR)/debian/songrec/usr/share/locale; \
+		cp -ra $(CURDIR)/translations/* $(CURDIR)/debian/songrec/usr/share/locale/; \
+	fi
+
 	mkdir -p $(CURDIR)/debian/songrec/usr/bin
 	cp -ra $(CURDIR)/target/release/songrec $(CURDIR)/debian/songrec/usr/bin/
 

@@ -1,3 +1,18 @@
+songrec (0.6.4) stable; urgency=medium
+
+  * Update to upstream version 0.6.4
+  * Migrated from GTK 3 to GTK 4 with libadwaita (upstream 0.6.0)
+  * Replaced reqwest with libsoup3 for network requests (upstream 0.6.3)
+  * Added status icon through KSNI (upstream 0.6.4)
+  * Added no-duplicate-entries setting (issue #198)
+  * Configurable request interval (default 8 seconds) to reduce rate-limiting
+  * Async network code for better performance
+  * Reduced song history load time for large histories
+  * Improved accessibility and GNOME Circle compliance
+  * Updated translations: Czech, Brazilian, French
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 19 Feb 2026 12:00:00 +0100
+
 songrec (0.5.0) stable; urgency=medium
 
   * Update to upstream version 0.5.0
