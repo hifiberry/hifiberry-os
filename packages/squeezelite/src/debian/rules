@@ -8,7 +8,7 @@ override_dh_auto_configure:
 	@if [ ! -d "squeezelite" ]; then \
 		echo "Cloning squeezelite repository..."; \
 		git clone https://github.com/ralph-irving/squeezelite.git; \
-		cd squeezelite && git checkout 72e1fd8abfa9b2f8e9636f033247526920878718; \
+		cd squeezelite && git checkout 6d571de8fa6dfff23a5a0cbb2c81b402d2c30c31; \
 	fi
 
 override_dh_auto_build:

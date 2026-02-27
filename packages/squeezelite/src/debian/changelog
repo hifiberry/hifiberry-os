@@ -1,3 +1,10 @@
+hifiberry-squeezelite (2.0.0.1556) stable; urgency=medium
+
+  * Updated squeezelite to latest upstream (6d571de, revision 1556)
+  * Fix gcc-15 build compatibility, manpage updates
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 08 Feb 2026 12:00:00 +0100
+
 hifiberry-squeezelite (2.0.0.1546) stable; urgency=medium
 
   * Added sound card detection check to start-squeezelite script
