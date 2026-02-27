@@ -249,8 +249,8 @@ def update_mpd_config_in_place(config_path, mixer_info):
 
 def main():
     """Main configuration function for user-service MPD."""
-    # Ensure user config exists
-    if not USER_CONFIG.exists():
+    # Ensure user config exists and is not empty
+    if not USER_CONFIG.exists() or USER_CONFIG.stat().st_size == 0:
         USER_ETC.mkdir(parents=True, exist_ok=True)
         if DEFAULT_CONFIG_SRC.exists():
             shutil.copy2(DEFAULT_CONFIG_SRC, USER_CONFIG)
