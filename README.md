@@ -28,7 +28,7 @@ Audio players are provided as standalone packages. You only need to install the 
 - [**Shairplay**](https://github.com/juhovh/shairplay) – AirPlay 2 implementation
 - [**Squeezelite**](https://github.com/ralph-irving/squeezelite) – Logitech Media Server client
 
-More players may be added in the future. You can also package and install your own player. However, to be visible and controllable through the WebUI, a player-specific module must be implemented for AudioControl.
+More players may be added in the future. You can also package and install your own player. To make it visible and controllable through AudioControl/WebUI, see [Add your own player](docs/add-your-own-player.md).
 
 ## Hardware Recommendations
 
