@@ -74,6 +74,7 @@ Depends: hifiberry-configurator,
          hifiberry-raat,
          hifiberry-shairport,
          hifiberry-squeezelite,
+         roomeq,
          i2c-tools,
          sox
 Description: HiFiBerry OS full meta-package

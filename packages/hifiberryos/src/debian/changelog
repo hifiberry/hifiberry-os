@@ -1,3 +1,9 @@
+hifiberryos-meta (0.6) unstable; urgency=medium
+
+  * Added roomeq dependency to hbos-full meta-package
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 08 Feb 2026 14:00:00 +0000
+
 hifiberryos-meta (0.5) unstable; urgency=medium
 
   * Added dependency to pipewire configs
