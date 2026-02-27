@@ -1,3 +1,11 @@
+hifiberry-shairport (5.0.1.1) stable; urgency=medium
+
+  * Updated shairport-sync from 5.0 to 5.0.1
+  * MQTT enhancement for Home Assistant (default_entity_id)
+  * Minor bug fixes from upstream
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 27 Feb 2026 23:00:00 +0000
+
 hifiberry-shairport (5.0.0.13) stable; urgency=medium
 
   * Convert to community plugin using external players mechanism

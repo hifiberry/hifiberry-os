@@ -1,8 +1,8 @@
 #!/usr/bin/make -f
 
 # Shairport Sync version configuration
-SHAIRPORT_VERSION ?= 5.0
-SHAIRPORT_COMMIT ?= df7bfcacfb9384b6f334aaa0320edb1e9f023e33
+SHAIRPORT_VERSION ?= 5.0.1
+SHAIRPORT_COMMIT ?= 1230285491127d9a4b6dab3263f2a6f73de19182
 
 %:
 	dh $@
