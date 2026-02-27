@@ -4,8 +4,9 @@ This guide is based on the latest ACR changes (0.6.18), especially:
 
 - `players.d/` include directory support
 - configurable `generic` player capabilities
+- Web UI player registry (drop-in descriptor + icon)
 
-Use this when you want to integrate an external/custom player without writing a new Rust controller first.
+Use this when you want to integrate an external/custom player without writing a new Rust controller first. Your player can appear in the Web UI's Services > Players page automatically by dropping a few files into well-known directories.
 
 ## 1) Add a player config in `players.d/`
 
@@ -93,7 +94,77 @@ curl http://localhost:1080/api/players
 
 You should see your player by `name`, with `type: generic`, and the capabilities you configured.
 
-## 5) When to implement a native Rust controller
+## 5) Register in the Web UI
+
+To make your player appear on the **Services > Players** page with a toggle switch, drop three files:
+
+### a) Player descriptor
+
+Create `/etc/hifiberry/players.d/<name>.json`:
+
+```json
+{
+    "name": "My Player",
+    "provided_by": "my-player-package",
+    "systemd_service": "my-player",
+    "icon": "my-player",
+    "allow_change": true
+}
+```
+
+Fields:
+- `name` — display name in the UI
+- `provided_by` — short identifier shown as subtitle
+- `systemd_service` — the systemd service to start/stop
+- `icon` — icon filename (without `.svg`), resolved from the icons directory
+- `allow_change` — whether the toggle switch is enabled (default: `true`)
+
+### b) Icon
+
+Place an SVG icon at `/etc/hifiberry/players.d/icons/<icon>.svg`.
+
+The icon is served by the configurator API and displayed as a 40x40 image. Use `currentColor` for fill/stroke to match the UI theme.
+
+### c) Systemd permissions
+
+Create `/etc/configserver/conf.d/<name>.json` to grant the configurator permission to manage your service:
+
+```json
+{
+    "systemd": {
+        "my-player": "all"
+    }
+}
+```
+
+This uses the configserver's drop-in config support — no need to edit `configserver.json` directly.
+
+### Verify
+
+After dropping the files, restart the configurator (`sudo systemctl restart config-server`) and open the Players page. Your player should appear with a working on/off toggle.
+
+```bash
+# Check the player registry API
+curl http://localhost:1081/api/v1/players
+
+# Check the icon is served
+curl -I http://localhost:1081/api/v1/players/icon/my-player
+```
+
+## 6) Complete example: all files for an external player
+
+Here is the full set of drop-in files needed for a player called "my-player":
+
+| File | Purpose |
+|------|---------|
+| `/etc/audiocontrol/players.d/my-player.json` | ACR player config (audio routing + metadata) |
+| `/etc/hifiberry/players.d/my-player.json` | Web UI descriptor (name, icon, service) |
+| `/etc/hifiberry/players.d/icons/my-player.svg` | SVG icon for the UI |
+| `/etc/configserver/conf.d/my-player.json` | Systemd permissions for start/stop |
+
+No code changes required — everything is pure drop-in.
+
+## 7) When to implement a native Rust controller
 
 Use `generic` + update API when your external process can publish its state via HTTP.
 
