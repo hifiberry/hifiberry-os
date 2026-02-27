@@ -40,3 +40,5 @@ scripts/sbuild
 CLAUDE.md
 .claude
 packages/tidal-connect/
+packages/vu-meter/sbuild_workspace
+
