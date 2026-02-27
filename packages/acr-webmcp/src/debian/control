@@ -1,0 +1,17 @@
+Source: hifiberry-acr-webmcp
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://www.hifiberry.com/
+
+Package: hifiberry-acr-webmcp
+Architecture: all
+Depends: ${misc:Depends}, python3, systemd, hifiberry-audiocontrol
+Description: MCP server for HiFiBerry AudioControl playback and library APIs
+ Exposes a Model Context Protocol (MCP) stdio server that wraps
+ AudioControl player and library endpoints.
+ .
+ Provides tools for playback control, queue management,
+ and library browsing using the local ACR API.

@@ -1,0 +1,20 @@
+hifiberry-acr-webmcp (0.1.2) stable; urgency=medium
+
+  * Add systemd user service for acr-webmcp HTTP mode
+  * Install and manage service via dh_installsystemduser
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 28 Feb 2026 00:40:00 +0000
+
+hifiberry-acr-webmcp (0.1.1) stable; urgency=medium
+
+  * Add HTTP transport mode for MCP on configurable host/port
+  * Keep stdio transport as default mode
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 28 Feb 2026 00:15:00 +0000
+
+hifiberry-acr-webmcp (0.1.0) stable; urgency=medium
+
+  * Initial release
+  * MCP stdio server for ACR playback, queue/playlist, and library endpoints
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 27 Feb 2026 23:55:00 +0000

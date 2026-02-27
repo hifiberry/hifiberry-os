@@ -1,0 +1,507 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import os
+import sys
+import traceback
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import Any, Dict, Optional
+from urllib.parse import quote, urlencode
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+
+
+JSONRPC_VERSION = "2.0"
+SERVER_NAME = "acr-webmcp"
+SERVER_VERSION = "0.1.2"
+
+
+class ACRClient:
+    def __init__(self) -> None:
+        base = os.environ.get("ACR_API_BASE_URL", "http://127.0.0.1:1080/api").strip()
+        self.base = base.rstrip("/")
+
+    def _url(self, path: str, query: Optional[Dict[str, Any]] = None) -> str:
+        url = f"{self.base}/{path.lstrip('/')}"
+        if query:
+            q = {k: v for k, v in query.items() if v is not None}
+            if q:
+                url += "?" + urlencode(q)
+        return url
+
+    def request(self, method: str, path: str, body: Optional[Dict[str, Any]] = None, query: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        url = self._url(path, query)
+        data = None
+        headers = {"Accept": "application/json"}
+        if body is not None:
+            data = json.dumps(body).encode("utf-8")
+            headers["Content-Type"] = "application/json"
+        req = Request(url=url, method=method.upper(), headers=headers, data=data)
+        try:
+            with urlopen(req, timeout=10) as response:
+                raw = response.read()
+                if not raw:
+                    return {"ok": True, "status": response.status, "data": None}
+                content = raw.decode("utf-8", errors="replace")
+                try:
+                    parsed = json.loads(content)
+                except json.JSONDecodeError:
+                    parsed = {"raw": content}
+                return {"ok": True, "status": response.status, "data": parsed}
+        except HTTPError as err:
+            text = err.read().decode("utf-8", errors="replace") if err.fp else ""
+            return {
+                "ok": False,
+                "status": err.code,
+                "error": f"HTTP {err.code}",
+                "body": text,
+                "url": url,
+            }
+        except URLError as err:
+            return {
+                "ok": False,
+                "status": None,
+                "error": f"Connection error: {err}",
+                "url": url,
+            }
+
+
+class MCPServer:
+    def __init__(self) -> None:
+        self.acr = ACRClient()
+
+    def run(self) -> None:
+        while True:
+            message = self._read_message()
+            if message is None:
+                return
+            try:
+                response = self.process_message(message)
+                if response is not None:
+                    self._send(response)
+            except Exception as err:
+                req_id = message.get("id")
+                if req_id is not None:
+                    self._send(self._error_payload(req_id, -32603, f"Internal error: {err}"))
+
+    def _read_message(self) -> Optional[Dict[str, Any]]:
+        content_length = None
+        while True:
+            line = sys.stdin.buffer.readline()
+            if not line:
+                return None
+            if line in (b"\r\n", b"\n"):
+                break
+            decoded = line.decode("utf-8", errors="replace").strip()
+            if decoded.lower().startswith("content-length:"):
+                content_length = int(decoded.split(":", 1)[1].strip())
+        if content_length is None:
+            return None
+        body = sys.stdin.buffer.read(content_length)
+        if not body:
+            return None
+        return json.loads(body.decode("utf-8", errors="replace"))
+
+    def _send(self, payload: Dict[str, Any]) -> None:
+        body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        header = f"Content-Length: {len(body)}\r\n\r\n".encode("ascii")
+        sys.stdout.buffer.write(header)
+        sys.stdout.buffer.write(body)
+        sys.stdout.buffer.flush()
+
+    def _result_payload(self, req_id: Any, result: Dict[str, Any]) -> Dict[str, Any]:
+        return {"jsonrpc": JSONRPC_VERSION, "id": req_id, "result": result}
+
+    def _error_payload(self, req_id: Any, code: int, message: str) -> Dict[str, Any]:
+        return {
+            "jsonrpc": JSONRPC_VERSION,
+            "id": req_id,
+            "error": {"code": code, "message": message},
+        }
+
+    def _ok_text(self, data: Any) -> Dict[str, Any]:
+        return {
+            "content": [{"type": "text", "text": json.dumps(data, ensure_ascii=False)}],
+            "isError": False,
+        }
+
+    def _err_text(self, message: str) -> Dict[str, Any]:
+        return {
+            "content": [{"type": "text", "text": message}],
+            "isError": True,
+        }
+
+    def process_message(self, msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        method = msg.get("method")
+        req_id = msg.get("id")
+        params = msg.get("params", {})
+
+        if method == "initialize":
+            return self._result_payload(
+                req_id,
+                {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {"tools": {}},
+                    "serverInfo": {"name": SERVER_NAME, "version": SERVER_VERSION},
+                },
+            )
+
+        if method == "notifications/initialized":
+            return None
+
+        if method == "tools/list":
+            return self._result_payload(req_id, {"tools": self._tools()})
+
+        if method == "tools/call":
+            name = params.get("name")
+            arguments = params.get("arguments", {})
+            result = self._call_tool(name, arguments)
+            return self._result_payload(req_id, result)
+
+        if req_id is not None:
+            return self._error_payload(req_id, -32601, f"Method not found: {method}")
+
+        return None
+
+    def _tools(self) -> list:
+        return [
+            {
+                "name": "players_list",
+                "description": "List players and capabilities.",
+                "inputSchema": {"type": "object", "properties": {}},
+            },
+            {
+                "name": "player_active",
+                "description": "Get current active player.",
+                "inputSchema": {"type": "object", "properties": {}},
+            },
+            {
+                "name": "now_playing",
+                "description": "Get now-playing details for active player.",
+                "inputSchema": {"type": "object", "properties": {}},
+            },
+            {
+                "name": "playback_command",
+                "description": "Send playback command (play/pause/stop/next/previous) to a player.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string", "description": "Player name or 'active'."},
+                        "command": {"type": "string", "enum": ["play", "pause", "stop", "next", "previous"]},
+                    },
+                    "required": ["player", "command"],
+                },
+            },
+            {
+                "name": "player_queue",
+                "description": "Get queue for a player.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string", "description": "Player name or 'active'."}
+                    },
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "queue_add_track",
+                "description": "Add track URI to a player's queue.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "uri": {"type": "string"},
+                        "metadata": {"type": "object"},
+                    },
+                    "required": ["player", "uri"],
+                },
+            },
+            {
+                "name": "queue_remove_index",
+                "description": "Remove queue item by index.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "index": {"type": "integer", "minimum": 0},
+                    },
+                    "required": ["player", "index"],
+                },
+            },
+            {
+                "name": "queue_play_index",
+                "description": "Play queue item by index.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "index": {"type": "integer", "minimum": 0},
+                    },
+                    "required": ["player", "index"],
+                },
+            },
+            {
+                "name": "queue_clear",
+                "description": "Clear player's queue.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"}
+                    },
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "library_players",
+                "description": "List players with library support and load state.",
+                "inputSchema": {"type": "object", "properties": {}},
+            },
+            {
+                "name": "library_info",
+                "description": "Get library status for one player.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {"player": {"type": "string"}},
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "library_albums",
+                "description": "List albums for one player.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {"player": {"type": "string"}},
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "library_artists",
+                "description": "List artists for one player.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {"player": {"type": "string"}},
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "library_album_by_id",
+                "description": "Get album details (with tracks) by album id.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "album_id": {"type": "string"},
+                    },
+                    "required": ["player", "album_id"],
+                },
+            },
+            {
+                "name": "library_albums_by_artist",
+                "description": "Get albums by artist name.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "artist_name": {"type": "string"},
+                    },
+                    "required": ["player", "artist_name"],
+                },
+            },
+            {
+                "name": "library_artist_by_name",
+                "description": "Get artist details by name.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "artist_name": {"type": "string"},
+                    },
+                    "required": ["player", "artist_name"],
+                },
+            },
+            {
+                "name": "library_refresh",
+                "description": "Trigger library refresh from backend source.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {"player": {"type": "string"}},
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "library_update",
+                "description": "Trigger asynchronous library update job.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {"player": {"type": "string"}},
+                    "required": ["player"],
+                },
+            },
+        ]
+
+    def _call_tool(self, name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            if name == "players_list":
+                return self._acr_get("players")
+            if name == "player_active":
+                return self._acr_get("player")
+            if name == "now_playing":
+                return self._acr_get("now-playing")
+            if name == "playback_command":
+                return self._playback_command(args)
+            if name == "player_queue":
+                return self._player_queue(args)
+            if name == "queue_add_track":
+                return self._queue_add(args)
+            if name == "queue_remove_index":
+                return self._player_command(args.get("player"), f"remove_track:{args.get('index')}")
+            if name == "queue_play_index":
+                return self._player_command(args.get("player"), f"play_queue_index:{args.get('index')}")
+            if name == "queue_clear":
+                return self._player_command(args.get("player"), "clear_queue")
+            if name == "library_players":
+                return self._acr_get("library")
+            if name == "library_info":
+                return self._acr_get(f"library/{self._enc(args.get('player'))}")
+            if name == "library_albums":
+                return self._acr_get(f"library/{self._enc(args.get('player'))}/albums")
+            if name == "library_artists":
+                return self._acr_get(f"library/{self._enc(args.get('player'))}/artists")
+            if name == "library_album_by_id":
+                return self._acr_get(
+                    f"library/{self._enc(args.get('player'))}/album/by-id/{self._enc(args.get('album_id'))}"
+                )
+            if name == "library_albums_by_artist":
+                return self._acr_get(
+                    f"library/{self._enc(args.get('player'))}/albums/by-artist/{self._enc(args.get('artist_name'))}"
+                )
+            if name == "library_artist_by_name":
+                return self._acr_get(
+                    f"library/{self._enc(args.get('player'))}/artist/by-name/{self._enc(args.get('artist_name'))}"
+                )
+            if name == "library_refresh":
+                return self._acr_get(f"library/{self._enc(args.get('player'))}/refresh")
+            if name == "library_update":
+                return self._acr_post(f"library/{self._enc(args.get('player'))}/update", {})
+            return self._err_text(f"Unknown tool: {name}")
+        except Exception as err:
+            return self._err_text(f"Tool execution failed: {err}\n{traceback.format_exc()}")
+
+    def _enc(self, value: Any) -> str:
+        if value is None:
+            raise ValueError("Missing required argument")
+        return quote(str(value), safe="")
+
+    def _acr_get(self, path: str) -> Dict[str, Any]:
+        result = self.acr.request("GET", path)
+        if result.get("ok"):
+            return self._ok_text(result.get("data"))
+        return self._err_text(json.dumps(result, ensure_ascii=False))
+
+    def _acr_post(self, path: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        result = self.acr.request("POST", path, body=body)
+        if result.get("ok"):
+            return self._ok_text(result.get("data"))
+        return self._err_text(json.dumps(result, ensure_ascii=False))
+
+    def _player_command(self, player: Any, command: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        if not player:
+            return self._err_text("Missing required argument: player")
+        path = f"player/{self._enc(player)}/command/{self._enc(command)}"
+        return self._acr_post(path, body)
+
+    def _playback_command(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        player = args.get("player")
+        command = args.get("command")
+        if command not in {"play", "pause", "stop", "next", "previous"}:
+            return self._err_text("Invalid command. Allowed: play, pause, stop, next, previous")
+        return self._player_command(player, command)
+
+    def _player_queue(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        player = args.get("player")
+        if not player:
+            return self._err_text("Missing required argument: player")
+        return self._acr_get(f"player/{self._enc(player)}/queue")
+
+    def _queue_add(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        player = args.get("player")
+        uri = args.get("uri")
+        if not player or not uri:
+            return self._err_text("Missing required arguments: player, uri")
+        body: Dict[str, Any] = {"uri": uri}
+        if isinstance(args.get("metadata"), dict):
+            body["metadata"] = args["metadata"]
+        return self._player_command(player, "add_track", body)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="ACR MCP server (stdio or HTTP)")
+    parser.add_argument(
+        "--transport",
+        choices=["stdio", "http"],
+        default=os.environ.get("ACR_MCP_TRANSPORT", "stdio"),
+        help="MCP transport mode",
+    )
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("ACR_MCP_HOST", "127.0.0.1"),
+        help="HTTP host (http transport only)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("ACR_MCP_PORT", "13180")),
+        help="HTTP port (http transport only)",
+    )
+    args = parser.parse_args()
+
+    mcp_server = MCPServer()
+
+    if args.transport == "stdio":
+        mcp_server.run()
+        return 0
+
+    class MCPHttpHandler(BaseHTTPRequestHandler):
+        def _send_json(self, status_code: int, payload: Dict[str, Any]) -> None:
+            body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+            self.send_response(status_code)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self) -> None:
+            if self.path == "/health":
+                self._send_json(200, {"ok": True, "server": SERVER_NAME, "version": SERVER_VERSION})
+                return
+            self._send_json(404, {"error": "not found"})
+
+        def do_POST(self) -> None:
+            if self.path != "/mcp":
+                self._send_json(404, {"error": "not found"})
+                return
+
+            try:
+                content_length = int(self.headers.get("Content-Length", "0"))
+                raw = self.rfile.read(content_length)
+                msg = json.loads(raw.decode("utf-8", errors="replace"))
+            except Exception as err:
+                self._send_json(400, {"error": f"invalid request body: {err}"})
+                return
+
+            response = mcp_server.process_message(msg)
+            if response is None:
+                self.send_response(204)
+                self.end_headers()
+                return
+            self._send_json(200, response)
+
+    httpd = ThreadingHTTPServer((args.host, args.port), MCPHttpHandler)
+    print(f"{SERVER_NAME} listening on http://{args.host}:{args.port}/mcp", file=sys.stderr)
+    httpd.serve_forever()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

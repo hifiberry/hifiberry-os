@@ -1,0 +1,13 @@
+[Unit]
+Description=HiFiBerry ACR Web MCP Service
+After=pipewire.service
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sleep 2
+ExecStart=/usr/bin/acr-webmcp --transport http --host 127.0.0.1 --port 13180
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
