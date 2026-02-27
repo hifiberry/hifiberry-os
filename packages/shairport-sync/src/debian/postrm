@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# Remove drop-in files on remove or purge
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    rm -f /etc/hifiberry/players.d/shairport.json
+    rm -f /etc/hifiberry/players.d/icons/shairport.svg
+    rm -f /etc/configserver/conf.d/shairport.json
+    rm -f /etc/audiocontrol/players.d/shairport.json
+fi
+
 # Remove users and groups on purge
 if [ "$1" = "purge" ]; then
     # Remove runtime directory

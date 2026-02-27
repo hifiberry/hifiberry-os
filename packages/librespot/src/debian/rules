@@ -108,6 +108,10 @@ override_dh_auto_install:
 	mkdir -p debian/hifiberry-librespot/usr/lib/systemd/user
 	cp librespot.service debian/hifiberry-librespot/usr/lib/systemd/user/
 	
+	# Install icon for player registry
+	mkdir -p debian/hifiberry-librespot/usr/share/hifiberry-librespot/icons
+	cp icons/spotify.svg debian/hifiberry-librespot/usr/share/hifiberry-librespot/icons/
+
 	# Install man pages
 	mkdir -p debian/hifiberry-librespot/usr/share/man/man1
 	cp debian/librespot.1 debian/hifiberry-librespot/usr/share/man/man1/

@@ -1,3 +1,10 @@
+hifiberry-shairport (5.0.0.13) stable; urgency=medium
+
+  * Convert to community plugin using external players mechanism
+  * Add drop-in registration for Web UI, configserver, and ACR
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 27 Feb 2026 21:00:00 +0000
+
 hifiberry-shairport (5.0.0.12) stable; urgency=medium
 
   * Updated NQPTP from 1.2.4 to 1.2.6

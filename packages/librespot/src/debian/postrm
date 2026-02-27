@@ -2,11 +2,16 @@
 set -e
 
 case "$1" in
-    purge)
-        # No system users or system directories to remove for user service
-        :
+    remove|purge)
+        # Remove player registry files
+        rm -f /etc/hifiberry/players.d/librespot.json
+        rm -f /etc/hifiberry/players.d/icons/librespot.svg
+        # Remove configserver drop-in
+        rm -f /etc/configserver/conf.d/librespot.json
+        # Remove ACR player registration
+        rm -f /etc/audiocontrol/players.d/librespot.json
         ;;
-    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         :
         ;;
     *)

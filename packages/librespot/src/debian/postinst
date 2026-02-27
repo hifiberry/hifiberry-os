@@ -6,7 +6,55 @@ set -e
 
 case "$1" in
     configure)
-        # No actions needed for user service configuration
+        # Register in Web UI player registry
+        HBOS_PLAYERS_D="/etc/hifiberry/players.d"
+        mkdir -p "$HBOS_PLAYERS_D/icons"
+
+        cat > "$HBOS_PLAYERS_D/librespot.json" <<'PLAYEREOF'
+{
+    "name": "Spotify",
+    "provided_by": "librespot",
+    "systemd_service": "librespot",
+    "icon": "librespot",
+    "allow_change": true
+}
+PLAYEREOF
+
+        # Install icon
+        if [ -f /usr/share/hifiberry-librespot/icons/spotify.svg ]; then
+            cp /usr/share/hifiberry-librespot/icons/spotify.svg "$HBOS_PLAYERS_D/icons/librespot.svg"
+        fi
+
+        echo "Registered Spotify in Web UI player registry."
+
+        # Register systemd permissions via configserver drop-in
+        mkdir -p /etc/configserver/conf.d
+        cat > /etc/configserver/conf.d/librespot.json <<'CONFEOF'
+{
+    "systemd": {
+        "librespot": "all"
+    }
+}
+CONFEOF
+
+        echo "Configserver drop-in installed for librespot."
+
+        # Register with ACR
+        if [ -d /etc/audiocontrol ]; then
+            ACR_PLAYERS_D="/etc/audiocontrol/players.d"
+            mkdir -p "$ACR_PLAYERS_D"
+            cat > "$ACR_PLAYERS_D/librespot.json" <<'ACREOF'
+{
+    "librespot": {
+        "name": "librespot",
+        "enable": true,
+        "supports_api_events": true,
+        "capabilities": ["killable"]
+    }
+}
+ACREOF
+            echo "Registered librespot with ACR."
+        fi
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
         # No actions needed for user service during these states

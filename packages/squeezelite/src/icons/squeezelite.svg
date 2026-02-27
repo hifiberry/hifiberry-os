@@ -1,0 +1,7 @@
+<svg class="css-icon" viewBox="-1 -1 23 23" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M11.5,13.5l0,-8l-7,0l0,8"/>
+  <circle cx="9.5" cy="13.5" r="2"/>
+  <circle cx="2.5" cy="13.5" r="2"/>
+  <path d="M14.743,14.743c1.125,-1.126 1.757,-2.652 1.757,-4.243c0,-1.591 -0.632,-3.117 -1.757,-4.243"/>
+  <path d="M17.571,17.571c1.875,-1.875 2.929,-4.419 2.929,-7.071c0,-2.652 -1.054,-5.196 -2.929,-7.071"/>
+</svg>

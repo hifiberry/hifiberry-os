@@ -34,6 +34,10 @@ override_dh_auto_install:
 	# Install systemd user service
 	cp squeezelite.service debian/hifiberry-squeezelite/usr/lib/systemd/user/
 	
+	# Install icon for player registry
+	mkdir -p debian/hifiberry-squeezelite/usr/share/hifiberry-squeezelite/icons
+	cp icons/squeezelite.svg debian/hifiberry-squeezelite/usr/share/hifiberry-squeezelite/icons/
+
 	# Install manual pages
 	cp man/squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/
 	cp man/start-squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/

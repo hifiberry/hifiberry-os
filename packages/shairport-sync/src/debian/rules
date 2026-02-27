@@ -121,6 +121,9 @@ override_dh_auto_install:
 	# Install default configuration file
 	install -D -m644 shairport-sync.conf.default $(CURDIR)/debian/hifiberry-shairport/etc/shairport-sync.conf.default
 	
+	# Install icon for player registry
+	install -D -m644 icons/airplay.svg $(CURDIR)/debian/hifiberry-shairport/usr/share/hifiberry-shairport/icons/airplay.svg
+
 	# Create symlinks for start and stop scripts (these point to the event handler)
 	mkdir -p $(CURDIR)/debian/hifiberry-shairport/usr/bin/
 	ln -sf /usr/bin/shairport-event $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event-start

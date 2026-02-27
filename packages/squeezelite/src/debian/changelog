@@ -1,3 +1,10 @@
+hifiberry-squeezelite (2.0.0.1557) stable; urgency=medium
+
+  * Convert to community plugin using external players mechanism
+  * Add drop-in registration for Web UI, configserver, and ACR
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 27 Feb 2026 21:00:00 +0000
+
 hifiberry-squeezelite (2.0.0.1556) stable; urgency=medium
 
   * Updated squeezelite to latest upstream (6d571de, revision 1556)

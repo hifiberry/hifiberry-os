@@ -74,6 +74,7 @@ Depends: hifiberry-configurator,
          hifiberry-raat,
          hifiberry-shairport,
          hifiberry-squeezelite,
+         hifiberry-bluetooth,
          roomeq,
          i2c-tools,
          sox

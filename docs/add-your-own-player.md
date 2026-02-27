@@ -164,7 +164,20 @@ Here is the full set of drop-in files needed for a player called "my-player":
 
 No code changes required — everything is pure drop-in.
 
-## 7) When to implement a native Rust controller
+## 7) Example: Spotify/librespot as a community plugin
+
+The `hifiberry-librespot` package is a real-world example of a native Debian package (no Docker) that registers itself using the drop-in mechanism. Its `postinst` creates three files on install:
+
+- `/etc/hifiberry/players.d/librespot.json` — UI descriptor (name: "Spotify", service: "librespot")
+- `/etc/hifiberry/players.d/icons/librespot.svg` — Spotify icon (stroke-based SVG)
+- `/etc/configserver/conf.d/librespot.json` — systemd permission (`"librespot": "all"`)
+- `/etc/audiocontrol/players.d/librespot.json` — ACR player registration
+
+Its `postrm` removes all four files on uninstall. The icon SVG is shipped inside the package at `/usr/share/hifiberry-librespot/icons/spotify.svg` and copied to the drop-in directory during `postinst`.
+
+This pattern works for any Debian-packaged player — no Docker required.
+
+## 8) When to implement a native Rust controller
 
 Use `generic` + update API when your external process can publish its state via HTTP.
 

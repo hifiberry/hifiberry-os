@@ -74,6 +74,56 @@ case "$1" in
         else
             echo "Package upgrade - services will be handled by debhelper"
         fi
+
+        # Register in Web UI player registry
+        HBOS_PLAYERS_D="/etc/hifiberry/players.d"
+        mkdir -p "$HBOS_PLAYERS_D/icons"
+
+        cat > "$HBOS_PLAYERS_D/shairport.json" <<'PLAYEREOF'
+{
+    "name": "Airplay",
+    "provided_by": "shairport-sync",
+    "systemd_service": "shairport",
+    "icon": "shairport",
+    "allow_change": true
+}
+PLAYEREOF
+
+        # Install icon
+        if [ -f /usr/share/hifiberry-shairport/icons/airplay.svg ]; then
+            cp /usr/share/hifiberry-shairport/icons/airplay.svg "$HBOS_PLAYERS_D/icons/shairport.svg"
+        fi
+
+        echo "Registered Airplay in Web UI player registry."
+
+        # Register systemd permissions via configserver drop-in
+        mkdir -p /etc/configserver/conf.d
+        cat > /etc/configserver/conf.d/shairport.json <<'CONFEOF'
+{
+    "systemd": {
+        "shairport": "all"
+    }
+}
+CONFEOF
+
+        echo "Configserver drop-in installed for shairport."
+
+        # Register with ACR
+        if [ -d /etc/audiocontrol ]; then
+            ACR_PLAYERS_D="/etc/audiocontrol/players.d"
+            mkdir -p "$ACR_PLAYERS_D"
+            cat > "$ACR_PLAYERS_D/shairport.json" <<'ACREOF'
+{
+    "shairport": {
+        "name": "shairport",
+        "enable": true,
+        "supports_api_events": true,
+        "capabilities": ["killable"]
+    }
+}
+ACREOF
+            echo "Registered shairport with ACR."
+        fi
         ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)

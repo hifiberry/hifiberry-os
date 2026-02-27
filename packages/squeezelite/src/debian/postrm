@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    # Remove drop-in files
+    rm -f /etc/hifiberry/players.d/squeezelite.json
+    rm -f /etc/hifiberry/players.d/icons/squeezelite.svg
+    rm -f /etc/configserver/conf.d/squeezelite.json
+    rm -f /etc/audiocontrol/players.d/squeezelite.json
+fi
+
 if [ "$1" = "purge" ]; then
     # Remove squeezelite user and group
     if getent passwd squeezelite > /dev/null; then

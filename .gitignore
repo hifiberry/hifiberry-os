@@ -39,3 +39,4 @@ packages/.claude/
 scripts/sbuild
 CLAUDE.md
 .claude
+packages/tidal-connect/

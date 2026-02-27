@@ -17,6 +17,56 @@ case "$1" in
             mkdir -p /var/lib/squeezelite
             chown squeezelite:squeezelite /var/lib/squeezelite
         fi
+
+        # Register in Web UI player registry
+        HBOS_PLAYERS_D="/etc/hifiberry/players.d"
+        mkdir -p "$HBOS_PLAYERS_D/icons"
+
+        cat > "$HBOS_PLAYERS_D/squeezelite.json" <<'PLAYEREOF'
+{
+    "name": "LMS",
+    "provided_by": "squeezelite",
+    "systemd_service": "squeezelite",
+    "icon": "squeezelite",
+    "allow_change": true
+}
+PLAYEREOF
+
+        # Install icon
+        if [ -f /usr/share/hifiberry-squeezelite/icons/squeezelite.svg ]; then
+            cp /usr/share/hifiberry-squeezelite/icons/squeezelite.svg "$HBOS_PLAYERS_D/icons/squeezelite.svg"
+        fi
+
+        echo "Registered LMS/squeezelite in Web UI player registry."
+
+        # Register systemd permissions via configserver drop-in
+        mkdir -p /etc/configserver/conf.d
+        cat > /etc/configserver/conf.d/squeezelite.json <<'CONFEOF'
+{
+    "systemd": {
+        "squeezelite": "all"
+    }
+}
+CONFEOF
+
+        echo "Configserver drop-in installed for squeezelite."
+
+        # Register with ACR
+        if [ -d /etc/audiocontrol ]; then
+            ACR_PLAYERS_D="/etc/audiocontrol/players.d"
+            mkdir -p "$ACR_PLAYERS_D"
+            cat > "$ACR_PLAYERS_D/squeezelite.json" <<'ACREOF'
+{
+    "squeezelite": {
+        "name": "squeezelite",
+        "enable": true,
+        "supports_api_events": true,
+        "capabilities": ["killable"]
+    }
+}
+ACREOF
+            echo "Registered squeezelite with ACR."
+        fi
         ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)
