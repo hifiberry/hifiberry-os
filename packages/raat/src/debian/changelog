@@ -1,8 +1,15 @@
+hifiberry-raat (1.1.43.23) stable; urgency=medium
+
+  * Fixed 100% CPU usage when control pipe has no writer
+  * On HUP/EOF/ERR, close channel and schedule 1s timer to reopen
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 27 Feb 2026 17:00:00 +0000
+
 hifiberry-raat (1.1.43.22) stable; urgency=medium
 
   * Added sound.target dependency to ensure ALSA drivers are ready
   * Prevents RAAT from starting before sound card is available
-  
+
  -- HiFiBerry <support@hifiberry.com>  Thu, 06 Feb 2026 13:45:00 +0000
 
 hifiberry-raat (1.1.43.21) stable; urgency=medium
