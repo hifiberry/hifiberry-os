@@ -57,10 +57,7 @@ if [ ! -d /var/run/shairport ]; then
     chmod 755 /var/run/shairport
 fi
 
-# Set capabilities for nqptp
-if command -v setcap > /dev/null; then
-    setcap 'cap_net_bind_service=+ep' /usr/bin/nqptp || true
-fi
+# Note: nqptp 1.2.6+ uses AmbientCapabilities in systemd service instead of setcap
 
 # Set capabilities for shairport binaries to allow real-time scheduling
 if command -v setcap > /dev/null; then

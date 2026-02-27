@@ -1,3 +1,19 @@
+hifiberry-shairport (5.0.0.12) stable; urgency=medium
+
+  * Updated NQPTP from 1.2.4 to 1.2.6
+  * NQPTP no longer needs root access (AmbientCapabilities support)
+  * Performance and security improvements
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 19 Feb 2026 12:00:00 +0100
+
+hifiberry-shairport (5.0.0.11) stable; urgency=medium
+
+  * Updated shairport-sync to latest development branch (df7bfca)
+  * 135 upstream commits: buffer management improvements, AirPlay classic
+    compatibility fixes, format warning fixes, MQTT fix, Yocto support
+
+ -- HiFiBerry <support@hifiberry.com>  Sun, 08 Feb 2026 12:00:00 +0100
+
 hifiberry-shairport (5.0.0.10) stable; urgency=medium
 
   * Added sound card detection check to start-shairport script
