@@ -1,0 +1,11 @@
+[Unit]
+Description=Reconcile MPD music links after SMB changes
+Documentation=https://www.musicpd.org/
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mpd-reconcile
+User=root
+Group=root

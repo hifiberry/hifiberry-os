@@ -73,6 +73,10 @@ override_dh_auto_install:
 	# Install our custom systemd user service file
 	mkdir -p debian/hifiberry-mpd/usr/lib/systemd/user
 	cp systemd/mpd.service debian/hifiberry-mpd/usr/lib/systemd/user/
+
+	# Install MPD reconcile system service file
+	mkdir -p debian/hifiberry-mpd/usr/lib/systemd/system
+	cp systemd/hifiberry-mpd-reconcile.service debian/hifiberry-mpd/usr/lib/systemd/system/
 	
 	# Install configure-mpd script
 	cp configure-mpd.py debian/hifiberry-mpd/usr/bin/configure-mpd
@@ -85,6 +89,10 @@ override_dh_auto_install:
 	# Install mpd-set-permissions script
 	cp mpd-set-permissions debian/hifiberry-mpd/usr/bin/mpd-set-permissions
 	chmod +x debian/hifiberry-mpd/usr/bin/mpd-set-permissions
+
+	# Install mpd-reconcile script
+	cp mpd-reconcile debian/hifiberry-mpd/usr/bin/mpd-reconcile
+	chmod +x debian/hifiberry-mpd/usr/bin/mpd-reconcile
 	
 	# Install default configuration file to shared data dir for user bootstrap
 	mkdir -p debian/hifiberry-mpd/usr/share/mpd

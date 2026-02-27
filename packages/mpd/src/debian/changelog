@@ -1,3 +1,12 @@
+hifiberry-mpd (0.24.8.2) stable; urgency=low
+
+  * Add mpd-reconcile helper script to run configure-mpd as the HiFiBerry user
+    and trigger MPD library update
+  * Add hifiberry-mpd-reconcile.service oneshot unit for post-mount MPD
+    reconciliation workflows
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 26 Feb 2026 19:00:00 +0000
+
 hifiberry-mpd (0.24.8.1) stable; urgency=low
 
   * Updated to MPD v0.24.8 from upstream

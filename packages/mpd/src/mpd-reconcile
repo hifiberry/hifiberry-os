@@ -1,0 +1,64 @@
+#!/bin/bash
+set -euo pipefail
+
+resolve_hifiberry_user() {
+    if [ -f /etc/hifiberry.user ]; then
+        local configured_user
+        configured_user=$(tr -d '\n\r ' </etc/hifiberry.user)
+        if [ -n "$configured_user" ]; then
+            echo "$configured_user"
+            return 0
+        fi
+    fi
+
+    if id -u hifiberry >/dev/null 2>&1; then
+        echo "hifiberry"
+        return 0
+    fi
+
+    if id -u pi >/dev/null 2>&1; then
+        echo "pi"
+        return 0
+    fi
+
+    echo ""
+}
+
+run_as_user() {
+    local target_user="$1"
+    shift
+
+    if command -v runuser >/dev/null 2>&1; then
+        runuser -u "$target_user" -- "$@"
+        return 0
+    fi
+
+    su -s /bin/bash - "$target_user" -c "$(printf '%q ' "$@")"
+}
+
+main() {
+    local target_user
+    target_user=$(resolve_hifiberry_user)
+
+    if [ -z "$target_user" ]; then
+        echo "Error: Could not determine HiFiBerry user from /etc/hifiberry.user"
+        exit 1
+    fi
+
+    if ! id -u "$target_user" >/dev/null 2>&1; then
+        echo "Error: Configured HiFiBerry user '$target_user' does not exist"
+        exit 1
+    fi
+
+    echo "Running MPD reconcile as user: $target_user"
+
+    run_as_user "$target_user" /usr/bin/configure-mpd
+
+    if run_as_user "$target_user" /usr/bin/mpc update; then
+        echo "MPD library update triggered"
+    else
+        echo "Warning: Failed to trigger MPD library update"
+    fi
+}
+
+main "$@"
