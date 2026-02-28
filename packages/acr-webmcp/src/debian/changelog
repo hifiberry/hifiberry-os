@@ -1,3 +1,30 @@
+hifiberry-acr-webmcp (0.1.6) stable; urgency=medium
+
+  * Add genre_config_get, genre_config_user_get MCP tools
+  * Add genre_mapping_set, genre_mapping_delete MCP tools
+  * Add genre_ignore_add, genre_ignore_remove MCP tools
+  * library_genres: add raw=true parameter to get unprocessed genre tags
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 28 Feb 2026 22:00:00 +0000
+
+hifiberry-acr-webmcp (0.1.5) stable; urgency=medium
+
+  * Add library_genres, library_albums_by_genre, library_artists_by_genre tools
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 28 Feb 2026 18:00:00 +0000
+
+hifiberry-acr-webmcp (0.1.4) stable; urgency=medium
+
+  * Add fuzzy parameter to library_artist_by_name and library_albums_by_artist tools
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 28 Feb 2026 14:00:00 +0000
+
+hifiberry-acr-webmcp (0.1.3) stable; urgency=medium
+
+  * Add nginx include file for MCP API proxy (/etc/nginx/hifiberry-api.d/)
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 28 Feb 2026 12:00:00 +0000
+
 hifiberry-acr-webmcp (0.1.2) stable; urgency=medium
 
   * Add systemd user service for acr-webmcp HTTP mode

@@ -5,7 +5,7 @@ After=pipewire.service
 [Service]
 Type=simple
 ExecStartPre=/bin/sleep 2
-ExecStart=/usr/bin/acr-webmcp --transport http --host 127.0.0.1 --port 13180
+ExecStart=/usr/bin/acr-webmcp --transport http --host 0.0.0.0 --port 13180
 Restart=on-failure
 RestartSec=5
 

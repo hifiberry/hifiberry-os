@@ -14,7 +14,7 @@ from urllib.error import HTTPError, URLError
 
 JSONRPC_VERSION = "2.0"
 SERVER_NAME = "acr-webmcp"
-SERVER_VERSION = "0.1.2"
+SERVER_VERSION = "0.1.6"
 
 
 class ACRClient:
@@ -298,26 +298,103 @@ class MCPServer:
             },
             {
                 "name": "library_albums_by_artist",
-                "description": "Get albums by artist name.",
+                "description": (
+                    "Get albums by artist name. "
+                    "Set fuzzy=true to enable fuzzy/flexible matching so that typos or "
+                    "different capitalisations are tolerated. "
+                    "When a fuzzy match is used the response includes match_type "
+                    "(exact|case_insensitive|fuzzy), match_score, matched_name (actual "
+                    "library name) and query (the original search term)."
+                ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "player": {"type": "string"},
                         "artist_name": {"type": "string"},
+                        "fuzzy": {
+                            "type": "boolean",
+                            "description": "Enable fuzzy/similarity matching (tolerates typos and capitalisation differences). Default: false.",
+                        },
                     },
                     "required": ["player", "artist_name"],
                 },
             },
             {
                 "name": "library_artist_by_name",
-                "description": "Get artist details by name.",
+                "description": (
+                    "Get artist details by name. "
+                    "Set fuzzy=true to enable fuzzy/flexible matching so that typos or "
+                    "different capitalisations are tolerated. "
+                    "When a fuzzy match is used the response includes match_type "
+                    "(exact|case_insensitive|fuzzy), match_score, matched_name (actual "
+                    "library name) and query (the original search term)."
+                ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "player": {"type": "string"},
                         "artist_name": {"type": "string"},
+                        "fuzzy": {
+                            "type": "boolean",
+                            "description": "Enable fuzzy/similarity matching (tolerates typos and capitalisation differences). Default: false.",
+                        },
                     },
                     "required": ["player", "artist_name"],
+                },
+            },
+            {
+                "name": "library_genres",
+                "description": (
+                    "List all genres available in the library for a player. "
+                    "Returns a union of genres from album file tags and artist metadata, "
+                    "with genre cleanup/mapping applied. "
+                    "Set raw=true to get unprocessed raw genre tags instead. "
+                    "Use this to discover what genres are available before filtering with "
+                    "library_albums_by_genre or library_artists_by_genre."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "raw": {
+                            "type": "boolean",
+                            "description": "Return raw unprocessed genre tags instead of cleaned genres. Default: false.",
+                        },
+                    },
+                    "required": ["player"],
+                },
+            },
+            {
+                "name": "library_albums_by_genre",
+                "description": "List albums filtered by genre. Genre matching is case-insensitive.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "genre": {
+                            "type": "string",
+                            "description": "Genre name (e.g. 'Rock', 'Jazz'). Use library_genres to discover available genres.",
+                        },
+                    },
+                    "required": ["player", "genre"],
+                },
+            },
+            {
+                "name": "library_artists_by_genre",
+                "description": (
+                    "List artists filtered by genre. Uses artist metadata genres populated from "
+                    "LastFM/MusicBrainz. Genre matching is case-insensitive."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string"},
+                        "genre": {
+                            "type": "string",
+                            "description": "Genre name (e.g. 'Rock', 'Jazz'). Use library_genres to discover available genres.",
+                        },
+                    },
+                    "required": ["player", "genre"],
                 },
             },
             {
@@ -336,6 +413,74 @@ class MCPServer:
                     "type": "object",
                     "properties": {"player": {"type": "string"}},
                     "required": ["player"],
+                },
+            },
+            {
+                "name": "genre_config_get",
+                "description": (
+                    "Get the current effective genre cleanup configuration (system + user merged). "
+                    "Shows all active genre mappings and the ignore list. "
+                    "Use this to see what cleanup is currently applied before making changes."
+                ),
+                "inputSchema": {"type": "object", "properties": {}},
+            },
+            {
+                "name": "genre_config_user_get",
+                "description": (
+                    "Get the user-specific genre config (what YOU have set, excluding system defaults). "
+                    "Use genre_config_get to see the full effective config including system defaults."
+                ),
+                "inputSchema": {"type": "object", "properties": {}},
+            },
+            {
+                "name": "genre_mapping_set",
+                "description": (
+                    "Add or update a genre mapping. Maps a raw genre tag to a canonical genre name. "
+                    "Example: from='hip hop', to='Hip-Hop'. Saves to the user config and reloads immediately."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "from": {"type": "string", "description": "Raw genre tag to map (case-insensitive match)."},
+                        "to": {"type": "string", "description": "Canonical genre name to map to."},
+                    },
+                    "required": ["from", "to"],
+                },
+            },
+            {
+                "name": "genre_mapping_delete",
+                "description": "Remove a genre mapping from the user config.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "from": {"type": "string", "description": "The raw genre tag whose mapping should be removed."},
+                    },
+                    "required": ["from"],
+                },
+            },
+            {
+                "name": "genre_ignore_add",
+                "description": (
+                    "Add a genre to the ignore list. Ignored genres are excluded from library genre results. "
+                    "Example: 'seen live', 'audiobook', '80s'."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "genre": {"type": "string", "description": "Genre tag to ignore."},
+                    },
+                    "required": ["genre"],
+                },
+            },
+            {
+                "name": "genre_ignore_remove",
+                "description": "Remove a genre from the user ignore list.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "genre": {"type": "string", "description": "Genre tag to stop ignoring."},
+                    },
+                    "required": ["genre"],
                 },
             },
         ]
@@ -373,17 +518,44 @@ class MCPServer:
                     f"library/{self._enc(args.get('player'))}/album/by-id/{self._enc(args.get('album_id'))}"
                 )
             if name == "library_albums_by_artist":
-                return self._acr_get(
-                    f"library/{self._enc(args.get('player'))}/albums/by-artist/{self._enc(args.get('artist_name'))}"
-                )
+                path = f"library/{self._enc(args.get('player'))}/albums/by-artist/{self._enc(args.get('artist_name'))}"
+                if args.get("fuzzy"):
+                    path += "?fuzzy=true"
+                return self._acr_get(path)
             if name == "library_artist_by_name":
+                path = f"library/{self._enc(args.get('player'))}/artist/by-name/{self._enc(args.get('artist_name'))}"
+                if args.get("fuzzy"):
+                    path += "?fuzzy=true"
+                return self._acr_get(path)
+            if name == "library_genres":
+                path = f"library/{self._enc(args.get('player'))}/genres"
+                if args.get("raw"):
+                    path += "?raw=true"
+                return self._acr_get(path)
+            if name == "library_albums_by_genre":
                 return self._acr_get(
-                    f"library/{self._enc(args.get('player'))}/artist/by-name/{self._enc(args.get('artist_name'))}"
+                    f"library/{self._enc(args.get('player'))}/albums/by-genre/{self._enc(args.get('genre'))}"
+                )
+            if name == "library_artists_by_genre":
+                return self._acr_get(
+                    f"library/{self._enc(args.get('player'))}/artists/by-genre/{self._enc(args.get('genre'))}"
                 )
             if name == "library_refresh":
                 return self._acr_get(f"library/{self._enc(args.get('player'))}/refresh")
             if name == "library_update":
                 return self._acr_post(f"library/{self._enc(args.get('player'))}/update", {})
+            if name == "genre_config_get":
+                return self._acr_get("genres/config")
+            if name == "genre_config_user_get":
+                return self._acr_get("genres/user-config")
+            if name == "genre_mapping_set":
+                return self._acr_post("genres/mapping", {"from": args.get("from"), "to": args.get("to")})
+            if name == "genre_mapping_delete":
+                return self._acr_delete(f"genres/mapping/{self._enc(args.get('from'))}")
+            if name == "genre_ignore_add":
+                return self._acr_post("genres/ignore", {"genre": args.get("genre")})
+            if name == "genre_ignore_remove":
+                return self._acr_delete(f"genres/ignore/{self._enc(args.get('genre'))}")
             return self._err_text(f"Unknown tool: {name}")
         except Exception as err:
             return self._err_text(f"Tool execution failed: {err}\n{traceback.format_exc()}")
@@ -401,6 +573,18 @@ class MCPServer:
 
     def _acr_post(self, path: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         result = self.acr.request("POST", path, body=body)
+        if result.get("ok"):
+            return self._ok_text(result.get("data"))
+        return self._err_text(json.dumps(result, ensure_ascii=False))
+
+    def _acr_put(self, path: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        result = self.acr.request("PUT", path, body=body)
+        if result.get("ok"):
+            return self._ok_text(result.get("data"))
+        return self._err_text(json.dumps(result, ensure_ascii=False))
+
+    def _acr_delete(self, path: str) -> Dict[str, Any]:
+        result = self.acr.request("DELETE", path)
         if result.get("ok"):
             return self._ok_text(result.get("data"))
         return self._err_text(json.dumps(result, ensure_ascii=False))

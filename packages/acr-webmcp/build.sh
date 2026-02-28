@@ -9,6 +9,6 @@ cd src
 dpkg-buildpackage -us -uc -b
 cd ..
 
-mv -f ./*.deb ./*.changes ./*.buildinfo ../ 2>/dev/null || true
+mv -f src/*.deb src/*.changes src/*.buildinfo . 2>/dev/null || true
 
 echo "Build completed."

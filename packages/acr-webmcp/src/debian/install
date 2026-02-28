@@ -1,2 +1,3 @@
 acr-webmcp usr/bin
 systemd/acr-webmcp.service usr/lib/systemd/user
+debian/hifiberry-acr-webmcp.nginx etc/nginx/hifiberry-api.d/
