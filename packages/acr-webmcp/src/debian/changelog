@@ -1,3 +1,17 @@
+hifiberry-acr-webmcp (0.1.8) stable; urgency=medium
+
+  * Bind to localhost (127.0.0.1) instead of all interfaces
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 28 Feb 2026 15:30:00 +0000
+
+hifiberry-acr-webmcp (0.1.7) stable; urgency=medium
+
+  * Add library_categories MCP tool (mapped genre labels)
+  * Add library_albums_by_category MCP tool
+  * Add library_artists_by_category MCP tool
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 28 Feb 2026 23:00:00 +0000
+
 hifiberry-acr-webmcp (0.1.6) stable; urgency=medium
 
   * Add genre_config_get, genre_config_user_get MCP tools
