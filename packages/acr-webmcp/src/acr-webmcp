@@ -14,7 +14,7 @@ from urllib.error import HTTPError, URLError
 
 JSONRPC_VERSION = "2.0"
 SERVER_NAME = "acr-webmcp"
-SERVER_VERSION = "0.1.8"
+SERVER_VERSION = "0.1.9"
 
 
 class ACRClient:
@@ -522,6 +522,38 @@ class MCPServer:
                     "required": ["player", "category"],
                 },
             },
+            {
+                "name": "library_delete_album",
+                "description": (
+                    "Delete an album and all its tracks from the library filesystem. "
+                    "Only works for players where supportsDelete is true (e.g. mpd not configured as read-only). "
+                    "Check library_info first to confirm supportsDelete. THIS IS IRREVERSIBLE."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string", "description": "Player name (e.g. 'mpd')."},
+                        "album_id": {"type": "string", "description": "Album ID from library_albums or library_album_by_id."},
+                    },
+                    "required": ["player", "album_id"],
+                },
+            },
+            {
+                "name": "library_delete_track",
+                "description": (
+                    "Delete a single track from the library filesystem by its URI. "
+                    "Only works for players where supportsDelete is true. "
+                    "The track_uri is the relative path from the album track list. THIS IS IRREVERSIBLE."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "player": {"type": "string", "description": "Player name (e.g. 'mpd')."},
+                        "track_uri": {"type": "string", "description": "Track URI (relative path) from album track list."},
+                    },
+                    "required": ["player", "track_uri"],
+                },
+            },
         ]
 
     def _call_tool(self, name: str, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -604,6 +636,14 @@ class MCPServer:
             if name == "library_artists_by_category":
                 return self._acr_get(
                     f"library/{self._enc(args.get('player'))}/artists/by-category/{self._enc(args.get('category'))}"
+                )
+            if name == "library_delete_album":
+                return self._acr_delete(
+                    f"library/{self._enc(args.get('player'))}/album/{self._enc(args.get('album_id'))}"
+                )
+            if name == "library_delete_track":
+                return self._acr_delete(
+                    f"library/{self._enc(args.get('player'))}/track/{self._enc(args.get('track_uri'))}"
                 )
             return self._err_text(f"Unknown tool: {name}")
         except Exception as err:

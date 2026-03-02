@@ -1,3 +1,10 @@
+hifiberry-acr-webmcp (0.1.9) stable; urgency=medium
+
+  * Add library_delete_album MCP tool (delete album and all tracks from filesystem)
+  * Add library_delete_track MCP tool (delete single track by URI)
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 02 Mar 2026 23:30:00 +0000
+
 hifiberry-acr-webmcp (0.1.8) stable; urgency=medium
 
   * Bind to localhost (127.0.0.1) instead of all interfaces
