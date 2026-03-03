@@ -85,7 +85,9 @@ case "$1" in
     "provided_by": "shairport-sync",
     "systemd_service": "shairport",
     "icon": "shairport",
-    "allow_change": true
+    "allow_change": true,
+    "maintainer_name": "Wanted",
+    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md"
 }
 PLAYEREOF
 

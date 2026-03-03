@@ -108,7 +108,9 @@ Create `/etc/hifiberry/players.d/<name>.json`:
     "provided_by": "my-player-package",
     "systemd_service": "my-player",
     "icon": "my-player",
-    "allow_change": true
+    "allow_change": true,
+    "maintainer_name": "Your Name",
+    "maintainer_url": "https://example.com/my-player"
 }
 ```
 
@@ -118,6 +120,8 @@ Fields:
 - `systemd_service` — the systemd service to start/stop
 - `icon` — icon filename (without `.svg`), resolved from the icons directory
 - `allow_change` — whether the toggle switch is enabled (default: `true`)
+- `maintainer_name` — (optional) name of the package/plugin maintainer, shown below the status badge
+- `maintainer_url` — (optional) URL for the maintainer or project page; if set, `maintainer_name` is rendered as a clickable link
 
 ### b) Icon
 

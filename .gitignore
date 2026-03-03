@@ -42,3 +42,15 @@ CLAUDE.md
 packages/tidal-connect/
 packages/vu-meter/sbuild_workspace
 
+packages/acr-webmcp/hifiberry-acr-webmcp_*
+packages/acr-webmcp/src/debian/.debhelper/
+packages/acr-webmcp/src/debian/debhelper-build-stamp
+packages/acr-webmcp/src/debian/files
+packages/acr-webmcp/src/debian/hifiberry-acr-webmcp.postinst.debhelper
+packages/acr-webmcp/src/debian/hifiberry-acr-webmcp.postrm.debhelper
+packages/acr-webmcp/src/debian/hifiberry-acr-webmcp.substvars
+packages/acr-webmcp/src/debian/hifiberry-acr-webmcp/DEBIAN/
+packages/acr-webmcp/src/debian/hifiberry-acr-webmcp/etc/
+packages/acr-webmcp/src/debian/hifiberry-acr-webmcp/usr/share/
+packages/*/*.tar.gz.new.*
+packages/*/*.tar.xz.new.*

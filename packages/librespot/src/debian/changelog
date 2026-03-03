@@ -1,3 +1,9 @@
+hifiberry-librespot (0.8.0.3) stable; urgency=medium
+
+  * Add maintainer_name/maintainer_url to player descriptor pointing to maintainers-wanted doc
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 02 Mar 2026 12:00:00 +0000
+
 hifiberry-librespot (0.8.0.2) stable; urgency=medium
 
   * Convert to community plugin using external players mechanism

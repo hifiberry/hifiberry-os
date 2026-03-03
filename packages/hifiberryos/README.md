@@ -60,27 +60,29 @@ To clean build artifacts:
 
 ## Installation
 
-After building, you can install any of the meta-packages. Choose the one that best fits your needs:
+For most users, we recommend the **full installation** which includes all streaming services and audio features.
+
+### Full Installation (Recommended)
+
+```bash
+sudo apt-get update
+sudo apt-get install hbos-full
+```
 
 ### Minimal Installation
 
+For a lightweight setup with only core functionality:
+
 ```bash
-sudo dpkg -i hbos-minimal_*.deb
-sudo apt-get install -f  # Fix any dependency issues
+sudo apt-get update
+sudo apt-get install hbos-minimal
 ```
 
 ### Testing/Development Installation
 
 ```bash
-sudo dpkg -i hbos-test_*.deb
-sudo apt-get install -f  # Fix any dependency issues
-```
-
-### Full Installation
-
-```bash
-sudo dpkg -i hbos-full_*.deb
-sudo apt-get install -f  # Fix any dependency issues
+sudo apt-get update
+sudo apt-get install hbos-test
 ```
 
 ## Prerequisites

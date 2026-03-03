@@ -88,16 +88,15 @@ curl -Ls https://raw.githubusercontent.com/hifiberry/hifiberry-os/refs/heads/hbo
 
 ### Install all players
 
-The minimal image only uses 
+Install a full or minimal set of packages. The full set includes all players, while the minimal comes only with mpd. We recommend the full installation for most users:
 
-Install a full or minimal set of packages. The full set included all players, while the minimal comes only with mpd. This allows you to install only the players you really need.
-
-```
-sudo apt install -y hbos-minimal
-```
-or
 ```
 sudo apt install -y hbos-full
+```
+
+If you prefer a minimal installation and want to install only the players you really need:
+```
+sudo apt install -y hbos-minimal
 ```
 
 ### Base configuration
@@ -105,14 +104,9 @@ sudo apt install -y hbos-full
 ```
 sudo config-configtxt --default-config --enable-i2c
 reboot
-sudo config-detect
-reboot
-sudo hifiberry-baseconfig --force
 ```
-
-Then reboot
 
 ## How to use
 
-The WebUI is accessible at: http://<device-ip>:80/
+Open the WebUI at http://<device-ip>:80/ to start the initial setup wizard. It will guide you through sound card selection, system naming, and service configuration.
 
