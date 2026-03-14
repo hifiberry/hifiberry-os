@@ -1,0 +1,29 @@
+Source: python3-bless
+Section: python
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               python3-pip,
+               wget,
+               ca-certificates
+Standards-Version: 4.6.0
+Homepage: https://pypi.org/project/bless/
+Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
+Vcs-Browser: https://github.com/hifiberry/hifiberry-os
+
+Package: python3-bless
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, python3-bleak, python3-dbus-next
+Description: BLE GATT server library for Python
+ Bless (BLE Server State) is a library for creating BLE GATT
+ servers using the bleak library for Bluetooth Low Energy.
+ .
+ It provides a cross-platform API for advertising BLE services
+ and handling GATT characteristic read/write requests.
+ .
+ On Linux it uses the BlueZ D-Bus interface.
+ .
+ This is the Python 3 version of the package.

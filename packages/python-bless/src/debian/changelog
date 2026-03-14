@@ -1,0 +1,7 @@
+python3-bless (0.2.6-1) unstable; urgency=medium
+
+  * Initial HiFiBerry packaging of bless BLE GATT server library
+  * Downloaded from PyPI and packaged for HiFiBerry OS
+  * Required for BLE WiFi provisioning feature
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 14 Mar 2026 15:00:00 +0000

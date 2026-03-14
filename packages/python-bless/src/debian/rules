@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=bless
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_clean:
+	rm -rf bless-source/
+	rm -f *.tar.gz
+	find . -name "*.pyc" -delete
+	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+override_dh_auto_configure:
+	# Download bless source from PyPI
+	if [ ! -d bless-source ]; then \
+		wget "https://files.pythonhosted.org/packages/source/b/bless/bless-0.2.6.tar.gz" -O "bless-0.2.6.tar.gz"; \
+		tar -xzf "bless-0.2.6.tar.gz"; \
+		mv "bless-0.2.6" bless-source; \
+		if [ ! -f bless-source/setup.py ]; then \
+			echo "Creating setup.py for compatibility..."; \
+			cd bless-source && \
+			echo 'from setuptools import setup, find_packages' > setup.py && \
+			echo '' >> setup.py && \
+			echo 'setup(' >> setup.py && \
+			echo '    name="bless",' >> setup.py && \
+			echo '    version="0.3.0",' >> setup.py && \
+			echo '    description="BLE Server State library",' >> setup.py && \
+			echo '    packages=find_packages(),' >> setup.py && \
+			echo '    python_requires=">=3.7",' >> setup.py && \
+			echo '    install_requires=["bleak"],' >> setup.py && \
+			echo ')' >> setup.py && \
+			cd ..; \
+		fi; \
+	fi
+
+override_dh_auto_build:
+	cd bless-source && python3 setup.py build
+
+override_dh_auto_install:
+	cd bless-source && python3 setup.py install --root=$(CURDIR)/debian/python3-bless --install-layout=deb
+
+override_dh_auto_test:
+	# Skip tests - requires BLE hardware
