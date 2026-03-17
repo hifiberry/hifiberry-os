@@ -6,10 +6,6 @@ if [ ! -d /var/lib/shairport ]; then
     mkdir -p /var/lib/shairport
 fi
 
-if [ ! -d /var/lib/nqptp ]; then
-    mkdir -p /var/lib/nqptp
-fi
-
 # Create shairport-sync group if it doesn't exist
 if ! getent group shairport-sync > /dev/null; then
     addgroup --system shairport-sync
@@ -21,22 +17,9 @@ if ! getent passwd shairport-sync > /dev/null; then
     usermod -a -G audio shairport-sync
 fi
 
-# Create nqptp group if it doesn't exist
-if ! getent group nqptp > /dev/null; then
-    addgroup --system nqptp
-fi
-
-# Create nqptp user if it doesn't exist
-if ! getent passwd nqptp > /dev/null; then
-    adduser --system --ingroup nqptp --home /var/lib/nqptp --no-create-home --shell /usr/sbin/nologin nqptp
-fi
-
 # Set ownership and permissions for directories after users are created
 chown shairport-sync:shairport-sync /var/lib/shairport
 chmod 755 /var/lib/shairport
-
-chown nqptp:nqptp /var/lib/nqptp
-chmod 755 /var/lib/nqptp
 
 # Add shairport-sync user to pipewire group for PipeWire integration
 if getent group pipewire > /dev/null; then

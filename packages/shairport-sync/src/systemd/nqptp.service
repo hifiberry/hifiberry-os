@@ -6,8 +6,9 @@ Wants=network.target
 
 [Service]
 Type=simple
-User=nqptp
 ExecStart=/usr/bin/start-nqptp
+DynamicUser=yes
+LimitRTPRIO=6
 Restart=on-failure
 RestartSec=5
 AmbientCapabilities=CAP_NET_BIND_SERVICE
