@@ -1,3 +1,10 @@
+hifiberry-pipewire-configs (1.0.7) stable; urgency=medium
+
+  * Set default sink volume to 100% instead of WirePlumber's 40% default
+  * Added 90-default-volume.conf WirePlumber config fragment
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 19 Mar 2026 14:00:00 +0000
+
 hifiberry-pipewire-configs (1.0.6) stable; urgency=medium
 
   * Added ladspa-riaa package as dependency
