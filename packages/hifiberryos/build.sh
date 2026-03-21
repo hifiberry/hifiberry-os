@@ -2,45 +2,65 @@
 
 set -e
 
-# Configuration
-VERSION="0.6"
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
+
 PACKAGE_NAME="hifiberryos-meta"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="${SCRIPT_DIR}/src"
-BUILD_DIR="${SCRIPT_DIR}/build-${PACKAGE_NAME}"
+BUILD_DIR="/tmp/build-${PACKAGE_NAME}"
 
-echo "Building HiFiBerry OS meta-packages..."
+# Parse version from debian/changelog
+VERSION=$(grep -m1 "^${PACKAGE_NAME}" "${SRC_DIR}/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
 
-# Ensure we have the source directory
-if [ ! -d "$SRC_DIR" ]; then
-    echo "Error: Source directory $SRC_DIR not found!"
+if [ -z "$VERSION" ]; then
+    echo "ERROR: Could not parse version from debian/changelog"
     exit 1
 fi
+echo "Parsed version from changelog: $VERSION"
 
-# Clean and create build directory
+# Check for DIST environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    CHROOT="${DIST}-amd64-sbuild"
+    DIST_ARG="--dist=$DIST"
+    CHROOT_ARG="--chroot=$CHROOT"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+    CHROOT_ARG=""
+fi
+
+# Clean previous build
 rm -rf "$BUILD_DIR"
-cp -r "$SRC_DIR" "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
 
 cd "$BUILD_DIR"
 
-# Make sure debian/rules is executable
+# Ensure debian/rules is executable
 chmod +x debian/rules
 
-# Build binary packages directly (meta-packages don't need compilation)
-echo "Building binary packages..."
-dpkg-buildpackage -us -uc
+echo "Building binary packages with sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    $DIST_ARG \
+    $CHROOT_ARG \
+    --build-dir="$BUILD_DIR" \
+    --verbose
 
-# Move packages to script directory
-cd ..
-mv ${PACKAGE_NAME}_${VERSION}*.deb "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.dsc "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.tar.* "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.changes "${SCRIPT_DIR}/" 2>/dev/null || true
-mv ${PACKAGE_NAME}_${VERSION}*.buildinfo "${SCRIPT_DIR}/" 2>/dev/null || true
-mv hbos-*_${VERSION}_*.deb "${SCRIPT_DIR}/" 2>/dev/null || true
+# Move artifacts back to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.dsc "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.tar.* "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+mv hbos-*_${VERSION}_*.deb "$SCRIPT_DIR/" 2>/dev/null || true
 
 echo "Build completed successfully!"
 echo "Packages built in ${SCRIPT_DIR}:"
-cd "${SCRIPT_DIR}"
-ls -la *${VERSION}*.deb 2>/dev/null || echo "No .deb files found"
-
+ls -la "$SCRIPT_DIR"/*${VERSION}*.deb 2>/dev/null || echo "No .deb files found"

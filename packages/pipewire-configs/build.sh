@@ -2,18 +2,62 @@
 
 set -e
 
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
+
+PACKAGE_NAME="hifiberry-pipewire-configs"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="${SCRIPT_DIR}/src"
+BUILD_DIR="/tmp/build-${PACKAGE_NAME}"
+
 echo "Building HiFiBerry PipeWire configs package..."
 
-cd src
+# Check for DIST environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    CHROOT="${DIST}-amd64-sbuild"
+    DIST_ARG="--dist=$DIST"
+    CHROOT_ARG="--chroot=$CHROOT"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+    CHROOT_ARG=""
+fi
 
-# Build the package
-dpkg-buildpackage -us -uc
+# Clean previous build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
 
-cd ..
+cd "$BUILD_DIR"
 
-# Remove debug symbols package (though pipewire-configs shouldn't produce any)
-rm -f *-dbgsym*.deb 2>/dev/null || true
+# Ensure debian/rules is executable
+if [ -f "debian/rules" ]; then
+    chmod +x debian/rules
+fi
+
+echo "Building package with sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    $DIST_ARG \
+    $CHROOT_ARG \
+    --build-dir="$BUILD_DIR" \
+    --verbose
+
+# Move build artifacts back to script directory
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.dsc "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.tar.* "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
+
+# Remove debug symbols package (if any)
+rm -f "$SCRIPT_DIR/"*-dbgsym*.deb 2>/dev/null || true
 
 echo "Build completed successfully!"
-echo "Built packages:"
-ls -la *.deb 2>/dev/null || echo "No .deb files found"
+echo "Built packages in ${SCRIPT_DIR}:"
+ls -la "$SCRIPT_DIR/"*.deb 2>/dev/null || echo "No .deb files found"

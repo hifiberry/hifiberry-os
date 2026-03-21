@@ -3,12 +3,38 @@
 # Exit on error
 set -e
 
-# Define variables
-PACKAGE="hifiberry-analoginput"
-SOURCE_DIR="src"
-BUILD_DIR="build"
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
 
-# Function to clean up build files
+PACKAGE="hifiberry-analoginput"
+
+# Parse version from debian/changelog
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+VERSION=$(grep -m1 "^${PACKAGE}" "${SCRIPT_DIR}/src/debian/changelog" | sed 's/.*(\([^)]*\)).*/\1/')
+
+if [ -z "$VERSION" ]; then
+    echo "ERROR: Could not parse version from debian/changelog"
+    exit 1
+fi
+echo "Parsed version from changelog: $VERSION"
+
+# Check for DIST environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    CHROOT="${DIST}-amd64-sbuild"
+    DIST_ARG="--dist=$DIST"
+    CHROOT_ARG="--chroot=$CHROOT"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+    CHROOT_ARG=""
+fi
+
+BUILD_DIR="/tmp/${PACKAGE}-build"
+SRC_DIR="${SCRIPT_DIR}/src"
+
+# Clean function
 clean() {
     echo "Cleaning up build files..."
     rm -rf "$BUILD_DIR"
@@ -16,32 +42,35 @@ clean() {
     echo "Cleanup completed."
 }
 
-# Check for the --clean option
 if [[ "$1" == "--clean" ]]; then
     clean
     exit 0
 fi
 
-# Step 1: Create build directory
 echo "Preparing build directory..."
 rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR/$PACKAGE"
+mkdir -p "$BUILD_DIR"
 
-# Step 2: Copy source files
 echo "Copying source files..."
-cp -r "$SOURCE_DIR"/* "$BUILD_DIR/$PACKAGE/"
+cp -r "$SRC_DIR/"* "$BUILD_DIR/"
 
-# Step 3: Build the Debian package
-echo "Building the Debian package..."
-cd "$BUILD_DIR/$PACKAGE"
-dpkg-buildpackage -us -uc -b
+cd "$BUILD_DIR"
 
-# Step 4: Move built packages back to package directory
-cd ../..
-mv "$BUILD_DIR"/${PACKAGE}*.deb . 2>/dev/null || true
-mv "$BUILD_DIR"/${PACKAGE}*.build . 2>/dev/null || true
-mv "$BUILD_DIR"/${PACKAGE}*.buildinfo . 2>/dev/null || true
-mv "$BUILD_DIR"/${PACKAGE}*.changes . 2>/dev/null || true
+echo "Building package with sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    $DIST_ARG \
+    $CHROOT_ARG \
+    --build-dir="$BUILD_DIR" \
+    --verbose
+
+echo "Moving build artifacts..."
+mv *.deb "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.changes "$SCRIPT_DIR/" 2>/dev/null || true
+mv *.buildinfo "$SCRIPT_DIR/" 2>/dev/null || true
 
 echo "Debian package build completed."
-echo "Package: ${PACKAGE}*.deb"
+echo "Built packages:"
+ls -la "$SCRIPT_DIR"/*.deb 2>/dev/null || echo "No packages found"
