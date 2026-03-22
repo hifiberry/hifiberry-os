@@ -3,9 +3,23 @@
 # Exit on error
 set -e
 
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then 
+    source "$_CC_ENV"
+else 
+    echo "Not using cross-compilation (${_CC_ENV} does not exist)"
+fi
+
 SCRIPT_DIR="$(dirname $(realpath $0))"
 DSP_PROFILES_URL="https://github.com/hifiberry/dspprofiles"
 DSP_PROFILES_CHECKOUT="$SCRIPT_DIR/dspprofiles"
+export BUILD_DIR="/tmp/${PACKAGE}-build"
+
+# Prepare build directory
+echo "Preparing build directory..."
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
 echo "DSP Profiles build script"
 
@@ -38,6 +52,16 @@ update_dspprofiles() {
     fi
     echo "DSP profiles updated successfully"
 }
+
+# Check for DIST environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    export DIST_ARG="--dist=$DIST"
+    export CHROOT_ARG="--chroot=$CHROOT"
+else
+    export DIST_ARG=""
+    export CHROOT_ARG=""
+fi
 
 # Update or clone the repository
 update_dspprofiles
