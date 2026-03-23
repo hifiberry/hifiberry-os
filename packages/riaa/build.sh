@@ -62,10 +62,10 @@ rm -f ../ladspa-riaa-dbgsym*.deb
 
 # Step 3: Move built packages back to package directory
 cd ..
-mv $BUILD_DIR/$DEB_PACKAGE_*.deb . 2>/dev/null || true
-mv $BUILD_DIR/$DEB_PACKAGE_*.build . 2>/dev/null || true
-mv $BUILD_DIR/$DEB_PACKAGE_*.buildinfo . 2>/dev/null || true
-mv $BUILD_DIR/$DEB_PACKAGE_*.changes . 2>/dev/null || true
+mv $BUILD_DIR/${DEB_PACKAGE}_*.deb . 2>/dev/null || true
+mv $BUILD_DIR/${DEB_PACKAGE}_*.build . 2>/dev/null || true
+mv $BUILD_DIR/${DEB_PACKAGE}_*.buildinfo . 2>/dev/null || true
+mv $BUILD_DIR/${DEB_PACKAGE}_*.changes . 2>/dev/null || true
 
 echo "Package build completed."
 echo "Built packages:"
