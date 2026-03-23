@@ -13,7 +13,7 @@ fi
 # Define variables
 PACKAGE="pipewire-api"
 DEB_PACKAGE="pipewire-api"
-REPO_URL="https://github.com/LarsGrootkarzijn/pipewire-api"
+REPO_URL="https://github.com/hifiberry/pipewire-api"
 export BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Check for DIST environment variable
