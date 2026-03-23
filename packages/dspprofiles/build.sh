@@ -14,6 +14,8 @@ fi
 SCRIPT_DIR="$(dirname $(realpath $0))"
 DSP_PROFILES_URL="https://github.com/hifiberry/dspprofiles"
 DSP_PROFILES_CHECKOUT="$SCRIPT_DIR/dspprofiles"
+PACKAGE="dspprofiles"
+
 export BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Prepare build directory
