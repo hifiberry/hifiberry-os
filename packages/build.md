@@ -51,6 +51,119 @@ df -h /tmp
 tmpfs /tmp tmpfs defaults,size=16G 0 0
 ```
 
+## Cross-Compilation Support
+
+HiFiBerry OS supports building packages for different architectures (e.g., ARM64 on x86, or different ARM variants). Cross-compilation uses `sbuild` with isolated chroot environments.
+
+### When to Use Cross-Compilation
+
+- **Building for Raspberry Pi on other systems** (Linux desktop, CI/CD servers)
+- **Building for different distributions** (trixie, bookworm, etc.)
+- **Consistent, reproducible builds** across multiple machines
+
+### Prerequisites
+
+1. **sbuild installed:**
+   ```bash
+   sudo apt-get install sbuild
+   ```
+
+2. **qemu-user-static for ARM emulation** (if building for different architecture):
+   ```bash
+   sudo apt-get install qemu-user-static
+   ```
+
+3. **Chroot cache directory:**
+   ```bash
+   mkdir -p ~/.cache/sbuild
+   ```
+
+### Setting Up Cross-Compilation
+
+The `scripts/enable-cross-compile` script creates an sbuild wrapper and initializes a build chroot.
+
+**Default setup** (ARM64, Debian Trixie):
+```bash
+cd /path/to/hifiberry-os
+./scripts/enable-cross-compile
+```
+
+**Custom architecture or distribution:**
+```bash
+./scripts/enable-cross-compile --arch arm64 --dist bookworm
+```
+
+**Options:**
+- `--arch ARCH` — Target architecture (default: `arm64`)
+- `--dist DIST` — Debian distribution (default: `trixie`)
+- `--clean-chroot` — Force rebuild of chroot (useful if chroot was corrupted)
+
+**What this does:**
+1. Creates `scripts/sbuild` wrapper that automatically selects the right chroot
+2. Creates initial chroot tarball at `~/.cache/sbuild/{DIST}-{ARCH}-hifiberry.tar.zst`
+3. Subsequent cross-compilation builds use `sbuild` with this chroot
+
+### Building with Cross-Compilation
+
+Once `enable-cross-compile` has run successfully, builds automatically use the sbuild wrapper:
+
+```bash
+cd packages/<package-name>
+./build.sh
+```
+
+The build script detects the sbuild wrapper via `scripts/cross-compile-env.sh` and uses it automatically. No environment variables needed.
+
+**Verify cross-compilation is active:**
+```bash
+ls -la scripts/sbuild   # Should exist and be executable
+```
+
+### Disabling Cross-Compilation
+
+To switch back to native/dpkg-buildpackage builds:
+```bash
+./scripts/disable-cross-compile
+```
+
+This removes the sbuild wrapper. Existing chroot tarballs remain in `~/.cache/sbuild/` for reuse.
+
+### Build Variables
+
+When using cross-compilation with different distributions:
+
+```bash
+export DIST=bookworm
+export CHROOT_ARG="--chroot=bookworm-arm64-hifiberry"
+cd packages/<package-name>
+./build.sh
+```
+
+Available distributions should match existing chroots:
+```bash
+ls ~/.cache/sbuild/
+```
+
+### Troubleshooting Cross-Compilation
+
+**"sbuild: chroot not found" error:**
+- Chroot was not initialized. Run `enable-cross-compile` again.
+- Or check: `ls ~/.cache/sbuild/ | grep hifiberry`
+
+**"qemu: could not load user module" (when building for different architecture):**
+- Ensure `qemu-user-static` is installed: `sudo apt-get install qemu-user-static`
+- Verify static qemu binaries: `ls /usr/bin/qemu-*-static`
+
+**Chroot corruption or stale builds:**
+```bash
+./scripts/enable-cross-compile --clean-chroot
+```
+
+**Return to native builds:**
+```bash
+./scripts/disable-cross-compile
+```
+
 ## Building Individual Packages
 
 ### Standard Package Build
