@@ -1,0 +1,7 @@
+freqresp (1.0.0) stable; urgency=medium
+
+  * Initial release
+  * Loopback frequency response measurement (20 Hz - 20 kHz)
+  * Text table output and optional PNG plot
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 26 Mar 2026 12:00:00 +0000

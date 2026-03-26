@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""
+freqresp.py — Measure audio loopback frequency response (20 Hz – 20 kHz)
+
+Usage:
+    python3 freqresp.py [device]        # default: hw:0,0
+    python3 freqresp.py hw:0,0
+
+Plays stepped sine tones through the output, records from the input,
+computes amplitude via FFT, prints a text table, and saves freqresp.png.
+"""
+
+import numpy as np
+import sys
+import os
+
+DEVICE  = sys.argv[1] if len(sys.argv) > 1 else "hw:0,0"
+RATE    = 48000
+CH      = 2
+FMT     = "S32_LE"
+BPS     = 4          # bytes per sample per channel (int32)
+TONE_T  = 1.0        # tone duration seconds
+SETTLE  = 0.2        # discard first N seconds of each tone (settling)
+GAP_T   = 0.2        # silence before first tone (record sync)
+FREQS   = np.logspace(np.log10(20), np.log10(20000), 40).tolist()
+
+
+def make_tone(freq, duration, amplitude=0.5):
+    n = int(RATE * duration)
+    t = np.linspace(0, duration, n, endpoint=False)
+    mono = (np.sin(2 * np.pi * freq * t) * amplitude * (2**31 - 1)).astype(np.int32)
+    stereo = np.empty(n * CH, dtype=np.int32)
+    stereo[0::2] = mono
+    stereo[1::2] = mono
+    return stereo.tobytes()
+
+
+def record_and_play(play_signal, total_dur, device):
+    import alsaaudio
+    import threading
+
+    period = 1024
+    period_bytes = period * CH * BPS
+    total_record_bytes = int(RATE * total_dur) * CH * BPS
+
+    def _play():
+        out_pcm = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL,
+                                device=device, channels=CH, rate=RATE,
+                                format=alsaaudio.PCM_FORMAT_S32_LE,
+                                periodsize=period)
+        pos = 0
+        while pos < len(play_signal):
+            chunk = play_signal[pos:pos + period_bytes]
+            out_pcm.write(chunk)
+            pos += len(chunk)
+        out_pcm.close()
+
+    def _record():
+        in_pcm = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL,
+                               device=device, channels=CH, rate=RATE,
+                               format=alsaaudio.PCM_FORMAT_S32_LE,
+                               periodsize=period)
+        recorded = bytearray()
+        while len(recorded) < total_record_bytes:
+            n, data = in_pcm.read()
+            if n > 0:
+                recorded.extend(data)
+        in_pcm.close()
+        result.append(bytes(recorded))
+
+    result = []
+    rec_t = threading.Thread(target=_record)
+    play_t = threading.Thread(target=_play)
+    rec_t.start()
+    play_t.start()
+    play_t.join()
+    rec_t.join()
+
+    return result[0]
+
+
+def analyze(raw, freqs):
+    samples = np.frombuffer(raw, dtype=np.int32).astype(np.float64) / (2**31)
+    left = samples[0::2]  # left channel only
+
+    pos = int(RATE * GAP_T)
+    amplitudes = []
+
+    for freq in freqs:
+        tone_n   = int(RATE * TONE_T)
+        settle_n = int(RATE * SETTLE)
+        chunk = left[pos + settle_n : pos + tone_n]
+        pos += tone_n
+
+        if len(chunk) < 512:
+            amplitudes.append(None)
+            continue
+
+        # Snap to an integer number of complete cycles to eliminate leakage
+        cycles = max(1, round(len(chunk) * freq / RATE))
+        n_samples = int(round(cycles * RATE / freq))
+        n_samples = min(n_samples, len(chunk))
+        chunk = chunk[:n_samples]
+
+        # Single-frequency DFT at the exact target frequency — no bin-alignment needed
+        n = np.arange(n_samples)
+        amp = 2.0 * abs(np.dot(chunk, np.exp(-2j * np.pi * freq * n / RATE))) / n_samples
+        amplitudes.append(amp)
+
+    # Normalize: find amplitude closest to 1 kHz as 0 dB reference
+    ref_idx = np.argmin(np.abs(np.array(freqs) - 1000.0))
+    ref_amp = amplitudes[ref_idx]
+    if ref_amp is None or ref_amp < 1e-10:
+        ref_amp = max((a for a in amplitudes if a is not None), default=1.0)
+
+    results = []
+    for freq, amp in zip(freqs, amplitudes):
+        if amp is not None and amp > 1e-10:
+            db = 20.0 * np.log10(amp / ref_amp)
+        else:
+            db = None
+        results.append((freq, db))
+
+    return results
+
+
+def print_table(results):
+    print(f"\n{'Freq (Hz)':>12}  {'dB re 1kHz':>12}")
+    print("-" * 28)
+    for freq, db in results:
+        if db is not None:
+            print(f"{freq:12.1f}  {db:+12.2f}")
+        else:
+            print(f"{freq:12.1f}  {'--':>12}")
+
+
+def save_plot(results, path="freqresp.png"):
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        valid = [(f, db) for f, db in results if db is not None]
+        if not valid:
+            print("No valid data to plot.")
+            return
+        fv, dv = zip(*valid)
+
+        plt.figure(figsize=(11, 5))
+        plt.semilogx(fv, dv, "b-o", markersize=4, linewidth=1.2)
+        plt.axhline(0, color="gray", linewidth=0.8, linestyle="--")
+        plt.xlabel("Frequency (Hz)")
+        plt.ylabel("Level (dB, ref 1 kHz)")
+        plt.title(f"Frequency Response — {DEVICE}")
+        plt.grid(True, which="both", alpha=0.35)
+        plt.xlim(20, 20000)
+        plt.ylim(min(dv) - 3, max(dv) + 3)
+        plt.xticks(
+            [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000],
+            ["20", "50", "100", "200", "500", "1k", "2k", "5k", "10k", "20k"],
+        )
+        plt.tight_layout()
+        plt.savefig(path, dpi=150)
+        print(f"\nPlot saved to {os.path.abspath(path)}")
+    except ImportError:
+        print("\n(matplotlib not installed — skipping plot)")
+
+
+if __name__ == "__main__":
+    print(f"Frequency response measurement")
+    print(f"  Device : {DEVICE}")
+    print(f"  Points : {len(FREQS)}  (20 Hz – 20 kHz, log spaced)")
+    print(f"  Tone   : {TONE_T*1000:.0f} ms each  ({SETTLE*1000:.0f} ms settle)")
+    print(f"  Total  : ~{GAP_T + len(FREQS) * TONE_T:.1f} s")
+    print("Recording...", flush=True)
+
+    gap = (np.zeros(int(RATE * GAP_T) * CH, dtype=np.int32)).tobytes()
+    tones = b"".join(make_tone(f, TONE_T) for f in FREQS)
+    play_signal = gap + tones
+    total_dur = GAP_T + len(FREQS) * TONE_T + 0.5
+
+    raw = record_and_play(play_signal, total_dur, DEVICE)
+    results = analyze(raw, FREQS)
+
+    print_table(results)
+    save_plot(results)
