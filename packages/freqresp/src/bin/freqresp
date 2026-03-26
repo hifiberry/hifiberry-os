@@ -27,8 +27,71 @@ FREQS   = np.logspace(np.log10(20), np.log10(20000), 40).tolist()
 
 
 def get_audio_blocking_services():
-    """Detect running audio services that may block ALSA device access."""
-    services = []
+    """Detect running audio services and processes that may block ALSA device access."""
+    processes = []
+
+    # Try using lsof to find processes holding ALSA devices
+    try:
+        result = subprocess.run(["lsof", "+D", "/dev/snd"],
+                               capture_output=True, text=True, timeout=5)
+        if result.returncode == 0 and result.stdout:
+            for line in result.stdout.split('\n')[1:]:  # skip header
+                if not line.strip():
+                    continue
+                parts = line.split()
+                if len(parts) >= 2:
+                    cmd = parts[0]
+                    pid = parts[1]
+                    seen = False
+                    # Map common process names to friendly names
+                    if cmd in ("pipewire", "pipewire-pulse"):
+                        if not any(p[0] == "PipeWire" for p in processes):
+                            processes.append(("PipeWire", pid, cmd))
+                            seen = True
+                    elif cmd == "pulseaudio":
+                        if not any(p[0] == "PulseAudio" for p in processes):
+                            processes.append(("PulseAudio", pid, cmd))
+                            seen = True
+                    elif cmd == "jackd":
+                        if not any(p[0] == "JACK" for p in processes):
+                            processes.append(("JACK", pid, cmd))
+                            seen = True
+                    elif "alsa" in cmd.lower():
+                        if not any(p[2] == cmd for p in processes):
+                            processes.append(("ALSA", pid, cmd))
+                            seen = True
+                    if seen and processes:
+                        return processes
+    except Exception:
+        pass
+
+    # Fallback: check /proc for audio-related processes
+    try:
+        result = subprocess.run(["pgrep", "-l", "-f", "pipewire|pulseaudio|jackd|alsa"],
+                               capture_output=True, text=True, timeout=5)
+        if result.returncode == 0 and result.stdout:
+            for line in result.stdout.split('\n'):
+                if not line.strip():
+                    continue
+                parts = line.split(maxsplit=1)
+                if len(parts) >= 2:
+                    pid = parts[0]
+                    cmd = parts[1]
+                    if "pipewire" in cmd.lower():
+                        if not any(p[0] == "PipeWire" for p in processes):
+                            processes.append(("PipeWire", pid, cmd.split()[0]))
+                    elif "pulseaudio" in cmd.lower():
+                        if not any(p[0] == "PulseAudio" for p in processes):
+                            processes.append(("PulseAudio", pid, cmd.split()[0]))
+                    elif "jackd" in cmd.lower():
+                        if not any(p[0] == "JACK" for p in processes):
+                            processes.append(("JACK", pid, cmd.split()[0]))
+            if processes:
+                return processes
+    except Exception:
+        pass
+
+    # Fallback: check systemctl for running services
     common_services = {
         "pulseaudio": "PulseAudio",
         "pipewire": "PipeWire",
@@ -40,14 +103,13 @@ def get_audio_blocking_services():
         result = subprocess.run(["systemctl", "list-units", "--all", "--plain"],
                                capture_output=True, text=True, timeout=5)
         running = result.stdout
+        for cmd, name in common_services.items():
+            if cmd in running or f"{cmd}.service" in running:
+                processes.append((name, "?", cmd))
     except Exception:
-        return services
+        pass
 
-    for cmd, name in common_services.items():
-        if cmd in running or f"{cmd}.service" in running:
-            services.append(name)
-
-    return services
+    return processes
 
 
 def make_tone(freq, duration, amplitude=0.5):
@@ -305,19 +367,23 @@ if __name__ == "__main__":
             print(f"\nError: Cannot access audio device '{DEVICE}'")
             print(f"  Reason: Device is already in use\n")
 
-            blocking_services = get_audio_blocking_services()
-            if blocking_services:
-                print(f"Running audio services blocking the device:")
-                for service in blocking_services:
-                    print(f"  • {service}")
-                print(f"\nTo free the device, stop these services:")
-                for service in blocking_services:
+            blocking_processes = get_audio_blocking_services()
+            if blocking_processes:
+                print(f"Blocking processes:")
+                for service, pid, cmd in blocking_processes:
+                    pid_str = f" (PID {pid})" if pid != "?" else ""
+                    print(f"  • {service}{pid_str}: {cmd}")
+                print(f"\nTo free the device:")
+                for service, pid, cmd in blocking_processes:
                     if service == "PipeWire":
                         print(f"  sudo systemctl stop pipewire pipewire-pulse")
                     elif service == "PulseAudio":
                         print(f"  sudo systemctl stop pulseaudio")
                     elif service == "JACK":
                         print(f"  killall jackd")
+                    else:
+                        pid_str = f" kill {pid}" if pid != "?" else ""
+                        print(f"  {cmd}: sudo systemctl stop {cmd}{pid_str}")
             else:
                 print(f"Could not detect blocking services.")
                 print(f"Try stopping PipeWire/PulseAudio:")
