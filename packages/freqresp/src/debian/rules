@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	echo "No build required"
+
+override_dh_auto_install:
+	mkdir -p debian/freqresp/usr/bin
+	cp bin/freqresp debian/freqresp/usr/bin/
+	chmod +x debian/freqresp/usr/bin/freqresp
+
+override_dh_auto_clean:
+	find . -name "*.pyc" -delete 2>/dev/null || true
+	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
