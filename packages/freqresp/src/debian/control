@@ -12,7 +12,7 @@ Architecture: all
 Depends: ${misc:Depends},
          python3,
          python3-numpy,
-         python3-pyalsaaudio
+         python3-alsaaudio
 Recommends: python3-matplotlib
 Description: Audio loopback frequency response measurement tool
  Measures audio loopback frequency response from 20 Hz to 20 kHz by

@@ -13,6 +13,7 @@ computes amplitude via FFT, prints a text table, and saves freqresp.png.
 import numpy as np
 import sys
 import os
+import subprocess
 
 DEVICE  = sys.argv[1] if len(sys.argv) > 1 else "hw:0,0"
 RATE    = 48000
@@ -23,6 +24,30 @@ TONE_T  = 1.0        # tone duration seconds
 SETTLE  = 0.2        # discard first N seconds of each tone (settling)
 GAP_T   = 0.2        # silence before first tone (record sync)
 FREQS   = np.logspace(np.log10(20), np.log10(20000), 40).tolist()
+
+
+def get_audio_blocking_services():
+    """Detect running audio services that may block ALSA device access."""
+    services = []
+    common_services = {
+        "pulseaudio": "PulseAudio",
+        "pipewire": "PipeWire",
+        "jackd": "JACK",
+        "alsa-state": "ALSA State",
+    }
+
+    try:
+        result = subprocess.run(["systemctl", "list-units", "--all", "--plain"],
+                               capture_output=True, text=True, timeout=5)
+        running = result.stdout
+    except Exception:
+        return services
+
+    for cmd, name in common_services.items():
+        if cmd in running or f"{cmd}.service" in running:
+            services.append(name)
+
+    return services
 
 
 def make_tone(freq, duration, amplitude=0.5):
@@ -43,30 +68,38 @@ def record_and_play(play_signal, total_dur, device):
     period_bytes = period * CH * BPS
     total_record_bytes = int(RATE * total_dur) * CH * BPS
 
+    errors = []
+
     def _play():
-        out_pcm = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL,
-                                device=device, channels=CH, rate=RATE,
-                                format=alsaaudio.PCM_FORMAT_S32_LE,
-                                periodsize=period)
-        pos = 0
-        while pos < len(play_signal):
-            chunk = play_signal[pos:pos + period_bytes]
-            out_pcm.write(chunk)
-            pos += len(chunk)
-        out_pcm.close()
+        try:
+            out_pcm = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL,
+                                    device=device, channels=CH, rate=RATE,
+                                    format=alsaaudio.PCM_FORMAT_S32_LE,
+                                    periodsize=period)
+            pos = 0
+            while pos < len(play_signal):
+                chunk = play_signal[pos:pos + period_bytes]
+                out_pcm.write(chunk)
+                pos += len(chunk)
+            out_pcm.close()
+        except Exception as e:
+            errors.append(("playback", e))
 
     def _record():
-        in_pcm = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL,
-                               device=device, channels=CH, rate=RATE,
-                               format=alsaaudio.PCM_FORMAT_S32_LE,
-                               periodsize=period)
-        recorded = bytearray()
-        while len(recorded) < total_record_bytes:
-            n, data = in_pcm.read()
-            if n > 0:
-                recorded.extend(data)
-        in_pcm.close()
-        result.append(bytes(recorded))
+        try:
+            in_pcm = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL,
+                                   device=device, channels=CH, rate=RATE,
+                                   format=alsaaudio.PCM_FORMAT_S32_LE,
+                                   periodsize=period)
+            recorded = bytearray()
+            while len(recorded) < total_record_bytes:
+                n, data = in_pcm.read()
+                if n > 0:
+                    recorded.extend(data)
+            in_pcm.close()
+            result.append(bytes(recorded))
+        except Exception as e:
+            errors.append(("recording", e))
 
     result = []
     rec_t = threading.Thread(target=_record)
@@ -76,7 +109,92 @@ def record_and_play(play_signal, total_dur, device):
     play_t.join()
     rec_t.join()
 
+    if errors:
+        # Re-raise the first error encountered
+        raise errors[0][1]
+
+    if not result:
+        raise RuntimeError("Recording failed: no data captured")
+
     return result[0]
+
+
+def record_and_play_with_progress(freqs, device):
+    """Record each frequency separately to show progress."""
+    import alsaaudio
+    import threading
+
+    period = 1024
+    period_bytes = period * CH * BPS
+    all_recorded = bytearray()
+
+    # Initial silence
+    silence_dur = GAP_T
+    silence_samples = int(RATE * silence_dur) * CH
+    silence = (np.zeros(silence_samples, dtype=np.int32)).tobytes()
+    all_recorded.extend(silence)
+
+    for idx, freq in enumerate(freqs):
+        print(f"  [{idx+1:2d}/{len(freqs)}]  {freq:7.1f} Hz", end="", flush=True)
+
+        # Create tone for this frequency
+        tone_signal = make_tone(freq, TONE_T)
+        total_dur = TONE_T + 0.1  # slight buffer
+        total_record_bytes = int(RATE * total_dur) * CH * BPS
+
+        errors = []
+
+        def _play():
+            try:
+                out_pcm = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL,
+                                        device=device, channels=CH, rate=RATE,
+                                        format=alsaaudio.PCM_FORMAT_S32_LE,
+                                        periodsize=period)
+                pos = 0
+                while pos < len(tone_signal):
+                    chunk = tone_signal[pos:pos + period_bytes]
+                    out_pcm.write(chunk)
+                    pos += len(chunk)
+                out_pcm.close()
+            except Exception as e:
+                errors.append(("playback", e))
+
+        def _record():
+            try:
+                in_pcm = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL,
+                                       device=device, channels=CH, rate=RATE,
+                                       format=alsaaudio.PCM_FORMAT_S32_LE,
+                                       periodsize=period)
+                recorded = bytearray()
+                while len(recorded) < total_record_bytes:
+                    n, data = in_pcm.read()
+                    if n > 0:
+                        recorded.extend(data)
+                in_pcm.close()
+                result.append(bytes(recorded))
+            except Exception as e:
+                errors.append(("recording", e))
+
+        result = []
+        rec_t = threading.Thread(target=_record)
+        play_t = threading.Thread(target=_play)
+        rec_t.start()
+        play_t.start()
+        play_t.join()
+        rec_t.join()
+
+        if errors:
+            print(" [FAILED]")
+            raise errors[0][1]
+
+        if result:
+            all_recorded.extend(result[0])
+            print(" ✓")
+        else:
+            print(" [NO DATA]")
+            raise RuntimeError(f"Recording failed for {freq:.1f} Hz: no data captured")
+
+    return bytes(all_recorded)
 
 
 def analyze(raw, freqs):
@@ -172,15 +290,40 @@ if __name__ == "__main__":
     print(f"  Points : {len(FREQS)}  (20 Hz – 20 kHz, log spaced)")
     print(f"  Tone   : {TONE_T*1000:.0f} ms each  ({SETTLE*1000:.0f} ms settle)")
     print(f"  Total  : ~{GAP_T + len(FREQS) * TONE_T:.1f} s")
-    print("Recording...", flush=True)
+    print("Recording...\n")
 
-    gap = (np.zeros(int(RATE * GAP_T) * CH, dtype=np.int32)).tobytes()
-    tones = b"".join(make_tone(f, TONE_T) for f in FREQS)
-    play_signal = gap + tones
-    total_dur = GAP_T + len(FREQS) * TONE_T + 0.5
+    try:
+        raw = record_and_play_with_progress(FREQS, DEVICE)
+        results = analyze(raw, FREQS)
 
-    raw = record_and_play(play_signal, total_dur, DEVICE)
-    results = analyze(raw, FREQS)
+        print_table(results)
+        save_plot(results)
+    except Exception as e:
+        import alsaaudio
+        error_str = str(e)
+        if "Device or resource busy" in error_str or isinstance(e, alsaaudio.ALSAAudioError):
+            print(f"\nError: Cannot access audio device '{DEVICE}'")
+            print(f"  Reason: Device is already in use\n")
 
-    print_table(results)
-    save_plot(results)
+            blocking_services = get_audio_blocking_services()
+            if blocking_services:
+                print(f"Running audio services blocking the device:")
+                for service in blocking_services:
+                    print(f"  • {service}")
+                print(f"\nTo free the device, stop these services:")
+                for service in blocking_services:
+                    if service == "PipeWire":
+                        print(f"  sudo systemctl stop pipewire pipewire-pulse")
+                    elif service == "PulseAudio":
+                        print(f"  sudo systemctl stop pulseaudio")
+                    elif service == "JACK":
+                        print(f"  killall jackd")
+            else:
+                print(f"Could not detect blocking services.")
+                print(f"Try stopping PipeWire/PulseAudio:")
+                print(f"  sudo systemctl stop pipewire pipewire-pulse")
+
+            sys.exit(1)
+
+        # Re-raise other exceptions
+        raise
