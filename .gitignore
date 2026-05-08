@@ -39,8 +39,10 @@ packages/.claude/
 scripts/sbuild
 CLAUDE.md
 .claude
+hifiberryos_app/
 packages/tidal-connect/
 packages/vu-meter/sbuild_workspace
+.playwright-mcp/
 
 packages/acr-webmcp/hifiberry-acr-webmcp_*
 packages/acr-webmcp/src/debian/.debhelper/
