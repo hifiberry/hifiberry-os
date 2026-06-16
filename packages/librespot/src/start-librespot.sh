@@ -4,8 +4,11 @@
 # This script handles startup of librespot with the system's pretty hostname
 # and auto-configures audio parameters based on the detected sound card
 #
-# Version: 1.1.1
+# Version: 1.1.2
 # Changelog:
+# - v1.1.2: Added VOLUME_CTRL environment knob to select librespot's volume curve
+#           (linear|log|cubic|fixed). Default remains "linear" (unchanged behaviour);
+#           integrators can override via a systemd drop-in (Environment=VOLUME_CTRL=cubic).
 # - v1.1.1: Fixed parameter name from --mdns-backend to --zeroconf-backend for compatibility
 #           Updated variable names to match librespot's actual command line options
 # - v1.1.0: Added Avahi daemon availability check when using Avahi as MDNS backend
@@ -40,6 +43,13 @@ echo "Sound card detected successfully."
 # Set default values for librespot
 BITRATE=320
 BACKEND="rodio"
+
+# Volume control curve: linear|log|cubic|fixed.
+# Default "linear" keeps the existing behaviour. Integrators can override it
+# without forking this wrapper via a systemd drop-in, e.g.:
+#   [Service]
+#   Environment=VOLUME_CTRL=cubic
+VOLUME_CTRL="${VOLUME_CTRL:-linear}"
 
 # MDNS backend
 ZEROCONF_BACKEND="avahi"
@@ -96,6 +106,7 @@ LIBRESPOT_OPTS=("--name" "$PRETTY_HOSTNAME"
                 "--bitrate" "$BITRATE"
                 "--disable-audio-cache"
                 "--onevent" "$EVENT_HANDLER"
+                "--volume-ctrl" "$VOLUME_CTRL"
                 "--zeroconf-backend" "$ZEROCONF_BACKEND")  # Explicitly set the zeroconf backend
 
 # Check if we can get an access token from audiocontrol

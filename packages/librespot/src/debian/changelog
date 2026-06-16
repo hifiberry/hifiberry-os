@@ -1,3 +1,14 @@
+hifiberry-librespot (0.8.0.4) stable; urgency=medium
+
+  * start-librespot: expose librespot's volume curve via a VOLUME_CTRL
+    environment variable (linear|log|cubic|fixed). Default stays "linear"
+    so behaviour is unchanged; integrators can pick a cubic curve (closer to
+    shairport-sync's "standard" profile) via a systemd drop-in without
+    forking the wrapper. (start-librespot.sh v1.1.2; GH issue #8,
+    mattias-arrelid)
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 16 Jun 2026 13:30:00 +0000
+
 hifiberry-librespot (0.8.0.3) stable; urgency=medium
 
   * Add maintainer_name/maintainer_url to player descriptor pointing to maintainers-wanted doc

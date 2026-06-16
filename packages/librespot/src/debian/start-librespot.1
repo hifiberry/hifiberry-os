@@ -12,6 +12,16 @@ based on the detected sound card and uses the system's pretty hostname.
 The script sets up librespot with a default bitrate of 320 kbps and uses the ALSA
 audio backend. It attempts to get the system's pretty hostname, falling back to
 the regular hostname, and finally to "HiFiBerry" if neither is available.
+.SH ENVIRONMENT
+.TP
+.B VOLUME_CTRL
+Selects librespot's volume control curve: one of
+.IR linear ", " log ", " cubic " or " fixed .
+Defaults to
+.I linear
+(unchanged behaviour). Set it via a systemd drop-in, e.g.
+.I Environment=VOLUME_CTRL=cubic ,
+for a more naturally curved Spotify Connect volume slider.
 .SH FILES
 .I /etc/hostname
 .RS
