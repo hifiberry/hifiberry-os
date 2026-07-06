@@ -29,6 +29,7 @@ Architecture: all
 Depends: hifiberry-configurator,
          hifiberry-eeprom,
          hifiberry-dsp,
+         hifiberry-dspprofiles,
          hifiberry-mpd,
          hifiberry-audiocontrol,
          hifiberry-webui,

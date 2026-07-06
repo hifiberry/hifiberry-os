@@ -1,8 +1,16 @@
-hifiberryos-meta (0.9) unstable; urgency=medium
+hifiberryos-meta (0.10) unstable; urgency=medium
 
-  * Add hifiberry-analog-recognition to hbos-full dependencies
+  * hbos-full: add hifiberry-analog-recognition (analog-input track
+    recognition plugin).
 
  -- HiFiBerry <support@hifiberry.com>  Mon, 06 Jul 2026 12:00:00 +0000
+
+hifiberryos-meta (0.9) unstable; urgency=medium
+
+  * hbos-minimal: add hifiberry-dspprofiles dependency so DSP-based cards
+    (Beocreate, DAC+ DSP) get the required profile XMLs by default.
+
+ -- HiFiBerry <info@hifiberry.com>  Tue, 12 May 2026 09:00:00 +0000
 
 hifiberryos-meta (0.8) unstable; urgency=medium
 
