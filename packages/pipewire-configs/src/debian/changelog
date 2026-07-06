@@ -1,3 +1,9 @@
+hifiberry-pipewire-configs (1.0.8) stable; urgency=medium
+
+  * Depend on hifiberry-input-processor (renamed from ladspa-riaa)
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 06 Jul 2026 16:49:59 +0200
+
 hifiberry-pipewire-configs (1.0.7) stable; urgency=medium
 
   * Set default sink volume to 100% instead of WirePlumber's 40% default

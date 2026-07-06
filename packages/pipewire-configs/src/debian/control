@@ -8,7 +8,7 @@ Homepage: https://hifiberry.com/os
 
 Package: hifiberry-pipewire-configs
 Architecture: all
-Depends: ${misc:Depends}, pipewire, ladspa-riaa, ladspa-speakereq, pipewire-api
+Depends: ${misc:Depends}, pipewire, hifiberry-input-processor, ladspa-speakereq, pipewire-api
 Recommends: pipewire-pulse, wireplumber, bluez
 Description: HiFiBerry PipeWire configuration files
  This package provides PipeWire configuration files optimized for HiFiBerry
