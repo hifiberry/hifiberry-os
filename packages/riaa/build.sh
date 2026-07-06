@@ -5,7 +5,7 @@ set -e
 
 # Define variables
 PACKAGE="riaa"
-DEB_PACKAGE="ladspa-riaa"
+DEB_PACKAGE="hifiberry-input-processor"
 REPO_URL="https://github.com/hifiberry/riaa"
 
 # Function to clean up build and downloaded files
@@ -38,7 +38,7 @@ echo "Building $PACKAGE Debian package..."
 make deb
 
 # Remove debug symbols package
-rm -f ../ladspa-riaa-dbgsym*.deb
+rm -f ../hifiberry-input-processor-dbgsym*.deb
 
 # Step 3: Move built packages back to package directory
 cd ..
