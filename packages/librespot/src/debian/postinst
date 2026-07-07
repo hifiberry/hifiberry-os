@@ -56,6 +56,34 @@ CONFEOF
 }
 ACREOF
             echo "Registered librespot with ACR."
+
+            # The player is now provided via the players.d drop-in above. Remove any
+            # stale inline "librespot" definition from the main audiocontrol config so
+            # the player is not loaded twice.
+            ACR_MAIN="/etc/audiocontrol/audiocontrol.json"
+            if [ -f "$ACR_MAIN" ] && command -v python3 >/dev/null 2>&1; then
+                python3 - "$ACR_MAIN" librespot <<'PYEOF'
+import json, os, sys
+path, key = sys.argv[1], sys.argv[2]
+try:
+    with open(path) as f:
+        data = json.load(f)
+    players = data.get("players") if isinstance(data, dict) else None
+    if isinstance(players, list):
+        kept = [p for p in players if not (isinstance(p, dict) and key in p)]
+        if len(kept) != len(players):
+            data["players"] = kept
+            tmp = path + ".acrtmp"
+            with open(tmp, "w") as out:
+                json.dump(data, out, indent=4)
+                out.write("\n")
+            os.replace(tmp, path)
+            print("Removed stale inline '%s' player from audiocontrol.json" % key)
+except Exception as e:
+    sys.stderr.write("audiocontrol inline cleanup skipped: %s\n" % e)
+sys.exit(0)
+PYEOF
+            fi
         fi
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
