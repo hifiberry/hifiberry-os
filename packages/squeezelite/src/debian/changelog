@@ -1,3 +1,12 @@
+hifiberry-squeezelite (2.0.0.1560) stable; urgency=medium
+
+  * postinst: after registering the players.d ACR drop-in, remove any stale
+    inline "lms" player from audiocontrol.json. audiocontrol >= 0.7.13 loads
+    players.d entries as separate players, so a leftover inline definition
+    would duplicate this one.
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 07 Jul 2026 15:34:07 +0000
+
 hifiberry-squeezelite (2.0.0.1559) stable; urgency=medium
 
   * Add maintainer_name/maintainer_url to player descriptor pointing to maintainers-wanted doc

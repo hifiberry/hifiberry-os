@@ -1,3 +1,15 @@
+hifiberry-shairport (5.1.1) stable; urgency=medium
+
+  * Update Shairport Sync to upstream 5.1 (security update; classic remote
+    control support restored and other fixes). Previously 5.0.1.
+  * postinst: after registering the players.d ACR drop-in, remove any stale
+    inline "shairport" player from audiocontrol.json. audiocontrol >= 0.7.13
+    loads players.d entries as separate players, so a leftover inline
+    definition duplicated this one and the second listener failed to bind UDP
+    :5555, breaking AirPlay metadata.
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 07 Jul 2026 15:34:07 +0000
+
 hifiberry-shairport (5.0.1.3) stable; urgency=medium
 
   * Fix nqptp.service installation: install as system service instead of user

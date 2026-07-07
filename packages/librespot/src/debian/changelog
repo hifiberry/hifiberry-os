@@ -1,3 +1,12 @@
+hifiberry-librespot (0.8.0.5) stable; urgency=medium
+
+  * postinst: after registering the players.d ACR drop-in, remove any stale
+    inline "librespot" player from audiocontrol.json. audiocontrol >= 0.7.13
+    loads players.d entries as separate players, so a leftover inline
+    definition would duplicate this one.
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 07 Jul 2026 15:34:07 +0000
+
 hifiberry-librespot (0.8.0.4) stable; urgency=medium
 
   * start-librespot: expose librespot's volume curve via a VOLUME_CTRL
