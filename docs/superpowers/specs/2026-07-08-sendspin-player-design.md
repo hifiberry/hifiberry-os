@@ -171,12 +171,13 @@ Command contract (ACR → daemon):
 { "command": "stop" }
 { "command": "next" }
 { "command": "previous" }
-{ "command": "seek", "position": 42.5 }
 ```
 
-`PlayerCommand` → string map: Play→`play`, Pause→`pause`, Stop→`stop`,
-Next→`next`, Previous→`previous`, Seek(p)→`seek`+`position`. SetLoopMode /
-SetRandom are mapped for forward-compatibility, but v1 UI wires only transport.
+`PlayerCommand` → `SendspinControllerCommand` map: Play→`PLAY`, Pause→`PAUSE`,
+Stop→`STOP`, Next→`NEXT`, Previous→`PREVIOUS`. **Seek is not supported** — the
+Sendspin controller protocol (`controller_role.h`) has no SEEK command, so it is
+not exposed as a capability. Repeat/shuffle exist in the protocol and are mapped
+for forward-compatibility, but v1 UI wires only transport.
 
 ### Flow D — Volume (both ways), over the one hardware control
 
@@ -206,7 +207,7 @@ Installed by the new repo's deb, mirroring shairport:
   ```json
   { "generic": {
       "name": "sendspin", "enable": true, "supports_api_events": true,
-      "capabilities": ["play","pause","stop","next","previous","seek","killable"],
+      "capabilities": ["play","pause","stop","next","previous","killable"],
       "command_url": "http://127.0.0.1:3547/command" } }
   ```
 - An icon (e.g. `sendspin.svg`) alongside the WebUI registry, like shairport's
@@ -248,6 +249,8 @@ libavahi-compat-libdnssd-dev, git`.
 
 ## Out of Scope (v1)
 
+- Seek from the HiFiBerry UI — the Sendspin controller protocol has no SEEK
+  command, so the capability is not advertised.
 - Shuffle/loop controls from the HiFiBerry UI (mapping present, UI not wired).
 - Replacing the AirPlay path — Sendspin coexists as an additional input.
 - Manual encryption toggles — rely on sendspin-cpp's negotiated handshake.
