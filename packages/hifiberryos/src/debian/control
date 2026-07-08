@@ -74,6 +74,7 @@ Depends: hifiberry-configurator,
          hifiberry-librespot,
          hifiberry-raat,
          hifiberry-shairport,
+         hifiberry-sendspin,
          hifiberry-squeezelite,
          hifiberry-bluetooth,
          hifiberry-vu-meter,
@@ -89,6 +90,7 @@ Description: HiFiBerry OS full meta-package
   - All components from hbos-minimal (including PipeWire configurations)
   - Spotify Connect support (hifiberry-librespot)
   - AirPlay streaming (hifiberry-shairport)
+  - Sendspin / Music Assistant streaming (hifiberry-sendspin)
   - Squeezebox/Logitech Media Server support (hifiberry-squeezelite)
   - RAAT streaming for Roon integration (hifiberry-raat)
   - Analog-input track recognition plugin (hifiberry-analog-recognition)
