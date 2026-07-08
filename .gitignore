@@ -56,3 +56,5 @@ packages/acr-webmcp/src/debian/hifiberry-acr-webmcp/etc/
 packages/acr-webmcp/src/debian/hifiberry-acr-webmcp/usr/share/
 packages/*/*.tar.gz.new.*
 packages/*/*.tar.xz.new.*
+
+packages/sendspin/sendspin
