@@ -1,3 +1,10 @@
+hifiberry-squeezelite (2.0.0.1561) stable; urgency=medium
+
+  * postinst: restart config-server when it is running so a post-boot
+    install is picked up and the WebUI can start the player.
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 08 Jul 2026 18:30:00 +0000
+
 hifiberry-squeezelite (2.0.0.1560) stable; urgency=medium
 
   * postinst: after registering the players.d ACR drop-in, remove any stale

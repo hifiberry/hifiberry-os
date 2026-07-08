@@ -93,6 +93,13 @@ CONFEOF
 
         echo "Configserver drop-in installed for shairport."
 
+        # config-server caches conf.d systemd-permission drop-ins at startup; when
+        # this package is installed onto a running system, restart it so the WebUI
+        # can control this player. No-op during image builds (config-server not up).
+        if [ -d /run/systemd/system ] && systemctl is-active --quiet config-server 2>/dev/null; then
+            systemctl restart config-server >/dev/null 2>&1 || true
+        fi
+
         # Register with ACR
         if [ -d /etc/audiocontrol ]; then
             ACR_PLAYERS_D="/etc/audiocontrol/players.d"

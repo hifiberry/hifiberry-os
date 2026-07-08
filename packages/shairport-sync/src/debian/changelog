@@ -1,3 +1,10 @@
+hifiberry-shairport (5.1.2) stable; urgency=medium
+
+  * postinst: restart config-server when it is running so a post-boot
+    install is picked up and the WebUI can start the player.
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 08 Jul 2026 18:30:00 +0000
+
 hifiberry-shairport (5.1.1) stable; urgency=medium
 
   * Update Shairport Sync to upstream 5.1 (security update; classic remote
