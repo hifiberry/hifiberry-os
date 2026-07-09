@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# flash-studio-dac8x - flash the HiFiBerry Studio DAC8x ATtiny402 firmware
+# over UPDI using pymcuprog.
+#
+# Usage: flash-studio-dac8x [serial-port] [hex-file]
+#   serial-port  UPDI UART (default: /dev/serial0)
+#   hex-file     firmware to flash (default: newest studiodac8x-*.hex
+#                in /usr/share/firmware-studio)
+#
+# The UPDI line is the Pi's serial UART (GPIO TXD/RXD). The serial console
+# must be disabled on that port (no console=serial0 in cmdline.txt,
+# enable_uart=1 in config.txt) or programming will fail.
+#
+set -e
+
+FW_DIR=/usr/share/firmware-studio
+DEVICE=attiny402
+PORT="${1:-/dev/serial0}"
+HEX="${2:-$(ls -1 "$FW_DIR"/studiodac8x-*.hex 2>/dev/null | sort -V | tail -1)}"
+
+if [ -z "$HEX" ] || [ ! -f "$HEX" ]; then
+    echo "flash-studio-dac8x: no firmware hex found in $FW_DIR" >&2
+    exit 1
+fi
+
+echo "flash-studio-dac8x: flashing $(basename "$HEX") to $DEVICE via UPDI on $PORT"
+exec pymcuprog write --erase -d "$DEVICE" -t uart -u "$PORT" -f "$HEX"

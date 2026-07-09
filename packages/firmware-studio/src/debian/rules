@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	echo "No build required - firmware is shipped prebuilt"
+
+override_dh_auto_install:
+	mkdir -p debian/firmware-studio/usr/share/firmware-studio
+	mkdir -p debian/firmware-studio/usr/bin
+	mkdir -p debian/firmware-studio/usr/share/doc/firmware-studio
+
+	# Firmware binaries
+	cp -r firmware/* debian/firmware-studio/usr/share/firmware-studio/
+
+	# Flash helper
+	cp bin/flash-studio-dac8x debian/firmware-studio/usr/bin/
+	chmod +x debian/firmware-studio/usr/bin/flash-studio-dac8x
+
+	# README
+	cp README.md debian/firmware-studio/usr/share/doc/firmware-studio/

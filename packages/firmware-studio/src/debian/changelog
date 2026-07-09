@@ -1,0 +1,8 @@
+firmware-studio (1.0.0) stable; urgency=medium
+
+  * Initial package.
+  * Ship Studio DAC8x ATtiny402 firmware v0.0.2
+    (studiodac8x-0.0.2.hex).
+  * Add flash-studio-dac8x helper to flash firmware over UPDI via pymcuprog.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Jul 2026 12:00:00 +0000
