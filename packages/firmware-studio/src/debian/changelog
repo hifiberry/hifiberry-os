@@ -1,3 +1,13 @@
+firmware-studio (1.0.1) stable; urgency=medium
+
+  * Add firmware-studio-setup: one-shot setup for stock Raspberry Pi OS
+    (adds the HiFiBerry apt repo, installs the package, configures config.txt
+    and frees the serial UART for UPDI flashing).
+  * README: document adding the apt repo, the package to install and the
+    config.txt settings.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Jul 2026 13:00:00 +0000
+
 firmware-studio (1.0.0) stable; urgency=medium
 
   * Initial package.

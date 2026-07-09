@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# firmware-studio-setup - prepare a stock Raspberry Pi OS system to use and
+# flash a HiFiBerry Studio sound card.
+#
+# It:
+#   1. adds the HiFiBerry apt repository
+#   2. installs firmware-studio (+ python3-pymcuprog) and i2c-tools
+#   3. configures config.txt (sound overlay, I2C, UART)
+#   4. frees the serial UART from the console so the firmware can be flashed
+#      over UPDI, and loads i2c-dev at boot
+#
+# A reboot is required afterwards. Then flash the card with:
+#     sudo flash-studio-dac8x
+#
+# Usage: sudo firmware-studio-setup [--overlay <name>]
+#   --overlay <name>   device-tree overlay to enable
+#                      (default: hifiberry-studio-dac8x; use hifiberry-dac8x
+#                       for the driver without the ALSA mixer)
+#
+set -euo pipefail
+
+REPO_LINE="deb [trusted=yes] http://debianrepo.hifiberry.com trixie main"
+REPO_FILE="/etc/apt/sources.list.d/hifiberry.list"
+OVERLAY="hifiberry-studio-dac8x"
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --overlay) OVERLAY="$2"; shift 2 ;;
+        -h|--help) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        *) echo "unknown argument: $1" >&2; exit 1 ;;
+    esac
+done
+
+[ "$(id -u)" -eq 0 ] || { echo "Run as root (sudo firmware-studio-setup)" >&2; exit 1; }
+
+BOOT="/boot/firmware"; [ -d "$BOOT" ] || BOOT="/boot"
+CONFIG="$BOOT/config.txt"
+CMDLINE="$BOOT/cmdline.txt"
+STAMP="bak-$(date +%Y%m%d-%H%M%S)"
+
+log(){ printf '\033[1;34m[firmware-studio-setup]\033[0m %s\n' "$*"; }
+
+# 1. HiFiBerry apt repo
+if ! grep -qs "debianrepo.hifiberry.com" "$REPO_FILE" 2>/dev/null; then
+    log "Adding HiFiBerry apt repo -> $REPO_FILE"
+    echo "$REPO_LINE" > "$REPO_FILE"
+else
+    log "HiFiBerry apt repo already configured"
+fi
+
+# 2. packages
+log "Installing firmware-studio + i2c-tools"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y firmware-studio i2c-tools
+
+# 3. config.txt: sound overlay + I2C + UART
+cp -a "$CONFIG" "$CONFIG.$STAMP"
+sed -i '/^dtoverlay=hifiberry-/d' "$CONFIG"
+grep -qxF 'dtparam=i2c_arm=on' "$CONFIG" || echo 'dtparam=i2c_arm=on' >> "$CONFIG"
+grep -qxF 'enable_uart=1'       "$CONFIG" || echo 'enable_uart=1'       >> "$CONFIG"
+echo "dtoverlay=$OVERLAY" >> "$CONFIG"
+log "Configured $CONFIG (dtoverlay=$OVERLAY, dtparam=i2c_arm=on, enable_uart=1)"
+
+# 4. free the serial UART from the console (needed to flash over UPDI)
+if grep -qsE 'console=(serial0|ttyAMA[0-9]+),[0-9]+' "$CMDLINE"; then
+    cp -a "$CMDLINE" "$CMDLINE.$STAMP"
+    sed -i -E 's/console=(serial0|ttyAMA[0-9]+),[0-9]+ ?//g; s/  +/ /g; s/ +$//' "$CMDLINE"
+    log "Removed serial console from $CMDLINE"
+fi
+systemctl disable --now serial-getty@ttyAMA0.service  2>/dev/null || true
+systemctl disable --now serial-getty@ttyAMA10.service 2>/dev/null || true
+
+# 5. i2c-dev at boot
+echo i2c-dev > /etc/modules-load.d/i2c-dev.conf
+
+log "Done. Reboot to apply, then flash the card:"
+log "    sudo reboot"
+log "    sudo flash-studio-dac8x"
