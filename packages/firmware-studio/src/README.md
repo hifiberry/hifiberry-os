@@ -76,10 +76,10 @@ sudo flash-studio-dac8x
 ## Studio DAC8x firmware
 
 The Studio DAC8x carries an **ATtiny402** microcontroller. The firmware makes it
-an I2C controller at slave address **0x10** on the Pi's I2C bus, presenting the
+an I2C controller at address **0x10** on the Pi's I2C bus, presenting the
 "universal sound-card" register map (firmware/hardware version, UUID, supported
-rates/formats, per-channel volume, DAC filter, ...) and relaying control to the
-four on-board PCM5242 DACs over a bit-banged soft-I2C bus.
+rates/formats, per-channel volume, DAC filter, ...) that the driver uses to
+configure the card.
 
 It pairs with the `hifiberry-studio-dac8x` device-tree overlay and the
 `snd-soc-hifiberry-studio-dac8x` kernel driver, which talks to the controller at
@@ -89,7 +89,7 @@ It pairs with the `hifiberry-studio-dac8x` device-tree overlay and the
 
 * Per-channel volume is `master + offset` on all 8 channels (channel 0 was
   previously inconsistent and could not be attenuated via the mixer).
-* All four PCM5242 DACs are initialised at start-up.
+* All output channels are initialised at start-up.
 
 Source: <https://github.com/hifiberry/firmware-studio_dac8x> (branch `main`).
 
