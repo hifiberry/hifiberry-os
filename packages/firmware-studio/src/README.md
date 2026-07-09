@@ -8,7 +8,7 @@ together with a helper to flash them over UPDI using
 
 | File | Description |
 |------|-------------|
-| `/usr/share/firmware-studio/studiodac8x-0.0.2.hex` | Studio DAC8x ATtiny402 firmware, v0.0.2 |
+| `/usr/share/firmware-studio/studiodac8x-0.0.2.hex` | Studio DAC8x microcontroller firmware, v0.0.2 |
 | `/usr/bin/flash-studio-dac8x` | Flash helper (uses `pymcuprog` over UPDI) |
 | `/usr/bin/firmware-studio-setup` | One-shot setup for stock Raspberry Pi OS |
 
@@ -75,7 +75,7 @@ sudo flash-studio-dac8x
 
 ## Studio DAC8x firmware
 
-The Studio DAC8x carries an **ATtiny402** microcontroller. The firmware makes it
+The Studio DAC8x carries a **microcontroller**. The firmware makes it
 an I2C controller at address **0x10** on the Pi's I2C bus, presenting the
 "universal sound-card" register map (firmware/hardware version, UUID, supported
 rates/formats, per-channel volume, DAC filter, ...) that the driver uses to

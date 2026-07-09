@@ -12,9 +12,9 @@ Architecture: all
 Depends: ${misc:Depends},
          python3-pymcuprog
 Description: Firmware for HiFiBerry Studio sound card microcontrollers
- Prebuilt firmware binaries for the ATtiny microcontrollers on HiFiBerry
- Studio sound cards, plus a helper to flash them over UPDI using pymcuprog.
+ Prebuilt firmware binaries for the microcontrollers on HiFiBerry Studio
+ sound cards, plus a helper to flash them over UPDI using pymcuprog.
  .
  Currently ships the Studio DAC8x firmware (v0.0.2). The firmware turns the
- on-board ATtiny402 into an I2C controller (address 0x10) that presents the
+ on-board microcontroller into an I2C controller (address 0x10) that presents the
  universal sound-card register map used by the driver to configure the card.

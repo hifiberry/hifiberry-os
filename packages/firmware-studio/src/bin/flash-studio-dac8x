@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# flash-studio-dac8x - flash the HiFiBerry Studio DAC8x ATtiny402 firmware
+# flash-studio-dac8x - flash the HiFiBerry Studio DAC8x microcontroller firmware
 # over UPDI using pymcuprog.
 #
 # Usage: flash-studio-dac8x [serial-port] [hex-file]
