@@ -8,7 +8,7 @@ _CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
 if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
 
 PACKAGE="python3-pymcuprog"
-VERSION="3.19.4.61-1"
+VERSION="3.19.4.61-2"
 
 # Check if DIST is set by environment variable
 if [ -n "$DIST" ]; then

@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
-# Configuration
-PACKAGE_VERSION = 3.17.3.45
+# Configuration - keep in sync with debian/changelog
+PACKAGE_VERSION = 3.19.4.61
 
 %:
 	dh $@
@@ -26,24 +26,23 @@ override_dh_auto_install:
 	# Install the unpacked wheel contents
 	mkdir -p debian/python3-pymcuprog/usr/lib/python3/dist-packages/
 	cp -r pymcuprog-source/* debian/python3-pymcuprog/usr/lib/python3/dist-packages/
-	# Install console scripts if they exist
-	if [ -d pymcuprog-source/../*/Scripts ]; then \
-		mkdir -p debian/python3-pymcuprog/usr/bin/; \
-		cp pymcuprog-source/../*/Scripts/* debian/python3-pymcuprog/usr/bin/ 2>/dev/null || true; \
-	fi
-	# Look for entry points and create console scripts
-	if [ -f pymcuprog-source/../*/METADATA ]; then \
-		grep -A10 "console_scripts" pymcuprog-source/../*/METADATA | grep "=" | while read line; do \
-			script_name=$$(echo "$$line" | cut -d'=' -f1 | tr -d ' '); \
-			if [ ! -z "$$script_name" ]; then \
-				echo "#!/usr/bin/python3" > debian/python3-pymcuprog/usr/bin/$$script_name; \
-				echo "import sys" >> debian/python3-pymcuprog/usr/bin/$$script_name; \
-				echo "from pymcuprog.main import main" >> debian/python3-pymcuprog/usr/bin/$$script_name; \
-				echo "sys.exit(main())" >> debian/python3-pymcuprog/usr/bin/$$script_name; \
-				chmod +x debian/python3-pymcuprog/usr/bin/$$script_name; \
-			fi \
-		done \
-	fi
+	# Debian trixie dropped python3-appdirs; the module was superseded by
+	# platformdirs (drop-in for the user_*_dir helpers pymcuprog uses). Rewrite
+	# the imports so the tool runs without the obsolete appdirs package.
+	find debian/python3-pymcuprog/usr/lib/python3/dist-packages/pymcuprog -name '*.py' \
+		-exec sed -i \
+			-e 's/^\(\s*\)from appdirs import/\1from platformdirs import/' \
+			-e 's/^\(\s*\)import appdirs\b/\1import platformdirs as appdirs/' {} +
+	# Install the console entry point. pymcuprog's CLI lives in
+	# pymcuprog/pymcuprog.py:main (upstream entry point pymcuprog.pymcuprog:main).
+	mkdir -p debian/python3-pymcuprog/usr/bin/
+	printf '%s\n' \
+		'#!/usr/bin/python3' \
+		'import sys' \
+		'from pymcuprog.pymcuprog import main' \
+		'sys.exit(main())' \
+		> debian/python3-pymcuprog/usr/bin/pymcuprog
+	chmod +x debian/python3-pymcuprog/usr/bin/pymcuprog
 
 override_dh_auto_test:
 	# Skip tests - requires hardware

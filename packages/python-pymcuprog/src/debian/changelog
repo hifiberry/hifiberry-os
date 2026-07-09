@@ -1,3 +1,16 @@
+python3-pymcuprog (3.19.4.61-2) stable; urgency=medium
+
+  * Declare missing runtime dependencies: python3-pyedbglib, python3-intelhex,
+    python3-platformdirs (the tool failed to import without them)
+  * Install a working /usr/bin/pymcuprog entry point (pymcuprog.pymcuprog:main);
+    the previous auto-generated wrapper imported a non-existent pymcuprog.main
+  * Port the appdirs import to platformdirs, which replaces appdirs in Debian
+    trixie (from appdirs import user_log_dir -> from platformdirs import ...)
+  * Fix PACKAGE_VERSION in debian/rules (was 3.17.3.45): the deb was versioned
+    3.19.4.61-1 but shipped 3.17.3.45 code
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Jul 2026 08:34:31 +0100
+
 python3-pymcuprog (3.19.4.61-1) stable; urgency=medium
 
   * Updated to pymcuprog v3.19.4.61 from PyPI

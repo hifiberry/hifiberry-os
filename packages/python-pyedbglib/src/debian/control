@@ -11,7 +11,8 @@ Vcs-Browser: https://github.com/hifiberry/hifiberry-os
 
 Package: python3-pyedbglib
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends},
+         python3-serial
 Description: Python library for EDBG communications
  This package provides a library and utilities for communicating with EDBG devices.
  EDBG is a family of on-board debuggers from Microchip for their development boards.

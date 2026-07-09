@@ -18,6 +18,9 @@ Vcs-Browser: https://github.com/hifiberry/hifiberry-os
 Package: python3-pymcuprog
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends},
+         python3-pyedbglib,
+         python3-intelhex,
+         python3-platformdirs,
          python3-serial,
          python3-yaml
 Description: Python MCU programming tool
