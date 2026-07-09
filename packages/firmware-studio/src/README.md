@@ -96,8 +96,6 @@ It pairs with the `hifiberry-studio-dac8x` device-tree overlay and the
   previously inconsistent and could not be attenuated via the mixer).
 * All output channels are initialised at start-up.
 
-Source: <https://github.com/hifiberry/firmware-studio_dac8x> (branch `main`).
-
 ## Flashing
 
 The microcontroller is programmed over **UPDI**, which uses the Raspberry Pi's

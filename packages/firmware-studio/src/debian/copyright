@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: firmware-studio
 Upstream-Contact: HiFiBerry <support@hifiberry.com>
-Source: https://github.com/hifiberry/firmware-studio_dac8x
+Source: https://github.com/hifiberry/hifiberry-os
 
 Files: *
 Copyright: 2026 HiFiBerry <support@hifiberry.com>

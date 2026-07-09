@@ -1,3 +1,10 @@
+firmware-studio (1.0.3) stable; urgency=medium
+
+  * Remove references to the (private) firmware source repository from the
+    README and copyright.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Jul 2026 15:00:00 +0000
+
 firmware-studio (1.0.2) stable; urgency=medium
 
   * Install the HiFiBerry repository signing key into /etc/apt/keyrings and use
