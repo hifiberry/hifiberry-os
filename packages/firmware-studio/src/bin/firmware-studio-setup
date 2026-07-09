@@ -20,8 +20,10 @@
 #
 set -euo pipefail
 
-REPO_LINE="deb [trusted=yes] http://debianrepo.hifiberry.com trixie main"
+KEYRING="/etc/apt/keyrings/hifiberry.gpg"
+KEY_URL="http://debianrepo.hifiberry.com/hifiberry.gpg"
 REPO_FILE="/etc/apt/sources.list.d/hifiberry.list"
+REPO_LINE="deb [signed-by=$KEYRING] http://debianrepo.hifiberry.com trixie main"
 OVERLAY="hifiberry-studio-dac8x"
 
 while [ $# -gt 0 ]; do
@@ -41,13 +43,12 @@ STAMP="bak-$(date +%Y%m%d-%H%M%S)"
 
 log(){ printf '\033[1;34m[firmware-studio-setup]\033[0m %s\n' "$*"; }
 
-# 1. HiFiBerry apt repo
-if ! grep -qs "debianrepo.hifiberry.com" "$REPO_FILE" 2>/dev/null; then
-    log "Adding HiFiBerry apt repo -> $REPO_FILE"
-    echo "$REPO_LINE" > "$REPO_FILE"
-else
-    log "HiFiBerry apt repo already configured"
-fi
+# 1. HiFiBerry signing key + apt repo
+log "Installing HiFiBerry signing key -> $KEYRING"
+install -d -m0755 /etc/apt/keyrings
+curl -fsSL "$KEY_URL" -o "$KEYRING"
+log "Configuring HiFiBerry apt repo -> $REPO_FILE"
+echo "$REPO_LINE" > "$REPO_FILE"
 
 # 2. packages
 log "Installing firmware-studio + i2c-tools"

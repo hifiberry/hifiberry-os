@@ -10,7 +10,9 @@ Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
 Package: firmware-studio
 Architecture: all
 Depends: ${misc:Depends},
-         python3-pymcuprog
+         python3-pymcuprog,
+         curl,
+         ca-certificates
 Description: Firmware for HiFiBerry Studio sound card microcontrollers
  Prebuilt firmware binaries for the microcontrollers on HiFiBerry Studio
  sound cards, plus a helper to flash them over UPDI using pymcuprog.

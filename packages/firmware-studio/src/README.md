@@ -23,8 +23,10 @@ package and a bit of `config.txt` are needed.
 `firmware-studio-setup` does everything below. Bootstrap it on a fresh system:
 
 ```sh
-# add repo + install the package, then run the setup helper
-echo "deb [trusted=yes] http://debianrepo.hifiberry.com trixie main" \
+# install signing key + repo, install the package, then run the setup helper
+sudo install -d -m0755 /etc/apt/keyrings
+sudo curl -fsSL http://debianrepo.hifiberry.com/hifiberry.gpg -o /etc/apt/keyrings/hifiberry.gpg
+echo "deb [signed-by=/etc/apt/keyrings/hifiberry.gpg] http://debianrepo.hifiberry.com trixie main" \
   | sudo tee /etc/apt/sources.list.d/hifiberry.list
 sudo apt-get update
 sudo apt-get install -y firmware-studio
@@ -36,10 +38,13 @@ sudo flash-studio-dac8x
 
 ### Manual
 
-1. **Add the HiFiBerry apt repository:**
+1. **Add the HiFiBerry signing key and apt repository:**
 
    ```sh
-   echo "deb [trusted=yes] http://debianrepo.hifiberry.com trixie main" \
+   sudo install -d -m0755 /etc/apt/keyrings
+   sudo curl -fsSL http://debianrepo.hifiberry.com/hifiberry.gpg \
+     -o /etc/apt/keyrings/hifiberry.gpg
+   echo "deb [signed-by=/etc/apt/keyrings/hifiberry.gpg] http://debianrepo.hifiberry.com trixie main" \
      | sudo tee /etc/apt/sources.list.d/hifiberry.list
    sudo apt-get update
    ```

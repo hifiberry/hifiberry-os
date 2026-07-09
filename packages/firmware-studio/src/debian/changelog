@@ -1,3 +1,12 @@
+firmware-studio (1.0.2) stable; urgency=medium
+
+  * Install the HiFiBerry repository signing key into /etc/apt/keyrings and use
+    signed-by= instead of [trusted=yes], so apt no longer warns about a missing
+    key. Setup script and README updated accordingly.
+  * Depend on curl and ca-certificates (used to fetch the signing key).
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Jul 2026 14:00:00 +0000
+
 firmware-studio (1.0.1) stable; urgency=medium
 
   * Add firmware-studio-setup: one-shot setup for stock Raspberry Pi OS
