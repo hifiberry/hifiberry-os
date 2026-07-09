@@ -1,3 +1,14 @@
+hifiberry-shairport (5.1.3) stable; urgency=medium
+
+  * Build with --with-metadata-multicast so shairport-sync emits AirPlay
+    metadata to the UDP socket (socket_address/socket_port, 127.0.0.1:5555).
+    Previously only --with-metadata was passed, which compiles in the metadata
+    pipe but NOT the multicast/socket output, so audiocontrol (which listens on
+    UDP 5555) never saw AirPlay play state. Fixes AirPlay not being detected /
+    not participating in active-player switching.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 09 Jul 2026 09:30:00 +0000
+
 hifiberry-shairport (5.1.2) stable; urgency=medium
 
   * postinst: restart config-server when it is running so a post-boot

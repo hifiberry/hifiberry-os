@@ -31,12 +31,12 @@ override_dh_auto_configure:
 	# Configure AirPlay 2 version
 	@echo "Configuring AirPlay 2 version..."
 	cd shairport-sync-airplay2 && autoreconf -fi
-	cd shairport-sync-airplay2 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --without-mqtt-client --with-dbus-interface --with-mpris-interface --with-avahi --with-alsa --without-soxr --without-pipe --without-stdout --with-metadata
+	cd shairport-sync-airplay2 && ./configure --prefix=/usr --sysconfdir=/etc --with-airplay-2 --with-ssl=openssl --without-mqtt-client --with-dbus-interface --with-mpris-interface --with-avahi --with-alsa --without-soxr --without-pipe --without-stdout --with-metadata --with-metadata-multicast
 	
 	# Configure legacy version (without AirPlay 2)
 	@echo "Configuring legacy version..."
 	cd shairport-sync-legacy && autoreconf -fi
-	cd shairport-sync-legacy && ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl --without-mqtt-client --with-dbus-interface --with-mpris-interface --with-avahi --with-alsa --without-soxr --without-pipe --without-stdout --with-metadata
+	cd shairport-sync-legacy && ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl --without-mqtt-client --with-dbus-interface --with-mpris-interface --with-avahi --with-alsa --without-soxr --without-pipe --without-stdout --with-metadata --with-metadata-multicast
 
 override_dh_auto_build:
 	# Build AirPlay 2 version
