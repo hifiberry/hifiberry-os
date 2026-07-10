@@ -1,3 +1,15 @@
+firmware-studio (1.0.4) stable; urgency=medium
+
+  * Ship Studio DAC8x firmware v0.0.3 (studiodac8x-0.0.3.hex), replacing
+    v0.0.2. Fixes the SMBus sequential-read off-by-one (a multi-byte read
+    duplicated the first byte and dropped the last) and a command ring-buffer
+    overrun; adds the DAC register-peek window (regmap 0xF0-0xF3).
+  * Add studio-dac8x-status: report per-chip PLL lock and audio-present
+    (real audio vs digital silence) via the peek window.
+  * Depend on i2c-tools (used by studio-dac8x-status).
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 10 Jul 2026 10:30:00 +0000
+
 firmware-studio (1.0.3) stable; urgency=medium
 
   * Remove references to the (private) firmware source repository from the

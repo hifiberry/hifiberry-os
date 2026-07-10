@@ -1,0 +1,44 @@
+#!/bin/bash
+# studio-dac8x-status - Show PLL-lock and audio-present status of the four
+# PCM5242 DACs on a HiFiBerry Studio DAC8x.
+#
+# Reads the DAC registers through the ATtiny402 firmware's register-peek
+# window (regmap 0xF0-0xF3) over I2C:
+#   0xF0 DAC_PEEK_CHIP   chip index 0-3
+#   0xF1 DAC_PEEK_PAGE   PCM5242 page
+#   0xF2 DAC_PEEK_ADDR   register offset (writing it triggers the read)
+#   0xF3 DAC_PEEK_DATA   result
+#
+# Per chip it reports:
+#   PLL   - register 0x04 bit 4 clear = locked (needs a valid bit clock)
+#   L / R - register 0x78 (auto-mute): bit0=left, bit4=right;
+#           set = digital silence (all-zero), clear = real audio
+#
+# Usage: studio-dac8x-status [i2c-bus] [mcu-addr]
+#   defaults: bus 1, MCU address 0x10
+
+set -u
+BUS="${1:-1}"
+ADDR="${2:-0x10}"
+
+# peek <chip 0-3> <dac register> -> DAC register byte, e.g. 0x11
+peek() {
+	i2cset -y "$BUS" "$ADDR" 0xF0 "$1" || return 1   # select chip
+	i2cset -y "$BUS" "$ADDR" 0xF1 0x00 || return 1   # page 0
+	i2cset -y "$BUS" "$ADDR" 0xF2 "$2" || return 1   # addr -> triggers read
+	sleep 0.02
+	i2cget -y "$BUS" "$ADDR" 0xF3                    # read cached result
+}
+
+printf 'DAC8x status  (bus %s, MCU %s)\n' "$BUS" "$ADDR"
+printf '%-5s  %-9s  %-8s  %-8s\n' CHIP PLL LEFT RIGHT
+for c in 0 1 2 3; do
+	pll=$(peek "$c" 0x04) || { echo "IC$((c+1))   read error"; continue; }
+	am=$(peek "$c" 0x78)
+
+	(( (pll & 0x10) == 0 )) && pll_s=locked || pll_s=UNLOCKED
+	(( am & 0x01 )) && l_s=silence || l_s=audio
+	(( am & 0x10 )) && r_s=silence || r_s=audio
+
+	printf 'IC%-3d  %-9s  %-8s  %-8s\n' "$((c+1))" "$pll_s" "$l_s" "$r_s"
+done

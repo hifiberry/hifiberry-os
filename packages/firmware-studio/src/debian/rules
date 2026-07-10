@@ -19,6 +19,8 @@ override_dh_auto_install:
 	cp bin/firmware-studio-setup debian/firmware-studio/usr/bin/
 	chmod +x debian/firmware-studio/usr/bin/flash-studio-dac8x
 	chmod +x debian/firmware-studio/usr/bin/firmware-studio-setup
+	cp bin/studio-dac8x-status debian/firmware-studio/usr/bin/
+	chmod +x debian/firmware-studio/usr/bin/studio-dac8x-status
 
 	# README
 	cp README.md debian/firmware-studio/usr/share/doc/firmware-studio/

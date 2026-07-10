@@ -8,9 +8,10 @@ together with a helper to flash them over UPDI using
 
 | File | Description |
 |------|-------------|
-| `/usr/share/firmware-studio/studiodac8x-0.0.2.hex` | Studio DAC8x microcontroller firmware, v0.0.2 |
+| `/usr/share/firmware-studio/studiodac8x-0.0.3.hex` | Studio DAC8x microcontroller firmware, v0.0.3 |
 | `/usr/bin/flash-studio-dac8x` | Flash helper (uses `pymcuprog` over UPDI) |
 | `/usr/bin/firmware-studio-setup` | One-shot setup for stock Raspberry Pi OS |
+| `/usr/bin/studio-dac8x-status` | Per-chip PLL lock and audio-present status (via the register-peek window) |
 
 ## Setup on Raspberry Pi OS
 
@@ -90,6 +91,16 @@ It pairs with the `hifiberry-studio-dac8x` device-tree overlay and the
 `snd-soc-hifiberry-studio-dac8x` kernel driver, which talks to the controller at
 0x10.
 
+### v0.0.3
+
+* Adds a **register-peek window** (regmap `0xF0`-`0xF3`): the host can read
+  back any PCM5242 register by chip/page/offset. Used by `studio-dac8x-status`
+  to report PLL lock and whether each DAC is receiving audio or digital silence.
+* Fixes an SMBus sequential-read off-by-one (a multi-byte read duplicated the
+  first byte and dropped the last).
+* Fixes a command ring-buffer overrun that could drop or corrupt queued writes
+  under a burst of control commands.
+
 ### v0.0.2
 
 * Per-channel volume is `master + offset` on all 8 channels (channel 0 was
@@ -113,7 +124,7 @@ Then:
 sudo flash-studio-dac8x
 
 # explicit port / hex file
-sudo flash-studio-dac8x /dev/serial0 /usr/share/firmware-studio/studiodac8x-0.0.2.hex
+sudo flash-studio-dac8x /dev/serial0 /usr/share/firmware-studio/studiodac8x-0.0.3.hex
 ```
 
 Check the controller responds after flashing (firmware version at registers
@@ -122,4 +133,24 @@ Check the controller responds after flashing (firmware version at registers
 ```sh
 printf '%d.%d.%d\n' \
   "$(i2cget -y 1 0x10 0x00)" "$(i2cget -y 1 0x10 0x01)" "$(i2cget -y 1 0x10 0x02)"
+```
+
+## Status
+
+Once the card is clocked (a stream is playing), check PLL lock and which DACs
+are actually receiving audio:
+
+```sh
+studio-dac8x-status
+```
+
+Example (a stereo source — audio on IC1, the other channels idle):
+
+```
+DAC8x status  (bus 1, MCU 0x10)
+CHIP   PLL        LEFT      RIGHT
+IC1    locked     audio     audio
+IC2    locked     silence   silence
+IC3    locked     silence   silence
+IC4    locked     silence   silence
 ```
