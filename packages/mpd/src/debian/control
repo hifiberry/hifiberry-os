@@ -31,6 +31,8 @@ Build-Depends: debhelper-compat (= 13),
                libexpat1-dev,
                libavahi-client-dev,
                wget,
+               libmpdclient-dev,
+               libnfs-dev,
                ca-certificates
 Standards-Version: 4.6.0
 Homepage: https://www.musicpd.org/
