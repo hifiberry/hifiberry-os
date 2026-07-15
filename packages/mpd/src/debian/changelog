@@ -1,3 +1,17 @@
+hifiberry-mpd (0.24.13.1) stable; urgency=high
+
+  * Updated to MPD v0.24.13 from upstream
+  * Security: v0.24.11 fixes a path traversal that let clients escape the
+    music directory via "listfiles ..". This was reachable without a password
+    on our default configuration, which binds to 0.0.0.0 and grants
+    default_permissions "read,add,control" (listfiles only needs read).
+  * Security: v0.24.11 fixes a stack buffer overflow in the pcm decoder and
+    disallows newlines and invalid UTF-8 in song URIs
+  * v0.24.13 fixes a pipewire file descriptor leak after connect failure
+  * v0.24.12 fixes a v0.24.11 regression with empty URIs in "lsinfo"/"add"
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 15 Jul 2026 12:00:00 +0000
+
 hifiberry-mpd (0.24.8.4) stable; urgency=low
 
   * Enable NFS support (libnfs) and the proxy database plugin (libmpdclient)
