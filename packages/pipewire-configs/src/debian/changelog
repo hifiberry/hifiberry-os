@@ -1,3 +1,10 @@
+hifiberry-pipewire-configs (1.0.9) stable; urgency=medium
+
+  * Add 10-hifiberry-rates.conf: allow 44.1-192kHz so the graph follows the
+    source rate instead of resampling everything to 48kHz
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 15 Jul 2026 10:00:00 +0200
+
 hifiberry-pipewire-configs (1.0.8) stable; urgency=medium
 
   * Depend on hifiberry-input-processor (renamed from ladspa-riaa)
