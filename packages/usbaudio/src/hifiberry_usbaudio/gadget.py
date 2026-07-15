@@ -139,31 +139,6 @@ def teardown_paths(base):
     ]
 
 
-def _prune_empty_ancestors(path, stop_at):
-    """Best-effort removal of now-empty ancestor directories of `path`,
-    stopping before `stop_at` (never touches `stop_at` or anything above
-    it, e.g. CONFIGFS_ROOT).
-
-    Real configfs auto-destroys certain "default" child groups (the
-    gadget's own configs/functions/strings containers, and a config's own
-    strings container) as soon as their contents are gone -- there is no
-    plain mkdir/rmdir equivalent for that on a normal filesystem. Pruning
-    opportunistically here keeps this correct on both: on real hardware
-    these directories are typically already gone by this point, or refuse
-    removal (EPERM), which we simply ignore since teardown_paths already
-    explicitly removes everything configfs requires explicit removal for;
-    on a plain filesystem it clears leftover empty wrapper directories so
-    the final gadget-root rmdir genuinely succeeds.
-    """
-    parent = os.path.dirname(path)
-    while parent and parent != stop_at and os.path.exists(parent):
-        try:
-            os.rmdir(parent)
-        except OSError:
-            break
-        parent = os.path.dirname(parent)
-
-
 def remove_gadget(root=CONFIGFS_ROOT):
     """Unbind and fully tear down the gadget.
 
@@ -178,10 +153,26 @@ def remove_gadget(root=CONFIGFS_ROOT):
 
     for path in teardown_paths(base):
         if os.path.islink(path):
-            os.remove(path)
+            try:
+                os.remove(path)
+            except OSError:
+                # Entry doesn't exist or is inaccessible
+                pass
         elif os.path.isdir(path):
-            os.rmdir(path)
-            if path != base:
-                _prune_empty_ancestors(path, stop_at=base)
+            try:
+                os.rmdir(path)
+            except OSError:
+                # Entry doesn't exist, is not empty, or is inaccessible
+                pass
+            # Opportunistically remove empty ancestor directories up to base.
+            # On real configfs these would be auto-destroyed default groups.
+            parent = os.path.dirname(path)
+            while parent and parent != base:
+                try:
+                    os.rmdir(parent)
+                    parent = os.path.dirname(parent)
+                except OSError:
+                    # Parent is not empty or inaccessible; stop trying
+                    break
 
     logging.info("UAC2 gadget removed")

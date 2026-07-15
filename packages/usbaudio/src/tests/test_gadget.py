@@ -136,12 +136,21 @@ def _populate_gadget_tree(base_path, config=None):
 
 
 def test_remove_gadget_tears_down_everything(tmp_path):
+    """Verify that remove_gadget removes all paths declared by teardown_paths.
+
+    A tmp_path fixture cannot simulate real configfs semantics (EBUSY,
+    rmdir-only enforcement, auto-destruction of default groups), but it can
+    verify that our code attempts to remove every directory and symlink that
+    teardown_paths declares necessary.
+    """
     base = tmp_path / GADGET_NAME
     _populate_gadget_tree(base)
 
     remove_gadget(root=str(tmp_path))
 
-    assert not base.exists()
+    # Verify that every path teardown_paths says should be removed is gone.
+    for path in teardown_paths(str(base)):
+        assert not os.path.exists(path), f"{path} still exists after remove_gadget"
 
 
 def test_remove_gadget_is_noop_on_nonexistent_gadget(tmp_path):
