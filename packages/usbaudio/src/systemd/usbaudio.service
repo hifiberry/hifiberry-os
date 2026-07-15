@@ -1,0 +1,12 @@
+[Unit]
+Description=HiFiBerry USB Audio Input Service
+After=pipewire.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/hifiberry-usbaudio connect
+ExecStop=/usr/bin/hifiberry-usbaudio disconnect
+
+[Install]
+WantedBy=default.target
