@@ -43,8 +43,16 @@ update_dspprofiles() {
             if git stash pop; then
                 echo "Successfully restored local changes"
             else
-                echo "Warning: Conflicts detected when restoring changes"
-                echo "Please resolve conflicts manually"
+                echo "ERROR: restoring the stashed local changes hit a conflict in $(pwd)." >&2
+                echo "The working tree now has conflict markers and the stash was kept." >&2
+                echo "Refusing to build: a conflicted tree would package broken sources." >&2
+                echo "" >&2
+                echo "  git -C $(pwd) status          # see the conflicted files" >&2
+                echo "  git -C $(pwd) stash list      # your changes are still here" >&2
+                echo "" >&2
+                echo "To build from upstream and keep the stash for later:" >&2
+                echo "  git -C $(pwd) checkout HEAD -- <conflicted file>" >&2
+                exit 1
             fi
         fi
         cd "$SCRIPT_DIR"
