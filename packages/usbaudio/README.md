@@ -36,7 +36,13 @@ This flag requires **hifiberry-configurator >= 2.13.19** (see
 
 This package ships three units, and they are **deliberately not all
 enabled/started the same way** (see `debian/rules`,
-`override_dh_installsystemd`):
+`override_dh_installsystemd` / `override_dh_installsystemduser`).
+`hifiberry-usbgadget.service` is a *system* unit, handled by
+`dh_installsystemd`; the other two are *user* units
+(`/usr/lib/systemd/user`), handled by the separate `dh_installsystemduser`
+helper -- naming a user unit to `dh_installsystemd` makes it fail the build
+with "does not install unit ...", since that helper only looks at system
+units.
 
 - **`hifiberry-usbgadget.service`** (system unit) creates the UAC2 gadget.
   It is foundational infrastructure, not a WebUI-toggleable player, so it is
@@ -46,8 +52,14 @@ enabled/started the same way** (see `debian/rules`,
   simply skips instead of failing.
 - **`usbaudio-state.service`** (user unit) reports state to ACR. It is
   *not* surfaced as a WebUI player toggle -- `players.d/usbaudio.json`
-  names only `usbaudio` -- so nothing else would ever enable it. It is
-  therefore enabled and started unconditionally too.
+  names only `usbaudio` -- so nothing else would ever enable it on its
+  behalf. Even so, it ships **disabled**: its `ExecStart` still carries a
+  deliberately-invalid `PLACEHOLDER_PIN_DURING_BRINGUP` card (see below),
+  and `state.run()` raises without a valid `--card`. Auto-enabling a unit
+  that is designed to fail until a manual bring-up step is done would mean
+  a permanently-failed systemd unit on every install/boot, which is worse
+  than the service simply not running yet. Bring-up must pin the real card
+  *and* run `systemctl --user enable --now usbaudio-state.service`.
 - **`usbaudio.service`** (user unit) links the gadget's audio to the DAC. It
   is the WebUI-toggleable player, like every other HiFiBerryOS player
   (sendspin, librespot, shairport, ...): it ships **disabled**, and the
@@ -75,13 +87,17 @@ ExecStart=/usr/bin/hifiberry-usbaudio state --card PLACEHOLDER_PIN_DURING_BRINGU
 ```
 
 `PLACEHOLDER_PIN_DURING_BRINGUP` is a deliberately-invalid value: it
-matches no real card, so out of the box this unit just always reports
-"stopped" (harmless) rather than crash-looping. **Once the gadget's real
+matches no real card, so `state.run()` raises immediately if the unit is
+started as shipped. Rather than let that crash-loop on every boot, the
+package ships `usbaudio-state.service` **disabled** (see above) -- it sits
+present but inert until bring-up is done. **Once the gadget's real
 `/proc/asound` card name/id is confirmed on hardware** (bind the gadget,
 then check `cat /proc/asound/card*/id`), replace the placeholder with that
-value in the unit file. The same applies to `linker.py`'s
-`GADGET_NODE_PREFIX`, which is an unverified placeholder for the PipeWire
-node name until confirmed the same way.
+value in the unit file, then run
+`systemctl --user enable --now usbaudio-state.service` to activate state
+reporting. The same placeholder-until-confirmed treatment applies to
+`linker.py`'s `GADGET_NODE_PREFIX`, an unverified placeholder for the
+PipeWire node name until confirmed the same way.
 
 ## HiFiBerryOS integration files
 

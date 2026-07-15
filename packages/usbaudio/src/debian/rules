@@ -4,7 +4,12 @@
 	dh $@ --buildsystem=pybuild
 
 # This package ships three systemd units that must NOT all get the same
-# enable/start treatment (see README.md):
+# enable/start treatment (see README.md). dh_installsystemd only handles
+# *system* units (/usr/lib/systemd/system); *user* units
+# (/usr/lib/systemd/user) are a different helper, dh_installsystemduser,
+# which has no --no-start (user units are never started at package-install
+# time -- there is typically no user session to start them in -- only
+# --no-enable, controlling whether they run at the *next* session/boot).
 #
 #  - hifiberry-usbgadget.service (a *system* unit) creates the UAC2 gadget.
 #    It is foundational infrastructure, not a WebUI-toggleable player, so it
@@ -13,12 +18,21 @@
 #    USB device mode was never enabled.
 #  - usbaudio-state.service (a *user* unit) reports state to ACR and, unlike
 #    usbaudio.service, is not surfaced as a WebUI player toggle (see
-#    players.d/usbaudio.json, which names only "usbaudio") -- nothing else
-#    will ever enable it, so it must be enabled here too.
+#    players.d/usbaudio.json, which names only "usbaudio"). It would be
+#    tempting to auto-enable it for that reason, but its ExecStart still
+#    carries a deliberately-invalid PLACEHOLDER_PIN_DURING_BRINGUP card
+#    (see systemd/usbaudio-state.service and README.md) and state.run()
+#    raises without a valid --card. Auto-enabling it here would mean a
+#    permanently-failed user unit on every boot of every install until
+#    someone does hardware bring-up -- worse than the service simply not
+#    running yet. So it ships present but disabled; bring-up must pin the
+#    card AND run `systemctl --user enable --now usbaudio-state.service`.
 #  - usbaudio.service (a *user* unit) is the WebUI-toggleable player, like
 #    every other HiFiBerryOS player (sendspin, librespot, shairport, ...):
 #    it ships disabled and the user turns it on from Services > Players.
 override_dh_installsystemd:
 	dh_installsystemd hifiberry-usbgadget.service
-	dh_installsystemd usbaudio-state.service
-	dh_installsystemd --no-enable --no-start usbaudio.service
+
+override_dh_installsystemduser:
+	dh_installsystemduser --no-enable usbaudio-state.service
+	dh_installsystemduser --no-enable usbaudio.service

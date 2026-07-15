@@ -5,15 +5,20 @@ After=pipewire.service
 [Service]
 Type=simple
 # --card is REQUIRED: hifiberry_usbaudio.state.run() refuses to start
-# without it, precisely to stop this unit from silently misreporting the
-# DAC's own playback to ACR as the USB gadget playing (see state.py).
+# without it (raises ValueError), precisely to stop this unit from silently
+# misreporting the DAC's own playback to ACR as the USB gadget playing (see
+# state.py).
 #
 # PLACEHOLDER_PIN_DURING_BRINGUP below is a deliberately-invalid value --
-# it matches no real /proc/asound card, so until it is replaced this
-# service simply reports "stopped" instead of anything wrong. Replace it
-# with the gadget's real /proc/asound card name/id (e.g. "gadget") once
-# that is confirmed on hardware bring-up (see linker.py's
-# GADGET_NODE_PREFIX note and README.md).
+# it matches no real /proc/asound card, so this unit would fail every time
+# it runs until it is replaced. That is *why the package ships this unit
+# disabled* (see debian/rules, override_dh_installsystemduser): a unit that
+# is designed to fail until a manual bring-up step is done must not be
+# auto-enabled, or every install would carry a permanently-failed systemd
+# unit. Replace the placeholder with the gadget's real /proc/asound card
+# name/id (e.g. "gadget") once that is confirmed on hardware bring-up (see
+# linker.py's GADGET_NODE_PREFIX note and README.md), then run
+# `systemctl --user enable --now usbaudio-state.service` to activate it.
 ExecStart=/usr/bin/hifiberry-usbaudio state --card PLACEHOLDER_PIN_DURING_BRINGUP
 
 [Install]
