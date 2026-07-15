@@ -1,0 +1,9 @@
+{
+    "name": "USB Audio",
+    "provided_by": "hifiberry-usbaudio",
+    "systemd_service": "usbaudio",
+    "icon": "usbaudio",
+    "allow_change": true,
+    "maintainer_name": "HiFiBerry",
+    "maintainer_url": "https://www.hifiberry.com/"
+}
