@@ -40,6 +40,8 @@ override_dh_auto_configure:
 		-Dlocal_socket=true \
 		-Dcue=true \
 		-Dzeroconf=avahi \
+		-Dnfs=enabled \
+		-Dlibmpdclient=enabled \
 		-Dpulse=disabled \
 		-Djack=disabled \
 		--prefix=/usr \
