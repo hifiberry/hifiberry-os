@@ -200,6 +200,21 @@ def test_run_posts_again_when_state_flips(tmp_path):
     assert [c.args[0] for c in poster.call_args_list] == ["stopped", "playing"]
 
 
+def test_run_raises_without_card_filter(tmp_path):
+    """A missing --card must fail loudly at startup rather than silently
+    fall back to scanning every card (the exact bug that let the DAC's own
+    playback get reported to ACR as the gadget playing)."""
+    poster = MagicMock()
+
+    def sleeper(_interval):
+        raise StopIteration
+
+    with pytest.raises(ValueError):
+        run(base_dir=str(tmp_path), card_filter=None, poster=poster, sleeper=sleeper)
+
+    poster.assert_not_called()
+
+
 def test_run_is_card_scoped_by_default_via_card_filter_argument(tmp_path):
     """run() must accept a card_filter and use it for discovery -- it must
     not hardcode any particular gadget card name."""

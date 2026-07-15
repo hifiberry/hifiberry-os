@@ -2,3 +2,23 @@
 
 %:
 	dh $@ --buildsystem=pybuild
+
+# This package ships three systemd units that must NOT all get the same
+# enable/start treatment (see README.md):
+#
+#  - hifiberry-usbgadget.service (a *system* unit) creates the UAC2 gadget.
+#    It is foundational infrastructure, not a WebUI-toggleable player, so it
+#    must be enabled + started unconditionally -- its own
+#    ConditionPathExistsGlob makes this a safe no-op on hosts/images where
+#    USB device mode was never enabled.
+#  - usbaudio-state.service (a *user* unit) reports state to ACR and, unlike
+#    usbaudio.service, is not surfaced as a WebUI player toggle (see
+#    players.d/usbaudio.json, which names only "usbaudio") -- nothing else
+#    will ever enable it, so it must be enabled here too.
+#  - usbaudio.service (a *user* unit) is the WebUI-toggleable player, like
+#    every other HiFiBerryOS player (sendspin, librespot, shairport, ...):
+#    it ships disabled and the user turns it on from Services > Players.
+override_dh_installsystemd:
+	dh_installsystemd hifiberry-usbgadget.service
+	dh_installsystemd usbaudio-state.service
+	dh_installsystemd --no-enable --no-start usbaudio.service

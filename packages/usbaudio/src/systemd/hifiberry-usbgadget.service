@@ -1,9 +1,13 @@
 [Unit]
 Description=HiFiBerry USB Audio Gadget (UAC2)
-Before=pipewire.service
 DefaultDependencies=no
 After=sysinit.target
-ConditionPathExists=/sys/class/udc
+# /sys/class/udc always exists once the dwc2 driver is loaded, even in host
+# mode -- it is merely empty then, not absent, so ConditionPathExists never
+# skipped this unit. ConditionPathExistsGlob checks for an actual UDC entry
+# underneath, so the unit genuinely no-ops when USB device mode was never
+# enabled (config-configtxt --enable-usb-gadget + reboot; see README.md).
+ConditionPathExistsGlob=/sys/class/udc/*
 
 [Service]
 Type=oneshot

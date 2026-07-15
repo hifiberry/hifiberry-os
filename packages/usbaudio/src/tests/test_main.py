@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+import pytest
+
 from hifiberry_usbaudio.main import build_parser, dispatch
 
 
@@ -99,3 +101,13 @@ def test_state_passes_port_to_run():
         dispatch(build_parser().parse_args(["state", "--port", "1090"]))
     mock.assert_called_once()
     assert mock.call_args[1]["port"] == 1090
+
+
+def test_state_without_card_rejects_loudly_instead_of_scanning_every_card():
+    """CLI-level proof of the fix: `hifiberry-usbaudio state` with no --card
+    (e.g. a misconfigured/un-pinned systemd unit) must fail loudly via
+    state.run's own guard rather than silently default to scanning every
+    /proc/asound card -- the exact mechanism that let the DAC's own
+    playback be reported to ACR as the USB gadget playing."""
+    with pytest.raises(ValueError):
+        dispatch(build_parser().parse_args(["state"]))

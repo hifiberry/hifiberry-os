@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+#DEBHELPER#
+
+# config-server caches the conf.d systemd-permission drop-ins at startup. When
+# this package is installed onto an already-running system (e.g. apt install of
+# hbos-full), config-server won't know it is allowed to control usbaudio until
+# it re-reads conf.d, so the WebUI can't start the player. Restart it when it is
+# running. This is a no-op during image builds (config-server not yet started).
+if [ -d /run/systemd/system ] && systemctl is-active --quiet config-server 2>/dev/null; then
+    systemctl restart config-server >/dev/null 2>&1 || true
+fi
+
+exit 0

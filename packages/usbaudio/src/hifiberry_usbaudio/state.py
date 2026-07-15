@@ -106,7 +106,23 @@ def run(interval=5, card_filter=None, base_dir="/proc/asound", poster=post_state
     `sleeper` may raise StopIteration to end the loop; real callers never
     do this, it exists so tests can bound an otherwise-infinite loop
     (mirrors monitor.run's runner= idiom).
+
+    Raises ValueError if `card_filter` is None. Unlike monitor.run (where
+    unscoped xrun/rate attribution merely surfaces ambiguity in the log),
+    an unscoped state poll actively reports the wrong thing to ACR --
+    "playing" whenever *any* card, including the DAC's own local playback,
+    happens to be RUNNING. There is no safe unscoped default here, so a
+    caller that forgets --card must fail loudly at startup rather than
+    have the state service quietly lie to ACR forever.
     """
+    if card_filter is None:
+        raise ValueError(
+            "state.run() requires an explicit card_filter (--card): without "
+            "it, the DAC's own playback would be misreported to ACR as the "
+            "USB gadget playing. Pass the gadget's real /proc/asound card "
+            "name/id once it is known (pin it during hardware bring-up -- "
+            "see systemd/usbaudio-state.service and README.md)."
+        )
     last_state = None
     while True:
         status_paths = discover_status_paths(base_dir=base_dir, card_filter=card_filter)
