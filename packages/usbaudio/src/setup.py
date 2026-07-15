@@ -14,9 +14,13 @@ setup(
         # Standard library only (subprocess, argparse, json, glob).
     ],
     data_files=[
-        ('/usr/lib/systemd/user', ['systemd/usbaudio.service']),
+        ('/usr/lib/systemd/user', [
+            'systemd/usbaudio.service',
+            'systemd/usbaudio-state.service',
+        ]),
         ('/usr/lib/systemd/system', ['systemd/hifiberry-usbgadget.service']),
         ('/etc/hifiberry/players.d', ['players.d/usbaudio.json']),
+        ('/etc/hifiberry/players.d/icons', ['players.d/icons/usbaudio.svg']),
     ],
     entry_points={
         "console_scripts": [

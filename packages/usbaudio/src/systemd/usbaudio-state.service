@@ -1,0 +1,14 @@
+[Unit]
+Description=HiFiBerry USB Audio Gadget State Reporter (ACR)
+After=pipewire.service
+
+[Service]
+Type=simple
+# Add --card <gadget-card-id> once the gadget's real /proc/asound card
+# name is known on hardware (see linker.py's GADGET_NODE_PREFIX note) --
+# otherwise the DAC's own playback can be misreported as the gadget
+# streaming.
+ExecStart=/usr/bin/hifiberry-usbaudio state
+
+[Install]
+WantedBy=default.target

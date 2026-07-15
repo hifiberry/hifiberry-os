@@ -110,6 +110,34 @@ def _card_identity(card_dir, base_dir):
     return f"{card_dir}:{name}" if name else card_dir
 
 
+def discover_status_paths(base_dir="/proc/asound", card_filter=None):
+    """Return substream `status` file paths under base_dir, card-scoped.
+
+    Shared discovery used both by `_current_rate` (rate/xrun attribution)
+    and by `state.gadget_stream_state` (play/stop reporting to ACR) --
+    both need the identical "which card is this?" answer, so there is one
+    place that answers it rather than two implementations that could
+    silently drift apart.
+
+    `card_filter`, if given, restricts the scan to cards whose directory
+    name (e.g. "card1") or id (e.g. "gadget") contains it as a substring.
+    Unset, it scans every card -- the historical default behavior. The
+    USB gadget's real card name isn't known until it's bound on hardware,
+    so nothing here hardcodes a guess at it; callers can pass it once
+    they know it.
+    """
+    paths = []
+    pattern = os.path.join(base_dir, "card*", "pcm*", "sub*", "status")
+    for path in sorted(glob.glob(pattern)):
+        rel = os.path.relpath(path, base_dir)
+        card_dir = rel.split(os.sep)[0]
+        identity = _card_identity(card_dir, base_dir)
+        if card_filter and card_filter not in card_dir and card_filter not in identity:
+            continue
+        paths.append(path)
+    return paths
+
+
 def _current_rate(card_filter=None, base_dir="/proc/asound"):
     """Find the negotiated rate of the RUNNING substream(s) under base_dir.
 
@@ -124,21 +152,13 @@ def _current_rate(card_filter=None, base_dir="/proc/asound"):
       invalidate this experiment), the identity names every card/rate
       involved and rate is None, so the ambiguity is visible in the log.
 
-    `card_filter`, if given, restricts the scan to cards whose directory
-    name (e.g. "card1") or id (e.g. "gadget") contains it as a substring.
-    Unset, it scans every card -- the historical default behavior. The
-    USB gadget's real card name isn't known until it's bound on hardware,
-    so nothing here hardcodes a guess at it; callers can pass it once
-    they know it.
+    `card_filter` is passed straight through to `discover_status_paths`.
     """
     running = []
-    pattern = os.path.join(base_dir, "card*", "pcm*", "sub*", "status")
-    for path in sorted(glob.glob(pattern)):
+    for path in discover_status_paths(base_dir=base_dir, card_filter=card_filter):
         rel = os.path.relpath(path, base_dir)
         card_dir = rel.split(os.sep)[0]
         identity = _card_identity(card_dir, base_dir)
-        if card_filter and card_filter not in card_dir and card_filter not in identity:
-            continue
         try:
             with open(path) as handle:
                 status = parse_alsa_status(handle.read())

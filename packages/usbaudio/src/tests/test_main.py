@@ -48,3 +48,54 @@ def test_monitor_passes_card_filter_to_run():
         dispatch(build_parser().parse_args(["monitor", "--card", "gadget"]))
     mock.assert_called_once()
     assert mock.call_args[1]["card_filter"] == "gadget"
+
+
+def test_parser_accepts_state_action():
+    assert build_parser().parse_args(["state"]).action == "state"
+
+
+def test_state_dispatches_to_state_run():
+    with patch("hifiberry_usbaudio.main.state.run") as mock:
+        assert dispatch(build_parser().parse_args(["state"])) == 0
+    mock.assert_called_once()
+
+
+def test_state_accepts_interval_option():
+    args = build_parser().parse_args(["state", "--interval", "10"])
+    assert args.interval == 10
+
+
+def test_state_accepts_card_filter_option():
+    args = build_parser().parse_args(["state", "--card", "gadget"])
+    assert args.card == "gadget"
+
+
+def test_state_accepts_port_option():
+    args = build_parser().parse_args(["state", "--port", "1090"])
+    assert args.port == 1090
+
+
+def test_state_port_defaults_to_1080():
+    args = build_parser().parse_args(["state"])
+    assert args.port == 1080
+
+
+def test_state_passes_interval_to_run():
+    with patch("hifiberry_usbaudio.main.state.run") as mock:
+        dispatch(build_parser().parse_args(["state", "--interval", "15"]))
+    mock.assert_called_once()
+    assert mock.call_args[1]["interval"] == 15
+
+
+def test_state_passes_card_filter_to_run():
+    with patch("hifiberry_usbaudio.main.state.run") as mock:
+        dispatch(build_parser().parse_args(["state", "--card", "gadget"]))
+    mock.assert_called_once()
+    assert mock.call_args[1]["card_filter"] == "gadget"
+
+
+def test_state_passes_port_to_run():
+    with patch("hifiberry_usbaudio.main.state.run") as mock:
+        dispatch(build_parser().parse_args(["state", "--port", "1090"]))
+    mock.assert_called_once()
+    assert mock.call_args[1]["port"] == 1090
