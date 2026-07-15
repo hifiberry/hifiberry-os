@@ -142,8 +142,20 @@ def teardown_paths(base):
 def remove_gadget(root=CONFIGFS_ROOT):
     """Unbind and fully tear down the gadget.
 
-    Safe to call when the gadget does not exist (no-op) or is already
-    unbound.
+    Safe to call when the gadget does not exist (no-op) or has already
+    been torn down: each teardown_paths() entry is only acted on if it is
+    still present, so repeating the call finds nothing left to do. Any
+    other failure -- e.g. EBUSY because the gadget is still bound, or a
+    permissions error -- propagates as an OSError. A real teardown
+    failure must be visible to the caller, not reported as success.
+
+    The default groups configfs creates automatically -- configs/,
+    functions/, strings/, and configs/c.1/strings/ -- are deliberately
+    never rmdir'd here. configfs refuses a direct rmdir of a default
+    group (EPERM) and instead destroys each one itself once the group
+    that owns it (the gadget root, or configs/c.1) is removed.
+    teardown_paths() reflects this: it lists only the entries this
+    module created itself, not the kernel-managed default groups.
     """
     base = os.path.join(root, GADGET_NAME)
     if not os.path.exists(base):
@@ -153,26 +165,8 @@ def remove_gadget(root=CONFIGFS_ROOT):
 
     for path in teardown_paths(base):
         if os.path.islink(path):
-            try:
-                os.remove(path)
-            except OSError:
-                # Entry doesn't exist or is inaccessible
-                pass
+            os.remove(path)
         elif os.path.isdir(path):
-            try:
-                os.rmdir(path)
-            except OSError:
-                # Entry doesn't exist, is not empty, or is inaccessible
-                pass
-            # Opportunistically remove empty ancestor directories up to base.
-            # On real configfs these would be auto-destroyed default groups.
-            parent = os.path.dirname(path)
-            while parent and parent != base:
-                try:
-                    os.rmdir(parent)
-                    parent = os.path.dirname(parent)
-                except OSError:
-                    # Parent is not empty or inaccessible; stop trying
-                    break
+            os.rmdir(path)
 
     logging.info("UAC2 gadget removed")

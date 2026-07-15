@@ -103,24 +103,57 @@ def test_teardown_paths_covers_every_dir_implied_by_build_gadget_tree():
 
 
 # ---------------------------------------------------------------------------
-# remove_gadget: exercised against a plain tmp_path tree (via root=), which
-# can prove ordering/coverage/no-op safety but cannot simulate real configfs
-# semantics (EBUSY, rmdir-only enforcement) -- those require actual /sys.
+# remove_gadget: exercised against a plain tmp_path tree (via root=).
+#
+# A plain filesystem cannot fully simulate real configfs semantics. On real
+# hardware, rmdir-ing a group that still contains a *default* child group
+# (configs/, functions/, strings/, configs/c.1/strings/) succeeds anyway --
+# the kernel destroys the default group itself as part of removing its
+# owner. That is precisely why the standard teardown recipe can rmdir
+# configs/c.1 (which still "contains" the default configs/c.1/strings
+# group) and finally the gadget root itself (which still "contains"
+# configs/, functions/, strings/).
+#
+# A tmp_path directory has no such magic: os.rmdir requires the directory
+# to be *actually* empty. Once create_gadget's os.makedirs has created a
+# default-group directory as a real parent of something we mkdir'd inside
+# it (e.g. "strings" as the parent of "strings/0x409"), that wrapper
+# directory is left behind as an empty directory after we remove its
+# child -- because our code correctly never rmdir's the default group
+# itself. That leftover then blocks the *next* rmdir up the tree.
+#
+# This affects two of the six teardown_paths() entries: configs/c.1 (blocked
+# by the leftover configs/c.1/strings) and the gadget root (blocked by the
+# leftover configs/, functions/, strings/). It is not fixable by rearranging
+# the fixture -- it is a real difference between configfs and POSIX rmdir
+# semantics that only actual /sys can paper over. So instead of asserting a
+# single remove_gadget() call tears down everything (which would only be
+# true by accident, e.g. by silently swallowing the resulting ENOTEMPTY), we
+# split coverage into what a plain filesystem CAN prove honestly:
+#   - every entry remove_gadget successfully reaches gets removed
+#     (proves ordering/coverage), and
+#   - a genuine obstacle (the leftover default-group directory) raises
+#     rather than being swallowed (proves the restored error propagation).
 # ---------------------------------------------------------------------------
 
 
 def _populate_gadget_tree(base_path, config=None):
-    """Build the directory/symlink skeleton remove_gadget is responsible for.
+    """Build the full directory/symlink skeleton create_gadget would leave.
 
     Deliberately does NOT write real attribute files (idVendor, UDC, etc.).
     On real configfs those are kernel-managed pseudo-files that vanish
-    automatically when their owning directory is rmdir'd -- that's *why*
-    the standard teardown recipe can rmdir a "non-empty-looking" directory.
-    A plain filesystem has no such magic: leaving real files in these dirs
-    would make rmdir fail with ENOTEMPTY in a way that has nothing to do
-    with our code and everything to do with the fixture lying about what
-    configfs actually looks like. So we model only the part a tmp_path can
-    faithfully represent: the directory/symlink structure and its ordering.
+    automatically when their owning directory is rmdir'd. A plain
+    filesystem has no such magic: leaving real files in these dirs would
+    make rmdir fail with ENOTEMPTY in a way that has nothing to do with our
+    code. So we model only the part a tmp_path can faithfully represent:
+    the directory/symlink structure and its ordering.
+
+    Because this mirrors the *real* structure, os.makedirs necessarily also
+    creates the default-group wrapper directories (configs/, functions/,
+    strings/, configs/c.1/strings/) as real, literal parent directories --
+    on a tmp_path they don't vanish on their own the way they would on real
+    configfs. See the module comment above for what that means for tests
+    built on this fixture.
     """
     config = config or GadgetConfig()
     implied_dirs = {
@@ -135,37 +168,81 @@ def _populate_gadget_tree(base_path, config=None):
     return base_path
 
 
-def test_remove_gadget_tears_down_everything(tmp_path):
-    """Verify that remove_gadget removes all paths declared by teardown_paths.
+def test_remove_gadget_removes_configs_branch_then_surfaces_real_failure(tmp_path):
+    """The configs/c.1 branch, torn down against a realistic full tree.
 
-    A tmp_path fixture cannot simulate real configfs semantics (EBUSY,
-    rmdir-only enforcement, auto-destruction of default groups), but it can
-    verify that our code attempts to remove every directory and symlink that
-    teardown_paths declares necessary.
+    remove_gadget successfully removes the symlink and
+    configs/c.1/strings/0x409 (genuine leaves, no children of their own).
+    It then attempts rmdir on configs/c.1 itself -- on real configfs this
+    succeeds because the kernel auto-destroys the leftover
+    configs/c.1/strings default group; on a tmp_path that group is a real,
+    still-present empty directory, so the rmdir genuinely fails with
+    ENOTEMPTY. That failure must propagate, not be swallowed -- so this
+    test asserts it raises, and that the two reachable entries were removed
+    before the raise.
     """
     base = tmp_path / GADGET_NAME
     _populate_gadget_tree(base)
 
-    remove_gadget(root=str(tmp_path))
+    symlink = base / "configs/c.1/uac2.usb0"
+    configs_strings = base / "configs/c.1/strings/0x409"
+    assert symlink.exists() or symlink.is_symlink()
+    assert configs_strings.is_dir()
 
-    # Verify that every path teardown_paths says should be removed is gone.
-    for path in teardown_paths(str(base)):
-        assert not os.path.exists(path), f"{path} still exists after remove_gadget"
+    with pytest.raises(OSError):
+        remove_gadget(root=str(tmp_path))
+
+    assert not symlink.is_symlink()
+    assert not configs_strings.exists()
+
+
+def test_remove_gadget_removes_functions_and_strings_leaves(tmp_path):
+    """The functions/ and strings/ branches, torn down in isolation.
+
+    Uses a narrower fixture with no configs/c.1 branch at all, so
+    remove_gadget's walk skips those (absent) entries harmlessly and
+    reaches functions/uac2.usb0 and strings/0x409, both genuine leaves that
+    are removed cleanly. It then attempts the final rmdir on the gadget
+    root -- which fails for the same class of reason as the test above
+    (the leftover functions/ and strings/ default-group directories are
+    still, literally, present on a tmp_path), and that failure must
+    likewise propagate rather than be swallowed.
+    """
+    base = tmp_path / GADGET_NAME
+    (base / "functions/uac2.usb0").mkdir(parents=True)
+    (base / "strings/0x409").mkdir(parents=True)
+
+    with pytest.raises(OSError):
+        remove_gadget(root=str(tmp_path))
+
+    assert not (base / "functions/uac2.usb0").exists()
+    assert not (base / "strings/0x409").exists()
+
+
+def test_remove_gadget_removes_bare_gadget_root_and_is_noop_on_repeat(tmp_path):
+    """The final rmdir(base) step, and repeat-call safety.
+
+    A tmp_path can't reproduce the kernel auto-destroying configs/,
+    functions/, strings/ out from under the gadget root (see module
+    comment), so this proves the base-removal code path the only honest
+    way available: starting from a gadget root that is already down to
+    nothing, matching the state real configfs would have reduced it to by
+    the time this step runs. remove_gadget's own no-op branch is then
+    exercised by calling it again once the gadget is gone.
+    """
+    base = tmp_path / GADGET_NAME
+    base.mkdir()
+
+    remove_gadget(root=str(tmp_path))
+    assert not base.exists()
+
+    remove_gadget(root=str(tmp_path))  # must not raise: gadget is now gone
+    assert not base.exists()
 
 
 def test_remove_gadget_is_noop_on_nonexistent_gadget(tmp_path):
     # Must not raise even though nothing exists under tmp_path.
     remove_gadget(root=str(tmp_path))
-
-
-def test_remove_gadget_is_noop_on_second_call(tmp_path):
-    base = tmp_path / GADGET_NAME
-    _populate_gadget_tree(base)
-
-    remove_gadget(root=str(tmp_path))
-    remove_gadget(root=str(tmp_path))  # must not raise: gadget is now gone
-
-    assert not base.exists()
 
 
 # ---------------------------------------------------------------------------
