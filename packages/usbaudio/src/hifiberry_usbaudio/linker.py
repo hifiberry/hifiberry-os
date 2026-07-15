@@ -11,7 +11,10 @@ import subprocess
 import sys
 import time
 
-# Determined empirically on hardware once the gadget is bound (see plan Task 7).
+# PROVISIONAL: unverified placeholder, not confirmed on hardware. The
+# gadget's real ALSA card/node name can only be determined once the UAC2
+# gadget is actually bound on a device (see plan Task 7); pin this value
+# then.
 GADGET_NODE_PREFIX = "alsa_input.usb-gadget"
 TARGET_NODE = "alsa_output.platform-soc_107c000000_sound.stereo-fallback"
 
@@ -37,18 +40,26 @@ def find_node_by_prefix(prefix, nodes):
     return None
 
 
+def find_node_exact(name, nodes):
+    for n in nodes:
+        if n == name:
+            return n
+    return None
+
+
 def link_pairs(source, target):
     return [(f"{source}:{src}", f"{target}:{dst}") for src, dst in CHANNELS]
 
 
-def _resolve(runner):
-    for attempt in range(RETRY_COUNT + 1):
+def _resolve(runner, retry=True):
+    attempts = RETRY_COUNT + 1 if retry else 1
+    for attempt in range(attempts):
         nodes = list_nodes(runner=runner)
         gadget = find_node_by_prefix(GADGET_NODE_PREFIX, nodes)
-        target = find_node_by_prefix(TARGET_NODE, nodes)
+        target = find_node_exact(TARGET_NODE, nodes)
         if gadget and target:
             return gadget, target
-        if attempt < RETRY_COUNT:
+        if attempt < attempts - 1:
             time.sleep(RETRY_DELAY)
     return None, None
 
@@ -75,7 +86,9 @@ def connect(runner=subprocess.run):
 
 
 def disconnect(runner=subprocess.run):
-    gadget, target = _resolve(runner)
+    # Deliberately no retries: waiting to tear down a link that is already
+    # gone just delays `systemctl --user stop`.
+    gadget, target = _resolve(runner, retry=False)
     if not gadget or not target:
         print("Required nodes not found", file=sys.stderr)
         return 1
