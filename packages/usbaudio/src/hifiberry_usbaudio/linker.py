@@ -11,11 +11,33 @@ import subprocess
 import sys
 import time
 
-# PROVISIONAL: unverified placeholder, not confirmed on hardware. The
-# gadget's real ALSA card/node name can only be determined once the UAC2
-# gadget is actually bound on a device (see plan Task 7); pin this value
-# then.
-GADGET_NODE_PREFIX = "alsa_input.usb-gadget"
+# Measured on a CM5 (BCM2712) with the UAC2 gadget bound: `pw-cli ls Node`
+# reported the gadget's capture node as
+# "alsa_input.platform-1000480000.usb.stereo-fallback", where
+# "1000480000.usb" is the dwc2 USB controller's platform-device address on
+# CM5/Pi 5. That address is NOT the same on every Pi that supports gadget
+# mode -- Pi 4/CM4 exposes the same dwc2 controller at "7e980000.usb"
+# instead -- so this prefix is CM5-specific and will silently fail to match
+# (connect() logs "gadget node not found") on Pi 4/CM4 hardware. That is a
+# known, deliberate limitation, not an oversight: find_node_by_prefix() only
+# does a plain startswith() match, and the varying controller address sits
+# in the *middle* of the node name (right after "platform-", before
+# ".usb..."), not at either end. A prefix generic enough to skip that
+# address (e.g. just "alsa_input.platform-") would also match
+# "alsa_input.platform-soc_107c000000_sound.stereo-fallback" -- the DAC's
+# own ADC -- which `find_node_by_prefix` would then happily return instead
+# of (or before) the real gadget node, wiring the DAC's ADC into its own
+# sink as a feedback loop. Excluding that node correctly and staying
+# board-portable both at once is not possible with a single startswith
+# prefix, so this pins the safest option: exact-enough to guarantee no
+# feedback loop on the hardware that has actually been verified (CM5), at
+# the known cost of not working out of the box on Pi 4/CM4. UNVERIFIED:
+# behavior on Pi 4/CM4 (and any other board whose dwc2 address differs from
+# both "1000480000.usb" and "7e980000.usb"). If/when Pi 4/CM4 bring-up
+# happens, either add board detection (e.g. read the bound UDC name from
+# /sys/class/udc, as gadget.find_udc() already does, and build the prefix
+# from that at runtime) or extend the match beyond a plain prefix.
+GADGET_NODE_PREFIX = "alsa_input.platform-1000480000.usb."
 TARGET_NODE = "alsa_output.platform-soc_107c000000_sound.stereo-fallback"
 
 CHANNELS = (("capture_FL", "playback_FL"), ("capture_FR", "playback_FR"))

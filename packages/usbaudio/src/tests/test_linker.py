@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 from hifiberry_usbaudio.linker import (
+    GADGET_NODE_PREFIX,
     TARGET_NODE,
     connect,
     disconnect,
@@ -10,12 +11,20 @@ from hifiberry_usbaudio.linker import (
     list_nodes,
 )
 
+# Real `pw-cli ls Node` output captured on a CM5 with the UAC2 gadget bound
+# (/sys/class/udc/ == "1000480000.usb"). Includes both the gadget's own
+# capture node and the DAC2 ADC Pro's own ADC capture node
+# (alsa_input.platform-soc_107c000000_sound.stereo-fallback) -- the two must
+# never be confused, since routing the DAC's own ADC into the DAC's own sink
+# would be a feedback loop, not USB audio.
 PW_CLI_OUTPUT = '''
 \tnode.name = "Dummy-Driver"
 \tnode.name = "input-processor"
 \tnode.name = "speakereq2x2"
+\tnode.name = "alsa_output.platform-1000480000.usb.stereo-fallback"
+\tnode.name = "alsa_input.platform-1000480000.usb.stereo-fallback"
 \tnode.name = "alsa_output.platform-soc_107c000000_sound.stereo-fallback"
-\tnode.name = "alsa_input.usb-gadget.stereo-fallback"
+\tnode.name = "alsa_input.platform-soc_107c000000_sound.stereo-fallback"
 '''
 
 
@@ -49,7 +58,23 @@ def test_list_nodes_parses_pw_cli_output():
 
 def test_find_node_by_prefix_matches():
     nodes = list_nodes(runner=_runner(PW_CLI_OUTPUT))
-    assert find_node_by_prefix("alsa_input.usb-gadget", nodes) == "alsa_input.usb-gadget.stereo-fallback"
+    assert (
+        find_node_by_prefix(GADGET_NODE_PREFIX, nodes)
+        == "alsa_input.platform-1000480000.usb.stereo-fallback"
+    )
+
+
+def test_gadget_node_prefix_selects_the_gadget_not_the_dacs_own_adc():
+    """The DAC2 ADC Pro's own ADC capture node
+    (alsa_input.platform-soc_107c000000_sound.stereo-fallback) is present
+    in the same node list as the gadget's capture node. GADGET_NODE_PREFIX
+    must resolve to the gadget node and never to the DAC's own ADC --
+    linking the DAC's ADC into the DAC's own sink would be a feedback loop,
+    not USB audio."""
+    nodes = list_nodes(runner=_runner(PW_CLI_OUTPUT))
+    match = find_node_by_prefix(GADGET_NODE_PREFIX, nodes)
+    assert match == "alsa_input.platform-1000480000.usb.stereo-fallback"
+    assert match != "alsa_input.platform-soc_107c000000_sound.stereo-fallback"
 
 
 def test_find_node_by_prefix_returns_none_when_absent():

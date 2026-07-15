@@ -9,17 +9,18 @@ Type=simple
 # misreporting the DAC's own playback to ACR as the USB gadget playing (see
 # state.py).
 #
-# PLACEHOLDER_PIN_DURING_BRINGUP below is a deliberately-invalid value --
-# it matches no real /proc/asound card, so this unit would fail every time
-# it runs until it is replaced. That is *why the package ships this unit
-# disabled* (see debian/rules, override_dh_installsystemduser): a unit that
-# is designed to fail until a manual bring-up step is done must not be
-# auto-enabled, or every install would carry a permanently-failed systemd
-# unit. Replace the placeholder with the gadget's real /proc/asound card
-# name/id (e.g. "gadget") once that is confirmed on hardware bring-up (see
-# linker.py's GADGET_NODE_PREFIX note and README.md), then run
-# `systemctl --user enable --now usbaudio-state.service` to activate it.
-ExecStart=/usr/bin/hifiberry-usbaudio state --card PLACEHOLDER_PIN_DURING_BRINGUP
+# "UAC2Gadget" is the real ALSA card id the UAC2 gadget driver creates --
+# confirmed on hardware bring-up via `/proc/asound/cards`
+# ("1 [UAC2Gadget     ]: UAC2_Gadget - UAC2_Gadget"). Unlike
+# linker.py's GADGET_NODE_PREFIX, this value is NOT tied to any particular
+# SoC/board: the gadget driver assigns this card id itself, independent of
+# which platform device the dwc2 controller sits behind, so it is expected
+# to be the same on Pi 4/CM4 as on CM5. It is matched by
+# monitor.discover_status_paths()'s card_filter as a substring of the card
+# identity string "<card_dir>:<id>" (e.g. "card1:UAC2Gadget"), built from
+# /proc/asound/<card_dir>/id -- not against the card_dir ("card1") itself --
+# so this value only works because it matches the id, not the directory.
+ExecStart=/usr/bin/hifiberry-usbaudio state --card UAC2Gadget
 
 [Install]
 WantedBy=default.target

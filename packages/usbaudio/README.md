@@ -53,20 +53,24 @@ units.
 - **`usbaudio-state.service`** (user unit) reports state to ACR. It is
   *not* surfaced as a WebUI player toggle -- `players.d/usbaudio.json`
   names only `usbaudio` -- so nothing else would ever enable it on its
-  behalf. Even so, it ships **disabled**: its `ExecStart` still carries a
-  deliberately-invalid `PLACEHOLDER_PIN_DURING_BRINGUP` card (see below),
-  and `state.run()` raises without a valid `--card`. Auto-enabling a unit
-  that is designed to fail until a manual bring-up step is done would mean
-  a permanently-failed systemd unit on every install/boot, which is worse
-  than the service simply not running yet. Bring-up must pin the real card
-  *and* run `systemctl --user enable --now usbaudio-state.service`.
+  behalf. It used to ship **disabled** because its `ExecStart` carried a
+  deliberately-invalid `PLACEHOLDER_PIN_DURING_BRINGUP` card, and
+  `state.run()` raises without a valid `--card`; auto-enabling it while
+  that placeholder was in place would have meant a permanently-failed
+  systemd unit on every install/boot. Hardware bring-up has since pinned
+  `--card UAC2Gadget` (see below) -- the ALSA card id the UAC2 gadget
+  driver assigns itself, independent of SoC, so it holds on every Pi that
+  supports gadget mode -- so this unit now ships **enabled**, the same as
+  `hifiberry-usbgadget.service`. When the gadget isn't bound (no card named
+  `UAC2Gadget` exists) it degrades safely: `discover_status_paths` simply
+  finds nothing to scope to and the service reports "stopped".
 - **`usbaudio.service`** (user unit) links the gadget's audio to the DAC. It
   is the WebUI-toggleable player, like every other HiFiBerryOS player
   (sendspin, librespot, shairport, ...): it ships **disabled**, and the
   user turns it on from *Services > Players*. Its systemd permissions are
   granted to config-server via `/etc/configserver/conf.d/usbaudio.json`.
 
-## `--card` must be pinned during hardware bring-up
+## `--card` and `GADGET_NODE_PREFIX`, pinned from hardware bring-up
 
 `hifiberry-usbaudio state` (and `monitor`) scope every `/proc/asound` read
 to a single card via `--card <name-or-id>`. This matters because the
@@ -83,21 +87,43 @@ silently reporting plausible-looking nonsense.
 The shipped `systemd/usbaudio-state.service` ships with
 
 ```
-ExecStart=/usr/bin/hifiberry-usbaudio state --card PLACEHOLDER_PIN_DURING_BRINGUP
+ExecStart=/usr/bin/hifiberry-usbaudio state --card UAC2Gadget
 ```
 
-`PLACEHOLDER_PIN_DURING_BRINGUP` is a deliberately-invalid value: it
-matches no real card, so `state.run()` raises immediately if the unit is
-started as shipped. Rather than let that crash-loop on every boot, the
-package ships `usbaudio-state.service` **disabled** (see above) -- it sits
-present but inert until bring-up is done. **Once the gadget's real
-`/proc/asound` card name/id is confirmed on hardware** (bind the gadget,
-then check `cat /proc/asound/card*/id`), replace the placeholder with that
-value in the unit file, then run
-`systemctl --user enable --now usbaudio-state.service` to activate state
-reporting. The same placeholder-until-confirmed treatment applies to
-`linker.py`'s `GADGET_NODE_PREFIX`, an unverified placeholder for the
-PipeWire node name until confirmed the same way.
+`UAC2Gadget` is the real ALSA card id the UAC2 gadget driver assigns
+itself, confirmed on a CM5 via `/proc/asound/cards`
+(`1 [UAC2Gadget     ]: UAC2_Gadget - UAC2_Gadget`). It is matched by
+`monitor.discover_status_paths`'s `card_filter` against the card's
+*identity* string (`"<card_dir>:<id>"`, built from
+`/proc/asound/<card_dir>/id`), not the bare directory name (`card1`) --
+so `UAC2Gadget` matches because it's the id, not because of anything
+about which card number the kernel happened to assign. Since the gadget
+driver assigns this id itself, independent of the SoC/platform device, it
+is expected to be the same value on every Pi that supports gadget mode
+(Pi 4/CM4, CM5, ...), not just the CM5 it was confirmed on -- unlike
+`GADGET_NODE_PREFIX` below. Because the value is valid,
+`usbaudio-state.service` now ships **enabled** (see above).
+
+`linker.py`'s `GADGET_NODE_PREFIX` is pinned the same way but does **not**
+carry the same board-portability guarantee. Measured on a CM5 with the
+gadget bound, `pw-cli ls Node` reported the gadget's capture node as
+`alsa_input.platform-1000480000.usb.stereo-fallback`, where
+`1000480000.usb` is the dwc2 USB controller's platform-device address on
+CM5/Pi 5 specifically -- Pi 4/CM4 exposes the same controller at
+`7e980000.usb` instead. `GADGET_NODE_PREFIX` is therefore pinned to
+`"alsa_input.platform-1000480000.usb."`, which is **CM5-only**: it will not
+match on Pi 4/CM4 (`connect()` will log "USB gadget audio node not found"
+there). A more generic prefix (e.g. just `"alsa_input.platform-"`) was
+considered and rejected -- it would also match
+`alsa_input.platform-soc_107c000000_sound.stereo-fallback`, the DAC's own
+ADC node, and linking that into the DAC's own sink is a feedback loop, not
+USB audio. `find_node_by_prefix` only does a plain `startswith` match, and
+the varying controller address sits in the middle of the node name, so a
+single prefix cannot be both specific enough to exclude the DAC's ADC and
+generic enough to cover every board. **Pi 4/CM4 gadget-mode bring-up is
+still open work**: either add board detection (e.g. read the bound UDC
+name from `/sys/class/udc`, as `gadget.find_udc()` already does, and build
+the prefix from that at runtime) or extend the match past a plain prefix.
 
 ## HiFiBerryOS integration files
 

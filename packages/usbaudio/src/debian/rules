@@ -18,15 +18,21 @@
 #    USB device mode was never enabled.
 #  - usbaudio-state.service (a *user* unit) reports state to ACR and, unlike
 #    usbaudio.service, is not surfaced as a WebUI player toggle (see
-#    players.d/usbaudio.json, which names only "usbaudio"). It would be
-#    tempting to auto-enable it for that reason, but its ExecStart still
-#    carries a deliberately-invalid PLACEHOLDER_PIN_DURING_BRINGUP card
-#    (see systemd/usbaudio-state.service and README.md) and state.run()
-#    raises without a valid --card. Auto-enabling it here would mean a
-#    permanently-failed user unit on every boot of every install until
-#    someone does hardware bring-up -- worse than the service simply not
-#    running yet. So it ships present but disabled; bring-up must pin the
-#    card AND run `systemctl --user enable --now usbaudio-state.service`.
+#    players.d/usbaudio.json, which names only "usbaudio"). It used to ship
+#    disabled because its ExecStart carried a deliberately-invalid
+#    PLACEHOLDER_PIN_DURING_BRINGUP card that made state.run() raise on
+#    every start. Hardware bring-up has now pinned --card to "UAC2Gadget",
+#    the real ALSA card id the UAC2 gadget driver creates (see
+#    systemd/usbaudio-state.service) -- that id is assigned by the gadget
+#    driver itself, not derived from the SoC, so it is expected to hold on
+#    every Pi that supports gadget mode, not just the CM5 it was confirmed
+#    on. With a valid --card there is no longer a reason to withhold this
+#    unit the way usbaudio.service is withheld (that one is a deliberate
+#    WebUI on/off toggle for a *player*; this one is a background state
+#    reporter with no such toggle), so it is now enabled like
+#    hifiberry-usbgadget.service. Like that unit, it degrades safely when
+#    there is no gadget: discover_status_paths() simply finds no
+#    "UAC2Gadget" card and gadget_stream_state() reports "stopped".
 #  - usbaudio.service (a *user* unit) is the WebUI-toggleable player, like
 #    every other HiFiBerryOS player (sendspin, librespot, shairport, ...):
 #    it ships disabled and the user turns it on from Services > Players.
@@ -34,5 +40,5 @@ override_dh_installsystemd:
 	dh_installsystemd hifiberry-usbgadget.service
 
 override_dh_installsystemduser:
-	dh_installsystemduser --no-enable usbaudio-state.service
+	dh_installsystemduser usbaudio-state.service
 	dh_installsystemduser --no-enable usbaudio.service
