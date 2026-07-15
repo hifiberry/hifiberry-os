@@ -6,6 +6,7 @@ Build-Depends: debhelper-compat (= 13),
                dh-sequence-python3,
                python3-all,
                python3-setuptools,
+               python3-pytest,
 Standards-Version: 4.1.4
 Homepage: https://www.hifiberry.com/
 
