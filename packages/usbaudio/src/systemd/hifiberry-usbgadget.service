@@ -1,0 +1,16 @@
+[Unit]
+Description=HiFiBerry USB Audio Gadget (UAC2)
+Before=pipewire.service
+DefaultDependencies=no
+After=sysinit.target
+ConditionPathExists=/sys/class/udc
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/sbin/modprobe libcomposite
+ExecStart=/usr/bin/hifiberry-usbgadget create
+ExecStop=/usr/bin/hifiberry-usbgadget remove
+
+[Install]
+WantedBy=multi-user.target
