@@ -22,6 +22,25 @@ This flag requires **hifiberry-configurator >= 2.13.20** (see
 `debian/control`). Without it, `/sys/class/udc` has no entries and
 `hifiberry-usbgadget.service` cleanly no-ops (see below) instead of failing.
 
+### CM5 IO board: leave the `USB_OTG` jumper unfitted
+
+The CM5 IO board has a `USB_OTG` jumper wired to the SoC's `OTG_ID` pin --
+a Raspberry Pi engineer confirms this wiring in [a forum
+post](https://forums.raspberrypi.com/viewtopic.php?t=380836), and says it
+selects host vs. device role.
+
+Measured on a CM5 Lite / CM5 IO board today: fitting the jumper is **not**
+required for gadget mode, and it actively breaks booting -- with it fitted
+the board did not boot correctly. With the jumper **removed**, gadget mode
+works fully end to end: the UDC reports `configured` at high-speed and the
+host (a Mac) enumerates `HiFiBerry USB Audio`.
+
+**Leave `USB_OTG` unfitted.** The exact boot failure mode with the jumper
+fitted was not characterised -- the likely mechanism is that grounding
+`OTG_ID` puts the module into rpiboot / USB-boot-wait before it falls
+through to local media, but this is an unconfirmed guess, not a measured
+root cause.
+
 ## Components
 
 | Module | Responsibility |
@@ -142,6 +161,74 @@ the prefix from that at runtime) or extend the match past a plain prefix.
 install, since config-server caches the `conf.d` systemd-permission
 drop-ins at startup and otherwise wouldn't know it may control `usbaudio`
 until its next restart.
+
+## Verified hardware configuration
+
+Confirmed working end to end on: CM5 Lite on a CM5 IO board, USB-C to the
+host computer, with the Pi **powered from that same USB-C** connection.
+`USB_OTG` jumper **not fitted** (see above).
+
+- `config-configtxt --enable-usb-gadget` + reboot results in
+  `/sys/class/udc/` containing `1000480000.usb`; `config.txt`'s `[cm5]`
+  section gets `dtoverlay=dwc2,dr_mode=peripheral`; `PSU_MAX_CURRENT=3000`
+  is applied to the bootloader EEPROM automatically as part of enabling the
+  gadget.
+- The gadget shows up as ALSA `card 1: UAC2Gadget [UAC2_Gadget]`, and
+  PipeWire exposes its capture node as
+  `alsa_input.platform-1000480000.usb.stereo-fallback` (see
+  `GADGET_NODE_PREFIX` above).
+- The host (Mac) sees **both** directions of the gadget -- an output
+  (`out=2`) and an input (`in=2`) -- at USB high-speed (480 Mb/s).
+- `hifiberry-usbaudio connect` links the gadget's `capture_FL/FR` straight
+  to the DAC sink's `alsa_output.platform-soc_107c000000_sound.stereo-fallback:playback_FL/FR`.
+
+## Troubleshooting: UDC reports `not attached`
+
+Symptom: `cat /sys/class/udc/1000480000.usb/state` reports `not attached`
+even though the gadget is bound (`function = hifiberry` in the
+configfs gadget) and the configuration otherwise looks correct.
+
+Working theory, not a confirmed root cause: dwc2 needs a fresh VBUS
+session. If the USB-C cable was already plugged in **before**
+`dr_mode=peripheral` took effect (i.e. before the reboot that enables
+gadget mode), the session dwc2 sees is stale and no enumeration happens.
+What was actually *measured* is that unplugging and re-plugging the
+USB-C cable took the state from `not attached` to `configured`, so
+re-establishing the physical connection (unplug/replug, or power-cycle it)
+is the practical fix, whatever the underlying mechanism turns out to be.
+
+Diagnostic to narrow down where the fault is:
+
+```sh
+cat /sys/class/udc/1000480000.usb/state       # not attached | configured
+sudo cat /sys/kernel/debug/usb/1000480000.usb/regdump | grep -E "GOTGCTL|DSTS|DCTL"
+```
+
+In `GOTGCTL`: bit 19 (`BSESVLD`) means VBUS/session is sensed; bit 16
+(`CONID_B`) means the ID pin reports a B-device (peripheral role). In
+`DSTS`: bit 0 (`SUSPSTS`) means the bus is suspended. If the session bits
+are set but `state` still reads `not attached`, the host isn't enumerating
+the device -- check the cable and re-plug it.
+
+## Known issues
+
+- **Pi 4/CM4 gadget-mode bring-up is still open work** -- see the
+  `GADGET_NODE_PREFIX` discussion above; the prefix is currently pinned to
+  the CM5's dwc2 controller address and won't match on Pi 4/CM4.
+- **Full-Speed isochronous descriptors are malformed for 192 kHz.** The
+  kernel warns at gadget bind:
+
+  ```
+  configfs-gadget.hifiberry gadget.0: FS Playback: Req. wMaxPacketSize 1158 at bInterval 1 > max ISOC 1023, may drop data!
+  ```
+
+  Our 192 kHz advertisement (192000 x 2ch x 3 bytes = 1152 bytes/frame)
+  exceeds the 1023-byte Full-Speed isochronous packet limit. This is
+  harmless in the verified configuration above, since High Speed is what
+  actually negotiates there, but the Full-Speed descriptors themselves are
+  malformed -- a host that falls back to Full Speed would drop audio. Needs
+  fixing (e.g. capping the FS-advertised sample rate/bit depth so the
+  packet size fits within 1023 bytes).
 
 ## Manual usage
 
