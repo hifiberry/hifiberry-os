@@ -21,6 +21,7 @@ setup(
         ('/usr/lib/systemd/system', ['systemd/hifiberry-usbgadget.service']),
         ('/etc/hifiberry/players.d', ['players.d/usbaudio.json']),
         ('/etc/hifiberry/players.d/icons', ['players.d/icons/usbaudio.svg']),
+        ('/etc/configserver/conf.d', ['data/etc/configserver/conf.d/usbaudio.json']),
     ],
     entry_points={
         "console_scripts": [
