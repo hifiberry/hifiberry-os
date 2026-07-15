@@ -18,7 +18,7 @@ sudo config-configtxt --enable-usb-gadget
 sudo reboot
 ```
 
-This flag requires **hifiberry-configurator >= 2.13.19** (see
+This flag requires **hifiberry-configurator >= 2.13.20** (see
 `debian/control`). Without it, `/sys/class/udc` has no entries and
 `hifiberry-usbgadget.service` cleanly no-ops (see below) instead of failing.
 
