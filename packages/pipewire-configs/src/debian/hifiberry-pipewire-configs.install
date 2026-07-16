@@ -2,3 +2,5 @@ etc/pipewire/pipewire.conf.d/99-hifiberry-headless.conf
 etc/xdg/wireplumber/wireplumber.conf.d/90-default-volume.conf
 etc/xdg/wireplumber/wireplumber.conf.d/91-hide-midi-ui.conf
 etc/xdg/wireplumber/wireplumber.conf.d/99-hifiberry-bluetooth.conf
+etc/pipewire/pipewire.conf.d/10-hifiberry-rates.conf
+etc/xdg/wireplumber/wireplumber.conf.d/98-hifiberry-digi-no-capture.conf

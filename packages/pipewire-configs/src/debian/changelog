@@ -1,3 +1,21 @@
+hifiberry-pipewire-configs (1.0.10) stable; urgency=medium
+
+  * Add 98-hifiberry-digi-no-capture.conf: disable the S/PDIF capture node on
+    HiFiBerry Digi cards (snd_rpi_hifiberry_digi / WM8804). The Digi's receiver
+    and transmitter share one clock domain, so exposing the input to PipeWire
+    lets it open the S/PDIF RX and slave the card clock to the (absent) input,
+    breaking or locking playback (e.g. stuck at 192 kHz). Digi is an output
+    card; its capture must not be connected to PipeWire.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 16 Jul 2026 12:00:00 +0200
+
+hifiberry-pipewire-configs (1.0.9) stable; urgency=medium
+
+  * Add 10-hifiberry-rates.conf: allow 44.1-192kHz so the graph follows the
+    source rate instead of resampling everything to 48kHz
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 15 Jul 2026 10:00:00 +0200
+
 hifiberry-pipewire-configs (1.0.8) stable; urgency=medium
 
   * Depend on hifiberry-input-processor (renamed from ladspa-riaa)
