@@ -2,6 +2,8 @@
 
 All backend services are reverse-proxied through **nginx on port 80**. The WebUI and all API calls go through this single entry point. No direct access to backend ports is needed from the browser.
 
+> Access to these APIs is gated by an authentication/authorization layer. See the [Security Model](security-model.md) for how requests are classified (`ok` vs `risky`) and when a password is required.
+
 ## API Routing Overview
 
 | Frontend Path | Backend | Port | Description |
