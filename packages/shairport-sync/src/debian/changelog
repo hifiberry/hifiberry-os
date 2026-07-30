@@ -1,3 +1,26 @@
+hifiberry-shairport (1:5.2.1.1) stable; urgency=medium
+
+  * Update Shairport Sync to upstream 5.2.1 (was 5.1). Notable for HiFiBerryOS:
+    - Metadata: upstream restored the "classic" metadata feature bits
+      (artwork/progress/text) as the default. 5.1 advertised only the new
+      plist-based metadata (AirPlay feature bit 50), which audiocontrol's
+      shairport listener (classic ssnc/core packets on UDP 5555) does not
+      parse. Keep diagnostics.get_plist_metadata unset/"no".
+    - Fixed a hang when an unfixable error occurs: the alsa backend mutex is
+      now released, so shairport-sync exits and systemd can restart it instead
+      of the unit hanging.
+    - New exit handler for clean shutdown (normal, fatal-error and D-Bus/MPRIS
+      quit paths).
+    - 5.2.1 additionally drops an obsolete log_to_syslog() reference that broke
+      --with-libdaemon builds (not used here).
+  * The log_output_to setting and --log-to-syslog option are now obsolete
+    upstream; neither is used by our config or start-shairport.
+  * NQPTP stays at 1.2.6: shairport-sync 5.2.1 still requires shm structures
+    version 10, so 1.2.7/1.2.8 (systemd unit path + man page only) add nothing
+    for this package.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 30 Jul 2026 10:00:00 +0000
+
 hifiberry-shairport (1:5.1.0.2) stable; urgency=medium
 
   * postinst: generate a D-Bus own-policy for the media-player user from
