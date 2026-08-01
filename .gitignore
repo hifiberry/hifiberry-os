@@ -62,3 +62,14 @@ packages/sendspin/sendspin
 # Superpowers brainstorm specs / plans (local only)
 docs/superpowers/
 packages/hifiberry-auth/hifiberry-auth
+
+# Upstream source checkouts pulled in by build.sh
+packages/analog-recognition/analog-recognition
+
+# Build logs
+build-*.log
+packages/*/build-*.log
+
+# Editor / tooling, workstation specific
+.vscode/settings.json
+.mcp.json
