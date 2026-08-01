@@ -1,0 +1,24 @@
+[submodule "packages/bluetooth-service/hbos-bluetooth"]
+	path = packages/bluetooth-service/hbos-bluetooth
+	url = https://github.com/hifiberry/hbos-bluetooth.git
+[submodule "packages/licman/licman"]
+	path = packages/licman/licman
+	url = https://github.com/hifiberry/licman.git
+[submodule "packages/nowplaying-sdl/nowplaying-sdl"]
+	path = packages/nowplaying-sdl/nowplaying-sdl
+	url = https://github.com/hifiberry/nowplaying-sdl.git
+[submodule "packages/pw-api/pipewire-api"]
+	path = packages/pw-api/pipewire-api
+	url = https://github.com/hifiberry/pipewire-api.git
+[submodule "packages/riaa/riaa"]
+	path = packages/riaa/riaa
+	url = https://github.com/hifiberry/riaa.git
+[submodule "packages/songrec/songrec"]
+	path = packages/songrec/songrec
+	url = https://github.com/marin-m/SongRec.git
+[submodule "packages/speakereq/speakereq"]
+	path = packages/speakereq/speakereq
+	url = https://github.com/hifiberry/speakereq.git
+[submodule "packages/vu-meter/src"]
+	path = packages/vu-meter/src
+	url = https://github.com/hifiberry/vu-meter.git
