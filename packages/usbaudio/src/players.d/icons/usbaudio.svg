@@ -1,0 +1,9 @@
+<svg class="css-icon" viewBox="-1 -1 23 23" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M10.5,2l0,10.17"/>
+  <path d="M7.5,5l3,-3l3,3"/>
+  <circle cx="10.5" cy="15.5" r="2.3"/>
+  <path d="M8.4,17.1l-2.4,2.4"/>
+  <circle cx="4.5" cy="20" r="1.3"/>
+  <path d="M12.6,17.1l2.4,2.4"/>
+  <circle cx="16.5" cy="20" r="1.3"/>
+</svg>

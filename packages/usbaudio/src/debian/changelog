@@ -1,0 +1,5 @@
+hifiberry-usbaudio (0.1.0) stable; urgency=medium
+
+  * Initial release: UAC2 USB audio gadget with PipeWire routing to the DAC
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 15 Jul 2026 10:00:00 +0200

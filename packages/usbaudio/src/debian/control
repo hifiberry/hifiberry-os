@@ -1,0 +1,20 @@
+Source: hifiberry-usbaudio
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-sequence-python3,
+               python3-all,
+               python3-setuptools,
+               python3-pytest,
+Standards-Version: 4.1.4
+Homepage: https://www.hifiberry.com/
+
+Package: hifiberry-usbaudio
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire, kmod, hifiberry-configurator (>= 2.13.20)
+Description: HiFiBerry USB audio gadget service
+ Presents the HiFiBerry device to a host computer as a class-compliant UAC2
+ USB sound card, and routes the received audio to the HiFiBerry DAC using
+ PipeWire. Requires USB device mode, which is enabled with
+ 'config-configtxt --enable-usb-gadget'.

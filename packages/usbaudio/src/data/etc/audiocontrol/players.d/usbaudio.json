@@ -1,0 +1,9 @@
+{
+    "generic": {
+        "name": "usbaudio",
+        "enable": true,
+        "initial_state": "stopped",
+        "supports_api_events": true,
+        "capabilities": ["play", "stop"]
+    }
+}

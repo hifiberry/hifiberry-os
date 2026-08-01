@@ -1,0 +1,26 @@
+[Unit]
+Description=HiFiBerry USB Audio Gadget State Reporter (ACR)
+After=pipewire.service
+
+[Service]
+Type=simple
+# --card is REQUIRED: hifiberry_usbaudio.state.run() refuses to start
+# without it (raises ValueError), precisely to stop this unit from silently
+# misreporting the DAC's own playback to ACR as the USB gadget playing (see
+# state.py).
+#
+# "UAC2Gadget" is the real ALSA card id the UAC2 gadget driver creates --
+# confirmed on hardware bring-up via `/proc/asound/cards`
+# ("1 [UAC2Gadget     ]: UAC2_Gadget - UAC2_Gadget"). Unlike
+# linker.py's GADGET_NODE_PREFIX, this value is NOT tied to any particular
+# SoC/board: the gadget driver assigns this card id itself, independent of
+# which platform device the dwc2 controller sits behind, so it is expected
+# to be the same on Pi 4/CM4 as on CM5. It is matched by
+# monitor.discover_status_paths()'s card_filter as a substring of the card
+# identity string "<card_dir>:<id>" (e.g. "card1:UAC2Gadget"), built from
+# /proc/asound/<card_dir>/id -- not against the card_dir ("card1") itself --
+# so this value only works because it matches the id, not the directory.
+ExecStart=/usr/bin/hifiberry-usbaudio state --card UAC2Gadget
+
+[Install]
+WantedBy=default.target
