@@ -36,6 +36,16 @@ ERRORS: List[str] = []
 WARNINGS: List[str] = []
 NOTES: List[str] = []
 
+# Submodules living in private repositories. Neither CI nor an outside clone
+# can reach them, so an unreachable url is a property of the setup rather than
+# a defect and is reported as a warning. It does mean that
+# `git submodule update --init` fails for anyone outside the organisation,
+# even though hifiberry-os itself is public.
+PRIVATE_SUBMODULES = {
+    "packages/licman/licman",
+    "packages/speakereq/speakereq",
+}
+
 
 def git(root: str, *args: str) -> str:
     r = subprocess.run(["git", "-C", root, *args], capture_output=True, text=True)
@@ -141,7 +151,13 @@ def check_structure(root: str, online: bool) -> None:
             ERRORS.append(f"{path}: .gitmodules entry has no url")
         elif online:
             if subprocess.run(["git", "ls-remote", url, "HEAD"], capture_output=True).returncode != 0:
-                ERRORS.append(f"{path}: submodule url is unreachable ({url})")
+                if path in PRIVATE_SUBMODULES:
+                    WARNINGS.append(
+                        f"{path}: private repository, not reachable without credentials "
+                        f"({url}) - `git submodule update --init` fails for outside clones"
+                    )
+                else:
+                    ERRORS.append(f"{path}: submodule url is unreachable ({url})")
             else:
                 probe = subprocess.run(
                     ["git", "-C", root, "fetch", "-q", "--depth", "1", url, commit],
