@@ -164,8 +164,16 @@ def check_structure(root: str, online: bool) -> None:
                     capture_output=True,
                 )
                 if probe.returncode != 0:
-                    ERRORS.append(
-                        f"{path}: recorded commit {commit[:8]} cannot be fetched from {url}"
+                    # Deliberately a warning, not an error. A refused
+                    # fetch-by-sha does not prove the commit is gone: servers
+                    # may reject requests for commits that no branch points at,
+                    # and third-party hosts often refuse them anonymously while
+                    # serving them fine to an authenticated client. Concluding
+                    # "the commit no longer exists" from this has already been
+                    # wrong twice.
+                    WARNINGS.append(
+                        f"{path}: could not verify recorded commit {commit[:8]} against "
+                        f"{url} from here - check it before assuming it is gone"
                     )
 
     for path in sorted(by_path):
