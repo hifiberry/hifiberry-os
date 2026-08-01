@@ -24,7 +24,7 @@ python3 scripts/git-repo-sync.py --root /home/matuschd/hifiberry-os --include-di
 | `packages/python-pyedbglib/pyedbglib` | https://github.com/microchip-pic-avr-tools/pyedbglib | `main` | Third-party: Microchip debug library |
 | `packages/python-usagecollector/usagecollector` | https://github.com/hifiberry/usagecollector | `master` | Usage/telemetry collector |
 | `packages/raat/src/raat` | https://github.com/hifiberry/raat | `master` | RAAT (Roon) player |
-| `packages/riaa/riaa` | https://github.com/hifiberry/riaa | `main` | RIAA phono preamp service |
+| `packages/input-processor/input-processor` | https://github.com/hifiberry/input-processor | `main` | Analog input processor, optional RIAA phono EQ |
 | `packages/roomeq/roomeq` | https://github.com/hifiberry/roomeq | `main` | Room equalization |
 | `packages/songrec/songrec` | https://github.com/marin-m/SongRec | — | Third-party: song recognition (pinned release, DETACHED HEAD) |
 | `packages/speakereq/speakereq` | https://github.com/hifiberry/speakereq | `main` | Speaker equalization |

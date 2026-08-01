@@ -10,9 +10,9 @@
 [submodule "packages/pw-api/pipewire-api"]
 	path = packages/pw-api/pipewire-api
 	url = https://github.com/hifiberry/pipewire-api.git
-[submodule "packages/riaa/riaa"]
-	path = packages/riaa/riaa
-	url = https://github.com/hifiberry/riaa.git
+[submodule "packages/input-processor/input-processor"]
+	path = packages/input-processor/input-processor
+	url = https://github.com/hifiberry/input-processor.git
 [submodule "packages/songrec/songrec"]
 	path = packages/songrec/songrec
 	url = https://github.com/marin-m/SongRec.git
