@@ -45,7 +45,13 @@ def load_sibling(name: str, filename: str):
     if spec is None or spec.loader is None:
         return None
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    try:
+        spec.loader.exec_module(module)
+    except OSError:
+        # Copied somewhere without its sibling. Losing the clone-target map
+        # only means sources are looked for in the default places, which beats
+        # a traceback.
+        return None
     return module
 
 
@@ -151,6 +157,13 @@ def main() -> int:
         source_version = history[0] if history else "-"
         names = binary_names(src) if src else []
 
+        # A package can declare that it is deliberately not published, by
+        # dropping a .unpublished file next to its build.sh saying why. The
+        # marker lives with the package rather than in a list in here, so that
+        # removing the package removes the exemption with it - a central list
+        # outlives what it describes and starts lying.
+        unpublished_on_purpose = os.path.isfile(os.path.join(pkgdir, pkg, ".unpublished"))
+
         built: Dict[str, str] = {}
         for deb in glob.glob(os.path.join(pkgdir, pkg, "*.deb")):
             parsed = deb_version(deb)
@@ -163,8 +176,11 @@ def main() -> int:
             p = max(available, key=cmp_to_key(compare)) if available else "-"
             note = ""
             if b != "-" and p == "-":
-                note = "built but never published"
-                findings.append(f"{name}: built {b} is not in the repository")
+                if unpublished_on_purpose:
+                    note = "unpublished on purpose"
+                else:
+                    note = "built but never published"
+                    findings.append(f"{name}: built {b} is not in the repository")
             elif b != "-" and p != "-" and compare(b, p) > 0:
                 note = "built newer than published"
                 findings.append(f"{name}: built {b}, published {p}")
