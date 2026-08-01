@@ -1,0 +1,22 @@
+#!/bin/sh
+# Structural checks for packages/ before anything leaves the machine.
+#
+# Enable once per clone:
+#   git config core.hooksPath .githooks
+#
+# Skip a single push (and please fix it afterwards):
+#   SKIP_PACKAGE_CHECK=1 git push
+
+[ -n "$SKIP_PACKAGE_CHECK" ] && exit 0
+
+root=$(git rev-parse --show-toplevel) || exit 0
+[ -f "$root/scripts/check-packages.py" ] || exit 0
+
+# No network here: a push should not wait on eight git ls-remote round trips.
+# CI runs the same script with --online.
+if ! python3 "$root/scripts/check-packages.py" --root "$root" --skip-versions; then
+    echo
+    echo "pre-push: packages/ consistency check failed - push aborted."
+    echo "Run scripts/check-packages.py for details, or SKIP_PACKAGE_CHECK=1 git push."
+    exit 1
+fi

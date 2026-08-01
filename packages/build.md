@@ -15,6 +15,27 @@ This document provides instructions for building HiFiBerry OS packages locally.
 - `git` for source code management
 - Build tools: `build-essential`, `devscripts`, `debhelper`
 
+## Consistency checks
+
+Packages take their sources either as a git submodule or as a clone made by
+their `build.sh`. `scripts/check-packages.py` verifies that this stays
+coherent — that no path is both, that every submodule is resolvable, that
+clone targets are gitignored, and that `debian/changelog` agrees with
+`Cargo.toml` / `setup.py` / `package.json` / `_version.py`.
+
+```sh
+scripts/check-packages.py            # everything, needs the sources checked out
+scripts/check-packages.py --online   # also verify submodule urls and commits
+scripts/check-packages.py --skip-versions   # structure only, what CI runs
+```
+
+Enable the pre-push hook once per clone so the structural checks run before
+anything leaves the machine:
+
+```sh
+git config core.hooksPath .githooks
+```
+
 ## Pre-Build System Configuration
 
 ### 1. Increase Swap Space
