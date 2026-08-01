@@ -83,3 +83,6 @@ packages/pw-api/pipewire-api
 packages/songrec/songrec
 packages/speakereq/speakereq
 packages/vu-meter/src
+
+# Python bytecode from the helper scripts
+__pycache__/
