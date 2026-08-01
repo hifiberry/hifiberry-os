@@ -5,6 +5,19 @@ set -e
 _CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
 if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
 
+# Define variables
+PACKAGE="src"
+REPO_URL="https://github.com/hifiberry/vu-meter.git"
+
+# Step 1: Clone or update the source repository
+if [[ -d "$PACKAGE/.git" ]]; then
+    echo "Updating vu-meter source from $REPO_URL..."
+    git -C "$PACKAGE" pull
+else
+    echo "Cloning vu-meter source from $REPO_URL..."
+    git clone "$REPO_URL" "$PACKAGE"
+fi
+
 # Building package with sbuild
 echo "Building hifiberry-vu-meter package..."
 

@@ -1,6 +1,0 @@
-[submodule "packages/licman/licman"]
-	path = packages/licman/licman
-	url = https://github.com/hifiberry/licman.git
-[submodule "packages/vu-meter/src"]
-	path = packages/vu-meter/src
-	url = https://github.com/hifiberry/vu-meter.git

@@ -82,3 +82,5 @@ packages/nowplaying-sdl/nowplaying-sdl
 packages/pw-api/pipewire-api
 packages/songrec/songrec
 packages/speakereq/speakereq
+packages/licman/licman
+packages/vu-meter/src
