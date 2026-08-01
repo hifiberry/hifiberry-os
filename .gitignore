@@ -73,3 +73,12 @@ packages/*/build-*.log
 # Editor / tooling, workstation specific
 .vscode/settings.json
 .mcp.json
+
+# Source checkouts made by each package's build.sh
+packages/autorec/autorec
+packages/bluetooth-service/hbos-bluetooth
+packages/input-processor/input-processor
+packages/nowplaying-sdl/nowplaying-sdl
+packages/pw-api/pipewire-api
+packages/songrec/songrec
+packages/speakereq/speakereq

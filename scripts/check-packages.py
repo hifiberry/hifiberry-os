@@ -53,13 +53,20 @@ def git(root: str, *args: str) -> str:
 
 
 def gitlinks(root: str) -> Dict[str, str]:
-    """path -> recorded commit, for every submodule in HEAD."""
+    """path -> recorded commit, for every submodule in the index.
+
+    The index rather than HEAD, so that this compares against the same state
+    as the working-tree .gitmodules. Reading gitlinks from HEAD while reading
+    .gitmodules from disk reports staged-but-uncommitted work as broken.
+    With a clean tree the index equals HEAD, so a pre-push hook sees exactly
+    what is about to be pushed either way.
+    """
     out = {}
-    for line in git(root, "ls-tree", "-r", "HEAD").splitlines():
+    for line in git(root, "ls-files", "--stage").splitlines():
         meta, _, path = line.partition("\t")
         parts = meta.split()
-        if len(parts) == 3 and parts[1] == "commit":
-            out[path] = parts[2]
+        if len(parts) == 3 and parts[0] == "160000":
+            out[path] = parts[1]
     return out
 
 
