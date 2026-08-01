@@ -61,3 +61,4 @@ packages/sendspin/sendspin
 
 # Superpowers brainstorm specs / plans (local only)
 docs/superpowers/
+packages/hifiberry-auth/hifiberry-auth
