@@ -158,11 +158,11 @@ def main() -> int:
         names = binary_names(src) if src else []
 
         # A package can declare that it is deliberately not published, by
-        # dropping a .unpublished file next to its build.sh saying why. The
+        # dropping an UNPUBLISHED file next to its build.sh saying why. The
         # marker lives with the package rather than in a list in here, so that
         # removing the package removes the exemption with it - a central list
         # outlives what it describes and starts lying.
-        unpublished_on_purpose = os.path.isfile(os.path.join(pkgdir, pkg, ".unpublished"))
+        unpublished_on_purpose = os.path.isfile(os.path.join(pkgdir, pkg, "UNPUBLISHED"))
 
         built: Dict[str, str] = {}
         for deb in glob.glob(os.path.join(pkgdir, pkg, "*.deb")):

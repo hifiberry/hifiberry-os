@@ -1,5 +1,5 @@
 Work in progress. Built here so it does not rot, but deliberately kept out of
 the package repository - `apt install hifiberry-usbaudio` is expected to fail.
 
-Remove this file when it should ship; check-release.py will then start
+Delete this file when it should ship; check-release.py will then start
 reporting the package as built but not published until it is.
