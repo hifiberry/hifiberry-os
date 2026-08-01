@@ -4,6 +4,43 @@
 PACKAGE_DIR="$HOME/packages/trixie"
 APTLY_REPO="hbos-trixie"
 
+# Gate before anything is staged for publication.
+#
+# Set SKIP_PUBLISH_CHECKS=1 to bypass, and expect to regret it: every package
+# problem we have had came from publishing artefacts the repository did not
+# describe.
+#
+# Note there is deliberately no check-release.py call here. "Built but not
+# published" is the normal state right before running this script - that is
+# what it is for - so gating on it would abort every single time. Run
+# check-release.py after publishing, to confirm the result.
+if [ -z "$SKIP_PUBLISH_CHECKS" ]; then
+    ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+
+    if [ -n "$ROOT" ] && [ -f "$ROOT/scripts/check-packages.py" ]; then
+        echo "Checking packages/ consistency..."
+        if ! python3 "$ROOT/scripts/check-packages.py" --root "$ROOT" --skip-versions; then
+            echo "ERROR: packages/ is inconsistent - refusing to publish." >&2
+            echo "  Fix it, or SKIP_PUBLISH_CHECKS=1 ./copy-packages" >&2
+            exit 1
+        fi
+    fi
+
+    # Publishing from a tree whose state was never committed is how the build
+    # host became the only place that knew what shipped.
+    if [ -n "$ROOT" ]; then
+        dirty=$(git -C "$ROOT" status --porcelain --untracked-files=no)
+        ahead=$(git -C "$ROOT" rev-list --count @{upstream}..HEAD 2>/dev/null || echo 0)
+        if [ -n "$dirty" ] || [ "$ahead" != "0" ]; then
+            echo "ERROR: hifiberry-os is not in sync with its remote." >&2
+            [ -n "$dirty" ] && echo "  uncommitted changes:" >&2 && echo "$dirty" | sed 's/^/    /' >&2
+            [ "$ahead" != "0" ] && echo "  $ahead commit(s) not pushed" >&2
+            echo "  Commit and push first, or SKIP_PUBLISH_CHECKS=1 ./copy-packages" >&2
+            exit 1
+        fi
+    fi
+fi
+
 # Remove debug symbol packages
 rm -f */*dbgsym*.deb
 
