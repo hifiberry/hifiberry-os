@@ -36,6 +36,21 @@ anything leaves the machine:
 git config core.hooksPath .githooks
 ```
 
+`scripts/check-release.py` compares the three records of a package version
+that are supposed to agree: `debian/changelog` in the sources, the built
+`.deb`, and what the apt repository serves. Run it on the build host, since
+the built packages only exist there.
+
+```sh
+scripts/check-release.py             # report
+scripts/check-release.py --strict    # exit 1 on any finding
+scripts/check-release.py --offline   # sources vs built only
+```
+
+It does not detect two artefacts that carry the same version but different
+content — that is what the `secrets.txt` guard in `packages/acr/build.sh` is
+for.
+
 ## Pre-Build System Configuration
 
 ### 1. Increase Swap Space
