@@ -76,8 +76,17 @@ if [[ -d "$SOURCE_PACKAGE/.git" ]]; then
         if git stash pop; then
             echo "Successfully restored local changes"
         else
-            echo "Warning: Conflicts detected when restoring changes"
-            echo "Please resolve conflicts manually or use --clean to start fresh"
+            echo "ERROR: restoring the stashed local changes hit a conflict in $(pwd)." >&2
+            echo "The working tree now has conflict markers and the stash was kept." >&2
+            echo "Refusing to build: a conflicted tree would package broken sources." >&2
+            echo "" >&2
+            echo "  git -C $(pwd) status          # see the conflicted files" >&2
+            echo "  git -C $(pwd) stash list      # your changes are still here" >&2
+            echo "" >&2
+            echo "To build from upstream and keep the stash for later:" >&2
+            echo "  git -C $(pwd) checkout HEAD -- <conflicted file>" >&2
+            echo "Or discard the working copy entirely: ./build.sh --clean" >&2
+            exit 1
         fi
     fi
     # Extract version from changelog now that we're in the correct directory
