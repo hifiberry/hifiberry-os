@@ -36,15 +36,13 @@ ERRORS: List[str] = []
 WARNINGS: List[str] = []
 NOTES: List[str] = []
 
-# Submodules living in private repositories. Neither CI nor an outside clone
-# can reach them, so an unreachable url is a property of the setup rather than
-# a defect and is reported as a warning. It does mean that
-# `git submodule update --init` fails for anyone outside the organisation,
-# even though hifiberry-os itself is public.
-PRIVATE_SUBMODULES = {
-    "packages/licman/licman",
-    "packages/speakereq/speakereq",
-}
+# There are no submodules left; every package clones its sources from its
+# build.sh. The submodule checks below stay as a guard, so that adding one
+# back has to be a deliberate act rather than something that quietly works
+# on one machine. An unreachable url is an error on purpose: a submodule in a
+# private repository would break `git submodule update --init` for every clone
+# of this public repository, which is exactly why licman and speakereq stopped
+# being submodules.
 
 
 def git(root: str, *args: str) -> str:
@@ -158,13 +156,10 @@ def check_structure(root: str, online: bool) -> None:
             ERRORS.append(f"{path}: .gitmodules entry has no url")
         elif online:
             if subprocess.run(["git", "ls-remote", url, "HEAD"], capture_output=True).returncode != 0:
-                if path in PRIVATE_SUBMODULES:
-                    WARNINGS.append(
-                        f"{path}: private repository, not reachable without credentials "
-                        f"({url}) - `git submodule update --init` fails for outside clones"
-                    )
-                else:
-                    ERRORS.append(f"{path}: submodule url is unreachable ({url})")
+                ERRORS.append(
+                    f"{path}: submodule url is unreachable ({url}) - if the repository is "
+                    f"private, `git submodule update --init` breaks for every outside clone"
+                )
             else:
                 probe = subprocess.run(
                     ["git", "-C", root, "fetch", "-q", "--depth", "1", url, commit],
