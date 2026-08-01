@@ -94,19 +94,32 @@ else
     cd ..
 fi
 
-# Create secrets.txt if it doesn't exist
+# Refresh secrets.txt from $HOME/secrets.txt.
+#
+# This used to only run when secrets.txt was absent. A placeholder copy made
+# from secrets.txt.sample (when $HOME/secrets.txt did not exist yet) therefore
+# survived every later build: the checkout is only git-pulled, and secrets.txt
+# is untracked. Builds then silently baked "your_lastfm_api_key_here" and
+# "your-spotify-proxy-secret-here" into the binary, which the daemon happily
+# sent to Last.fm ("Invalid API key") and to the Spotify OAuth proxy (401 ->
+# 500 on /spotify/create_session). $HOME/secrets.txt now always wins.
 cd "$SOURCE_PACKAGE"
-if [ ! -f "secrets.txt" ]; then
-  if [ -f "$HOME/secrets.txt" ]; then
-    echo "Copying secrets.txt from $HOME/secrets.txt..."
-    cp "$HOME/secrets.txt" secrets.txt
-  else
-    echo "Creating secrets.txt from secrets.txt.sample..."
-    cp secrets.txt.sample secrets.txt
-    echo "Please edit secrets.txt with your credentials."
-  fi
-else
-    echo "secrets.txt already exists."
+if [ -f "$HOME/secrets.txt" ]; then
+  echo "Copying secrets.txt from $HOME/secrets.txt..."
+  cp "$HOME/secrets.txt" secrets.txt
+elif [ ! -f "secrets.txt" ]; then
+  echo "Creating secrets.txt from secrets.txt.sample..."
+  cp secrets.txt.sample secrets.txt
+  echo "Please edit secrets.txt with your credentials."
+fi
+
+# Never ship a build with sample credentials in it.
+if cmp -s secrets.txt secrets.txt.sample; then
+  echo "ERROR: secrets.txt is identical to secrets.txt.sample."
+  echo "  The build would bake placeholder credentials into the binary and"
+  echo "  Last.fm, Spotify and TheAudioDB would all fail at runtime."
+  echo "  Put the real credentials in $HOME/secrets.txt and re-run."
+  exit 1
 fi
 cd ..
 
