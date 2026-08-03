@@ -120,6 +120,10 @@ override_dh_auto_install:
 	cp configure-mpd.1 debian/hifiberry-mpd/usr/share/man/man1/
 	cp start-mpd.1 debian/hifiberry-mpd/usr/share/man/man1/
 	cp mpd-set-permissions.1 debian/hifiberry-mpd/usr/share/man/man1/
-	
+
+	# Install the ACR player definition
+	mkdir -p debian/hifiberry-mpd/etc/audiocontrol/players.d
+	cp players.d/mpd.json debian/hifiberry-mpd/etc/audiocontrol/players.d/
+
 override_dh_auto_test:
 	# Skip tests - requires network access and specific hardware

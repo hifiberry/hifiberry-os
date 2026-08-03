@@ -1,0 +1,19 @@
+{
+    "mpd": {
+        "enable": true,
+        "host": "localhost",
+        "port": 6600,
+        "load_on_startup": true,
+        "enable_library": true,
+        "extract_coverart": true,
+        "artist_separator": [
+            ",",
+            "feat. "
+        ],
+        "enhance_metadata": true,
+        "_comment": "max_reconnect_attempts: Maximum number of connection attempts before giving up (default: 5)",
+        "max_reconnect_attempts": 5,
+        "library_read_only": true,
+        "_library_read_only_comment": "Set to true to disable album/track deletion via the API. Default is true for safety; set to false only if audiocontrol has write access to the music directory."
+    }
+}

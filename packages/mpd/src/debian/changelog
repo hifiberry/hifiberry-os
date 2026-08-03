@@ -1,3 +1,12 @@
+hifiberry-mpd (0.24.13.2) stable; urgency=medium
+
+  * Ship the ACR player definition as /etc/audiocontrol/players.d/mpd.json.
+    The definition used to live in audiocontrol.json, which meant the package
+    that provides mpd and the file that defines the player were owned by
+    different packages.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 14:13:05 +0200
+
 hifiberry-mpd (0.24.13.1) stable; urgency=high
 
   * Updated to MPD v0.24.13 from upstream
