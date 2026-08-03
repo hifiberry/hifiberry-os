@@ -118,6 +118,10 @@ override_dh_auto_install:
 	cp debian/start-librespot.1 debian/hifiberry-librespot/usr/share/man/man1/
 	cp debian/spotify-event.1 debian/hifiberry-librespot/usr/share/man/man1/
 
+	# Install the ACR player definition
+	mkdir -p debian/hifiberry-librespot/etc/audiocontrol/players.d
+	cp players.d/librespot.json debian/hifiberry-librespot/etc/audiocontrol/players.d/
+
 override_dh_auto_test:
 	# Skip tests - requires network access and specific hardware
 

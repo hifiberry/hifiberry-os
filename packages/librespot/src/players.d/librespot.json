@@ -1,0 +1,7 @@
+{
+    "librespot": {
+        "enable": true,
+        "process_name": "/usr/bin/librespot",
+        "on_pause_event": "systemd"
+    }
+}

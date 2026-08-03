@@ -1,3 +1,15 @@
+hifiberry-librespot (0.8.0.7) stable; urgency=medium
+
+  * Ship the ACR player definition as /etc/audiocontrol/players.d/librespot.json.
+    The definition used to live in audiocontrol.json, which meant the package
+    that provides librespot and the file that defines it were owned by
+    different packages.
+  * postinst: stop writing the players.d drop-in at configure time now that
+    it ships as a package conffile; dpkg owns it and preserves local edits
+    across upgrades instead of it being silently overwritten every run.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 11:00:22 +0000
+
 hifiberry-librespot (0.8.0.6) stable; urgency=medium
 
   * postinst: restart config-server when it is running so a post-boot

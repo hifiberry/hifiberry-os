@@ -50,23 +50,14 @@ CONFEOF
 
         # Register with ACR
         if [ -d /etc/audiocontrol ]; then
-            ACR_PLAYERS_D="/etc/audiocontrol/players.d"
-            mkdir -p "$ACR_PLAYERS_D"
-            cat > "$ACR_PLAYERS_D/librespot.json" <<'ACREOF'
-{
-    "librespot": {
-        "name": "librespot",
-        "enable": true,
-        "supports_api_events": true,
-        "capabilities": ["killable"]
-    }
-}
-ACREOF
-            echo "Registered librespot with ACR."
+            # The player definition itself now ships as a static conffile at
+            # /etc/audiocontrol/players.d/librespot.json (installed by
+            # debian/rules), so dpkg owns it and preserves local edits across
+            # upgrades. Do not (re)write it here - that would defeat conffile
+            # handling by silently clobbering it on every install/upgrade.
 
-            # The player is now provided via the players.d drop-in above. Remove any
-            # stale inline "librespot" definition from the main audiocontrol config so
-            # the player is not loaded twice.
+            # Remove any stale inline "librespot" definition from the main
+            # audiocontrol config so the player is not loaded twice.
             ACR_MAIN="/etc/audiocontrol/audiocontrol.json"
             if [ -f "$ACR_MAIN" ] && command -v python3 >/dev/null 2>&1; then
                 python3 - "$ACR_MAIN" librespot <<'PYEOF'
