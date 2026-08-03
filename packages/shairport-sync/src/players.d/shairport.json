@@ -1,0 +1,10 @@
+{
+    "shairport": {
+        "enable": true,
+        "port": 5555,
+        "_comment": "ShairportSync metadata listener for AirPlay streams. Requires shairport-sync to be configured with metadata UDP output.",
+        "systemd_unit": "shairport-sync",
+        "coverart_dir": "/tmp/shairport-sync/.cache/coverart",
+        "_coverart_comment": "Directory to monitor for new cover art files. The watcher will automatically detect new image files and use them as album art."
+    }
+}

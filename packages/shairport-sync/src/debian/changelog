@@ -1,3 +1,17 @@
+hifiberry-shairport (1:5.2.1.2) stable; urgency=medium
+
+  * Ship the ACR player definition as /etc/audiocontrol/players.d/shairport.json.
+    The definition used to live in audiocontrol.json, which meant the package
+    that provides shairport-sync and the file that defines the player were
+    owned by different packages.
+  * postinst: stop writing the players.d drop-in at configure time now that
+    it ships as a package conffile; dpkg owns it and preserves local edits
+    across upgrades instead of it being silently overwritten every run.
+  * postrm: only delete the players.d conffile on purge, not on plain remove,
+    so local edits survive a remove/reinstall cycle.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 11:59:07 +0000
+
 hifiberry-shairport (1:5.2.1.1) stable; urgency=medium
 
   * Update Shairport Sync to upstream 5.2.1 (was 5.1). Notable for HiFiBerryOS:

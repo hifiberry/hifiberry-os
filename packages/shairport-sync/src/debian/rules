@@ -129,6 +129,10 @@ override_dh_auto_install:
 	ln -sf /usr/bin/shairport-event $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event-start
 	ln -sf /usr/bin/shairport-event $(CURDIR)/debian/hifiberry-shairport/usr/bin/shairport-event-stop
 
+	# Install the ACR player definition
+	mkdir -p debian/hifiberry-shairport/etc/audiocontrol/players.d
+	cp players.d/shairport.json debian/hifiberry-shairport/etc/audiocontrol/players.d/
+
 override_dh_auto_clean:
 	rm -rf nqptp/
 	rm -rf metadata-reader/
