@@ -48,6 +48,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Provides: mpd
 Conflicts: mpd
 Replaces: mpd
+Breaks: hifiberry-audiocontrol (<< 0.8.8)
 Description: Music Player Daemon (HiFiBerry build)
  MPD is a daemon for playing music files. Music is played through the
  configured audio outputs. The daemon can be controlled from the command

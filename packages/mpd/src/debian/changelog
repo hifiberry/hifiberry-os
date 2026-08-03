@@ -1,3 +1,13 @@
+hifiberry-mpd (0.24.13.3) stable; urgency=medium
+
+  * Add Breaks: hifiberry-audiocontrol (<< 0.8.8). Older audiocontrol still
+    carries this player's inline entry in audiocontrol.json; combined with
+    the new /etc/audiocontrol/players.d/mpd.json conffile that duplicates
+    into two MPD controllers, since audiocontrol merges includes without
+    deduplicating against the legacy players array.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 16:00:00 +0200
+
 hifiberry-mpd (0.24.13.2) stable; urgency=medium
 
   * Ship the ACR player definition as /etc/audiocontrol/players.d/mpd.json.

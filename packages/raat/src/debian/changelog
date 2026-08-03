@@ -1,3 +1,14 @@
+hifiberry-raat (1.1.43.25) stable; urgency=medium
+
+  * Add Breaks: hifiberry-audiocontrol (<< 0.8.8). Older audiocontrol still
+    carries this player's inline entry in audiocontrol.json; combined with
+    the new /etc/audiocontrol/players.d/raat.json conffile that duplicates
+    into two RAAT controllers, both of which would open
+    /var/lib/raat/metadata_pipe for reading and split the FIFO's Roon
+    metadata between two parsers.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 16:05:00 +0200
+
 hifiberry-raat (1.1.43.24) stable; urgency=medium
 
   * Ship the ACR player definition as /etc/audiocontrol/players.d/raat.json.
