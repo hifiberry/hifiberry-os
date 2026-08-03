@@ -1,3 +1,11 @@
+hifiberry-squeezelite (2.0.0.1562) stable; urgency=medium
+
+  * Ship the ACR player definition as /etc/audiocontrol/players.d/squeezelite.json.
+    The file defines the "lms" player type, matching the file already deployed
+    in the field. The definition used to live in audiocontrol.json.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 14:06:38 +0200
+
 hifiberry-squeezelite (2.0.0.1561) stable; urgency=medium
 
   * postinst: restart config-server when it is running so a post-boot

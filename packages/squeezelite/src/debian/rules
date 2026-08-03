@@ -42,6 +42,10 @@ override_dh_auto_install:
 	cp man/squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/
 	cp man/start-squeezelite.1 debian/hifiberry-squeezelite/usr/share/man/man1/
 
+	# Install the ACR player definition
+	mkdir -p debian/hifiberry-squeezelite/etc/audiocontrol/players.d
+	cp players.d/squeezelite.json debian/hifiberry-squeezelite/etc/audiocontrol/players.d/
+
 override_dh_auto_clean:
 	rm -rf squeezelite/
 	find . -name "*.o" -delete 2>/dev/null || true

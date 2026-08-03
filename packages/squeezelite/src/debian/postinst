@@ -60,28 +60,10 @@ CONFEOF
             systemctl restart config-server >/dev/null 2>&1 || true
         fi
 
-        # Register with ACR
+        # The ACR player definition now ships as a conffile installed by
+        # debian/rules at /etc/audiocontrol/players.d/squeezelite.json
+        # (key "lms"). Nothing to write here anymore.
         if [ -d /etc/audiocontrol ]; then
-            ACR_PLAYERS_D="/etc/audiocontrol/players.d"
-            mkdir -p "$ACR_PLAYERS_D"
-            cat > "$ACR_PLAYERS_D/squeezelite.json" <<'ACREOF'
-{
-    "lms": {
-        "enable": true,
-        "server": null,
-        "port": 9000,
-        "autodiscovery": true,
-        "player_name": null,
-        "player_mac": [],
-        "reconnection_interval": 30,
-        "polling_interval": 30,
-        "enable_library": false
-    }
-}
-ACREOF
-            echo "Registered squeezelite with ACR."
-
-            # The player is now provided via the players.d drop-in above (key "lms").
             # Remove any stale inline "lms" definition from the main audiocontrol
             # config so the player is not loaded twice.
             ACR_MAIN="/etc/audiocontrol/audiocontrol.json"

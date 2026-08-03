@@ -1,0 +1,13 @@
+{
+    "lms": {
+        "enable": true,
+        "server": null,
+        "port": 9000,
+        "autodiscovery": true,
+        "player_name": null,
+        "player_mac": [],
+        "reconnection_interval": 30,
+        "polling_interval": 30,
+        "enable_library": false
+    }
+}

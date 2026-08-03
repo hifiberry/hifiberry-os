@@ -6,10 +6,14 @@ if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
     rm -f /etc/hifiberry/players.d/squeezelite.json
     rm -f /etc/hifiberry/players.d/icons/squeezelite.svg
     rm -f /etc/configserver/conf.d/squeezelite.json
-    rm -f /etc/audiocontrol/players.d/squeezelite.json
 fi
 
 if [ "$1" = "purge" ]; then
+    # /etc/audiocontrol/players.d/squeezelite.json is a registered conffile
+    # (installed by debian/rules), so dpkg governs it: a locally-modified
+    # conffile survives a plain "remove" and is only deleted on purge.
+    rm -f /etc/audiocontrol/players.d/squeezelite.json
+
     # Remove squeezelite user and group
     if getent passwd squeezelite > /dev/null; then
         deluser --quiet --system squeezelite || true
