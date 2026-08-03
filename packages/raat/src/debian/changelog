@@ -1,3 +1,12 @@
+hifiberry-raat (1.1.43.24) stable; urgency=medium
+
+  * Ship the ACR player definition as /etc/audiocontrol/players.d/raat.json.
+    The definition used to live in audiocontrol.json, which meant the package
+    that provides raat and the file that defines the player were owned by
+    different packages.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 03 Aug 2026 14:20:00 +0200
+
 hifiberry-raat (1.1.43.23) stable; urgency=medium
 
   * Fixed 100% CPU usage when control pipe has no writer

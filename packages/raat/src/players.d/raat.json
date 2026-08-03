@@ -1,0 +1,8 @@
+{
+    "raat": {
+        "enable": true,
+        "metadata_pipe": "/var/lib/raat/metadata_pipe",
+        "control_pipe": "/var/lib/raat/control_pipe",
+        "reopen_metadata_pipe": true
+    }
+}

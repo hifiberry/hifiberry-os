@@ -69,6 +69,8 @@ echo "Copying raat.service..."
 cp "$SRC_DIR/raat.service" "$BUILD_DIR/"
 echo "Copying raat/ directory..."
 cp -r "$SRC_DIR/raat" "$BUILD_DIR/"
+echo "Copying players.d/ directory..."
+cp -r "$SRC_DIR/players.d" "$BUILD_DIR/"
 
 # Create configure-raat.py with version replacement
 echo "Creating configure-raat.py with version $VERSION..."

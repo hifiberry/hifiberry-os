@@ -33,6 +33,10 @@ override_dh_auto_install:
 	# Install manual page
 	cp debian/start-raat.1 debian/hifiberry-raat/usr/share/man/man1/
 	
+	# Install the ACR player definition
+	mkdir -p debian/hifiberry-raat/etc/audiocontrol/players.d
+	cp players.d/raat.json debian/hifiberry-raat/etc/audiocontrol/players.d/
+	
 	# Install RAAT binaries (excluding .a files)
 	find raat/bin/release/linux/aarch64/ -type f ! -name '*.a' -exec cp {} debian/hifiberry-raat/usr/bin/ \;
 	
