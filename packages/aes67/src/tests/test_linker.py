@@ -9,9 +9,10 @@ AES67 = {"id": 90, "type": "PipeWire:Interface:Node",
 SINK = {"id": 38, "type": "PipeWire:Interface:Node",
         "info": {"props": {"node.name": "speakereq2x2", "media.class": "Audio/Sink"}}}
 GRAPH = [AES67, SINK]
+# Links address endpoints by NUMERIC node id, never by name.
 LINKED = GRAPH + [{"id": 5, "type": "PipeWire:Interface:Link",
-                   "info": {"props": {"link.output.node": "AU-U22 : 1",
-                                      "link.input.node": "speakereq2x2"}}}]
+                   "info": {"props": {"link.output.node": 90,
+                                      "link.input.node": 38}}}]
 
 
 class FakeRunner:
@@ -76,6 +77,13 @@ class LinkerTest(unittest.TestCase):
     def test_disconnect_without_selection_succeeds(self):
         runner = FakeRunner(GRAPH)
         self.assertEqual(linker.disconnect(runner=runner, selected=None), 0)
+
+    def test_is_linked_ignores_name_shaped_link_props(self):
+        """Names in link props must not count: real links use ids."""
+        bogus = GRAPH + [{"id": 6, "type": "PipeWire:Interface:Link",
+                          "info": {"props": {"link.output.node": "AU-U22 : 1",
+                                             "link.input.node": "speakereq2x2"}}}]
+        self.assertFalse(linker.is_linked(bogus, "AU-U22 : 1", "speakereq2x2"))
 
     def test_is_linked_detects_existing_link(self):
         self.assertTrue(linker.is_linked(LINKED, "AU-U22 : 1", "speakereq2x2"))

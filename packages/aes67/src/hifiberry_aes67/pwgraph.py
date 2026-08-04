@@ -36,3 +36,15 @@ def nodes(objects):
 
 def props(obj):
     return (obj.get("info") or {}).get("props") or {}
+
+
+def node_id(objects, name):
+    """Resolve a node name to its numeric id, or None.
+
+    Link objects reference endpoints by numeric id (link.output.node = 39), not
+    by name, so anything inspecting links has to translate first.
+    """
+    for node in nodes(objects):
+        if props(node).get("node.name") == name:
+            return node.get("id")
+    return None

@@ -8,8 +8,11 @@ SRC = {"id": 90, "type": "PipeWire:Interface:Node",
                           "rtp.rate": 48000, "rtp.mime": "L24",
                           "rtp.destination.ip": "239.69.55.186",
                           "rtp.destination.port": 5004}}}
+# Links reference nodes by numeric id, so the sink must exist as a node.
+SINK = {"id": 99, "type": "PipeWire:Interface:Node",
+        "info": {"props": {"node.name": "K", "media.class": "Audio/Sink"}}}
 LINK = {"id": 5, "type": "PipeWire:Interface:Link",
-        "info": {"props": {"link.output.node": "S", "link.input.node": "K"}}}
+        "info": {"props": {"link.output.node": 90, "link.input.node": 99}}}
 
 
 class ApiTest(unittest.TestCase):
@@ -25,7 +28,7 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(body["stream"], "S")
 
     def test_status_reports_receiving_when_linked(self):
-        code, body = api.handle_get("/api/v1/status", [SRC, LINK], "S", "K")
+        code, body = api.handle_get("/api/v1/status", [SRC, SINK, LINK], "S", "K")
         self.assertEqual(code, 200)
         self.assertTrue(body["receiving"])
         self.assertEqual(body["sink"], "K")

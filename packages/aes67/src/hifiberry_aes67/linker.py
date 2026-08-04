@@ -63,12 +63,23 @@ def disconnect(runner=subprocess.run, path=None, selected=_UNSET):
 
 
 def is_linked(objects, source_name, sink_name):
+    """True if any link joins the named source to the named sink.
+
+    Link objects address their endpoints by numeric node id
+    ("link.output.node": 39), never by name, so both names are resolved to ids
+    first. Comparing names directly silently never matches -- it reports
+    "not receiving" while audio is plainly playing.
+    """
+    source_id = pwgraph.node_id(objects, source_name)
+    sink_id = pwgraph.node_id(objects, sink_name)
+    if source_id is None or sink_id is None:
+        return False
     for obj in objects:
         if obj.get("type") != pwgraph.LINK_TYPE:
             continue
         p = pwgraph.props(obj)
-        if (p.get("link.output.node") == source_name
-                and p.get("link.input.node") == sink_name):
+        if (p.get("link.output.node") == source_id
+                and p.get("link.input.node") == sink_id):
             return True
     return False
 

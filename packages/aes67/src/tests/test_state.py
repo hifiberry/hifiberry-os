@@ -6,25 +6,28 @@ from hifiberry_aes67 import state
 SRC = {"id": 90, "type": "PipeWire:Interface:Node",
        "info": {"props": {"node.name": "S", "device.api": "aes67",
                           "media.class": "Audio/Source"}}}
+# Links reference nodes by numeric id, so the sink must exist as a node.
+SINK = {"id": 99, "type": "PipeWire:Interface:Node",
+        "info": {"props": {"node.name": "K", "media.class": "Audio/Sink"}}}
 LINK = {"id": 5, "type": "PipeWire:Interface:Link",
-        "info": {"props": {"link.output.node": "S", "link.input.node": "K"}}}
+        "info": {"props": {"link.output.node": 90, "link.input.node": 99}}}
 
 
 class StateTest(unittest.TestCase):
     def test_playing_when_selected_stream_is_linked(self):
-        self.assertEqual(state.current_state([SRC, LINK], "S", "K"), "playing")
+        self.assertEqual(state.current_state([SRC, SINK, LINK], "S", "K"), "playing")
 
     def test_stopped_when_not_linked(self):
         self.assertEqual(state.current_state([SRC], "S", "K"), "stopped")
 
     def test_stopped_when_nothing_selected(self):
-        self.assertEqual(state.current_state([SRC, LINK], None, "K"), "stopped")
+        self.assertEqual(state.current_state([SRC, SINK, LINK], None, "K"), "stopped")
 
     def test_stopped_when_stream_absent(self):
         self.assertEqual(state.current_state([], "S", "K"), "stopped")
 
     def test_stopped_when_no_sink_resolved(self):
-        self.assertEqual(state.current_state([SRC, LINK], "S", None), "stopped")
+        self.assertEqual(state.current_state([SRC, SINK, LINK], "S", None), "stopped")
 
     def test_post_state_sends_expected_payload(self):
         captured = {}
