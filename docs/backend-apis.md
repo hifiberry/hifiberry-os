@@ -36,7 +36,7 @@ The DSP toolkit proxy uses a rewrite rule instead:
 Backend: Python (Flask + Waitress), port 1081. Runs as root via `config-server.service`.
 
 ### System Info
-- `GET /api/config/v1/system` — System information (hostname, pretty_hostname, uptime, etc.)
+- `GET /api/config/v1/systeminfo` — System information (hat_info, pi_model, soundcard, hostname, uptime, etc.). Note the path is `systeminfo`, not `system`: `/api/config/v1/system` does not exist and config-server answers it with 404. The auth policy (`/etc/hifiberry/auth.d/config.json`) likewise lists `/systeminfo` in the `ok` tier, so the wrong path also reads as a 401 through nginx rather than a 404 — which makes it look like an auth problem.
 - `POST /api/config/v1/hostname` — Set hostname (`{"hostname": "..."}`)
 
 ### Sound Cards
