@@ -15,6 +15,7 @@ All backend services are reverse-proxied through **nginx on port 80**. The WebUI
 | `/api/btaudio/` | Bluetooth Service | 1082 | Bluetooth audio device management |
 | `/api/roomeq/` | RoomEQ | 10315 | Room acoustics measurement and correction |
 | `/api/vu-meter/` | VU Meter | 2717 | Real-time audio level WebSocket |
+| `/api/aes67/` | AES67 Receiver | 1083 | AES67 stream discovery and selection |
 
 ## Nginx Configuration
 
@@ -187,6 +188,20 @@ Backend: Rust, port 2717. Runs as user service via `vu-meter.service`.
 Provides real-time audio level data via WebSocket connection.
 
 - `WS /api/vu-meter/ws` — WebSocket for real-time VU meter data
+
+## AES67 API (`/api/aes67/`)
+
+Backend: Python (stdlib `http.server`), port 1083. Runs as user service via `aes67-agent.service`.
+
+Streams are discovered by PipeWire's `module-rtp-sap`, loaded into the main daemon by
+`/etc/pipewire/pipewire.conf.d/60-hifiberry-aes67.conf`. Discovery runs whenever the package
+is installed; the `aes67.service` toggle governs only whether the selected stream is routed.
+
+### Streams
+- `GET /api/aes67/v1/streams` — Discovered AES67 streams (SAP-announced)
+- `GET /api/aes67/v1/selection` — Currently selected stream
+- `POST /api/aes67/v1/selection` — Select a stream (`{"stream": "<session name>"}`, or `null` to unroute)
+- `GET /api/aes67/v1/status` — Selected stream, resolved sink, and whether audio is being received
 
 ## WebUI Frontend Configuration
 
