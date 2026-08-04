@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --buildsystem=pybuild
+
+# Both units are *user* units, so dh_installsystemduser handles them --
+# dh_installsystemd only looks at /usr/lib/systemd/system and would fail the
+# build with "does not install unit".
+#
+#  - aes67-agent.service serves the discovery API and reports player state. The
+#    web UI must be able to list discovered streams while AES67 is switched
+#    off, so this ships ENABLED.
+#  - aes67.service is the web-UI-toggleable player, like every other
+#    HiFiBerryOS player: it ships DISABLED and the user turns it on in
+#    Services > Players.
+override_dh_installsystemduser:
+	dh_installsystemduser aes67-agent.service
+	dh_installsystemduser --no-enable aes67.service

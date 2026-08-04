@@ -1,0 +1,22 @@
+Source: hifiberry-aes67
+Section: sound
+Priority: optional
+Maintainer: HiFiBerry <support@hifiberry.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-sequence-python3,
+               python3-all,
+               python3-setuptools,
+               python3-pytest,
+Standards-Version: 4.1.4
+Homepage: https://www.hifiberry.com/
+
+Package: hifiberry-aes67
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire (>= 1.1)
+Description: HiFiBerry AES67 receiver
+ Receives AES67 audio from a Dante network and plays it through the HiFiBerry
+ DAC using PipeWire. Streams announced over SAP are discovered automatically and
+ exposed over a REST API for selection from the web interface.
+ .
+ This is a listening endpoint rather than a clock-synchronised AES67 device: it
+ does not run a PTP daemon, so it does not share the Dante clock.
