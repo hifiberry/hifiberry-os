@@ -84,6 +84,20 @@ hifiberry-aes67 connect --watch            # link and keep reconciling
 hifiberry-aes67 disconnect
 ```
 
+## Known limitation: multicast membership is not released on toggle-off
+
+Streams you never select cost nothing — their PipeWire nodes are inert, with no
+IGMP join and no CPU. But once a stream has been routed, PipeWire keeps its
+multicast membership even after you toggle AES67 off and the node returns to
+`suspended`. `module-rtp-source` joins the group on first activation and holds it
+until the node is destroyed, which happens when the SAP announcement expires or
+PipeWire restarts.
+
+Practical effect: after toggling off, playback and processing stop, but the
+network traffic for that one stream keeps arriving. To stop it fully, remove the
+multicast flow in Dante Controller or restart PipeWire. Nothing in this package's
+API controls the membership.
+
 ## Implementation notes
 
 `pwgraph.py` is the only module that shells out to `pw-dump`; everything else
