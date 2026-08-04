@@ -56,3 +56,52 @@ class StateTest(unittest.TestCase):
             raise OSError("connection refused")
 
         self.assertFalse(state.post_state("playing", port=1080, opener=opener))
+
+
+class RunTest(unittest.TestCase):
+    """The reporter must survive an audiocontrol restart."""
+
+    def _runner_returning(self, objects):
+        import json as _json
+
+        def runner(cmd, **kwargs):
+            class R:
+                returncode = 0
+                stderr = ""
+                stdout = ""
+            r = R()
+            if cmd[0] == "pw-dump":
+                r.stdout = _json.dumps(objects)
+            elif cmd[0] == "pw-metadata":
+                r.stdout = ("update: id:0 key:'default.audio.sink' "
+                            "value:'{\"name\":\"K\"}' type:''\n")
+            return r
+        return runner
+
+    def test_resyncs_periodically_without_a_transition(self):
+        posts = []
+        original = state.post_state
+        state.post_state = lambda s, port=0, opener=None: posts.append(s) or True
+        try:
+            state.run(interval=0, runner=self._runner_returning([SRC, SINK, LINK]),
+                      path="/nonexistent", iterations=5, resync_after=2)
+        finally:
+            state.post_state = original
+        # One post for the initial state, plus resyncs -- not a single post.
+        self.assertGreater(len(posts), 1)
+
+    def test_failed_post_is_retried_next_poll(self):
+        attempts = []
+        original = state.post_state
+
+        def failing(s, port=0, opener=None):
+            attempts.append(s)
+            return False
+
+        state.post_state = failing
+        try:
+            state.run(interval=0, runner=self._runner_returning([SRC, SINK, LINK]),
+                      path="/nonexistent", iterations=3, resync_after=99)
+        finally:
+            state.post_state = original
+        self.assertEqual(len(attempts), 3)

@@ -44,22 +44,33 @@ def post_state(state_name, port=DEFAULT_ACR_PORT, opener=None):
 
 
 def run(interval=5, port=DEFAULT_ACR_PORT, runner=subprocess.run, path=None,
-        iterations=None):
-    """Poll link state and report transitions to ACR.
+        iterations=None, resync_after=12):
+    """Poll link state and report it to ACR.
+
+    Posts on every transition, and additionally re-posts every `resync_after`
+    polls even when nothing changed. The resync is not redundant: audiocontrol
+    resets each player to its configured initial_state when it restarts, so a
+    transition-only reporter leaves ACR permanently showing "stopped" while
+    audio is playing -- there is no further transition to trigger a correction.
+    A failed post also forces a retry on the next poll.
 
     `iterations` bounds the loop for tests; None means run forever.
     """
     last = None
+    since_post = 0
     count = 0
     while iterations is None or count < iterations:
         objects = pwgraph.dump(runner=runner)
         selected = selection.get(path)
         target = sinkmod.default_sink(objects, runner=runner)
         now = current_state(objects, selected, target)
-        if now != last:
-            post_state(now, port=port)
-            logging.info("state -> %s", now)
-            last = now
+        if now != last or since_post >= resync_after:
+            if now != last:
+                logging.info("state -> %s", now)
+            last = now if post_state(now, port=port) else None
+            since_post = 0
+        else:
+            since_post += 1
         count += 1
         if iterations is None or count < iterations:
             time.sleep(interval)
