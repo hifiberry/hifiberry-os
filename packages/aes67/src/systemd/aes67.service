@@ -1,0 +1,18 @@
+# Type=simple, not oneshot: the reconcile loop must keep running so a
+# transmitter that is power-cycled (or has AES67 toggled in Dante Controller)
+# gets relinked when its node reappears. ExecStop is still required because
+# pw-links outlive the process that made them.
+[Unit]
+Description=HiFiBerry AES67 Receiver
+After=pipewire.service aes67-agent.service
+Wants=pipewire.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/hifiberry-aes67 connect --watch
+ExecStop=/usr/bin/hifiberry-aes67 disconnect
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

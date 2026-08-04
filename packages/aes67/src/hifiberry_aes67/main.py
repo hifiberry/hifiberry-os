@@ -4,6 +4,7 @@
 import argparse
 import json
 import logging
+import threading
 
 from . import api, linker, pwgraph, registry, selection, state
 
@@ -26,6 +27,8 @@ def build_parser():
                         help="audiocontrol port (default: 1080)")
     parser.add_argument("--interval", type=int, default=5,
                         help="reconcile/state poll interval in seconds")
+    parser.add_argument("--no-state", action="store_true",
+                        help="with 'serve', do not also report state to audiocontrol")
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser
 
@@ -50,7 +53,21 @@ def dispatch(args, deps=None):
         return 0
     if args.action == "state":
         return state.run(interval=args.interval, port=args.acr_port)
-    api.serve(port=args.port)
+
+    # 'serve' is the agent: the REST API plus, unless suppressed, the ACR state
+    # reporter. They share a process so the package needs two units rather than
+    # three -- the API must stay up while the aes67.service toggle is off, and
+    # so must state reporting.
+    if not args.no_state:
+        reporter = deps.get("state_run", state.run)
+        threading.Thread(
+            target=reporter,
+            kwargs={"interval": args.interval, "port": args.acr_port},
+            daemon=True,
+            name="aes67-state",
+        ).start()
+    serve = deps.get("serve", api.serve)
+    serve(port=args.port)
     return 0
 
 

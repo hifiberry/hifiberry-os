@@ -1,3 +1,4 @@
+import time
 import unittest
 
 from hifiberry_aes67 import main
@@ -46,3 +47,30 @@ class MainTest(unittest.TestCase):
         )
         self.assertEqual(rc, 0)
         self.assertIsNone(written["n"])
+
+
+class ServeTest(unittest.TestCase):
+    def test_serve_starts_state_reporter_by_default(self):
+        started = {}
+        main.dispatch(
+            main.build_parser().parse_args(["serve"]),
+            deps={"serve": lambda port: started.setdefault("port", port),
+                  "state_run": lambda **kw: started.setdefault("state", kw)},
+        )
+        self.assertEqual(started["port"], 1083)
+        # The reporter runs on a daemon thread; give it a moment to be entered.
+        for _ in range(50):
+            if "state" in started:
+                break
+            time.sleep(0.01)
+        self.assertIn("state", started)
+
+    def test_serve_can_suppress_state_reporter(self):
+        started = {}
+        main.dispatch(
+            main.build_parser().parse_args(["serve", "--no-state"]),
+            deps={"serve": lambda port: started.setdefault("port", port),
+                  "state_run": lambda **kw: started.setdefault("state", kw)},
+        )
+        time.sleep(0.05)
+        self.assertNotIn("state", started)
