@@ -68,8 +68,13 @@ override_dh_auto_install:
 	# Remove the automatically installed service files
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd.service || true
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/user/mpd.service || true
-	# Remove socket activation and templated units we don't use
+	# Remove socket activation and templated units we don't use.
+	# The user socket matters: if it survives, its postinst enables it and MPD
+	# starts socket-activated, which makes listen_global_init() return before
+	# setting listen_port -- so ZeroconfInit() bails with "No global port,
+	# disabling zeroconf" and _mpd._tcp is never advertised.
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd.socket || true
+	rm -f debian/hifiberry-mpd/usr/lib/systemd/user/mpd.socket || true
 	rm -f debian/hifiberry-mpd/usr/lib/systemd/system/mpd@.service || true
 
 	# Install our custom systemd user service file
