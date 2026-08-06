@@ -34,20 +34,42 @@ would collide with `nqptp` over UDP 319/320, as native Dante does.
   in the PipeWire drop-in defaults to `eth0`.
 - **PipeWire ≥ 1.1** for `module-rtp-sap`.
 
+## Latency, and why the default depends on the board
+
+The right buffer depth is board-dependent, and this was measured rather than
+guessed:
+
+| Board | Default | Evidence |
+|---|---|---|
+| Pi 5 / CM5 | **3 ms** | 35-min soak matched a no-AES67 control (2 source / 1 DAC xrun) |
+| Pi 4 / CM4 | **20 ms** | 3 ms gave **1320 xruns** and audibly choppy playback; 20 ms gave none |
+| unknown | 20 ms | conservative — a device that stutters out of the box reads as broken |
+
+Users can override it in *Services → AES67*, or with
+`hifiberry-aes67 set-latency --latency 10`. Applying a change regenerates the
+PipeWire config and restarts PipeWire, briefly interrupting playback.
+
 ## Configuration
 
-`/etc/pipewire/pipewire.conf.d/60-hifiberry-aes67.conf` is the conffile. Two
-knobs: `local.ifname` and `sess.latency.msec` (default 3, the measured floor —
-2 ms underruns badly, producing 205 DAC xruns per 2 minutes). Changing either
-needs a PipeWire restart.
+There is **no system conffile.** The agent generates
+`~/.config/pipewire/pipewire.conf.d/60-hifiberry-aes67.conf` from the board
+default plus any override, and restarts PipeWire only when the rendered content
+actually changed.
+
+It has to be generated rather than shipped: `sess.latency.msec` lives inside the
+module's argument block, and a second drop-in cannot override it — PipeWire
+appends `context.modules` rather than merging, so a second file would load a
+*second* rtp-sap module. Generating the single file we own solves that, and
+doing it in user space means the agent needs no root at all.
 
 The module is loaded into the **main** PipeWire daemon deliberately. A second
 daemon only gets RT scheduling if launched with it, and without RT it produces
 xruns that no amount of buffering fixes. Do not move it into its own process
 without carrying RT priority across.
 
-The selected stream lives in `~/.local/state/hifiberry-aes67/selection.json` and
-is set through the API or `hifiberry-aes67 select`.
+The selected stream lives in `~/.local/state/hifiberry-aes67/selection.json`, the
+latency override in `settings.json` beside it. Both are set through the API,
+the web UI, or the CLI.
 
 ## systemd units
 
@@ -72,6 +94,11 @@ Proxied at `/api/aes67/`, listening on localhost:1083.
 | `GET /api/aes67/v1/selection` | Current selection |
 | `POST /api/aes67/v1/selection` | Select (`{"stream": "..."}`, or `null` to unroute) |
 | `GET /api/aes67/v1/status` | Selection, resolved sink, whether receiving |
+| `GET /api/aes67/v1/settings` | Latency, board default, whether overridden, bounds |
+| `POST /api/aes67/v1/settings` | Set latency (`{"latency_msec": 10}`, or `null` for the board default) |
+
+The web UI page lives in the separate `hifiberry/hbos-ui` repository
+(`src/views/services/aes67.vue`), not in this package.
 
 ## Manual usage
 
@@ -79,6 +106,8 @@ Proxied at `/api/aes67/`, listening on localhost:1083.
 hifiberry-aes67 streams                    # list discovered streams as JSON
 hifiberry-aes67 select --stream "AU-U22-f0f33b : 1"
 hifiberry-aes67 select                     # clear the selection
+hifiberry-aes67 settings                   # show latency and board default
+hifiberry-aes67 set-latency --latency 10   # override; 'default' restores board value
 hifiberry-aes67 connect                    # link once
 hifiberry-aes67 connect --watch            # link and keep reconciling
 hifiberry-aes67 disconnect

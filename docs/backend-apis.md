@@ -202,6 +202,8 @@ is installed; the `aes67.service` toggle governs only whether the selected strea
 - `GET /api/aes67/v1/selection` — Currently selected stream
 - `POST /api/aes67/v1/selection` — Select a stream (`{"stream": "<session name>"}`, or `null` to unroute)
 - `GET /api/aes67/v1/status` — Selected stream, resolved sink, and whether audio is being received
+- `GET /api/aes67/v1/settings` — Receive latency, board default, whether overridden, allowed range
+- `POST /api/aes67/v1/settings` — Set the receive latency (`{"latency_msec": 10}`, or `null` to follow the board default)
 
 ## WebUI Frontend Configuration
 
