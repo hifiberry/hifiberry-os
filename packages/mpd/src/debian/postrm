@@ -6,8 +6,9 @@ case "$1" in
         # Remove directories on purge (but preserve music and playlists)
         rm -rf /run/mpd || true
         # Note: We don't remove /var/lib/mpd as it may contain user data
-    # Clean up any leftover system socket symlink from previous versions
+    # Clean up any leftover socket symlinks from versions that shipped them
     rm -f /etc/systemd/system/sockets.target.wants/mpd.socket || true
+    rm -f /etc/systemd/user/sockets.target.wants/mpd.socket || true
         ;;
     
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
