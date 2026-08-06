@@ -143,6 +143,84 @@ Create `/etc/configserver/conf.d/<name>.json` to grant the configurator permissi
 
 This uses the configserver's drop-in config support — no need to edit `configserver.json` directly.
 
+### d) Settings (optional)
+
+A descriptor may declare a `settings` array. Each entry renders as a control in
+the player's expandable config panel on *Services > Players*, so a plugin gets a
+UI without touching the web interface at all.
+
+```json
+{
+    "name": "AES67",
+    "provided_by": "hifiberry-aes67",
+    "systemd_service": "aes67",
+    "icon": "aes67",
+    "settings": [
+        {
+            "key": "stream",
+            "type": "select",
+            "label": "Stream",
+            "description": "AES67 stream announced on the network.",
+            "default": "",
+            "options_url": "http://localhost:1083/api/v1/streams",
+            "options_path": "streams",
+            "options_value": "name",
+            "options_label": "name"
+        },
+        {
+            "key": "latency",
+            "type": "number",
+            "label": "Latency (ms)",
+            "description": "Receive buffer. Changing it restarts the audio engine.",
+            "default": 20,
+            "min": 3,
+            "max": 30,
+            "step": 1,
+            "widget": "slider"
+        }
+    ]
+}
+```
+
+Common fields: `key`, `type`, `label`, `default` are required; `description` is
+optional and renders as help text under the control.
+
+**Types**
+
+| `type` | Renders as | Required extras |
+|---|---|---|
+| `toggle` | On/off switch | — |
+| `select` | Drop-down | `options`, **or** `options_url` (see below) |
+| `number` | Number field, or a slider with `"widget": "slider"` | `min`, `max` (`step` defaults to 1) |
+
+`number` bounds are mandatory and enforced on write: a value outside
+`min`..`max` is rejected with a 400 rather than stored. Entries that declare no
+usable bounds are dropped from the listing entirely.
+
+**Dynamic options.** When the choices are only known at runtime, point
+`options_url` at your own API instead of listing `options` statically.
+config-server fetches it while building the players response and fills
+`options` from it:
+
+- `options_path` — key holding the array, when the response is an object
+- `options_value` / `options_label` — fields to read from each array element
+
+Only **loopback** URLs are accepted. config-server runs as root, so fetching
+arbitrary hosts would be a server-side request forgery. If the source is
+unreachable the stored value is kept as the sole option, so a plugin that is
+briefly down does not make the UI look as though nothing was ever selected.
+
+**Where values live.** config-server stores them in ConfigDB under
+`player.<systemd_service>.<key>` — so `player.aes67.latency` above. Your plugin
+reads them back from there; nothing is pushed to it. `hifiberry-aes67`'s
+`sync.py` shows the pattern: poll the keys, apply on change, and distinguish
+"unset" from "config-server unreachable" (both look like an absent value if you
+only check for `None`, and acting on that overwrites the user's choice).
+
+Values are written by the web interface through
+`PUT /api/config/v1/players/<systemd_service>/settings` with a
+`{"<key>": <value>}` body.
+
 ### Verify
 
 After dropping the files, restart the configurator (`sudo systemctl restart config-server`) and open the Players page. Your player should appear with a working on/off toggle.
@@ -162,7 +240,7 @@ Here is the full set of drop-in files needed for a player called "my-player":
 | File | Purpose |
 |------|---------|
 | `/etc/audiocontrol/players.d/my-player.json` | ACR player config (audio routing + metadata) |
-| `/etc/hifiberry/players.d/my-player.json` | Web UI descriptor (name, icon, service) |
+| `/etc/hifiberry/players.d/my-player.json` | Web UI descriptor (name, icon, service, optional settings) |
 | `/etc/hifiberry/players.d/icons/my-player.svg` | SVG icon for the UI |
 | `/etc/configserver/conf.d/my-player.json` | Systemd permissions for start/stop |
 
@@ -181,7 +259,14 @@ Its `postrm` removes all four files on uninstall. The icon SVG is shipped inside
 
 This pattern works for any Debian-packaged player — no Docker required.
 
-## 8) When to implement a native Rust controller
+## 8) Worked example: hifiberry-aes67
+
+`packages/aes67` is the reference for the settings mechanism above. It declares
+one dynamic `select` (AES67 streams discovered on the network, served from its
+own API on port 1083) and one `number` rendered as a slider, and its `sync.py`
+polls ConfigDB for both. It needs no code in the web interface at all.
+
+## 9) When to implement a native Rust controller
 
 Use `generic` + update API when your external process can publish its state via HTTP.
 
