@@ -1,0 +1,3 @@
+{ "service":"aes67", "match_prefix":"/api/aes67", "default_tier":"risky", "rules":[
+  { "tier":"ok","methods":["GET"],"paths":["/v1/streams","/v1/selection","/v1/status"] },
+  { "tier":"risky","methods":["*"],"paths":["/**"] } ]}

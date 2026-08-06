@@ -1,0 +1,13 @@
+[Unit]
+Description=HiFiBerry AES67 Agent (discovery API and player state)
+After=pipewire.service
+Wants=pipewire.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/hifiberry-aes67 serve
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

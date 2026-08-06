@@ -1,0 +1,9 @@
+{
+    "name": "AES67",
+    "provided_by": "hifiberry-aes67",
+    "systemd_service": "aes67",
+    "icon": "aes67",
+    "allow_change": true,
+    "maintainer_name": "HiFiBerry",
+    "maintainer_url": "https://www.hifiberry.com/"
+}

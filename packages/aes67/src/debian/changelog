@@ -1,0 +1,5 @@
+hifiberry-aes67 (0.1.0) stable; urgency=medium
+
+  * Initial release: AES67 receiver with SAP discovery and REST selection API
+
+ -- HiFiBerry <support@hifiberry.com>  Tue, 04 Aug 2026 10:00:00 +0200

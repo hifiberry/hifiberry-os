@@ -1,0 +1,8 @@
+{
+    "generic": {
+        "name": "aes67",
+        "enable": true,
+        "initial_state": "stopped",
+        "capabilities": ["play", "stop"]
+    }
+}

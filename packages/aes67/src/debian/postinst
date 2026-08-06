@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "configure" ]; then
+    # config-server caches conf.d systemd permissions at startup, so without a
+    # restart it would refuse to toggle aes67.service until its next one.
+    if systemctl is-active --quiet config-server 2>/dev/null; then
+        systemctl restart config-server || true
+    fi
+    # Pick up the new /etc/nginx/hifiberry-api.d drop-in.
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        systemctl reload nginx || true
+    fi
+fi
+
+#DEBHELPER#
+exit 0
