@@ -1,3 +1,16 @@
+hifiberry-aes67 (0.3.0) stable; urgency=medium
+
+  * Expose stream selection and latency as plugin settings under
+    Services > Players, next to how Analog Input presents its own, instead of
+    a separate AES67 page. Uses config-server's generic player-settings
+    mechanism, so the web UI needs nothing AES67-specific.
+  * Follow the values config-server stores in ConfigDB, seeding the latency
+    with the board default on first run so the UI shows what is in force.
+  * Requires hifiberry-configurator with the `number` setting type and
+    URL-sourced select options.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 06 Aug 2026 14:00:00 +0200
+
 hifiberry-aes67 (0.2.0) stable; urgency=medium
 
   * Pick the default receive latency from the board: 3ms on Pi 5/CM5, 20ms on

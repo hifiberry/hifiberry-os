@@ -114,3 +114,31 @@ class LatencyCliTest(unittest.TestCase):
                   "serve": lambda port, interface=None: order.append("serve")},
         )
         self.assertEqual(order, ["ensure", "serve"])
+
+
+class SyncThreadTest(unittest.TestCase):
+    def test_serve_starts_the_settings_sync(self):
+        started = {}
+        main.dispatch(
+            main.build_parser().parse_args(["serve", "--no-state"]),
+            deps={"ensure": lambda interface=None: None,
+                  "seed": lambda: None,
+                  "sync_run": lambda **kw: started.setdefault("sync", kw),
+                  "serve": lambda port, interface=None: None},
+        )
+        for _ in range(50):
+            if "sync" in started:
+                break
+            time.sleep(0.01)
+        self.assertIn("sync", started)
+
+    def test_serve_seeds_the_board_default_first(self):
+        order = []
+        main.dispatch(
+            main.build_parser().parse_args(["serve", "--no-state"]),
+            deps={"seed": lambda: order.append("seed"),
+                  "ensure": lambda interface=None: order.append("ensure"),
+                  "sync_run": lambda **kw: None,
+                  "serve": lambda port, interface=None: order.append("serve")},
+        )
+        self.assertEqual(order, ["seed", "ensure", "serve"])

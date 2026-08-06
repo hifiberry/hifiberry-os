@@ -6,7 +6,7 @@ import json
 import logging
 import threading
 
-from . import api, configure, linker, pwgraph, registry, selection, state
+from . import api, configure, linker, pwgraph, registry, selection, state, sync
 
 
 def build_parser():
@@ -81,9 +81,20 @@ def dispatch(args, deps=None):
             daemon=True,
             name="aes67-state",
         ).start()
-    # Make the PipeWire drop-in match the stored settings before serving.
-    # ensure() restarts PipeWire only when the rendered config actually
-    # changed, so a normal agent start does not interrupt playback.
+
+    # Follow settings the web UI writes into ConfigDB. Runs alongside the API
+    # so the agent stays the single place that applies configuration.
+    threading.Thread(
+        target=deps.get("sync_run", sync.run),
+        kwargs={"interval": args.interval, "interface": args.interface},
+        daemon=True,
+        name="aes67-sync",
+    ).start()
+    # Seed the board default so the web UI shows the value actually in force,
+    # then make the PipeWire drop-in match. ensure() restarts PipeWire only
+    # when the rendered config really changed, so a normal agent start does not
+    # interrupt playback.
+    deps.get("seed", sync.seed_latency)()
     deps.get("ensure", configure.ensure)(interface=args.interface)
     serve = deps.get("serve", api.serve)
     serve(port=args.port, interface=args.interface)

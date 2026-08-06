@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="hifiberry-aes67",
-    version="0.2.0",
+    version="0.3.0",
     description="HiFiBerry AES67 receiver",
     long_description="Receives AES67 audio from a Dante network and routes it to "
                      "the HiFiBerry DAC using PipeWire.",

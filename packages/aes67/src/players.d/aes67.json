@@ -5,5 +5,28 @@
     "icon": "aes67",
     "allow_change": true,
     "maintainer_name": "HiFiBerry",
-    "maintainer_url": "https://www.hifiberry.com/"
+    "maintainer_url": "https://www.hifiberry.com/",
+    "settings": [
+        {
+            "key": "stream",
+            "type": "select",
+            "label": "Stream",
+            "description": "AES67 stream announced on the network. Enable AES67 and create a multicast flow on the transmitter in Dante Controller.",
+            "default": "",
+            "options_url": "http://localhost:1083/api/v1/streams",
+            "options_path": "streams",
+            "options_value": "name",
+            "options_label": "name"
+        },
+        {
+            "key": "latency",
+            "type": "number",
+            "label": "Latency (ms)",
+            "description": "Receive buffer. Lower is tighter but more prone to dropouts; the default is chosen for this board. Changing it restarts the audio engine.",
+            "default": 20,
+            "min": 1,
+            "max": 500,
+            "step": 1
+        }
+    ]
 }
