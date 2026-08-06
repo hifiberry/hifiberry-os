@@ -12,6 +12,47 @@ case "$1" in
         # Set group ownership to audio and make directories group-writable
         chgrp audio /var/lib/mpd /var/lib/mpd/music /var/lib/mpd/playlists
         chmod g+rwx /var/lib/mpd /var/lib/mpd/music /var/lib/mpd/playlists
+
+        # Versions up to 0.24.13.3 shipped /usr/lib/systemd/user/mpd.socket and
+        # enabled it, which made MPD start socket-activated and silently disabled
+        # zeroconf. The unit is no longer shipped, but the enable state it left
+        # behind is not cleaned up by anything: the new maintainer scripts no
+        # longer mention mpd.socket, so the .wants symlink and the helper state
+        # file survive the upgrade as dangling leftovers, and a socket still
+        # loaded in the running user manager keeps holding port 6600.
+        if command -v deb-systemd-helper >/dev/null 2>&1; then
+            # purge works from the helper's own state file, so it still removes
+            # the symlinks even though the unit file itself is already gone.
+            deb-systemd-helper --user purge 'mpd.socket' >/dev/null 2>&1 || true
+            deb-systemd-helper --user unmask 'mpd.socket' >/dev/null 2>&1 || true
+        fi
+        rm -f /etc/systemd/user/sockets.target.wants/mpd.socket || true
+
+        # Drop it from the live session too, otherwise MPD cannot bind 6600
+        # until the next reboot. Best effort; no-op during image builds.
+        if [ -d /run/systemd/system ]; then
+            HB_USER=""
+            if [ -f /etc/hifiberry.user ]; then
+                HB_USER=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' /etc/hifiberry.user | head -1 | tr -d '[:space:]')
+            fi
+            if [ -n "$HB_USER" ] && getent passwd "$HB_USER" >/dev/null 2>&1; then
+                HB_UID=$(id -u "$HB_USER" 2>/dev/null)
+                if [ -n "$HB_UID" ] && [ -d "/run/user/$HB_UID" ]; then
+                    systemd-run --uid "$HB_UID" --setenv XDG_RUNTIME_DIR="/run/user/$HB_UID" \
+                        --pipe --wait --quiet --collect \
+                        systemctl --user stop mpd.socket >/dev/null 2>&1 || true
+                    systemd-run --uid "$HB_UID" --setenv XDG_RUNTIME_DIR="/run/user/$HB_UID" \
+                        --pipe --wait --quiet --collect \
+                        systemctl --user daemon-reload >/dev/null 2>&1 || true
+                    # An already socket-activated MPD keeps its inherited fd (and
+                    # its disabled zeroconf) until it restarts. try-restart, so a
+                    # deliberately stopped MPD is not started by an upgrade.
+                    systemd-run --uid "$HB_UID" --setenv XDG_RUNTIME_DIR="/run/user/$HB_UID" \
+                        --pipe --wait --quiet --collect \
+                        systemctl --user try-restart mpd.service >/dev/null 2>&1 || true
+                fi
+            fi
+        fi
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
         :
