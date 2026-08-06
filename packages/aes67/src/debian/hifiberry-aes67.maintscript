@@ -1,0 +1,1 @@
+rm_conffile /etc/pipewire/pipewire.conf.d/60-hifiberry-aes67.conf 0.1.0

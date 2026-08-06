@@ -54,7 +54,8 @@ class ServeTest(unittest.TestCase):
         started = {}
         main.dispatch(
             main.build_parser().parse_args(["serve"]),
-            deps={"serve": lambda port: started.setdefault("port", port),
+            deps={"serve": lambda port, interface=None: started.setdefault("port", port),
+                  "ensure": lambda interface=None: None,
                   "state_run": lambda **kw: started.setdefault("state", kw)},
         )
         self.assertEqual(started["port"], 1083)
@@ -69,8 +70,47 @@ class ServeTest(unittest.TestCase):
         started = {}
         main.dispatch(
             main.build_parser().parse_args(["serve", "--no-state"]),
-            deps={"serve": lambda port: started.setdefault("port", port),
+            deps={"serve": lambda port, interface=None: started.setdefault("port", port),
+                  "ensure": lambda interface=None: None,
                   "state_run": lambda **kw: started.setdefault("state", kw)},
         )
         time.sleep(0.05)
         self.assertNotIn("state", started)
+
+
+class LatencyCliTest(unittest.TestCase):
+    def test_set_latency_parses_integer(self):
+        seen = {}
+        rc = main.dispatch(
+            main.build_parser().parse_args(["set-latency", "--latency", "10"]),
+            deps={"apply_latency": lambda v, interface=None:
+                  seen.setdefault("v", v) or {"latency_msec": v}},
+        )
+        self.assertEqual(rc, 0)
+        self.assertEqual(seen["v"], 10)
+
+    def test_set_latency_default_restores_board_default(self):
+        seen = {}
+        main.dispatch(
+            main.build_parser().parse_args(["set-latency", "--latency", "default"]),
+            deps={"apply_latency": lambda v, interface=None:
+                  seen.setdefault("v", v) or {"latency_msec": 20}},
+        )
+        self.assertIsNone(seen["v"])
+
+    def test_settings_action_prints_current(self):
+        rc = main.dispatch(
+            main.build_parser().parse_args(["settings"]),
+            deps={"current": lambda: {"latency_msec": 20}},
+        )
+        self.assertEqual(rc, 0)
+
+    def test_serve_ensures_config_before_listening(self):
+        """The drop-in must match settings before the API answers."""
+        order = []
+        main.dispatch(
+            main.build_parser().parse_args(["serve", "--no-state"]),
+            deps={"ensure": lambda interface=None: order.append("ensure"),
+                  "serve": lambda port, interface=None: order.append("serve")},
+        )
+        self.assertEqual(order, ["ensure", "serve"])

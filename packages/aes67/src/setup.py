@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="hifiberry-aes67",
-    version="0.1.0",
+    version="0.2.0",
     description="HiFiBerry AES67 receiver",
     long_description="Receives AES67 audio from a Dante network and routes it to "
                      "the HiFiBerry DAC using PipeWire.",
@@ -18,7 +18,6 @@ setup(
             'systemd/aes67.service',
             'systemd/aes67-agent.service',
         ]),
-        ('/etc/pipewire/pipewire.conf.d', ['pipewire/60-hifiberry-aes67.conf']),
         ('/etc/hifiberry/players.d', ['players.d/aes67.json']),
         ('/etc/hifiberry/players.d/icons', ['players.d/icons/aes67.svg']),
         ('/etc/hifiberry/auth.d', ['data/etc/hifiberry/auth.d/aes67.json']),

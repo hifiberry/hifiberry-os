@@ -65,3 +65,51 @@ class ApiTest(unittest.TestCase):
     def test_post_to_unknown_path_is_404(self):
         code, _ = api.handle_post("/api/v1/nope", {}, [SRC], setter=lambda n: None)
         self.assertEqual(code, 404)
+
+
+class SettingsApiTest(unittest.TestCase):
+    def test_get_settings_reports_bounds_and_board_default(self):
+        code, body = api.handle_get_settings(20, 20, False, "eth0")
+        self.assertEqual(code, 200)
+        self.assertEqual(body["latency_msec"], 20)
+        self.assertEqual(body["board_default_msec"], 20)
+        self.assertFalse(body["overridden"])
+        self.assertEqual(body["interface"], "eth0")
+        self.assertIn("min_msec", body)
+        self.assertIn("max_msec", body)
+
+    def test_post_settings_applies_integer(self):
+        seen = {}
+        code, body = api.handle_post_settings(
+            {"latency_msec": 10},
+            apply_latency=lambda v: seen.setdefault("v", v) or {"latency_msec": v})
+        self.assertEqual(code, 200)
+        self.assertEqual(seen["v"], 10)
+
+    def test_post_settings_accepts_null_for_board_default(self):
+        seen = {}
+        code, _ = api.handle_post_settings(
+            {"latency_msec": None},
+            apply_latency=lambda v: seen.setdefault("v", v) or {"latency_msec": 20})
+        self.assertEqual(code, 200)
+        self.assertIsNone(seen["v"])
+
+    def test_post_settings_rejects_non_integer(self):
+        code, body = api.handle_post_settings(
+            {"latency_msec": "fast"}, apply_latency=lambda v: {})
+        self.assertEqual(code, 400)
+        self.assertIn("error", body)
+
+    def test_post_settings_rejects_boolean(self):
+        code, _ = api.handle_post_settings(
+            {"latency_msec": True}, apply_latency=lambda v: {})
+        self.assertEqual(code, 400)
+
+    def test_post_settings_surfaces_range_error(self):
+        def apply_latency(v):
+            raise ValueError("latency must be between 1 and 500 ms")
+
+        code, body = api.handle_post_settings({"latency_msec": 9999},
+                                              apply_latency=apply_latency)
+        self.assertEqual(code, 400)
+        self.assertIn("between", body["error"])

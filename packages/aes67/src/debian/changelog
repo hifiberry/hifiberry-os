@@ -1,3 +1,18 @@
+hifiberry-aes67 (0.2.0) stable; urgency=medium
+
+  * Pick the default receive latency from the board: 3ms on Pi 5/CM5, 20ms on
+    Pi 4/CM4 and unknown hardware. A Pi 4 at 3ms produced 1320 xruns and
+    audibly choppy playback; at 20ms it produced none.
+  * Make the latency adjustable at runtime through the API and web UI.
+  * Generate the PipeWire drop-in into the user config directory instead of
+    shipping it as a system conffile. The latency lives inside the module's
+    argument block and cannot be overridden by a second drop-in -- PipeWire
+    would load a second rtp-sap module rather than merge the two -- so the
+    file has to be generated, and generating it in user space needs no root.
+    The obsolete /etc conffile is removed on upgrade.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 06 Aug 2026 10:00:00 +0200
+
 hifiberry-aes67 (0.1.0) stable; urgency=medium
 
   * Initial release: AES67 receiver with SAP discovery and REST selection API
