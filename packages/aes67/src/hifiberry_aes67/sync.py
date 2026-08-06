@@ -29,7 +29,13 @@ def seed_latency(db=configdb, model_path=None):
     Without this the UI would display the descriptor's static default (one
     number for every board) while the agent quietly used the board-specific one.
     """
-    if db.get(db.setting_key(LATENCY_KEY)) is not None:
+    reachable, stored = db.fetch(db.setting_key(LATENCY_KEY))
+    if not reachable:
+        # config-server down or restarting: "no value" is unknowable right now,
+        # and seeding here would overwrite whatever the user had chosen.
+        logging.debug("ConfigDB unreachable; not seeding the AES67 latency")
+        return None
+    if stored is not None:
         return None
     default = (board.default_latency_msec(board.model(model_path)) if model_path
                else board.detect_default_latency())

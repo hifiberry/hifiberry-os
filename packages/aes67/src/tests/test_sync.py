@@ -134,3 +134,12 @@ def _pi4_model():
     with open(path, "wb") as handle:
         handle.write(b"Raspberry Pi 4 Model B Rev 1.1\x00")
     return path
+
+
+class SeedRobustnessTest(unittest.TestCase):
+    def test_unreachable_configdb_does_not_seed(self):
+        """Seeding on an unreachable ConfigDB would overwrite the user's value."""
+        db = FakeDb({"player.aes67.latency": "10"}, reachable=False)
+        self.assertIsNone(sync.seed_latency(db=db, model_path=_pi4_model()))
+        self.assertEqual(db.writes, [])
+        self.assertEqual(db.values["player.aes67.latency"], "10")
