@@ -14,7 +14,7 @@ body:
     attributes:
       label: Before you start
       options:
-        - label: I am running the current version of HiFiBerryOS
+        - label: I updated all packages with `sudo apt update && sudo apt upgrade`
           required: true
         - label: I searched the existing issues and this is not a duplicate
           required: true
