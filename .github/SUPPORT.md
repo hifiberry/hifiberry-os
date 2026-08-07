@@ -2,9 +2,9 @@
 
 ## Questions, setup problems, hardware advice
 
-Please use [HiFiBerry support](https://support.hifiberry.com). The issue
-tracker is for reproducible defects and feature requests in HiFiBerryOS, not
-for individual support cases.
+Please use [HiFiBerry support](https://support.hifiberry.com/forum/c/software).
+The issue tracker is for reproducible defects and feature requests in
+HiFiBerryOS, not for individual support cases.
 
 ## Reporting a bug
 
@@ -15,10 +15,16 @@ The form asks for the output of:
 config-supportinfo
 ```
 
+If the command is not found, update the package first:
+
+```
+sudo apt update && sudo apt install --only-upgrade hifiberry-configurator
+```
+
 That command ships with `hifiberry-configurator` and collects the hardware,
 package versions, service state and recent errors we need. It removes
 passwords, keys and tokens before printing, and it does not include your
-device UUID or hostname.
+device UUID or hostname — review the output before posting it anyway.
 
 ## A note on older HiFiBerryOS versions
 
