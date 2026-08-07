@@ -82,11 +82,38 @@ def truncate_to_bytes(name, limit=ZEROCONF_NAME_MAX_BYTES):
     return truncated
 
 
+def strip_hostname_token(name):
+    """Neutralise MPD's "%h" placeholder so the name is announced literally.
+
+    MPD expands "%h" in zeroconf_name to gethostname() *after* parsing the
+    config, so a pretty hostname containing the token would be announced as
+    something other than what was configured -- and could exceed the byte limit
+    truncate_to_bytes just enforced. MPD offers no escape for "%h", so the only
+    way to keep the name literal is to drop the "%".
+
+    The loop is what makes this a fixed point: a single pass over "%%hh" leaves
+    "%hh", which MPD would expand after all. Each pass removes at least one
+    "%", so it terminates.
+    """
+    if '%h' not in name:
+        return name
+
+    while '%h' in name:
+        name = name.replace('%h', 'h')
+    print(f'Warning: dropped "%" from the "%h" placeholder in the Zeroconf '
+          f'name, which MPD would otherwise replace with the hostname: {name}')
+    return name
+
+
 def format_zeroconf_name(name):
     """Render the canonical zeroconf_name line for the given name."""
-    # MPD's config tokenizer treats \ as an escape inside a quoted string, so a
-    # name containing " or \ has to be escaped or the value is truncated/broken.
-    escaped = truncate_to_bytes(name).replace('\\', '\\\\').replace('"', '\\"')
+    # Order matters: "%h" is neutralised first so truncation measures the name
+    # MPD will actually announce, and escaping comes last because MPD's
+    # tokenizer strips the backslashes again -- the escapes exist for the
+    # config file, not for Avahi, whose 63-byte limit applies to the unescaped
+    # value. A name containing " or \ has to be escaped or the value breaks.
+    name = truncate_to_bytes(strip_hostname_token(name))
+    escaped = name.replace('\\', '\\\\').replace('"', '\\"')
     return f'zeroconf_name\t\t"{escaped}"\n'
 
 
