@@ -6,6 +6,16 @@ The next-generation HiFiBerryOS is a complete rewrite, now based on a standard D
 
 - [Add your own player](docs/add-your-own-player.md)
 
+## Reporting bugs
+
+Bug reports and feature requests belong in the
+[issue tracker](https://github.com/hifiberry/hifiberry-os/issues/new/choose).
+Bug reports ask for the output of `config-supportinfo`, which collects the
+hardware, package versions and recent errors we need.
+
+Questions about setup, hardware or purchases are better placed with
+[HiFiBerry support](https://support.hifiberry.com).
+
 ## Architecture
 
 The system is composed of several core components:
