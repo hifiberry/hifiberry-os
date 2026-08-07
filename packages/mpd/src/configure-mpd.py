@@ -6,6 +6,7 @@ its audio_output mixer settings based on detected hardware.
 """
 
 import os
+import socket
 import sys
 import shutil
 import subprocess
@@ -16,64 +17,59 @@ USER_ETC = Path.home() / "etc"
 USER_CONFIG = USER_ETC / "mpd.conf"
 DEFAULT_CONFIG_SRC = Path("/usr/share/mpd/mpd.conf")
 
+# hostnamectl is a D-Bus round-trip to systemd-hostnamed and this runs
+# synchronously before `exec mpd`. If hostnamed is wedged an unbounded call
+# would hang mpd.service in "activating" forever, so bound it.
+HOSTNAMECTL_TIMEOUT = 5
+
+# Avahi's service-name label is capped at 63 bytes. The hostname API accepts up
+# to 64 characters, so a long name -- or a shorter one with multi-byte
+# characters -- would make registration fail and MPD vanish from Zeroconf.
+ZEROCONF_NAME_MAX_BYTES = 63
+
+
 def get_pretty_hostname():
     """Get the pretty hostname, falling back to the hostname, then "HiFiBerry".
 
-    Same order start-shairport.sh and start-librespot.sh use for the name they
-    announce, so all three players show up under one name.
+    Same order start-shairport.sh, start-librespot.sh and start-squeezelite use
+    for the name they announce, so all four players show up under one name. Like
+    start-squeezelite, a literal "localhost" counts as unset.
     """
     try:
         result = subprocess.run(['hostnamectl', 'hostname', '--pretty'],
-                                capture_output=True, text=True)
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
+                                capture_output=True, text=True,
+                                timeout=HOSTNAMECTL_TIMEOUT)
+        name = result.stdout.strip()
+        if result.returncode == 0 and name and name != "localhost":
+            return name
     except Exception as e:
         print(f"Warning: Could not read pretty hostname: {e}")
 
-    try:
-        result = subprocess.run(['hostname'], capture_output=True, text=True)
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
-    except Exception as e:
-        print(f"Warning: Could not read hostname: {e}")
+    # socket.gethostname() can't hang and needs no error handling, unlike the
+    # `hostname` subprocess the other wrappers shell out to.
+    name = socket.gethostname().strip()
+    if name and name != "localhost":
+        return name
 
     return "HiFiBerry"
 
 
-def update_zeroconf_name(config_path, name):
-    """Set zeroconf_name in the MPD config, leaving every other line untouched."""
+def truncate_to_bytes(name, limit=ZEROCONF_NAME_MAX_BYTES):
+    """Truncate a name to `limit` UTF-8 bytes without splitting a character."""
+    encoded = name.encode('utf-8')
+    if len(encoded) <= limit:
+        return name
+    truncated = encoded[:limit].decode('utf-8', errors='ignore')
+    print(f"Warning: Zeroconf name too long for mDNS, truncated to: {truncated}")
+    return truncated
+
+
+def format_zeroconf_name(name):
+    """Render the canonical zeroconf_name line for the given name."""
     # MPD's config tokenizer treats \ as an escape inside a quoted string, so a
     # name containing " or \ has to be escaped or the value is truncated/broken.
-    escaped = name.replace('\\', '\\\\').replace('"', '\\"')
-    try:
-        with open(config_path, 'r') as f:
-            lines = f.readlines()
-    except Exception as e:
-        print(f"Warning: Could not read {config_path} to set zeroconf_name: {e}")
-        return
-
-    out = []
-    replaced = False
-    for line in lines:
-        if line.strip().split()[:1] == ['zeroconf_name']:
-            if not replaced:
-                out.append(f'zeroconf_name\t\t"{escaped}"\n')
-                replaced = True
-            continue
-        out.append(line)
-
-    if not replaced:
-        # No zeroconf_name in the config (e.g. a hand-edited one): add it.
-        if out and not out[-1].endswith('\n'):
-            out[-1] += '\n'
-        out.append(f'zeroconf_name\t\t"{escaped}"\n')
-
-    try:
-        with open(config_path, 'w') as f:
-            f.writelines(out)
-        print(f"Zeroconf name set to: {name}")
-    except Exception as e:
-        print(f"Warning: Could not write zeroconf_name to {config_path}: {e}")
+    escaped = truncate_to_bytes(name).replace('\\', '\\\\').replace('"', '\\"')
+    return f'zeroconf_name\t\t"{escaped}"\n'
 
 
 def get_hw_mixer_info():
@@ -242,8 +238,13 @@ def manage_music_symlinks(music_dir, samba_dirs):
         except Exception as e:
             print(f"Warning: Could not create symlink {symlink_path}: {e}")
 
-def update_mpd_config_in_place(config_path, mixer_info):
-    """Update MPD configuration with mixer settings in-place for user file."""
+def update_mpd_config_in_place(config_path, mixer_info, zeroconf_name=None):
+    """Update MPD configuration in-place for user file.
+
+    Rewrites the audio_output mixer settings, and -- when zeroconf_name is given
+    -- the top-level zeroconf_name. Both are managed keys: existing lines are
+    dropped and the canonical form re-emitted.
+    """
     try:
         with open(config_path, 'r') as f:
             config_lines = f.readlines()
@@ -258,6 +259,7 @@ def update_mpd_config_in_place(config_path, mixer_info):
     in_audio_output = False
     audio_output_depth = 0
     mixer_lines_added = False
+    zeroconf_line_added = False
 
     for line in config_lines:
         stripped = line.strip()
@@ -292,7 +294,23 @@ def update_mpd_config_in_place(config_path, mixer_info):
                                  stripped.startswith('mixer_index')):
             continue
 
+        # zeroconf_name is a top-level key; only drop it outside a block, so a
+        # stray copy nested in audio_output is left alone rather than becoming
+        # the line we re-emit (MPD rejects it there as an unknown parameter).
+        if zeroconf_name is not None and not in_audio_output and \
+                stripped.split()[:1] == ['zeroconf_name']:
+            if not zeroconf_line_added:
+                output_lines.append(format_zeroconf_name(zeroconf_name))
+                zeroconf_line_added = True
+            continue
+
         output_lines.append(line)
+
+    if zeroconf_name is not None and not zeroconf_line_added:
+        # No top-level zeroconf_name (e.g. a hand-edited config): append it.
+        if output_lines and not output_lines[-1].endswith('\n'):
+            output_lines[-1] += '\n'
+        output_lines.append(format_zeroconf_name(zeroconf_name))
 
     try:
         Path(config_path).parent.mkdir(parents=True, exist_ok=True)
@@ -300,11 +318,23 @@ def update_mpd_config_in_place(config_path, mixer_info):
             shutil.copy2(config_path, str(config_path) + ".bak")
         except Exception:
             pass
-        with open(config_path, 'w') as f:
+        # Write via a temp file and rename. A truncating in-place write that dies
+        # partway (full SD card, killed mid-restart) would leave a config cut off
+        # mid-line that start-mpd.sh then execs mpd on -- and the self-heal in
+        # main() only catches a zero-length file, so it would survive reboots.
+        tmp_path = str(config_path) + ".tmp"
+        with open(tmp_path, 'w') as f:
             f.writelines(output_lines)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, config_path)
         print(f"MPD configuration updated: {config_path}")
     except Exception as e:
         print(f"Error writing configuration file: {e}")
+        try:
+            os.unlink(str(config_path) + ".tmp")
+        except Exception:
+            pass
         sys.exit(1)
 
 def main():
@@ -326,12 +356,15 @@ def main():
     if mixer_info["mixer_type"] == "hardware":
         print(f"Hardware mixer: {mixer_info['mixer_control']} on {mixer_info['mixer_device']}")
 
-    update_mpd_config_in_place(USER_CONFIG, mixer_info)
+    # Announce the same name as the other players (shairport, librespot,
+    # squeezelite), which all read the pretty hostname at startup. MPD takes its
+    # Zeroconf name from the config file only, so it has to be written here on
+    # every start -- folded into the mixer pass so the config is read and
+    # rewritten once.
+    zeroconf_name = get_pretty_hostname()
+    print(f"Zeroconf name: {zeroconf_name}")
 
-    # Announce the same name as the other players (shairport, librespot), which
-    # both read the pretty hostname at startup. MPD takes its Zeroconf name from
-    # the config file only, so it has to be written here on every start.
-    update_zeroconf_name(USER_CONFIG, get_pretty_hostname())
+    update_mpd_config_in_place(USER_CONFIG, mixer_info, zeroconf_name)
 
     print("Managing music directory symlinks...")
     music_dir = parse_music_directory(USER_CONFIG)

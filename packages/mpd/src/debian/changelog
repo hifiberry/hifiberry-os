@@ -8,7 +8,14 @@ hifiberry-mpd (0.24.13.5) stable; urgency=medium
     different names, and on a multi-device setup every MPD looked identical.
     configure-mpd now writes zeroconf_name on each start, using the same
     fallback order. Names containing " or \ are escaped for MPD's config
-    tokenizer.
+    tokenizer, and the name is truncated to 63 bytes on a character boundary
+    to stay within Avahi's service-name limit.
+  * NOTE: zeroconf_name in ~/etc/mpd.conf is now managed by configure-mpd and
+    is overwritten on every MPD start. It previously passed through verbatim
+    and survived restarts; a hand-set name there will now be replaced by the
+    pretty hostname. Set the device name via the hostname API (or
+    `hostnamectl set-hostname --pretty`) instead, which renames MPD, AirPlay
+    and Spotify Connect together.
 
  -- HiFiBerry <support@hifiberry.com>  Fri, 07 Aug 2026 10:00:00 +0200
 
