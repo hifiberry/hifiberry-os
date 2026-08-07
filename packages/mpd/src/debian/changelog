@@ -10,6 +10,11 @@ hifiberry-mpd (0.24.13.5) stable; urgency=medium
     fallback order. Names containing " or \ are escaped for MPD's config
     tokenizer, and the name is truncated to 63 bytes on a character boundary
     to stay within Avahi's service-name limit.
+  * Keep MPD's "%h" placeholder out of the announced name. MPD expands "%h" in
+    zeroconf_name to the hostname after parsing the config, so a pretty
+    hostname containing the token was announced as something other than what
+    was configured, and could grow back past the 63-byte limit. There is no
+    escape for it, so the "%" is dropped.
   * NOTE: zeroconf_name in ~/etc/mpd.conf is now managed by configure-mpd and
     is overwritten on every MPD start. It previously passed through verbatim
     and survived restarts; a hand-set name there will now be replaced by the
