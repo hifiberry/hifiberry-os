@@ -13,45 +13,63 @@ import subprocess
 import re
 from pathlib import Path
 
+# Import configurator modules. Unlike configure-raat, a missing configurator is
+# not fatal here: it only costs us the announced name, and MPD should still
+# start, so we fall back instead of exiting.
+try:
+    from configurator.hostname_utils import get_hostnames_with_fallback
+except ImportError as e:
+    print(f"Warning: Could not import configurator hostname utils: {e}")
+    get_hostnames_with_fallback = None
+
 USER_ETC = Path.home() / "etc"
 USER_CONFIG = USER_ETC / "mpd.conf"
 DEFAULT_CONFIG_SRC = Path("/usr/share/mpd/mpd.conf")
-
-# hostnamectl is a D-Bus round-trip to systemd-hostnamed and this runs
-# synchronously before `exec mpd`. If hostnamed is wedged an unbounded call
-# would hang mpd.service in "activating" forever, so bound it.
-HOSTNAMECTL_TIMEOUT = 5
 
 # Avahi's service-name label is capped at 63 bytes. The hostname API accepts up
 # to 64 characters, so a long name -- or a shorter one with multi-byte
 # characters -- would make registration fail and MPD vanish from Zeroconf.
 ZEROCONF_NAME_MAX_BYTES = 63
 
+# A device with no pretty hostname set typically reports the default system
+# hostname, which isn't a name anyone wants announced on the network.
+UNSET_HOSTNAMES = ("", "localhost")
+
+DEFAULT_NAME = "HiFiBerry"
+
 
 def get_pretty_hostname():
     """Get the pretty hostname, falling back to the hostname, then "HiFiBerry".
 
-    Same order start-shairport.sh, start-librespot.sh and start-squeezelite use
-    for the name they announce, so all four players show up under one name. Like
-    start-squeezelite, a literal "localhost" counts as unset.
-    """
-    try:
-        result = subprocess.run(['hostnamectl', 'hostname', '--pretty'],
-                                capture_output=True, text=True,
-                                timeout=HOSTNAMECTL_TIMEOUT)
-        name = result.stdout.strip()
-        if result.returncode == 0 and name and name != "localhost":
-            return name
-    except Exception as e:
-        print(f"Warning: Could not read pretty hostname: {e}")
+    The hostnamectl calls come from configurator.hostname_utils (already a
+    dependency), which bounds them with a timeout -- this runs synchronously
+    before `exec mpd`, so an unbounded D-Bus round-trip to a wedged
+    systemd-hostnamed would hang mpd.service in "activating" forever.
 
-    # socket.gethostname() can't hang and needs no error handling, unlike the
-    # `hostname` subprocess the other wrappers shell out to.
+    The helper stops one step short of what the players need, though: it falls
+    pretty -> hostname and then returns None, with no "HiFiBerry" default, and
+    it treats a literal "localhost" as a real name. Both are applied here so
+    MPD announces what start-shairport.sh, start-librespot.sh and
+    start-squeezelite announce, rather than "localhost" or nothing.
+    """
+    hostname = pretty_hostname = None
+    if get_hostnames_with_fallback is not None:
+        try:
+            hostname, pretty_hostname = get_hostnames_with_fallback()
+        except Exception as e:
+            print(f"Warning: Could not read hostnames from configurator: {e}")
+
+    for name in (pretty_hostname, hostname):
+        if name and name.strip().lower() not in UNSET_HOSTNAMES:
+            return name.strip()
+
+    # Last resort if the configurator import or both hostnamectl calls failed.
+    # socket.gethostname() can't hang and needs no error handling.
     name = socket.gethostname().strip()
-    if name and name != "localhost":
+    if name and name.lower() not in UNSET_HOSTNAMES:
         return name
 
-    return "HiFiBerry"
+    return DEFAULT_NAME
 
 
 def truncate_to_bytes(name, limit=ZEROCONF_NAME_MAX_BYTES):
