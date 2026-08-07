@@ -7,7 +7,7 @@ body:
       value: |
         This tracker covers the current, Debian-based HiFiBerryOS only.
         Problems with the older Buildroot-based images cannot be fixed here —
-        please contact [support](https://support.hifiberry.com) instead.
+        please contact [support](https://support.hifiberry.com/forum/c/software) instead.
 
   - type: checkboxes
     id: preflight
@@ -97,9 +97,11 @@ body:
       label: Output of config-supportinfo
       description: |
         Run `config-supportinfo` on the affected device and paste the complete
-        output. It removes passwords and keys before printing. If the device
-        does not boot far enough to run it, write "device does not boot" and
-        describe the hardware instead.
+        output. It removes passwords and keys before printing; review the
+        output before posting it anyway. If the command is not found, update
+        first with `sudo apt update && sudo apt install --only-upgrade hifiberry-configurator`.
+        If the device does not boot far enough to run it, write "device does
+        not boot" and describe the hardware instead.
       render: shell
     validations:
       required: true

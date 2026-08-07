@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Support and user questions
-    url: https://support.hifiberry.com
+    url: https://support.hifiberry.com/forum/c/software
     about: Setup help, hardware questions and purchase advice belong in support, not in the issue tracker.

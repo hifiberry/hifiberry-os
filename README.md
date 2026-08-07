@@ -14,7 +14,7 @@ Bug reports ask for the output of `config-supportinfo`, which collects the
 hardware, package versions and recent errors we need.
 
 Questions about setup, hardware or purchases are better placed with
-[HiFiBerry support](https://support.hifiberry.com).
+[HiFiBerry support](https://support.hifiberry.com/forum/c/software).
 
 ## Architecture
 
