@@ -1,0 +1,151 @@
+name: Bug report
+description: Report a reproducible problem in HiFiBerryOS
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This tracker covers the current, Debian-based HiFiBerryOS only.
+        Problems with the older Buildroot-based images cannot be fixed here —
+        please contact [support](https://support.hifiberry.com) instead.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I am running the current version of HiFiBerryOS
+          required: true
+        - label: I searched the existing issues and this is not a duplicate
+          required: true
+        - label: This is a defect, not a support or setup question
+          required: true
+
+  - type: dropdown
+    id: pi-model
+    attributes:
+      label: Raspberry Pi model
+      options:
+        - Raspberry Pi 3 Model A+
+        - Raspberry Pi 3 Model B
+        - Raspberry Pi 3 Model B+
+        - Raspberry Pi 4 Model B
+        - Raspberry Pi 5
+        - Compute Module 4
+        - Compute Module 5
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: hat
+    attributes:
+      label: HiFiBerry board
+      options:
+        - DAC8x/ADC8x
+        - DAC8x
+        - Digi2 Pro
+        - Amp100
+        - Amp3
+        - Amp4
+        - Amp4 Pro
+        - DAC+ ADC Pro
+        - DAC+ ADC
+        - DAC2 ADC Pro
+        - DAC2 HD
+        - DAC+ DSP
+        - DAC+/Amp2
+        - DAC+ Pro
+        - DAC2 Pro
+        - Amp+
+        - Digi+ Pro
+        - Digi+
+        - Beocreate 4-Channel Amplifier
+        - DAC+ Light
+        - DAC+ Zero
+        - MiniAmp
+        - ADC
+        - HDMI Audio
+        - None / other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      options:
+        - MPD (local music)
+        - Librespot (Spotify Connect)
+        - Raat (Roon)
+        - Shairport (AirPlay)
+        - Squeezelite
+        - Sendspin (Music Assistant)
+        - Bluetooth
+        - WebUI
+        - AudioControl (ACR)
+        - Network / Wi-Fi
+        - DSP
+        - Installation / upgrade
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: supportinfo
+    attributes:
+      label: Output of config-supportinfo
+      description: |
+        Run `config-supportinfo` on the affected device and paste the complete
+        output. It removes passwords and keys before printing. If the device
+        does not boot far enough to run it, write "device does not boot" and
+        describe the hardware instead.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What is wrong?
+      description: Describe the problem in a few sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected and actual behaviour
+      description: What did you expect to happen, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Additional logs
+      description: |
+        Anything else that helps, for example `journalctl -b -u mpd` for a
+        player problem. Remove passwords and keys before pasting.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: testing
+    attributes:
+      label: Testing
+      options:
+        - label: I can test a fix on my device
+          required: false
