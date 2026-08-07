@@ -16,6 +16,66 @@ USER_ETC = Path.home() / "etc"
 USER_CONFIG = USER_ETC / "mpd.conf"
 DEFAULT_CONFIG_SRC = Path("/usr/share/mpd/mpd.conf")
 
+def get_pretty_hostname():
+    """Get the pretty hostname, falling back to the hostname, then "HiFiBerry".
+
+    Same order start-shairport.sh and start-librespot.sh use for the name they
+    announce, so all three players show up under one name.
+    """
+    try:
+        result = subprocess.run(['hostnamectl', 'hostname', '--pretty'],
+                                capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    except Exception as e:
+        print(f"Warning: Could not read pretty hostname: {e}")
+
+    try:
+        result = subprocess.run(['hostname'], capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    except Exception as e:
+        print(f"Warning: Could not read hostname: {e}")
+
+    return "HiFiBerry"
+
+
+def update_zeroconf_name(config_path, name):
+    """Set zeroconf_name in the MPD config, leaving every other line untouched."""
+    # MPD's config tokenizer treats \ as an escape inside a quoted string, so a
+    # name containing " or \ has to be escaped or the value is truncated/broken.
+    escaped = name.replace('\\', '\\\\').replace('"', '\\"')
+    try:
+        with open(config_path, 'r') as f:
+            lines = f.readlines()
+    except Exception as e:
+        print(f"Warning: Could not read {config_path} to set zeroconf_name: {e}")
+        return
+
+    out = []
+    replaced = False
+    for line in lines:
+        if line.strip().split()[:1] == ['zeroconf_name']:
+            if not replaced:
+                out.append(f'zeroconf_name\t\t"{escaped}"\n')
+                replaced = True
+            continue
+        out.append(line)
+
+    if not replaced:
+        # No zeroconf_name in the config (e.g. a hand-edited one): add it.
+        if out and not out[-1].endswith('\n'):
+            out[-1] += '\n'
+        out.append(f'zeroconf_name\t\t"{escaped}"\n')
+
+    try:
+        with open(config_path, 'w') as f:
+            f.writelines(out)
+        print(f"Zeroconf name set to: {name}")
+    except Exception as e:
+        print(f"Warning: Could not write zeroconf_name to {config_path}: {e}")
+
+
 def get_hw_mixer_info():
     """Get hardware mixer information using config-soundcard"""
     try:
@@ -267,6 +327,11 @@ def main():
         print(f"Hardware mixer: {mixer_info['mixer_control']} on {mixer_info['mixer_device']}")
 
     update_mpd_config_in_place(USER_CONFIG, mixer_info)
+
+    # Announce the same name as the other players (shairport, librespot), which
+    # both read the pretty hostname at startup. MPD takes its Zeroconf name from
+    # the config file only, so it has to be written here on every start.
+    update_zeroconf_name(USER_CONFIG, get_pretty_hostname())
 
     print("Managing music directory symlinks...")
     music_dir = parse_music_directory(USER_CONFIG)
