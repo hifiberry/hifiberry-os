@@ -26,6 +26,12 @@ package versions, service state and recent errors we need. It removes
 passwords, keys and tokens before printing, and it does not include your
 device UUID or hostname — review the output before posting it anyway.
 
+No terminal access? The same report is available from the web interface,
+under Settings → System Tools → Support Report. It shows the report on the
+page for copying, and a "Download as file" button saves it so you can attach
+it to the issue directly. Since the endpoint is authenticated, you will be
+asked for the device password.
+
 ## A note on older HiFiBerryOS versions
 
 HiFiBerryOS has been rewritten and is now based on Debian. Issues about the
