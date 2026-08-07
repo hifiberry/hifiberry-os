@@ -97,11 +97,13 @@ body:
       label: Output of config-supportinfo
       description: |
         Run `config-supportinfo` on the affected device and paste the complete
-        output. It removes passwords and keys before printing; review the
-        output before posting it anyway. If the command is not found, update
-        first with `sudo apt update && sudo apt install --only-upgrade hifiberry-configurator`.
-        If the device does not boot far enough to run it, write "device does
-        not boot" and describe the hardware instead.
+        output, or get the same report from the web interface under
+        Settings → System Tools → Support Report, which also offers it as a
+        file. It removes passwords and keys before printing, but please read it
+        before posting. If the command is missing, update first with
+        `sudo apt update && sudo apt install --only-upgrade hifiberry-configurator`.
+        If the device does not boot far enough to run it, write "device does not
+        boot" and describe the hardware instead.
       render: shell
     validations:
       required: true
