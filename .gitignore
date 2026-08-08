@@ -73,6 +73,10 @@ packages/*/build-*.log
 # Editor / tooling, workstation specific
 .vscode/settings.json
 .mcp.json
+*.swp
+*.swo
+*~
+.DS_Store
 
 # Source checkouts made by each package's build.sh
 packages/autorec/autorec
