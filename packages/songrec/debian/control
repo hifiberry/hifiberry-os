@@ -24,9 +24,9 @@ Package: songrec
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         libasound2,
+         libasound2 | libasound2t64,
          libpulse0,
-         libssl3,
+         libssl3 | libssl3t64,
          ffmpeg,
          libgtk-4-1 (>= 4.14),
          libadwaita-1-0 (>= 1.5),
