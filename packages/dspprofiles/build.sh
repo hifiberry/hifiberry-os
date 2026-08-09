@@ -5,11 +5,7 @@ set -e
 
 # Enable cross-compile support if configured
 _CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
-if [ -f "$_CC_ENV" ]; then 
-    source "$_CC_ENV"
-else 
-    echo "Not using cross-compilation (${_CC_ENV} does not exist)"
-fi
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
 
 SCRIPT_DIR="$(dirname $(realpath $0))"
 DSP_PROFILES_URL="https://github.com/hifiberry/dspprofiles"

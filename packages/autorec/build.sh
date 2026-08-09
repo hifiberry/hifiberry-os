@@ -3,6 +3,10 @@
 # Exit on error
 set -e
 
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
+
 # Define variables
 PACKAGE="autorec"
 DEB_PACKAGE="hifiberry-autorec"
@@ -33,9 +37,27 @@ else
     cd "$PACKAGE"
 fi
 
+# Check for DIST environment variable
+if [ -n "$DIST" ]; then
+    echo "Using distribution from DIST environment variable: $DIST"
+    CHROOT="${DIST}-amd64-sbuild"
+    DIST_ARG="--dist=$DIST"
+    CHROOT_ARG="--chroot=$CHROOT"
+else
+    echo "No DIST environment variable set, using sbuild default"
+    DIST_ARG=""
+    CHROOT_ARG=""
+fi
+
 # Step 2: Build Debian package using dpkg-buildpackage
-echo "Building $DEB_PACKAGE Debian package..."
-dpkg-buildpackage -us -uc -b
+echo "Building $DEB_PACKAGE Debian package with sbuild..."
+sbuild \
+    --chroot-mode=unshare \
+    --no-clean-source \
+    --enable-network \
+    $DIST_ARG \
+    $CHROOT_ARG \
+    --verbose
 
 # Step 3: Move built packages back to package directory
 cd ..
