@@ -38,7 +38,7 @@ Vcs-Browser: https://github.com/mikebrady/shairport-sync
 Package: hifiberry-shairport
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         libssl3,
+         libssl3 | libssl3t64,
          libavahi-client3,
          libpopt0,
          libconfig11 | libconfig9,
@@ -51,7 +51,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          uuid-dev,
          libsystemd0,
          libcap2-bin,
-         libglib2.0-0,
+         libglib2.0-0 | libglib2.0-0t64,
          adduser,
          hifiberry-configurator
 Provides: shairport-sync, nqptp

@@ -21,7 +21,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libflac14 | libflac12,
          libmad0,
          libvorbis0a,
-         libmpg123-0,
+         libmpg123-0 | libmpg123-0t64,
          libfaad2,
          hifiberry-configurator,
          adduser
