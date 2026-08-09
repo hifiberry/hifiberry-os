@@ -3,6 +3,10 @@
 # Exit on error
 set -e
 
+# Enable cross-compile support if configured
+_CC_ENV="$(dirname "$0")/../../scripts/cross-compile-env.sh"
+if [ -f "$_CC_ENV" ]; then source "$_CC_ENV"; else echo "Not using cross-compilation (${_CC_ENV} does not exist)"; fi
+
 # Define variables
 PACKAGE="speakereq"
 REPO_URL="https://github.com/hifiberry/speakereq"
