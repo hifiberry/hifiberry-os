@@ -12,17 +12,7 @@ PACKAGE="input-processor"
 DEB_PACKAGE="hifiberry-input-processor"
 REPO_URL="https://github.com/hifiberry/input-processor.git"
 
-export BUILD_DIR="/tmp/${PACKAGE}-build"
-
-if [ -n "$DIST" ]; then
-    echo "Using distribution from DIST environment variable: $DIST"
-    export DIST_ARG="--dist=$DIST"
-    export CHROOT_ARG="--chroot=$CHROOT"
-else
-    echo "No DIST environment variable set, using sbuild default"
-    export DIST_ARG=""
-    export CHROOT_ARG=""
-fi
+BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Function to clean up build and downloaded files
 clean() {

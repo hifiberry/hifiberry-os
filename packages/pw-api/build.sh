@@ -13,18 +13,8 @@ fi
 # Define variables
 PACKAGE="pipewire-api"
 DEB_PACKAGE="pipewire-api"
-REPO_URL="https://github.com/hifiberry/pipewire-api"
-export BUILD_DIR="/tmp/${PACKAGE}-build"
-
-# Check for DIST environment variable
-if [ -n "$DIST" ]; then
-    echo "Using distribution from DIST environment variable: $DIST"
-    export DIST_ARG="--dist=$DIST"
-    export CHROOT_ARG="--chroot=$CHROOT"
-else
-    export DIST_ARG=""
-    export CHROOT_ARG=""
-fi
+REPO_URL="https://github.com/LarsGrootkarzijn/pipewire-api.git"
+BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Function to clean up build and downloaded files
 clean() {
