@@ -16,7 +16,7 @@ DSP_PROFILES_URL="https://github.com/hifiberry/dspprofiles"
 DSP_PROFILES_CHECKOUT="$SCRIPT_DIR/dspprofiles"
 PACKAGE="dspprofiles"
 
-export BUILD_DIR="/tmp/${PACKAGE}-build"
+BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Prepare build directory
 echo "Preparing build directory..."
@@ -54,16 +54,6 @@ update_dspprofiles() {
     fi
     echo "DSP profiles updated successfully"
 }
-
-# Check for DIST environment variable
-if [ -n "$DIST" ]; then
-    echo "Using distribution from DIST environment variable: $DIST"
-    export DIST_ARG="--dist=$DIST"
-    export CHROOT_ARG="--chroot=$CHROOT"
-else
-    export DIST_ARG=""
-    export CHROOT_ARG=""
-fi
 
 # Update or clone the repository
 update_dspprofiles
