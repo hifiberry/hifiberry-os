@@ -13,7 +13,7 @@ fi
 # Define variables
 PACKAGE="pipewire-api"
 DEB_PACKAGE="pipewire-api"
-REPO_URL="https://github.com/LarsGrootkarzijn/pipewire-api.git"
+REPO_URL="https://github.com/hifiberry/pipewire-api"
 BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Function to clean up build and downloaded files
