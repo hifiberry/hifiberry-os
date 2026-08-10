@@ -12,12 +12,9 @@ PACKAGE="input-processor"
 DEB_PACKAGE="hifiberry-input-processor"
 REPO_URL="https://github.com/hifiberry/input-processor.git"
 
-BUILD_DIR="/tmp/${PACKAGE}-build"
-
 # Function to clean up build and downloaded files
 clean() {
     echo "Cleaning up build files..."
-    rm -rf "$BUILD_DIR"
     rm -f $PACKAGE*.build $PACKAGE*.changes $PACKAGE*.dsc $PACKAGE*.deb $PACKAGE*.buildinfo $PACKAGE*.tar.gz
     echo "Cleanup completed."
 }
@@ -27,10 +24,6 @@ if [[ "$1" == "--clean" ]]; then
     clean
     exit 0
 fi
-
-echo "Preparing build directory..."
-rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR"
 
 # Step 1: Clone or update the GitHub repository
 if [[ -d "$PACKAGE/.git" ]]; then
@@ -52,10 +45,6 @@ rm -f ../hifiberry-input-processor-dbgsym*.deb
 
 # Step 3: Move built packages back to package directory
 cd ..
-mv $BUILD_DIR/${DEB_PACKAGE}_*.deb . 2>/dev/null || true
-mv $BUILD_DIR/${DEB_PACKAGE}_*.build . 2>/dev/null || true
-mv $BUILD_DIR/${DEB_PACKAGE}_*.buildinfo . 2>/dev/null || true
-mv $BUILD_DIR/${DEB_PACKAGE}_*.changes . 2>/dev/null || true
 
 echo "Package build completed."
 echo "Built packages:"

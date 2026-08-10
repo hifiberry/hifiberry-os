@@ -14,12 +14,10 @@ fi
 PACKAGE="pipewire-api"
 DEB_PACKAGE="pipewire-api"
 REPO_URL="https://github.com/hifiberry/pipewire-api"
-BUILD_DIR="/tmp/${PACKAGE}-build"
 
 # Function to clean up build and downloaded files
 clean() {
     echo "Cleaning up build and downloaded files..."
-    rm -rf "$BUILD_DIR"
     rm -rf "$PACKAGE"
     rm -f $PACKAGE*.build $PACKAGE*.changes $PACKAGE*.dsc $PACKAGE*.deb $PACKAGE*.buildinfo $PACKAGE*.tar.gz
     echo "Cleanup completed."
@@ -60,11 +58,6 @@ check_version_consistency() {
     echo "✓ All versions consistent: $debian_version"
 }
 
-# Prepare build directory
-echo "Preparing build directory..."
-rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR"
-
 # Clone or update repository
 if [[ -d "$PACKAGE/.git" ]]; then
     echo "Updating $PACKAGE source from $REPO_URL..."
@@ -90,10 +83,6 @@ rm -f ../${DEB_PACKAGE}-dbgsym*.deb
 
 # Move built packages to package directory
 cd ..
-mv $BUILD_DIR/${DEB_PACKAGE}_*.deb . 2>/dev/null || true
-mv $BUILD_DIR/${DEB_PACKAGE}_*.build . 2>/dev/null || true
-mv $BUILD_DIR/${DEB_PACKAGE}_*.buildinfo . 2>/dev/null || true
-mv $BUILD_DIR/${DEB_PACKAGE}_*.changes . 2>/dev/null || true
 
 echo "Package build completed."
 echo "Built packages:"

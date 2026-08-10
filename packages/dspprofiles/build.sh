@@ -16,15 +16,6 @@ DSP_PROFILES_URL="https://github.com/hifiberry/dspprofiles"
 DSP_PROFILES_CHECKOUT="$SCRIPT_DIR/dspprofiles"
 PACKAGE="dspprofiles"
 
-BUILD_DIR="/tmp/${PACKAGE}-build"
-
-# Prepare build directory
-echo "Preparing build directory..."
-rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR"
-
-echo "DSP Profiles build script"
-
 # Function to update or clone dspprofiles
 update_dspprofiles() {
     echo "Updating DSP profiles..."
