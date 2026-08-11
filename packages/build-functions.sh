@@ -203,8 +203,19 @@ build_package() {
             --no-run-lintian \
             --verbose
     fi
+
+    keep_deb_file_only
 }
 
+keep_deb_file_only() {
+    rm -f \
+        "${PACKAGE_DIR}"/*.build \
+        "${PACKAGE_DIR}"/*.changes \
+        "${PACKAGE_DIR}"/*.dsc \
+        "${PACKAGE_DIR}"/*dbgsym*.deb \
+        "${PACKAGE_DIR}"/*.buildinfo \
+        "${PACKAGE_DIR}"/*.tar.*
+}
 
 show_build_artifacts() {
     local directory="$1"

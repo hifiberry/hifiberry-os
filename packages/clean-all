@@ -12,7 +12,7 @@ for dir in "$SCRIPT_DIR"/*/; do
     figlet "$(basename "$dir")"
 
     if [[ -f "$dir/build.config" || -d "$dir/src" ]]; then
-        PACKAGE_DIR="$(realpath '$dir')"
+        PACKAGE_DIR="$(realpath $dir)"
         
         if [[ -f "${PACKAGE_DIR}/build.config" ]]; then
             source "${PACKAGE_DIR}/build.config"
