@@ -5,6 +5,7 @@ The next-generation HiFiBerryOS is a complete rewrite, now based on a standard D
 ## Documentation
 
 - [Add your own player](docs/add-your-own-player.md)
+- [Power key](docs/power-key.md) — stop the power button on a remote from shutting the system down
 
 ## Reporting bugs
 
