@@ -86,7 +86,7 @@ packages/nowplaying-sdl/nowplaying-sdl
 packages/pw-api/pipewire-api
 packages/songrec/songrec
 packages/speakereq/speakereq
-packages/vu-meter/src
+packages/vu-meter/vu-meter
 
 # Python bytecode from the helper scripts
 __pycache__/
