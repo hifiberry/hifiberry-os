@@ -138,13 +138,25 @@ setup_distribution() {
 }
 
 clone_update_git_repo() {
-    if [[ -d "${PACKAGE_DIR}/${SOURCE}/.git" ]]; then
+    if [[ -d "${PACKAGE_DIR}/${SOURCE}/.git" && ! -n "${REPO_TAG:-}" ]]; then
         echo "Updating $SOURCE from $REPO_URL..."
-        ( cd "${PACKAGE_DIR}/${SOURCE}" && git pull )
-    else
+
+        cd "${PACKAGE_DIR}/${SOURCE}"
+        git pull
+    elif [[ ! -d "${PACKAGE_DIR}/${SOURCE}/.git" ]]; then
         echo "Cloning $SOURCE from $REPO_URL..."
         git clone "$REPO_URL" "${PACKAGE_DIR}/${SOURCE}"
     fi
+
+    if [[ -n "${REPO_TAG:-}" ]]; then
+        echo "Checking out tag ${REPO_TAG}..."
+
+        cd "${PACKAGE_DIR}/${SOURCE}"
+        git fetch --tags
+        git checkout "tags/${REPO_TAG}"
+    fi
+
+    cd $PACKAGE_DIR/..
 }
 
 clean_build() {
