@@ -3,55 +3,31 @@
 set -e
 
 # Parse command line arguments
-CLEAN_MODE=false
+CLEAN_ARG=""
 if [ "$1" = "--clean" ]; then
-    CLEAN_MODE=true
+    CLEAN_ARG="--clean"
     echo "Clean mode enabled - will clean and rebuild all packages"
 fi
 
-# Define the packages directory
-PACKAGES_DIR="$HOME/packages"
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-echo "Looking for build.sh in subdirectories of $SCRIPT_DIR..."
-
-if [ -f "${SCRIPT_DIR}/../scripts/sbuild" ]; then
-    echo "Cross-compile detected, adding sbuild cross-compile to PATH."
-    export PATH="${SCRIPT_DIR}/../scripts:${PATH}"
-fi
-
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[1]}")")"
+echo "Building all packages in $SCRIPT_DIR..."
 
 for dir in "$SCRIPT_DIR"/*/; do
-    figlet `basename $dir`
-    if [ -f "$dir/build.sh" ]; then
-        echo "Found build.sh in $dir"
-        
-        # Check if .deb files already exist (unless cleaning)
-        if [ "$CLEAN_MODE" = false ] && ls "$dir"/*.deb 1> /dev/null 2>&1; then
+    figlet "$(basename "$dir")"
+
+    if [[ -f "$dir/build.config" || -d "$dir/src" ]]; then
+
+        if [[ "$CLEAN_ARG" != "--clean" ]] && ls "$dir"/*.deb 1> /dev/null 2>&1; then
             echo "Found existing .deb files in $dir. Skipping build (use --clean to force rebuild)..."
             echo 
             continue
         fi
-        
-        echo "Executing build process..."
-        (
-            cd "$dir"
-            chmod ugo+x ./build.sh 2>/dev/null || true
-            chmod ugo+x ./clean.sh 2>/dev/null || true
-            
-            # Run clean.sh only if clean mode is enabled or if it doesn't exist
-            if [ "$CLEAN_MODE" = true ] && [ -f clean.sh ]; then
-                echo "Running clean.sh in $dir..."
-                ./clean.sh
-            fi
-            
-            echo "Running build.sh in $dir..."
-            ./build.sh
-            echo 
-            sleep 2
-        )
+
+        echo "Found build config or source in $dir"
+
+        $SCRIPT_DIR/build "./$dir" $CLEAN_ARG
     else
-        echo "No build.sh found in $dir. Skipping..."
+        echo "No build.config or src found in $dir. Skipping..."
     fi
 done
 

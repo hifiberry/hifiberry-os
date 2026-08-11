@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[1]}")")"
+
+source "${SCRIPT_DIR}/build-functions.sh"
+
+echo "Cleaning all packages in $SCRIPT_DIR..."
+
+for dir in "$SCRIPT_DIR"/*/; do
+    figlet "$(basename "$dir")"
+
+    if [[ -f "$dir/build.config" || -d "$dir/src" ]]; then
+        PACKAGE_DIR="$(realpath '$dir')"
+        
+        if [[ -f "${PACKAGE_DIR}/build.config" ]]; then
+            source "${PACKAGE_DIR}/build.config"
+        fi
+
+        get_source_directory
+
+        clean_build
+
+    fi
+done
+
+echo
+echo "All packages cleaned."
+

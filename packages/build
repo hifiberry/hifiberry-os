@@ -1,0 +1,89 @@
+#!/bin/bash
+
+set -e
+
+# ---------------------------------------------------------
+# Determine script directory
+# ---------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# ---------------------------------------------------------
+# Load build functions
+# ---------------------------------------------------------
+
+source "${SCRIPT_DIR}/build-functions.sh"
+
+# ---------------------------------------------------------
+# Determine package directory
+# ---------------------------------------------------------
+
+PACKAGE_DIR="${1:-}"
+
+if [[ -z "$PACKAGE_DIR" ]]; then
+    echo "Usage: $0 <package-directory> [--clean]"
+    exit 1
+fi
+
+PACKAGE_DIR="$(realpath "$PACKAGE_DIR")"
+
+if [[ -f "${PACKAGE_DIR}/build.config" ]]; then
+    source "${PACKAGE_DIR}/build.config"
+fi
+
+get_source_directory
+
+# ---------------------------------------------------------
+# Handle command line arguments
+# ---------------------------------------------------------
+
+if [[ "${2:-}" == "--clean" ]]; then
+    clean_build
+fi
+
+if [[ -n "${REPO_URL:-}" ]]; then
+    clone_update_git_repo
+fi
+
+copy_source_files
+
+# ---------------------------------------------------------
+# Package information
+# ---------------------------------------------------------
+
+get_package_info "${PACKAGE_DIR}/${SOURCE}"
+
+print_package_info
+
+# ---------------------------------------------------------
+# Setup
+# ---------------------------------------------------------
+
+setup_cross_compile
+
+# ---------------------------------------------------------
+# Distribution
+# ---------------------------------------------------------
+
+setup_distribution
+
+# ---------------------------------------------------------
+# Build
+# ---------------------------------------------------------
+
+echo
+echo "Building ${PACKAGE} ${VERSION}..."
+echo
+
+cd "${PACKAGE_DIR}/${SOURCE}"
+
+build_package
+
+# ---------------------------------------------------------
+# Artifacts
+# ---------------------------------------------------------
+
+echo
+echo "Debian package build completed."
+
+show_build_artifacts "$PACKAGE_DIR"
