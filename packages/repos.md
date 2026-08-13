@@ -27,7 +27,7 @@ python3 scripts/git-repo-sync.py --root /home/matuschd/hifiberry-os --include-di
 | `packages/input-processor/input-processor` | https://github.com/hifiberry/input-processor | `main` | Analog input processor, optional RIAA phono EQ |
 | `packages/roomeq/roomeq` | https://github.com/hifiberry/roomeq | `main` | Room equalization |
 | `packages/songrec/songrec` | https://github.com/marin-m/SongRec | — | Third-party: song recognition (pinned release, DETACHED HEAD) |
-| `packages/speakereq/speakereq` | https://github.com/hifiberry/speakereq | `main` | Speaker equalization — **private repository**, building it needs credentials that can read it |
+| `packages/speakereq/speakereq` | https://github.com/hifiberry/speakereq | `main` | Speaker equalization |
 | `packages/tidal-connect` | https://github.com/pulpier/tidal-connect-hifiberry | `master` | Third-party: Tidal Connect |
 | `packages/vu-meter/src` | https://github.com/hifiberry/vu-meter | `main` | VU meter service |
 | `packages/webui/hbos-ui` | https://github.com/hifiberry/hbos-ui | `dev` | Web UI (Vue/TypeScript) |

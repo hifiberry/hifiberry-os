@@ -42,7 +42,8 @@ NOTES: List[str] = []
 # on one machine. An unreachable url is an error on purpose: a submodule in a
 # private repository would break `git submodule update --init` for every clone
 # of this public repository, which is exactly why licman and speakereq stopped
-# being submodules.
+# being submodules back when they were private. Both are public again, but the
+# guard is about the failure mode, not about those two repositories.
 
 
 def git(root: str, *args: str) -> str:
