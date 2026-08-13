@@ -75,6 +75,34 @@ fi
 # Write current username to /etc/hifiberry.user
 echo "$USER" | sudo tee /etc/hifiberry.user
 
+# Hardware access groups for the player user.
+# Raspberry Pi OS grants these to the first user created at imaging time, but a
+# user created later (e.g. a dedicated user just for the music player) has none
+# of them. Without "audio" the user services cannot open /dev/snd or write to
+# /var/lib/mpd, without gpio/i2c/spi the DSP and HAT tools have no bus access.
+HIFIBERRY_GROUPS="audio video render input gpio i2c spi plugdev netdev"
+groups_added=""
+for grp in $HIFIBERRY_GROUPS; do
+    if ! getent group "$grp" > /dev/null; then
+        continue
+    fi
+    if id -nG "$USER" | tr ' ' '\n' | grep -qx "$grp"; then
+        continue
+    fi
+    if sudo usermod -a -G "$grp" "$USER"; then
+        groups_added="$groups_added $grp"
+    else
+        echo "Warning: could not add user $USER to group $grp"
+    fi
+done
+
+if [ -n "$groups_added" ]; then
+    echo "Added user $USER to group(s):$groups_added"
+    RELOGIN_REQUIRED=yes
+else
+    echo "User $USER is already a member of all required groups"
+fi
+
 # Linger for current user
 echo "Enabling linger for user $USER"
 sudo loginctl enable-linger "$USER"
@@ -91,3 +119,15 @@ EOF
 # Reload the systemd user manager
 echo "Reloading systemd user manager..."
 systemctl --user daemon-reexec
+
+# New group memberships are only picked up when the user manager is started
+# again, which daemon-reexec does not do. Until then the player services keep
+# running without the new groups (MPD fails with "Permission denied" on
+# /var/lib/mpd), so ask for a reboot instead of silently leaving it broken.
+if [ "$RELOGIN_REQUIRED" = "yes" ]; then
+    echo ""
+    echo "Group memberships have changed. Please reboot now so that the"
+    echo "player services start with the new group memberships:"
+    echo ""
+    echo "    sudo reboot"
+fi
