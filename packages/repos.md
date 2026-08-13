@@ -13,7 +13,7 @@ python3 scripts/git-repo-sync.py --root /home/matuschd/hifiberry-os --include-di
 | Package dir | Repo | Branch | Notes |
 |-------------|------|--------|-------|
 | `packages/acr/acr` | https://github.com/hifiberry/acr | `main` | AudioControl Rust (ACR) — core audio routing service |
-| `packages/analog-recognition/analog-recognition` | https://github.com/hifiberry/analog-recognition | `main` | Analog-input song recognition (songrec) plus VU-meter play/stop state, published to ACR as the `analog` player |
+| `packages/analog-recognition/analog-recognition` | https://github.com/hifiberry/analog-recognition | `main` | Analog-input song recognition (songrec) plus VU-meter play/stop state, published to ACR as the `analog` player — **private repository**, building it needs credentials that can read it |
 | `packages/autorec/autorec` | https://github.com/hifiberry/autorec | `main` | Auto-recording service |
 | `packages/bluetooth-service/hbos-bluetooth` | https://github.com/hifiberry/hbos-bluetooth | `main` | Bluetooth audio service |
 | `packages/configurator/configurator` | https://github.com/hifiberry/configurator | `main` | System configuration API (Python) |
@@ -24,7 +24,7 @@ python3 scripts/git-repo-sync.py --root /home/matuschd/hifiberry-os --include-di
 | `packages/pw-api/pipewire-api` | https://github.com/hifiberry/pipewire-api | `master` | PipeWire API wrapper (C/Rust) |
 | `packages/python-pyedbglib/pyedbglib` | https://github.com/microchip-pic-avr-tools/pyedbglib | `main` | Third-party: Microchip debug library |
 | `packages/python-usagecollector/usagecollector` | https://github.com/hifiberry/usagecollector | `master` | Usage/telemetry collector |
-| `packages/raat/src/raat` | https://github.com/hifiberry/raat | `master` | RAAT (Roon) player |
+| `packages/raat/src/raat` | https://github.com/hifiberry/raat | `master` | RAAT (Roon) player — **private repository**, building it needs credentials that can read it |
 | `packages/input-processor/input-processor` | https://github.com/hifiberry/input-processor | `main` | Analog input processor, optional RIAA phono EQ |
 | `packages/roomeq/roomeq` | https://github.com/hifiberry/roomeq | `main` | Room equalization |
 | `packages/sendspin/sendspin` | https://github.com/hifiberry/sendspin | `main` | Sendspin / Music Assistant player (`sendspind`, C++) |
