@@ -13,7 +13,7 @@ python3 scripts/git-repo-sync.py --root /home/matuschd/hifiberry-os --include-di
 | Package dir | Repo | Branch | Notes |
 |-------------|------|--------|-------|
 | `packages/acr/acr` | https://github.com/hifiberry/acr | `main` | AudioControl Rust (ACR) — core audio routing service |
-| `packages/analog-recognition/analog-recognition` | https://github.com/hifiberry/analog-recognition | `main` | Analog-input song recognition (songrec) plus VU-meter play/stop state, published to ACR as the `analog` player — **private repository**, building it needs credentials that can read it |
+| `packages/analog-recognition/analog-recognition` | https://github.com/hifiberry/analog-recognition | `main` | Analog-input song recognition (songrec) plus VU-meter play/stop state, published to ACR as the `analog` player |
 | `packages/autorec/autorec` | https://github.com/hifiberry/autorec | `main` | Auto-recording service |
 | `packages/bluetooth-service/hbos-bluetooth` | https://github.com/hifiberry/hbos-bluetooth | `main` | Bluetooth audio service |
 | `packages/configurator/configurator` | https://github.com/hifiberry/configurator | `main` | System configuration API (Python) |
