@@ -18,12 +18,12 @@ Vcs-Git: https://github.com/hifiberry/hifiberry-os.git
 Vcs-Browser: https://github.com/hifiberry/hifiberry-os
 
 Package: hifiberry-librespot
-Architecture: arm64
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          libasound2 | libasound2t64,
          libssl3 | libssl3t64 | libssl1.1,
          libdbus-1-3,
-         libglib2.0-0,
+         libglib2.0-0 | libglib2.0-0t64,
          hifiberry-configurator
 Provides: librespot
 Conflicts: librespot
