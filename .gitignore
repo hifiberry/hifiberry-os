@@ -90,3 +90,6 @@ packages/vu-meter/src
 
 # Python bytecode from the helper scripts
 __pycache__/
+
+# Isolated worktrees for the nested package repos (SDD workspaces)
+.worktrees/
