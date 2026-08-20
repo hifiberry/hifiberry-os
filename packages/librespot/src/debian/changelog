@@ -1,3 +1,21 @@
+hifiberry-librespot (0.8.0.8) stable; urgency=medium
+
+  * Publish as a HiFiBerry extension: declare the XB-Extension metadata so
+    the package appears in the web interface's extension catalog, and drop
+    it from the hbos-full bundle. Spotify Connect is now installed on
+    demand rather than shipped with every full image.
+  * Ship the WebUI player descriptor and its icon
+    (/etc/hifiberry/players.d/librespot.json). These were never packaged --
+    dpkg -S found no owner for them on a running device -- so Spotify
+    appeared in the Players page only where someone had placed the files by
+    hand. As an extension that gap would be fatal: installing it would
+    register no player at all.
+  * The descriptor declares conflicts_with: ["soloist"], so the pairing is
+    now stated from both sides rather than relying on Soloist alone to
+    declare it.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 13:30:00 +0000
+
 hifiberry-librespot (0.8.0.7) stable; urgency=medium
 
   * Ship the ACR player definition as /etc/audiocontrol/players.d/librespot.json.

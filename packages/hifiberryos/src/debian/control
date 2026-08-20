@@ -71,9 +71,7 @@ Depends: hifiberry-configurator,
          pipewire-bin,
          pipewire-pulse,
          wireplumber,
-         hifiberry-librespot,
          hifiberry-raat,
-         hifiberry-shairport,
          hifiberry-bluetooth,
          hifiberry-vu-meter,
          roomeq,
@@ -85,11 +83,11 @@ Description: HiFiBerry OS full meta-package
  advanced features:
  .
   - All components from hbos-minimal (including PipeWire configurations)
-  - Spotify Connect support (hifiberry-librespot)
-  - AirPlay streaming (hifiberry-shairport)
   - RAAT streaming for Roon integration (hifiberry-raat)
+  - Bluetooth audio and the VU meter
  .
- Further players are no longer bundled here. Music Assistant
+ Players are no longer bundled here. Spotify Connect
+ (hifiberry-librespot), AirPlay (hifiberry-shairport), Music Assistant
  (hifiberry-sendspin), Squeezebox/LMS (hifiberry-squeezelite), analog-input
  track recognition (hifiberry-analog-recognition) and AES67
  (hifiberry-aes67) are published as extensions instead, installable on

@@ -1,0 +1,10 @@
+{
+    "name": "Spotify",
+    "provided_by": "librespot",
+    "systemd_service": "librespot",
+    "icon": "librespot",
+    "allow_change": true,
+    "conflicts_with": ["soloist"],
+    "maintainer_name": "Wanted",
+    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md"
+}

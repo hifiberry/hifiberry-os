@@ -1,3 +1,16 @@
+hifiberryos-meta (0.13) unstable; urgency=medium
+
+  * hbos-full: drop hifiberry-librespot and hifiberry-shairport. Both are
+    now published as extensions, installed on demand from the web
+    interface. With this, no player ships in the bundle except mpd and
+    RAAT: a fresh full install has neither Spotify Connect nor AirPlay
+    until the user adds them.
+    As before, this does not uninstall anything from existing systems --
+    apt leaves an installed package in place when a dependency is dropped,
+    though `apt autoremove` may then offer to remove it.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 13:30:00 +0000
+
 hifiberryos-meta (0.12) unstable; urgency=medium
 
   * hbos-full: drop hifiberry-sendspin, hifiberry-squeezelite and
