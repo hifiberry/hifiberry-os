@@ -128,9 +128,9 @@ override_dh_auto_install:
 	# appeared in the WebUI only where someone had placed the files by hand.
 	# Now that this package is an extension that matters: one that installs
 	# without registering a player is invisible.
-	mkdir -p debian/hifiberry-librespot/etc/hifiberry/players.d/icons
-	cp ui-players.d/librespot.json debian/hifiberry-librespot/etc/hifiberry/players.d/
-	cp ui-players.d/icons/librespot.svg debian/hifiberry-librespot/etc/hifiberry/players.d/icons/
+	mkdir -p debian/hifiberry-librespot/usr/share/hifiberry/players.d/icons
+	cp ui-players.d/librespot.json debian/hifiberry-librespot/usr/share/hifiberry/players.d/
+	cp ui-players.d/icons/librespot.svg debian/hifiberry-librespot/usr/share/hifiberry/players.d/icons/
 
 override_dh_auto_test:
 	# Skip tests - requires network access and specific hardware

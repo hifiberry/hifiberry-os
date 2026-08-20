@@ -1,0 +1,2 @@
+rm_conffile /etc/hifiberry/players.d/librespot.json 0.8.0.10
+rm_conffile /etc/hifiberry/players.d/icons/librespot.svg 0.8.0.10

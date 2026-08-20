@@ -23,7 +23,8 @@ XB-Extension-Needs-Reboot: no
 # installed and on a device with no internet access.
 XB-Extension-Icon-Url: /images/svg/network.svg
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire (>= 1.1)
+Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire (>= 1.1),
+         hifiberry-configurator (>= 2.17.6)
 Description: HiFiBerry AES67 receiver
  Receives AES67 audio from a Dante network and plays it through the HiFiBerry
  DAC using PipeWire. Streams announced over SAP are discovered automatically and

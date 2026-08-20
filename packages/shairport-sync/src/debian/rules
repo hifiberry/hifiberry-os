@@ -139,9 +139,9 @@ override_dh_auto_install:
 	# appeared in the WebUI only where someone had placed the files by hand.
 	# Now that this package is an extension that matters: one that installs
 	# without registering a player is invisible.
-	mkdir -p debian/hifiberry-shairport/etc/hifiberry/players.d/icons
-	cp ui-players.d/shairport.json debian/hifiberry-shairport/etc/hifiberry/players.d/
-	cp ui-players.d/icons/shairport.svg debian/hifiberry-shairport/etc/hifiberry/players.d/icons/
+	mkdir -p debian/hifiberry-shairport/usr/share/hifiberry/players.d/icons
+	cp ui-players.d/shairport.json debian/hifiberry-shairport/usr/share/hifiberry/players.d/
+	cp ui-players.d/icons/shairport.svg debian/hifiberry-shairport/usr/share/hifiberry/players.d/icons/
 
 override_dh_auto_clean:
 	rm -rf nqptp/

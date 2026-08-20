@@ -1,0 +1,2 @@
+rm_conffile /etc/hifiberry/players.d/usbaudio.json 0.1.1
+rm_conffile /etc/hifiberry/players.d/icons/usbaudio.svg 0.1.1

@@ -1,3 +1,18 @@
+hifiberry-librespot (0.8.0.10) stable; urgency=medium
+
+  * Ship the WebUI player descriptor and icon from
+    /usr/share/hifiberry/players.d instead of /etc. A descriptor is package
+    data, not configuration, and shipping it under /etc made it a conffile:
+    on any device where the file already existed -- they were hand-placed
+    before the packages shipped them -- dpkg treated it as a local edit and
+    preserved it, silently, for ever. Such a device never received a single
+    packaged update to its descriptor. The old conffile is removed on
+    upgrade; /etc/hifiberry/players.d still works and takes precedence, for
+    an administrator who genuinely wants to override or add a player.
+    Requires hifiberry-configurator 2.17.6, which reads both directories.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 20:00:00 +0000
+
 hifiberry-librespot (0.8.0.9) stable; urgency=medium
 
   * postinst: do not restart config-server. When the web interface installs

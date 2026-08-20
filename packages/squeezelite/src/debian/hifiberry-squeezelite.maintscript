@@ -1,0 +1,2 @@
+rm_conffile /etc/hifiberry/players.d/squeezelite.json 2.0.0.1565
+rm_conffile /etc/hifiberry/players.d/icons/squeezelite.svg 2.0.0.1565

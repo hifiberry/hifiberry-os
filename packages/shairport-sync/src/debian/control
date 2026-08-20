@@ -65,7 +65,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          libcap2-bin,
          libglib2.0-0 | libglib2.0-0t64,
          adduser,
-         hifiberry-configurator
+         hifiberry-configurator (>= 2.17.6)
 Provides: shairport-sync, nqptp
 Conflicts: shairport-sync, nqptp
 Replaces: shairport-sync, nqptp

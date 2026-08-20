@@ -12,7 +12,7 @@ Homepage: https://www.hifiberry.com/
 
 Package: hifiberry-usbaudio
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire, kmod, hifiberry-configurator (>= 2.13.20)
+Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire, kmod, hifiberry-configurator (>= 2.17.6)
 Description: HiFiBerry USB audio gadget service
  Presents the HiFiBerry device to a host computer as a class-compliant UAC2
  USB sound card, and routes the received audio to the HiFiBerry DAC using
