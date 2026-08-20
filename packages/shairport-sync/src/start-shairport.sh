@@ -113,12 +113,34 @@ else
   fi
 fi
 
-# Determine which binary to use based on version setting
+# Determine which binary to use based on version setting.
+#
+# The WebUI stores the choice in the config database under the same
+# player.<service>.<key> convention every plugin setting uses, so the Players
+# page can offer it as an ordinary select. Fall back to the config file when
+# it is unset or config-server cannot be reached: this script has to keep
+# working during an image build and on a device whose web interface never ran.
+AIRPLAY_VERSION=""
+if CONFIGDB_RESP=$(curl --silent --max-time 5 \
+      "http://127.0.0.1:1081/api/v1/key/player.shairport.airplay_version" 2>/dev/null); then
+  # Response shape: {"data":{"key":"...","value":"2"},"status":"success"}.
+  # Accept only the two values the descriptor offers -- anything else is
+  # treated as unset rather than passed through, because an unrecognised value
+  # would otherwise fall to the else branch below and silently select AirPlay
+  # 2, which looks identical to the user having chosen it.
+  case "$(printf '%s' "$CONFIGDB_RESP" | sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([12]\)".*/\1/p')" in
+    1) AIRPLAY_VERSION="1" ;;
+    2) AIRPLAY_VERSION="2" ;;
+  esac
+fi
+
 # Check runtime config first, then fall back to original config
-if [ -f "$RUNTIME_CONFIG" ]; then
-  AIRPLAY_VERSION=$(get_airplay_version "$RUNTIME_CONFIG")
-else
-  AIRPLAY_VERSION=$(get_airplay_version "$CONFIG_FILE")
+if [ -z "$AIRPLAY_VERSION" ]; then
+  if [ -f "$RUNTIME_CONFIG" ]; then
+    AIRPLAY_VERSION=$(get_airplay_version "$RUNTIME_CONFIG")
+  else
+    AIRPLAY_VERSION=$(get_airplay_version "$CONFIG_FILE")
+  fi
 fi
 
 if [ "$AIRPLAY_VERSION" = "1" ]; then

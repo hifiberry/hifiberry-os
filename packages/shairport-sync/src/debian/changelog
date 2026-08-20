@@ -1,3 +1,20 @@
+hifiberry-shairport (1:5.2.1.5) stable; urgency=medium
+
+  * Restore the AirPlay 1/2 choice, this time as a real setting. The old
+    control in the web interface wrote to an in-memory object and called no
+    API, so it never changed anything, and it stopped rendering at all when
+    this package became an extension. Declare airplay_version as an ordinary
+    select in the player descriptor, and have start-shairport read it from
+    the config database, falling back to shairport-sync.conf when it is
+    unset or config-server cannot be reached -- the script still has to work
+    during an image build and on a device whose web interface never ran.
+    Only "1" and "2" are accepted; any other stored value is treated as
+    unset rather than silently selecting AirPlay 2.
+    Applies the next time the player starts, like every other plugin
+    setting.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 19:00:00 +0000
+
 hifiberry-shairport (1:5.2.1.4) stable; urgency=medium
 
   * postinst: do not restart config-server. When the web interface installs
