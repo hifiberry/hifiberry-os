@@ -1,3 +1,16 @@
+hifiberry-aes67 (0.3.5) stable; urgency=medium
+
+  * postinst: do not restart config-server. When the web interface installs
+    an extension, config-server is the process running apt and it holds the
+    install job the UI polls in memory, so restarting from the postinst --
+    which runs during dpkg's configure step, mid-install -- destroyed that
+    job. The package installed correctly (apt runs under systemd-run and
+    survives) but the UI reported the install as lost. The restart was also
+    unnecessary: configurator re-reads conf.d in place after every extension
+    install.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 18:30:00 +0000
+
 hifiberry-aes67 (0.3.4) stable; urgency=medium
 
   * Player descriptor: mark the maintainer as Experimental. AES67 is not

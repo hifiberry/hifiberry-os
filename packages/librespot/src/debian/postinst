@@ -41,12 +41,23 @@ CONFEOF
 
         echo "Configserver drop-in installed for librespot."
 
-        # config-server caches conf.d systemd-permission drop-ins at startup; when
-        # this package is installed onto a running system, restart it so the WebUI
-        # can control this player. No-op during image builds (config-server not up).
-        if [ -d /run/systemd/system ] && systemctl is-active --quiet config-server 2>/dev/null; then
-            systemctl restart config-server >/dev/null 2>&1 || true
-        fi
+        # NOTE: deliberately no `systemctl restart config-server` here.
+        #
+        # When the WebUI installs an extension, config-server is the process running
+        # apt, and it holds the install job the UI polls in memory. Restarting from a
+        # postinst -- which runs during dpkg's configure step, mid-install -- destroys
+        # that job. apt survives (the runner starts it under systemd-run) so the
+        # package installs correctly, but the UI is left polling an id that no longer
+        # exists and reports the install as lost.
+        #
+        # It is also unnecessary: configurator re-reads conf.d in place after every
+        # extension install, via refresh_system_state() in
+        # configurator/extensions/postinstall.py, whose docstring says exactly why --
+        # "Restarting is not an option here: it would kill the job the UI is polling."
+        #
+        # Caveat for a manual `apt install` from a shell: nothing calls
+        # refresh_system_state() on that path, so config-server keeps its cached
+        # conf.d until restarted by hand.
 
         # Register with ACR
         if [ -d /etc/audiocontrol ]; then
