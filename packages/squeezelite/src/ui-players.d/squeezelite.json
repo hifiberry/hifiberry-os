@@ -1,0 +1,9 @@
+{
+    "name": "LMS",
+    "provided_by": "squeezelite",
+    "systemd_service": "squeezelite",
+    "icon": "squeezelite",
+    "allow_change": true,
+    "maintainer_name": "Wanted",
+    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md"
+}

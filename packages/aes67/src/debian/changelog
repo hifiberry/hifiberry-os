@@ -1,3 +1,12 @@
+hifiberry-aes67 (0.3.3) stable; urgency=medium
+
+  * Publish as a HiFiBerry extension: declare the XB-Extension metadata so
+    the package appears in the web interface's extension catalog and can be
+    installed on demand. Not previously part of any hbos-* bundle, so
+    nothing is removed from existing installs.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 11:00:00 +0000
+
 hifiberry-aes67 (0.3.2) stable; urgency=medium
 
   * Do not seed the latency when config-server is unreachable.

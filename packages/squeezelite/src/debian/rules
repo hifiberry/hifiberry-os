@@ -46,6 +46,16 @@ override_dh_auto_install:
 	mkdir -p debian/hifiberry-squeezelite/etc/audiocontrol/players.d
 	cp players.d/squeezelite.json debian/hifiberry-squeezelite/etc/audiocontrol/players.d/
 
+	# Install the WebUI player descriptor and its icon. Distinct from the ACR
+	# definition above: different schema, different directory. Until now this
+	# file was never packaged at all -- it existed only as a hand-placed file
+	# on individual devices, so the player showed up in the WebUI on those and
+	# nowhere else. That matters more now the package is an extension: an
+	# extension that installs without registering a player is invisible.
+	mkdir -p debian/hifiberry-squeezelite/etc/hifiberry/players.d/icons
+	cp ui-players.d/squeezelite.json debian/hifiberry-squeezelite/etc/hifiberry/players.d/
+	cp ui-players.d/icons/squeezelite.svg debian/hifiberry-squeezelite/etc/hifiberry/players.d/icons/
+
 override_dh_auto_clean:
 	rm -rf squeezelite/
 	find . -name "*.o" -delete 2>/dev/null || true

@@ -11,6 +11,17 @@ Standards-Version: 4.1.4
 Homepage: https://www.hifiberry.com/
 
 Package: hifiberry-aes67
+# Extension metadata, read by the WebUI's extension catalog. See
+# configurator/extensions/catalog.py: every card is built from the apt record,
+# and any field omitted here silently falls back to a default (the raw package
+# name, category "tool"). dpkg strips the XB- prefix in the built record.
+XB-Hifiberry-Extension: yes
+XB-Extension-Name: AES67
+XB-Extension-Category: player
+XB-Extension-Needs-Reboot: no
+# Served by hifiberry-webui itself, so it resolves before the extension is
+# installed and on a device with no internet access.
+XB-Extension-Icon-Url: /images/svg/network.svg
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, systemd, pipewire (>= 1.1)
 Description: HiFiBerry AES67 receiver

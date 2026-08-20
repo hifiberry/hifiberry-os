@@ -1,3 +1,15 @@
+hifiberryos-meta (0.12) unstable; urgency=medium
+
+  * hbos-full: drop hifiberry-sendspin, hifiberry-squeezelite and
+    hifiberry-analog-recognition. All three are now published as
+    extensions, installable on demand from the web interface, so a full
+    install no longer ships players the user may never enable.
+    Note this does not uninstall them from existing systems: apt leaves an
+    installed package in place when a dependency is dropped, though it may
+    then be flagged by `apt autoremove`.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 11:00:00 +0000
+
 hifiberryos-meta (0.11) unstable; urgency=medium
 
   * hbos-full: add hifiberry-sendspin (Sendspin / Music Assistant player).
