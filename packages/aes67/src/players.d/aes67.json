@@ -4,8 +4,8 @@
     "systemd_service": "aes67",
     "icon": "aes67",
     "allow_change": true,
-    "maintainer_name": "HiFiBerry",
-    "maintainer_url": "https://www.hifiberry.com/",
+    "maintainer_name": "Experimental",
+    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md",
     "settings": [
         {
             "key": "stream",

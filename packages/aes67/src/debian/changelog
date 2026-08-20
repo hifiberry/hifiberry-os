@@ -1,3 +1,11 @@
+hifiberry-aes67 (0.3.4) stable; urgency=medium
+
+  * Player descriptor: mark the maintainer as Experimental. AES67 is not
+    actively maintained, and showing "HiFiBerry" implied a level of support
+    behind it that does not exist.
+
+ -- HiFiBerry <support@hifiberry.com>  Thu, 20 Aug 2026 14:00:00 +0000
+
 hifiberry-aes67 (0.3.3) stable; urgency=medium
 
   * Publish as a HiFiBerry extension: declare the XB-Extension metadata so
