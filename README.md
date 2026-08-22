@@ -80,7 +80,8 @@ HiFiBerryOS supports all current HiFiBerry audio HATs. No sound cards from other
 
 ## Installation
 
-To install HiFiBerryOS, start with [**Raspberry Pi OS Lite**](https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-legacy) and add the required packages.
+To install HiFiBerryOS, start with [**Raspberry Pi OS Lite**](https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-64-bit) and add the required packages.
+
 
 ### Add repository
 
@@ -114,8 +115,15 @@ sudo apt install -y hbos-minimal
 
 ```
 sudo config-configtxt --default-config --enable-i2c
-reboot
+sudo reboot
 ```
+
+### Set up Kiosk Mode
+
+Activate a lightweight Kiosk mode that presents the UI on the device.
+This replaces either the default Desktop (Raspberry Pi OS), or the terminal output (Raspberry Pi OS Lite).
+
+[Instructions](docs/kiosk-mode.md)
 
 ## How to use
 
