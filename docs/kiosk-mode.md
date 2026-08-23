@@ -39,6 +39,17 @@ Reboot after setup for a clean start:
 sudo reboot
 ```
 
+### Setup (online)
+
+Download and execute the script directly from the online repository:
+
+```bash
+curl -Ls https://raw.githubusercontent.com/hifiberry/hifiberry-os/refs/heads/main/kiosk-mode/kiosk-mode.sh | sudo bash -s -- setup
+sudo reboot
+```
+
+Options can be added just as for the local installation procedure.
+
 ## Revert to normal desktop
 
 ```bash
@@ -78,3 +89,18 @@ Typical starting points:
 - `cage` and `cog` are installed by the setup script if not already present.
 - cog logs to `/tmp/kiosk.log` on the device.
 - The Pi 5 uses a split GPU: `card1` (vc4) for display, `renderD128` (v3d) for rendering. cog's DRM backend cannot bridge this directly, which is why cage is used as an intermediary Wayland compositor.
+
+
+## Optional: Hide cursor
+
+Raspberry Pi OS may detect the HDMI output as an input device. If you have no further input devices attached, this will result with a stuck cursor in the center of the screen. To deactivate this, the HDMI device can be ignored as an input device via an udev-rule:
+
+```bash
+echo 'SUBSYSTEM=="input", ATTRS{name}=="vc4-hdmi", ENV{LIBINPUT_IGNORE_DEVICE}="1"' | sudo tee /etc/udev/rules.d/10-ignore-pointer.rules > /dev/null
+```
+
+The name of the device is dependent on the Raspberry Pi. To identify the correct device(s), run 
+
+```bash
+dmesg | grep input | grep hdmi
+```
