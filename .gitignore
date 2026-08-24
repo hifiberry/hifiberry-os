@@ -59,6 +59,7 @@ packages/*/*.tar.xz.new.*
 
 packages/sendspin/sendspin
 packages/soloist-wrapper/soloist-wrapper
+packages/shairport-sync/hifiberry-shairport
 
 # Superpowers brainstorm specs / plans (local only)
 docs/superpowers/

@@ -1,2 +1,0 @@
-rm_conffile /etc/hifiberry/players.d/shairport.json 1:5.2.1.6
-rm_conffile /etc/hifiberry/players.d/icons/shairport.svg 1:5.2.1.6
