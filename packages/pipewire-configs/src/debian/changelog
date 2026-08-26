@@ -1,3 +1,23 @@
+hifiberry-pipewire-configs (1.0.11) stable; urgency=medium
+
+  * 99-hifiberry-bluetooth.conf: disable WirePlumber's logind seat monitoring
+    for the bluez monitor. WirePlumber's monitors/bluez.lua only calls
+    createMonitor() when the logind seat state is "active". A HiFiBerryOS box
+    has no seat -- the player runs in a systemd user session with no console
+    or graphical login -- so the plugin reports "online", the monitor is never
+    created, and libspa-bluez5 is never loaded into the process at all.
+    BlueZ is then left with no A2DP media endpoint: the adapter advertises no
+    Audio Sink UUID (0000110b) and keeps a generic class of device, so phones
+    list it as a nondescript device rather than a speaker, and a phone that
+    does connect finds nothing to stream to and drops the link after a few
+    seconds.
+    Verified on a Pi 4: before, class 0x00400000 with no Audio Sink UUID and
+    libspa-bluez5 absent from the process; after, class 0x006c0000 with
+    Audio Sink and Audio Source advertised and the plugin loaded.
+    Closes hifiberry/hifiberry-os#641, hifiberry/hifiberry-os#642.
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 26 Aug 2026 20:30:00 +0000
+
 hifiberry-pipewire-configs (1.0.10) stable; urgency=medium
 
   * Add 98-hifiberry-digi-no-capture.conf: disable the S/PDIF capture node on
