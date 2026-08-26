@@ -1,3 +1,18 @@
+hifiberryos-meta (0.14) unstable; urgency=medium
+
+  * hbos-minimal: add bluez and libspa-0.2-bluetooth. Until now
+    libspa-0.2-bluetooth -- the SPA plugin PipeWire needs to register A2DP
+    endpoints with BlueZ -- was pulled in only as a dependency of
+    hifiberry-bluetooth, which is part of hbos-full alone. A minimal
+    install therefore had no Bluetooth audio backend at all, while still
+    receiving 99-hifiberry-bluetooth.conf from hifiberry-pipewire-configs
+    and still offering the pairing toggle in the web interface. Phones
+    could pair but saw a generic device rather than a speaker, because no
+    A2DP service was ever published in the SDP record.
+    See hifiberry/hifiberry-os#641.
+
+ -- HiFiBerry <support@hifiberry.com>  Wed, 26 Aug 2026 19:00:00 +0000
+
 hifiberryos-meta (0.13) unstable; urgency=medium
 
   * hbos-full: drop hifiberry-librespot and hifiberry-shairport. Both are
