@@ -39,6 +39,8 @@ Depends: hifiberry-configurator,
          pipewire-bin,
          pipewire-pulse,
          wireplumber,
+         bluez,
+         libspa-0.2-bluetooth,
          i2c-tools,
          sox
 Description: HiFiBerry OS minimal meta-package
@@ -52,6 +54,7 @@ Description: HiFiBerry OS minimal meta-package
   - Audio control utilities (hifiberry-audiocontrol)
   - PipeWire audio server with optimized configurations (hifiberry-pipewire-configs)
   - Modern web interface (hifiberry-webui)
+  - Bluetooth audio backend for PipeWire (bluez, libspa-0.2-bluetooth)
  .
  This package is ideal for users who want a lightweight installation with
  essential audio functionality and web-based management.
