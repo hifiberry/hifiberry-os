@@ -1,0 +1,19 @@
+instructions = """
+This repository packages and ships the OS. Most changes are Debian packaging
+and shell, and the failure they cause shows up on a customer's device during
+an unattended upgrade. Alongside the usual defects, report these:
+
+- A maintainer script (postinst, prerm, postrm) that is not idempotent, that
+  assumes a fresh install and breaks on upgrade, or that restarts the service
+  currently installing it.
+- A package that calls a binary or imports a module it does not declare in
+  `debian/control`, and a new package missing from the metapackage that is
+  supposed to pull it in.
+- Shell without `set -e`, unquoted variables or paths, or `rm -rf` on a
+  constructed path.
+- A systemd unit whose ordering or conditions assume hardware that may be
+  absent — no display, no Bluetooth adapter, no sound card — and that fails
+  the boot or the install when it is.
+- A change to a build or cross-compile script that works from the maintainer
+  checkout but not from a clean clone.
+"""
