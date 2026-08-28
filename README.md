@@ -31,7 +31,27 @@ We use **PipeWire** as a system daemon to manage concurrent access to the sound 
 
 ### WebUI
 
-The WebUI is served directly by AudioControl, which includes a built-in web server.
+The WebUI is a static Vue application, installed to `/usr/share/hifiberry/webui`
+and served by **nginx**, which is the device's single front door on port 80.
+
+nginx also reverse-proxies every backend service. Each package ships its own nginx
+snippet, so a service's API prefix exists only when that package is installed:
+
+| Prefix | Upstream |
+|---|---|
+| `/api/audiocontrol/` | AudioControl on `127.0.0.1:1080` |
+| `/api/config/` | Configurator on `localhost:1081` |
+| `/api/auth/` | hifiberry-auth on `127.0.0.1:1089` |
+| `/api/roomeq/` | RoomEQ on `127.0.0.1:10315` |
+
+The prefix is rewritten before the request reaches the backend — `/api/audiocontrol/`
+becomes `/api/` on port 1080 — so a service's own documentation describes paths
+without the prefix.
+
+When the `hifiberry-auth` package is installed it adds an `auth_request` at server
+level, so nginx gates every `/api/<service>/` location and the individual services
+do not implement authentication themselves. Without that package the device is
+ungated.
 
 ### Players
 
