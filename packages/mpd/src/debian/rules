@@ -31,6 +31,15 @@ override_dh_auto_configure:
 		mv "MPD-$(MPD_VERSION)" mpd-source; \
 	fi
 	
+	# Apply our local patches to the MPD source (see debian/patches/)
+	if [ ! -f mpd-source/.hifiberry-patches-applied ]; then \
+		for p in $(CURDIR)/debian/patches/*.patch; do \
+			echo "Applying $$p"; \
+			patch -d mpd-source -p1 --forward < "$$p"; \
+		done; \
+		touch mpd-source/.hifiberry-patches-applied; \
+	fi
+	
 	# Configure MPD using meson directly
 	cd mpd-source && mkdir -p build
 	cd mpd-source/build && meson setup --buildtype=debugoptimized \

@@ -1,3 +1,25 @@
+hifiberry-mpd (0.24.13.6) stable; urgency=medium
+
+  * Fix playback freezing on "next", "previous" and seek while a track is
+    playing (hifiberry-os#646). MPD reported "state: play" but "elapsed" stayed
+    frozen and no samples reached the sink; only stop+play recovered.
+
+    MPD's ALSA output cancels playback with snd_pcm_drop() and defers the
+    matching snd_pcm_prepare() to the next DispatchSockets() call, which only
+    runs once the PCM's poll descriptor becomes ready. PipeWire's ALSA
+    compatibility plugin never makes that descriptor ready again after
+    snd_pcm_drop() -- poll() blocks indefinitely with the PCM stuck in
+    SND_PCM_STATE_SETUP -- and NonBlockPcm::PrepareSockets() arms no timeout,
+    so MPD waited forever and the deferred prepare never happened. A real ALSA
+    device reports the descriptor ready immediately in that state, so this only
+    ever bit PipeWire setups.
+
+    Patch NonBlockPcm::PrepareSockets() to arm a timeout whenever the PCM is
+    not RUNNING. While the stream runs, behaviour and wakeup count are
+    unchanged. Not a regression: 0.24.8 froze the same way.
+
+ -- HiFiBerry <support@hifiberry.com>  Fri, 28 Aug 2026 10:00:00 +0200
+
 hifiberry-mpd (0.24.13.5) stable; urgency=medium
 
   * Announce the pretty hostname over Zeroconf, like the other players.

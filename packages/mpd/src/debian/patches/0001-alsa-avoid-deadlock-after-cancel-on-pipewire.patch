@@ -1,0 +1,84 @@
+Description: alsa: don't deadlock after cancel on PipeWire's ALSA plugin
+ MPD's ALSA output cancels playback (next/previous/seek) by calling
+ snd_pcm_drop() and deferring the matching snd_pcm_prepare() until the next
+ DispatchSockets() call.  DispatchSockets() only runs when the PCM's poll
+ descriptor becomes ready, and NonBlockPcm::PrepareSockets() arms no timeout,
+ so the event loop waits on that descriptor alone.
+ .
+ PipeWire's ALSA compatibility plugin never makes the descriptor ready again
+ after snd_pcm_drop(): poll() blocks forever with the PCM in
+ SND_PCM_STATE_SETUP.  DispatchSockets() is therefore never called, the
+ deferred snd_pcm_prepare() never happens, and playback freezes permanently --
+ MPD keeps reporting "state: play" while "elapsed" stays frozen and no samples
+ reach the sink.  Only stop+play recovers, because that reopens the PCM.
+ .
+ A real ALSA device reports the descriptor as ready immediately (measured: 0ms
+ on hw:Dummy, versus an indefinite block through the PipeWire plugin), which is
+ why this only affects PipeWire setups.
+ .
+ Arm a timeout whenever the PCM is not RUNNING, so the state machine can always
+ make progress.  That timeout is a one-shot FineTimerEvent and
+ MultiSocketMonitor::OnTimeout() does not schedule PrepareSockets() again, so
+ AlsaOutput::DispatchSockets() additionally forces a PrepareSockets() call while
+ the stream is not RUNNING, to re-arm it.  Once the stream runs, both hunks stop
+ taking effect and the poll descriptor drives the loop again, unchanged.
+Author: HiFiBerry
+Bug: https://github.com/hifiberry/hifiberry-os/issues/646
+Forwarded: not-yet
+Last-Update: 2026-08-28
+--- a/src/lib/alsa/NonBlock.cxx	2026-08-28 10:35:31
++++ b/src/lib/alsa/NonBlock.cxx	2026-08-28 10:58:23
+@@ -5,6 +5,8 @@
+ #include "Error.hxx"
+ #include "event/MultiSocketMonitor.hxx"
+ 
++#include <chrono>
++
+ namespace Alsa {
+ 
+ std::span<pollfd>
+@@ -50,7 +52,24 @@
+ 	}
+ 
+ 	m.ReplaceSocketList(pfds.first(count));
+-	return Event::Duration(-1);
++
++	/* Workaround for PipeWire's ALSA compatibility plugin
++	   (libasound_module_pcm_pipewire.so): after snd_pcm_drop(), its poll
++	   descriptor never becomes ready again.  A purely descriptor-driven
++	   event loop would therefore never call DispatchSockets() again, and
++	   would never reach the snd_pcm_prepare() that revives the stream --
++	   playback freezes for good after "next", "previous" or a seek.  A
++	   real ALSA device reports the descriptor as ready immediately while
++	   in SND_PCM_STATE_SETUP, which is why this only bites on PipeWire.
++
++	   While the stream is running, keep waiting on the descriptor alone,
++	   so the hot path gets no additional wakeups.  In every other state,
++	   also arm a timeout so the state machine can always make progress.
++	   AlsaOutput::DispatchSockets() re-arms it until the stream runs. */
++	if (snd_pcm_state(pcm) == SND_PCM_STATE_RUNNING)
++		return Event::Duration(-1);
++
++	return std::chrono::milliseconds(10);
+ }
+ 
+ void
+--- a/src/output/plugins/AlsaOutputPlugin.cxx	2026-08-28 10:35:31
++++ b/src/output/plugins/AlsaOutputPlugin.cxx	2026-08-28 10:58:23
+@@ -1254,6 +1254,16 @@
+ AlsaOutput::DispatchSockets() noexcept
+ try {
+ 	non_block.DispatchSockets(*this, pcm);
++
++	if (snd_pcm_state(pcm) != SND_PCM_STATE_RUNNING)
++		/* the timeout armed by NonBlockPcm::PrepareSockets() is a
++		   one-shot FineTimerEvent, and MultiSocketMonitor::OnTimeout()
++		   does not schedule PrepareSockets() again.  On PipeWire the
++		   poll descriptor stays dead until the stream runs, so that
++		   single timeout would be our only wakeup; force a
++		   PrepareSockets() call to re-arm it.  Once the stream is
++		   RUNNING this stops and the descriptor drives us again. */
++		MultiSocketMonitor::InvalidateSockets();
+ 
+ 	if (must_prepare) {
+ 		must_prepare = false;
