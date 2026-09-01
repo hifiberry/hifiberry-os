@@ -106,7 +106,9 @@ the setup wizard and can change it later under **Settings → Security**.
   is also recorded in an **allowlist table** in the SQLite DB: a cookie is
   accepted only while its row is there. Signing out deletes that one row;
   changing the device password deletes them all. Rotating the key (or deleting
-  the DB) still revokes every session.
+  the DB) still revokes every session. Sessions issued before 0.2.0 carry no
+  session id and are not accepted, so every device signs in once after that
+  upgrade.
 - **Session lifetime**: **12 hours** by default, **30 days** if the user ticks
   *“stay signed in on this device”*.
 - **CSRF**: every risky **non-GET** request must carry the session's CSRF token
