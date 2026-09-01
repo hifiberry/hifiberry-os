@@ -274,8 +274,20 @@ def main() -> int:
     args = parser.parse_args()
 
     root = os.path.abspath(args.root)
-    if not os.path.isdir(os.path.join(root, ".git")):
+
+    # Ask git rather than looking for a .git directory: in a worktree - and in
+    # a submodule - .git is a *file* pointing at the real git dir, so the
+    # directory test rejected a perfectly good checkout. That made the
+    # pre-push hook abort every push from a worktree, leaving
+    # SKIP_PACKAGE_CHECK=1 as the only way through, which skips the check
+    # rather than running it.
+    toplevel = git(root, "rev-parse", "--show-toplevel")
+    if not toplevel:
         print(f"not a git repository: {root}", file=sys.stderr)
+        return 2
+    if os.path.realpath(toplevel) != os.path.realpath(root):
+        print(f"not the top level of a repository: {root}", file=sys.stderr)
+        print(f"  try: --root {toplevel}", file=sys.stderr)
         return 2
 
     check_structure(root, args.online)
