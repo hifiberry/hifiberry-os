@@ -211,15 +211,18 @@ exists.
 
 ## Auth API reference (`/api/auth/`)
 
-These endpoints are always reachable (nginx sets `auth_request off` for them):
+These endpoints are always reachable (nginx sets `auth_request off` for them),
+so the writes that need a CSRF token check it themselves rather than relying on
+the gateway. `login` cannot require one — it mints the session that would carry
+it — and `set-password` takes the current password instead:
 
 | Endpoint | Method | Purpose |
 |---|---|---|
 | `/api/auth/status` | GET | Current `{protection, has_password, authenticated}` |
 | `/api/auth/set-password` | POST | Set/change the password (needs `current` when one exists); mints a session |
 | `/api/auth/login` | POST | Sign in with the password (rate-limited); mints a session |
-| `/api/auth/logout` | POST | End the session (requires a session + CSRF token) and clear the cookie |
-| `/api/auth/policy` | POST | Set the protection policy (`off`/`risky`/`all`); requires a session |
+| `/api/auth/logout` | POST | End the session (requires a session + CSRF token); clears the cookie only when it succeeds |
+| `/api/auth/policy` | POST | Set the protection policy (`off`/`risky`/`all`); requires a session + CSRF token |
 | `/api/auth/csrf` | GET | Return the current session's CSRF token (used to rehydrate after reload) |
 
 The internal `GET /_auth/verify` endpoint is the nginx subrequest target; it is
