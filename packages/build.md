@@ -277,9 +277,26 @@ ERROR: secrets.txt is identical to secrets.txt.sample.
 This is deliberate — the credentials are compiled in, and a package built
 from the sample would fail against Last.fm, Spotify and TheAudioDB at runtime
 without failing at build time. A machine that has never built this package
-before will hit the guard. Put the real `secrets.txt` in the build user's home
-directory inside the container, or build that package where the credentials
-already are.
+before will hit the guard.
+
+Where to put the real `secrets.txt` decides whether you do this once or every
+time. `build.sh` copies `$HOME/secrets.txt` over the checkout's copy whenever
+that file exists, and otherwise keeps whatever `secrets.txt` is already in the
+checkout. Inside the container `$HOME` is `/home/builder`, which is not one of
+the mounts — only the project at `/work` and the sbuild chroot cache are
+mounted — so a file placed there lives in the container's writable layer, and
+`--stop` removes the container and the file with it. The next build hits the
+guard again with nothing pointing at why.
+
+The host-side path persists. `packages/acr/acr/secrets.txt` is inside the
+`/work` mount, and that checkout is gitignored and only ever git-pulled, so
+the file survives `--stop`, later builds and image rebuilds. The checkout
+appears on the first build attempt — the one that stops at the guard — so edit
+it then and the second attempt goes through. Only `packages/acr/build.sh
+--clean` removes it, since that deletes the checkout wholesale.
+
+Use `/home/builder/secrets.txt` for a one-off build in a container you are
+keeping, or build the package on a machine where the credentials already are.
 
 Packages other than `acr` are unaffected.
 
