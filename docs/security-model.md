@@ -100,10 +100,16 @@ the setup wizard and can change it later under **Settings → Security**.
 
 - **Password** is hashed with **argon2id** and stored in the SQLite DB. It is
   never stored in the browser.
-- **Session** is a **stateless, HMAC-SHA256-signed cookie** (`hifiberry_session`,
-  `HttpOnly`, `SameSite=Lax`). There is no server-side session table — the cookie
-  carries its own issue/expiry timestamps and a CSRF token, signed with a
-  per-device key. Rotating that key (or deleting the DB) revokes every session.
+- **Session** is an **HMAC-SHA256-signed cookie** (`hifiberry_session`,
+  `HttpOnly`, `SameSite=Lax`) carrying its own issue/expiry timestamps, a CSRF
+  token and a random session id, signed with a per-device key. The session id
+  is also recorded in an **allowlist table** in the SQLite DB: a cookie is
+  accepted only while its row is there. Signing out deletes that one row;
+  changing the device password deletes every row and then mints a new session
+  for whoever changed it, so every *other* device is signed out. Rotating the
+  key (or deleting the DB) still revokes every session. Sessions issued before
+  0.2.0 carry no session id and are not accepted, so every device signs in once
+  after that upgrade.
 - **Session lifetime**: **12 hours** by default, **30 days** if the user ticks
   *“stay signed in on this device”*.
 - **CSRF**: every risky **non-GET** request must carry the session's CSRF token
@@ -212,7 +218,7 @@ These endpoints are always reachable (nginx sets `auth_request off` for them):
 | `/api/auth/status` | GET | Current `{protection, has_password, authenticated}` |
 | `/api/auth/set-password` | POST | Set/change the password (needs `current` when one exists); mints a session |
 | `/api/auth/login` | POST | Sign in with the password (rate-limited); mints a session |
-| `/api/auth/logout` | POST | Clear the session cookie |
+| `/api/auth/logout` | POST | End the session (requires a session + CSRF token) and clear the cookie |
 | `/api/auth/policy` | POST | Set the protection policy (`off`/`risky`/`all`); requires a session |
 | `/api/auth/csrf` | GET | Return the current session's CSRF token (used to rehydrate after reload) |
 
@@ -223,7 +229,7 @@ not reachable from the browser.
 
 | Path | Purpose |
 |---|---|
-| `/var/lib/hifiberry-auth/auth.db` | password hash, signing key, protection policy |
+| `/var/lib/hifiberry-auth/auth.db` | password hash, signing key, protection policy, session allowlist |
 | `/etc/hifiberry/auth.d/*.json` | per-service classification manifests |
 | `/etc/nginx/hifiberry-auth.d/00-verify.conf` | server-level `auth_request` wiring |
 | `/etc/nginx/hifiberry-api.d/hifiberry-auth.nginx` | the `/api/auth/` location |
@@ -232,7 +238,7 @@ Common operations:
 
 - **Reset the password / all sessions**: stop the service, delete
   `/var/lib/hifiberry-auth/auth.db`, start the service. Protection returns to
-  `unset`.
+  `unset` and every session is revoked, since the allowlist lives in that file.
 - **Reload manifests**: manifests are read at startup, so
   `systemctl restart hifiberry-auth` after adding or changing one.
 - **Disable the gate entirely**: set the policy to `off`, or (for
