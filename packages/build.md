@@ -15,6 +15,11 @@ This document provides instructions for building HiFiBerry OS packages locally.
 - `git` for source code management
 - Build tools: `build-essential`, `devscripts`, `debhelper`
 
+On a host that is not Debian — macOS, or a Linux distribution without these
+tools — build in the container instead of installing any of this. See
+[Building in a container](#building-in-a-container), which is the only
+supported route on macOS.
+
 ## Consistency checks
 
 Packages take their sources either as a git submodule or as a clone made by
@@ -53,6 +58,10 @@ for.
 
 ## Pre-Build System Configuration
 
+Applies to a Debian host building natively. On the container route these are
+settings of the container runtime's VM instead — see
+[Building in a container](#building-in-a-container).
+
 ### 1. Increase Swap Space
 Large packages (especially Rust-based ones like `librespot`, `acr`) require significant memory during compilation:
 
@@ -90,6 +99,11 @@ tmpfs /tmp tmpfs defaults,size=16G 0 0
 ## Cross-Compilation Support
 
 HiFiBerry OS supports building packages for different architectures (e.g., ARM64 on x86, or different ARM variants). Cross-compilation uses `sbuild` with isolated chroot environments.
+
+Note that "cross-compilation" here means the *host* and the *target* differ.
+Building arm64 packages on an arm64 machine — an Apple Silicon Mac, a Pi, an
+arm64 server — is a native build, needs no `qemu-user-static`, and runs at
+full speed. The same commands apply either way; only the cost differs.
 
 ### When to Use Cross-Compilation
 
@@ -199,6 +213,100 @@ ls ~/.cache/sbuild/
 ```bash
 ./scripts/disable-cross-compile
 ```
+
+## Building in a container
+
+`packages/docker-build.sh` runs the whole package build inside a Debian
+container, using the same `sbuild` chroot the native path uses. This is how to
+build on a host that is not Debian, and it is the **only supported route on
+macOS**: `sbuild`, `schroot` and `dpkg-buildpackage` have no macOS equivalent,
+so a native build there is not possible at all.
+
+It is also worth using on Linux when you would rather not install the build
+toolchain on the host.
+
+### Prerequisites
+
+- A container runtime exposing a `docker` command — Docker Desktop, Colima or
+  Podman in Docker-compatible mode all work. Nothing in the scripts depends on
+  which one.
+- Enough resources **given to the container VM**, not just to the machine. On
+  macOS and on any VM-backed runtime the defaults are usually too small for
+  the Rust packages: allow 8 GB of RAM (16 GB is better) and tens of
+  gigabytes of disk. Raise them in the runtime's own configuration before the
+  first build; a Rust build that dies without a clear message is usually this.
+
+### Usage
+
+```bash
+cd packages
+./docker-build.sh <package>              # one package
+./docker-build.sh <package> <package>    # several
+./docker-build.sh all                    # everything
+```
+
+Options:
+
+- `--clean` — remove existing `.deb` files first and rebuild
+- `--rebuild-image` — force a rebuild of the builder image
+- `--shell` — open a shell inside the build container
+- `--stop` — stop and remove the build container
+
+The first run is slow: it builds the `hifiberryos-builder` image and then
+creates the sbuild chroot inside it. The chroot lives in a named volume, so
+later runs reuse it and start compiling immediately.
+
+### Architecture
+
+The container inherits the host's architecture unless told otherwise. On an
+arm64 machine the Debian container and its arm64 chroot are both native, so
+building the arm64 packages costs no emulation. On an x86 machine the same
+build runs the arm64 chroot under emulation and is much slower — correct, but
+budget for it.
+
+### Credentials
+
+`packages/acr/build.sh` refuses to build when `secrets.txt` is still the
+sample file:
+
+```
+ERROR: secrets.txt is identical to secrets.txt.sample.
+  The build would bake placeholder credentials into the binary
+```
+
+This is deliberate — the credentials are compiled in, and a package built
+from the sample would fail against Last.fm, Spotify and TheAudioDB at runtime
+without failing at build time. A machine that has never built this package
+before will hit the guard.
+
+Where to put the real `secrets.txt` decides whether you do this once or every
+time. `build.sh` copies `$HOME/secrets.txt` over the checkout's copy whenever
+that file exists, and otherwise keeps whatever `secrets.txt` is already in the
+checkout. Inside the container `$HOME` is `/home/builder`, which is not one of
+the mounts — only the project at `/work` and the sbuild chroot cache are
+mounted — so a file placed there lives in the container's writable layer, and
+`--stop` removes the container and the file with it. The next build hits the
+guard again with nothing pointing at why.
+
+The host-side path persists. `packages/acr/acr/secrets.txt` is inside the
+`/work` mount, and that checkout is gitignored and only ever git-pulled, so
+the file survives `--stop`, later builds and image rebuilds. The checkout
+appears on the first build attempt — the one that stops at the guard — so edit
+it then and the second attempt goes through. Only `packages/acr/build.sh
+--clean` removes it, since that deletes the checkout wholesale.
+
+Use `/home/builder/secrets.txt` for a one-off build in a container you are
+keeping, or build the package on a machine where the credentials already are.
+
+Packages other than `acr` are unaffected.
+
+### Verifying the sources without packaging
+
+Building a `.deb` is not the cheapest way to find out whether the code
+compiles. `acr` documents a plain container recipe for `cargo test` in its own
+[`doc/tooling.md`](https://github.com/hifiberry/acr/blob/main/doc/tooling.md),
+which needs no chroot, no sbuild and no credentials. Use that while working on
+the code, and the package build when you actually need a package.
 
 ## Building Individual Packages
 
