@@ -212,8 +212,9 @@ exists.
 ## Auth API reference (`/api/auth/`)
 
 These endpoints are always reachable (nginx sets `auth_request off` for them),
-so the writes among them check the CSRF token themselves rather than relying on
-the gateway:
+so the writes that need a CSRF token check it themselves rather than relying on
+the gateway. `login` cannot require one — it mints the session that would carry
+it — and `set-password` takes the current password instead:
 
 | Endpoint | Method | Purpose |
 |---|---|---|
