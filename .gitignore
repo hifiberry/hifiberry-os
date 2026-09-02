@@ -86,8 +86,8 @@ packages/bluetooth-service/hbos-bluetooth
 packages/input-processor/input-processor
 packages/nowplaying-sdl/nowplaying-sdl
 packages/pw-api/pipewire-api
-packages/songrec/songrec
 packages/songcompare/songcompare
+packages/songrec/songrec
 packages/speakereq/speakereq
 packages/vu-meter/src
 
