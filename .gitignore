@@ -87,6 +87,7 @@ packages/input-processor/input-processor
 packages/nowplaying-sdl/nowplaying-sdl
 packages/pw-api/pipewire-api
 packages/songrec/songrec
+packages/songcompare/songcompare
 packages/speakereq/speakereq
 packages/vu-meter/src
 
