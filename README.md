@@ -6,6 +6,7 @@ The next-generation HiFiBerryOS is a complete rewrite, now based on a standard D
 
 - [Add your own player](docs/add-your-own-player.md)
 - [Power key](docs/power-key.md) — stop the power button on a remote from shutting the system down
+- [Tailscale](docs/tailscale.md) — reach the device from anywhere without exposing it to the internet
 
 ## Reporting bugs
 
