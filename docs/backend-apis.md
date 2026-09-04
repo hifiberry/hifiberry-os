@@ -156,7 +156,7 @@ Backend: Python (Flask + Waitress), port 13141. Runs as system service via `sigm
   reports what's wrong with it instead of silently vanishing from the list.
   `ok` tier.
 - `POST /api/dsptoolkit/presets/<id>/apply` — Apply the preset: four biquad
-  banks and sixteen per-channel registers, written under one lock and
+  banks and up to sixteen per-channel registers, written under one lock and
   recorded in the settings store so they survive a reboot and a profile
   reload. Every compatibility check — including whether the loaded profile
   can express each channel's role — runs before the first write, so an
@@ -171,9 +171,10 @@ Presets are read from `/usr/share/hifiberry/speaker-presets` (shipped by
 `hifiberry-dspprofiles`) and `/var/lib/hifiberry/speaker-presets` (local,
 shadowing a shipped preset of the same id). Applying one is refused unless the
 loaded profile matches the preset's required DSP program, at least its
-minimum version, and its sample rate: preset coefficients are computed for
-one sample rate and cannot be rescaled, so applying 48 kHz biquads to a
-96 kHz program would produce a plausible-looking, wrong crossover.
+minimum version, and its sample rate, with filter banks large enough for the
+preset's filters: preset coefficients are computed for one sample rate and
+cannot be rescaled, so applying 48 kHz biquads to a 96 kHz program would
+produce a plausible-looking, wrong crossover.
 
 ## PipeWire API (`/api/pipewire/`)
 
