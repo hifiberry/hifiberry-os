@@ -51,6 +51,11 @@ fi
 
 echo "Detected Debian 13/Trixie - proceeding with installation"
 
+# This script is documented as "curl -Ls ... | bash", so bash is reading it from
+# stdin. A dpkg conffile prompt would consume the rest of the piped script as
+# its answer and the remainder of the install would never run.
+export DEBIAN_FRONTEND=noninteractive
+
 # Add HiFiBerry repository if not already present
 if ! grep -q "debianrepo.hifiberry.com" /etc/apt/sources.list.d/hifiberry.list 2>/dev/null; then
     echo "Adding HiFiBerry repository..."
@@ -60,7 +65,67 @@ else
     echo "HiFiBerry repository already configured"
 fi
 
+# hifiberry-audiocontrol declares Breaks: hifiberry-bluetooth (<< 1.0.6), so
+# unpacking a newer audiocontrol over an older bluetooth makes dpkg deconfigure
+# bluetooth first. Every hifiberry-bluetooth up to 1.0.8 ships a prerm that
+# rejects the deconfigure argument and exits 1, aborting the transaction
+# mid-unpack. dpkg runs the prerm of the *installed* version, so the archive
+# cannot fix this for a device that already has an older bluetooth: installing
+# hbos-minimal on one pulls the newer audiocontrol and hits the abort.
+#
+# Kept self-contained rather than sourced from scripts/: this file is fetched
+# and piped to bash on its own, with no checkout to source a helper from.
+preupgrade_hifiberry_bluetooth() {
+    local status state version
+
+    status=$(dpkg-query -W -f='${Status}' hifiberry-bluetooth 2>/dev/null) || return 0
+    state=${status##* }
+
+    # Absent, or only conffiles left behind: nothing can be deconfigured.
+    case "$state" in
+        not-installed|config-files) return 0 ;;
+    esac
+
+    version=$(dpkg-query -W -f='${Version}' hifiberry-bluetooth 2>/dev/null || true)
+    if [ -n "$version" ] && dpkg --compare-versions "$version" ge 1.0.6; then
+        return 0
+    fi
+
+    # A previous run that aborted during the deconfigure leaves the package
+    # unpacked or half-configured -- exactly the devices that need this most.
+    if [ "$state" != "installed" ]; then
+        echo "hifiberry-bluetooth is $state; settling dpkg state first..."
+        sudo dpkg --configure -a || true
+    fi
+
+    if [ "${status%% *}" = "hold" ]; then
+        echo "ERROR: hifiberry-bluetooth is held at ${version:-unknown}, below 1.0.6." >&2
+        echo "ERROR: apt cannot upgrade a held package, and installing hbos-minimal" >&2
+        echo "ERROR: would abort mid-unpack while dpkg deconfigures it." >&2
+        echo "ERROR: run: sudo apt-mark unhold hifiberry-bluetooth" >&2
+        exit 1
+    fi
+
+    echo "Upgrading hifiberry-bluetooth ahead of the other packages..."
+    if ! sudo apt install -y --only-upgrade hifiberry-bluetooth; then
+        echo "WARNING: pre-upgrade of hifiberry-bluetooth failed; repairing dpkg state"
+        sudo dpkg --configure -a || true
+    fi
+
+    version=$(dpkg-query -W -f='${Version}' hifiberry-bluetooth 2>/dev/null || true)
+    if [ -z "$version" ] || ! dpkg --compare-versions "$version" ge 1.0.6; then
+        echo "ERROR: hifiberry-bluetooth is ${version:-unknown}, still below 1.0.6." >&2
+        echo "ERROR: installing hbos-minimal now would abort mid-unpack and leave the" >&2
+        echo "ERROR: system full of unconfigured packages. Check that the HiFiBerry" >&2
+        echo "ERROR: repository is reachable and offers hifiberry-bluetooth >= 1.0.6." >&2
+        exit 1
+    fi
+}
+
 sudo apt update -y
+
+preupgrade_hifiberry_bluetooth
+
 sudo apt install -y hbos-minimal
 
 # Base configuration
