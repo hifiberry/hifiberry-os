@@ -54,6 +54,37 @@ fi
 
 echo "Starting upgrade to Debian 13 (Trixie)..."
 
+# hifiberry-audiocontrol declares Breaks: hifiberry-bluetooth (<< 1.0.6), so
+# unpacking a newer audiocontrol over an older bluetooth makes dpkg deconfigure
+# bluetooth first. Every hifiberry-bluetooth up to 1.0.8 ships a prerm that
+# rejects the deconfigure argument and exits 1, which aborts the transaction
+# mid-unpack and leaves the system full of unpacked but unconfigured packages.
+# dpkg runs the prerm of the *installed* version, so the archive cannot fix
+# this for devices already below 1.0.6 -- upgrading the package on its own
+# first is what stops dpkg ever having to deconfigure it. This has to happen
+# before any apt upgrade step, not just before the full upgrade: a plain
+# "apt upgrade" resolves Breaks by deconfiguring too.
+preupgrade_hifiberry_bluetooth() {
+    local status version
+    status=$(dpkg-query -W -f='${Status}' hifiberry-bluetooth 2>/dev/null) || return 0
+    case "$status" in
+        *" ok installed") ;;
+        *) return 0 ;;
+    esac
+
+    echo "Upgrading hifiberry-bluetooth ahead of the other packages..."
+    if ! sudo apt install -y --only-upgrade hifiberry-bluetooth; then
+        echo WARNING: "Pre-upgrade of hifiberry-bluetooth failed; repairing dpkg state"
+        sudo dpkg --configure -a || true
+    fi
+
+    version=$(dpkg-query -W -f='${Version}' hifiberry-bluetooth 2>/dev/null || true)
+    if [ -z "$version" ] || ! dpkg --compare-versions "$version" ge 1.0.6; then
+        echo WARNING: "hifiberry-bluetooth is ${version:-unknown}, still below 1.0.6 --"
+        echo WARNING: "the upgrade may abort while dpkg deconfigures it."
+    fi
+}
+
 # Backup sources.list
 echo "Backing up current package sources..."
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%Y%m%d_%H%M%S)
@@ -71,6 +102,8 @@ if ! sudo apt update; then
     sudo cp /etc/apt/sources.list.backup.* /etc/apt/sources.list 2>/dev/null || true
     exit 1
 fi
+
+preupgrade_hifiberry_bluetooth
 
 # Perform minimal upgrade first
 echo "Performing minimal upgrade..."
