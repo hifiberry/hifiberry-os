@@ -6,5 +6,14 @@
     "allow_change": true,
     "conflicts_with": ["soloist"],
     "maintainer_name": "Wanted",
-    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md"
+    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md",
+    "settings": [
+        {
+            "key": "allow_volume_control",
+            "type": "toggle",
+            "label": "Allow Spotify volume control",
+            "description": "When off, Spotify cannot change the system volume. Use the HiFiBerry volume control instead. Takes effect after this player is restarted.",
+            "default": true
+        }
+    ]
 }

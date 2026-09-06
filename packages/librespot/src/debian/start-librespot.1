@@ -1,4 +1,4 @@
-.TH START-LIBRESPOT 1 "2025-01-27" "HiFiBerry" "User Commands"
+.TH START-LIBRESPOT 1 "2026-09-06" "HiFiBerry" "User Commands"
 .SH NAME
 start-librespot \- Librespot startup script for HiFiBerry devices
 .SH SYNOPSIS
@@ -9,9 +9,17 @@ is a startup script that handles the initialization of librespot with system-spe
 configuration for HiFiBerry devices. It automatically configures audio parameters
 based on the detected sound card and uses the system's pretty hostname.
 .PP
-The script sets up librespot with a default bitrate of 320 kbps and uses the ALSA
-audio backend. It attempts to get the system's pretty hostname, falling back to
+The script sets up librespot with a default bitrate of 320 kbps and the rodio
+backend. It attempts to get the system's pretty hostname, falling back to
 the regular hostname, and finally to "HiFiBerry" if neither is available.
+.PP
+By default it attaches librespot to the card's ALSA mixer so Spotify Connect
+can change the system volume. That can be disabled from the WebUI under
+Services > Players > Spotify ("Allow Spotify volume control"), which stores
+.I player.librespot.allow_volume_control
+in ConfigDB. When disabled, librespot uses software volume fixed at 100%
+instead, so only the HiFiBerry volume control moves the output level.
+Changing the setting takes effect after this player is restarted.
 .SH ENVIRONMENT
 .TP
 .B VOLUME_CTRL
@@ -22,6 +30,21 @@ Defaults to
 (unchanged behaviour). Set it via a systemd drop-in, e.g.
 .I Environment=VOLUME_CTRL=cubic ,
 for a more naturally curved Spotify Connect volume slider.
+When Spotify volume control is disabled (see
+.BR ALLOW_VOLUME_CONTROL ),
+this is forced to
+.IR fixed .
+.TP
+.B ALLOW_VOLUME_CONTROL
+When
+.IR false ,
+skip ALSA mixer attachment and run with
+.B --mixer softvol
+.B --volume-ctrl fixed
+.BR --initial-volume " 100."
+When unset, the value is read from ConfigDB key
+.IR player.librespot.allow_volume_control
+(default true if unset or config-server is unreachable).
 .SH FILES
 .I /etc/hostname
 .RS
