@@ -1,3 +1,13 @@
+hifiberry-librespot (0.8.0.11) stable; urgency=medium
+
+  * Add a WebUI Players setting to disable Spotify volume control. When
+    allow_volume_control is off, start-librespot skips the ALSA mixer and
+    runs with softvol, so Spotify Connect cannot slam hardware gain.
+    Default remains on (stock behaviour). Takes effect after restarting
+    the librespot service.
+
+ -- HiFiBerry <support@hifiberry.com>  Sat, 06 Sep 2026 09:00:00 +0000
+
 hifiberry-librespot (0.8.0.10) stable; urgency=medium
 
   * Ship the WebUI player descriptor and icon from

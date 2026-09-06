@@ -4,8 +4,12 @@
 # This script handles startup of librespot with the system's pretty hostname
 # and auto-configures audio parameters based on the detected sound card
 #
-# Version: 1.1.2
+# Version: 1.2.0
 # Changelog:
+# - v1.2.0: Honour player.librespot.allow_volume_control from ConfigDB (WebUI
+#           Players > Spotify setting). When false, skip ALSA mixer attachment and
+#           use softvol + fixed volume so Spotify cannot drive hardware gain.
+#           Optional ALLOW_VOLUME_CONTROL env override for debugging/drop-ins.
 # - v1.1.2: Added VOLUME_CTRL environment knob to select librespot's volume curve
 #           (linear|log|cubic|fixed). Default remains "linear" (unchanged behaviour);
 #           integrators can override via a systemd drop-in (Environment=VOLUME_CTRL=cubic).
@@ -50,6 +54,21 @@ BACKEND="rodio"
 #   [Service]
 #   Environment=VOLUME_CTRL=cubic
 VOLUME_CTRL="${VOLUME_CTRL:-linear}"
+
+# Whether Spotify Connect may drive the ALSA/system mixer (true/false).
+# Default true keeps stock behaviour. WebUI stores
+# player.librespot.allow_volume_control in ConfigDB; override with a drop-in:
+#   Environment=ALLOW_VOLUME_CONTROL=false
+if [ -z "${ALLOW_VOLUME_CONTROL:-}" ]; then
+  response=$(curl -sf --max-time 2 "http://localhost:1081/api/v1/key/player.librespot.allow_volume_control" 2>/dev/null) || response=""
+  value=$(echo "$response" | sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+  # Unset key or unreachable config-server defaults to true (previous stock behaviour)
+  ALLOW_VOLUME_CONTROL="${value:-true}"
+fi
+if [ "$ALLOW_VOLUME_CONTROL" = "false" ]; then
+  # Softvol at 100% so Connect cannot change level (see --mixer softvol below)
+  VOLUME_CTRL="fixed"
+fi
 
 # MDNS backend
 ZEROCONF_BACKEND="avahi"
@@ -118,11 +137,17 @@ else
   echo "No access token available on audiocontrol"
 fi
 
-# Try to get both mixer name and hardware index from configurator
-if command -v config-soundcard >/dev/null 2>&1; then
+# Mixer: ALSA when Spotify volume control is allowed, otherwise softvol fixed
+# at 100% so Connect cannot move the hardware/system volume.
+if [ "$ALLOW_VOLUME_CONTROL" = "false" ]; then
+  echo "Spotify volume control disabled; using softvol with fixed volume"
+  LIBRESPOT_OPTS+=("--mixer" "softvol")
+  LIBRESPOT_OPTS+=("--initial-volume" "100")
+elif command -v config-soundcard >/dev/null 2>&1; then
+  # Try to get both mixer name and hardware index from configurator
   MIXER_NAME=$(config-soundcard --no-eeprom --volume-control-softvol 2>/dev/null)
   HW_INDEX=$(config-soundcard --no-eeprom --hw 2>/dev/null)
-  
+
   # Only use all three audio options together if both mixer and hw index are available
   if [ $? -eq 0 ] && [ -n "$MIXER_NAME" ] && [ -n "$HW_INDEX" ]; then
     echo "Using mixer control: $MIXER_NAME and hardware device: hw:$HW_INDEX"
