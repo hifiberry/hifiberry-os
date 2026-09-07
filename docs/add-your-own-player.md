@@ -240,22 +240,37 @@ Here is the full set of drop-in files needed for a player called "my-player":
 | File | Purpose |
 |------|---------|
 | `/etc/audiocontrol/players.d/my-player.json` | ACR player config (audio routing + metadata) |
-| `/etc/hifiberry/players.d/my-player.json` | Web UI descriptor (name, icon, service, optional settings) |
-| `/etc/hifiberry/players.d/icons/my-player.svg` | SVG icon for the UI |
+| `/usr/share/hifiberry/players.d/my-player.json` | Web UI descriptor (name, icon, service, optional settings) |
+| `/usr/share/hifiberry/players.d/icons/my-player.svg` | SVG icon for the UI |
 | `/etc/configserver/conf.d/my-player.json` | Systemd permissions for start/stop |
 
 No code changes required — everything is pure drop-in.
 
+**Ship the descriptor and icon under `/usr/share`, not `/etc`.** A descriptor
+is package data, not configuration. Shipping it as a conffile in `/etc` means
+dpkg treats any pre-existing file as a local edit and preserves it for ever,
+so a device that once had one placed by hand never receives another packaged
+update to it. configurator reads both directories and lets `/etc` shadow
+`/usr/share`, so `/etc` remains available — but for an administrator who
+genuinely wants to override or add a player, not for your package.
+
+For the same reason, do not write the descriptor from your `postinst`. A file
+your maintainer script rewrites on every configure shadows the one you ship,
+silently destroys any override an administrator put there, and drifts from the
+packaged copy without anything reporting it.
+
 ## 7) Example: Spotify/librespot as a community plugin
 
-The `hifiberry-librespot` package is a real-world example of a native Debian package (no Docker) that registers itself using the drop-in mechanism. Its `postinst` creates three files on install:
+The `hifiberry-librespot` package is a real-world example of a native Debian package (no Docker) that registers itself using the drop-in mechanism. It installs four files:
 
-- `/etc/hifiberry/players.d/librespot.json` — UI descriptor (name: "Spotify", service: "librespot")
-- `/etc/hifiberry/players.d/icons/librespot.svg` — Spotify icon (stroke-based SVG)
-- `/etc/configserver/conf.d/librespot.json` — systemd permission (`"librespot": "all"`)
-- `/etc/audiocontrol/players.d/librespot.json` — ACR player registration
+- `/usr/share/hifiberry/players.d/librespot.json` — UI descriptor (name: "Spotify", service: "librespot"), shipped by the package
+- `/usr/share/hifiberry/players.d/icons/librespot.svg` — Spotify icon (stroke-based SVG), shipped by the package
+- `/etc/audiocontrol/players.d/librespot.json` — ACR player registration, shipped as a conffile so local edits survive upgrades
+- `/etc/configserver/conf.d/librespot.json` — systemd permission (`"librespot": "all"`), written by `postinst`
 
-Its `postrm` removes all four files on uninstall. The icon SVG is shipped inside the package at `/usr/share/hifiberry-librespot/icons/spotify.svg` and copied to the drop-in directory during `postinst`.
+Only the last is created by a maintainer script; the rest are ordinary packaged
+files. `postrm` removes the configserver drop-in on uninstall and the ACR
+conffile on purge.
 
 This pattern works for any Debian-packaged player — no Docker required.
 
