@@ -100,7 +100,7 @@ To make your player appear on the **Services > Players** page with a toggle swit
 
 ### a) Player descriptor
 
-Create `/etc/hifiberry/players.d/<name>.json`:
+Create `/usr/share/hifiberry/players.d/<name>.json`:
 
 ```json
 {
@@ -125,7 +125,7 @@ Fields:
 
 ### b) Icon
 
-Place an SVG icon at `/etc/hifiberry/players.d/icons/<icon>.svg`.
+Place an SVG icon at `/usr/share/hifiberry/players.d/icons/<icon>.svg`.
 
 The icon is served by the configurator API and displayed as a 40x40 image. Use `currentColor` for fill/stroke to match the UI theme.
 
