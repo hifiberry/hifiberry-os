@@ -166,6 +166,13 @@ Backend: Python (Flask + Waitress), port 13141. Runs as system service via `sigm
   load. A failure partway through answers 500 and reports how many
   `banksWritten`/`filtersWritten`/`registersWritten` before it failed. `risky`
   tier — requires authentication.
+- `DELETE /api/dsptoolkit/presets/current` — Clear the applied preset:
+  writes a transparent biquad into every slot of all four banks and clears
+  their bypass state, then forgets the recorded selection. The per-channel
+  role/level/delay/polarity registers are deliberately left alone — clearing
+  filters is not the same as re-routing the amplifier. Clearing when nothing
+  is applied answers 200 with `cleared: null`; an unreadable profile checksum
+  is a 503, same as apply. `risky` tier — requires authentication.
 
 Presets are read from `/usr/share/hifiberry/speaker-presets` (shipped by
 `hifiberry-dspprofiles`) and `/var/lib/hifiberry/speaker-presets` (local,
