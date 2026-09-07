@@ -18,28 +18,27 @@ case "$1" in
             chown squeezelite:squeezelite /var/lib/squeezelite
         fi
 
-        # Register in Web UI player registry
-        HBOS_PLAYERS_D="/etc/hifiberry/players.d"
-        mkdir -p "$HBOS_PLAYERS_D/icons"
-
-        cat > "$HBOS_PLAYERS_D/squeezelite.json" <<'PLAYEREOF'
-{
-    "name": "LMS",
-    "provided_by": "squeezelite",
-    "systemd_service": "squeezelite",
-    "icon": "squeezelite",
-    "allow_change": true,
-    "maintainer_name": "Wanted",
-    "maintainer_url": "https://github.com/hifiberry/hifiberry-os/blob/hbosng/docs/maintainers-wanted.md"
-}
-PLAYEREOF
-
-        # Install icon
-        if [ -f /usr/share/hifiberry-squeezelite/icons/squeezelite.svg ]; then
-            cp /usr/share/hifiberry-squeezelite/icons/squeezelite.svg "$HBOS_PLAYERS_D/icons/squeezelite.svg"
+        # Up to 2.0.0.1565 this postinst wrote the WebUI descriptor and its icon
+        # into /etc/hifiberry/players.d. 2.0.0.1565 moved both to
+        # /usr/share/hifiberry/players.d, and configurator lets /etc shadow
+        # /usr/share -- so the copy written here masked the packaged one and
+        # nothing ever read it. The move changed where the files ship; it did
+        # not stop this postinst overwriting them.
+        #
+        # The two copies are identical today, so nothing is visibly broken.
+        # That is the reason to fix it now: the next field added to the shipped
+        # descriptor would be masked silently, which is how hifiberry-librespot
+        # lost a conflicts_with declaration and hifiberry-shairport lost its
+        # entire settings block.
+        #
+        # Remove the stale copy, but only when upgrading from an affected
+        # version. On a fresh install a file here is an administrator's own
+        # override, which is what /etc is for.
+        if [ -n "$2" ] && dpkg --compare-versions "$2" lt 2.0.0.1566; then
+            rm -f /etc/hifiberry/players.d/squeezelite.json
+            rm -f /etc/hifiberry/players.d/icons/squeezelite.svg
+            echo "Removed the /etc descriptor that shadowed the packaged one."
         fi
-
-        echo "Registered LMS/squeezelite in Web UI player registry."
 
         # Register systemd permissions via configserver drop-in
         mkdir -p /etc/configserver/conf.d

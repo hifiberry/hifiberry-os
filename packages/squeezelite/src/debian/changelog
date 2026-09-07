@@ -1,3 +1,20 @@
+hifiberry-squeezelite (2.0.0.1566) stable; urgency=medium
+
+  * postinst: stop writing the WebUI descriptor and icon into
+    /etc/hifiberry/players.d. 2.0.0.1565 moved both to
+    /usr/share/hifiberry/players.d, but left this postinst overwriting them on
+    every configure, and configurator lets /etc shadow /usr/share -- so the
+    packaged descriptor has been masked ever since and nothing has read it.
+    The two are byte-identical today, so nothing is visibly broken; that is
+    the reason to fix it now rather than after a field is added. The same
+    omission cost hifiberry-librespot a conflicts_with declaration and
+    hifiberry-shairport its entire settings block, both silently.
+  * postinst: remove the stale /etc copy when upgrading from an affected
+    version. A file present on a fresh install is left alone: there it is an
+    administrator's own override.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 07 Sep 2026 10:26:48 +0000
+
 hifiberry-squeezelite (2.0.0.1565) stable; urgency=medium
 
   * Ship the WebUI player descriptor and icon from
