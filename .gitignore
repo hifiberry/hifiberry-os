@@ -57,6 +57,7 @@ packages/acr-webmcp/src/debian/hifiberry-acr-webmcp/usr/share/
 packages/*/*.tar.gz.new.*
 packages/*/*.tar.xz.new.*
 
+packages/librespot/hifiberry-librespot
 packages/sendspin/sendspin
 packages/soloist-wrapper/soloist-wrapper
 packages/shairport-sync/hifiberry-shairport
