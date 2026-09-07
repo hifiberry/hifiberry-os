@@ -97,3 +97,8 @@ __pycache__/
 
 # Isolated worktrees for the nested package repos (SDD workspaces)
 .worktrees/
+
+# Credentials, so that an untracked token dropped in the working tree is
+# never one `git add -A` away from being committed.
+.controltower-token
+*.token
