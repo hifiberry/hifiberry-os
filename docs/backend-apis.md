@@ -144,6 +144,45 @@ Backend: Python (Flask + Waitress), port 13141. Runs as system service via `sigm
 ### Biquad
 - `POST /api/dsptoolkit/biquad` — Calculate biquad coefficients
 
+### Speaker Presets
+- `GET /api/dsptoolkit/presets` — List installed speaker presets. Each entry
+  carries `compatible`/`incompatibleReason` (`null` when compatible),
+  evaluated server-side against the loaded DSP profile, plus a top-level
+  `current` — the preset applied to that profile, or `null` if none is. `ok`
+  tier.
+- `GET /api/dsptoolkit/presets/<id>` — One preset in full. 404 if no file with
+  that id exists in either preset directory; 500 (carrying the reason) if a
+  file exists but fails validation, so a hand-edited preset with a typo
+  reports what's wrong with it instead of silently vanishing from the list.
+  `ok` tier.
+- `POST /api/dsptoolkit/presets/<id>/apply` — Apply the preset: four biquad
+  banks and up to sixteen per-channel registers, written under one lock and
+  recorded in the settings store so they survive a reboot and a profile
+  reload. Every compatibility check — including whether the loaded profile
+  can express each channel's role — runs before the first write, so an
+  incompatible preset answers 409 and writes nothing. If the active profile's
+  checksum can't be read, the request is refused with 503 rather than writing
+  changes that couldn't be recorded and would vanish at the next profile
+  load. A failure partway through answers 500 and reports how many
+  `banksWritten`/`filtersWritten`/`registersWritten` before it failed. `risky`
+  tier — requires authentication.
+- `DELETE /api/dsptoolkit/presets/current` — Clear the applied preset:
+  writes a transparent biquad into every slot of all four banks and clears
+  their bypass state, then forgets the recorded selection. The per-channel
+  role/level/delay/polarity registers are deliberately left alone — clearing
+  filters is not the same as re-routing the amplifier. Clearing when nothing
+  is applied answers 200 with `cleared: null`; an unreadable profile checksum
+  is a 503, same as apply. `risky` tier — requires authentication.
+
+Presets are read from `/usr/share/hifiberry/speaker-presets` (shipped by
+`hifiberry-dspprofiles`) and `/var/lib/hifiberry/speaker-presets` (local,
+shadowing a shipped preset of the same id). Applying one is refused unless the
+loaded profile matches the preset's required DSP program, at least its
+minimum version, and its sample rate, with filter banks large enough for the
+preset's filters: preset coefficients are computed for one sample rate and
+cannot be rescaled, so applying 48 kHz biquads to a 96 kHz program would
+produce a plausible-looking, wrong crossover.
+
 ## PipeWire API (`/api/pipewire/`)
 
 Backend: C/Rust, port 2716. Runs as user service via `pipewire-api.service`.
