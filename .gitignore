@@ -38,6 +38,7 @@ packages/.ai-context.md
 packages/.claude/
 scripts/sbuild
 CLAUDE.md
+AGENTS.md
 .claude
 hifiberryos_app/
 packages/tidal-connect/
