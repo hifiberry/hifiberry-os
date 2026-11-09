@@ -14,7 +14,7 @@ from urllib.error import HTTPError, URLError
 
 JSONRPC_VERSION = "2.0"
 SERVER_NAME = "acr-webmcp"
-SERVER_VERSION = "0.1.9"
+SERVER_VERSION = "0.1.10"
 
 
 class ACRClient:

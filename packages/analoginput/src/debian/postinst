@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+# analoginput.service runs as a systemd *user* service of the HiFiBerry user,
+# and debhelper only restarts system services on upgrade. Without this, an
+# upgrade leaves the old code running until the next reboot or login.
+# try-restart, so a service that is not running -- a player switched off in
+# the WebUI, or a fresh install -- is not started by this. Best effort; a
+# no-op during image builds, where no user manager runs.
+user_systemctl() {
+    [ -d /run/systemd/system ] || return 0
+    [ -f /etc/hifiberry.user ] || return 0
+    HB_USER=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' /etc/hifiberry.user | head -1 | tr -d '[:space:]')
+    [ -n "$HB_USER" ] && getent passwd "$HB_USER" >/dev/null 2>&1 || return 0
+    HB_UID=$(id -u "$HB_USER" 2>/dev/null) || return 0
+    [ -d "/run/user/$HB_UID" ] || return 0
+    systemd-run --uid "$HB_UID" --setenv XDG_RUNTIME_DIR="/run/user/$HB_UID" \
+        --pipe --wait --quiet --collect \
+        systemctl --user "$@" >/dev/null 2>&1 || true
+}
+
+if [ "$1" = "configure" ]; then
+    user_systemctl daemon-reload
+    user_systemctl try-restart analoginput.service
+fi
+
+exit 0
