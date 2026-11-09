@@ -247,7 +247,12 @@ cd packages
 
 Options:
 
-- `--clean` — remove existing `.deb` files first and rebuild
+- `--clean` — **removes the source checkout, not just the `.deb` files.** It
+  runs each package's `clean.sh`, and those start with a line like
+  `rm -rf configurator` or `rm -rf $BASE` that deletes the cloned source
+  directory. If that checkout holds work you have not pushed, `--clean`
+  destroys it. To force a rebuild without that risk, delete the stale `.deb`
+  files by hand (see below).
 - `--rebuild-image` — force a rebuild of the builder image
 - `--shell` — open a shell inside the build container
 - `--stop` — stop and remove the build container
@@ -255,6 +260,48 @@ Options:
 The first run is slow: it builds the `hifiberryos-builder` image and then
 creates the sbuild chroot inside it. The chroot lives in a named volume, so
 later runs reuse it and start compiling immediately.
+
+### When a build reports success without building
+
+`docker-build.sh` exits 0 and prints `Succeeded` in two cases where nothing was
+actually rebuilt. Both are easy to act on and hard to notice.
+
+**A package that already has a `.deb` is skipped.** The summary reads
+`Succeeded: <pkg> (cached)`. If you have just changed the source, that line
+means your change is *not* in the artefact. Remove the stale file first:
+
+```sh
+rm -f packages/<pkg>/*.deb
+```
+
+**hbos-ui reuses an existing `dist/`.** The inner `build.sh` prints
+`Using existing dist/ (set FORCE_VUE_BUILD=1 to rebuild)` and then
+`Vue.js build completed successfully`, so a stale bundle is packaged and the
+build still reports success. `FORCE_VUE_BUILD=1` cannot be passed through
+`docker-build.sh`, which invokes the build with `docker exec` and no
+environment, so the way to force it is to remove the directory:
+
+```sh
+rm -rf packages/webui/hbos-ui/dist
+```
+
+Note also that the container has neither npm nor Docker, so it cannot build the
+Vue application itself: it can only package a `dist/` that already exists.
+Build that on the host first (`npx vite build --config vite.config.ts` in
+`packages/webui/hbos-ui`), then run the container build to produce the `.deb`.
+Building it on the host also deletes `node_modules` as a side effect of
+packaging, so expect to re-run `npm ci` afterwards.
+
+**Check the artefact, not the exit code.** The reliable test is to look inside
+the built package for something that must be there:
+
+```sh
+cd /tmp && ar x /path/to/pkg.deb && tar tf data.tar.* | grep <expected-file>
+```
+
+That is what distinguishes a real build from a cached one, and it is worth
+doing before shipping a `.deb` to a device or the repository.
+
 
 ### Architecture
 
