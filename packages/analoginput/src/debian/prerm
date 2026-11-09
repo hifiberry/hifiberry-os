@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+# analoginput.service runs as a systemd *user* service of the HiFiBerry user, which
+# debhelper does not stop. Stop on removal, or the old process keeps running
+# with its files gone until the next reboot or login. Upgrades are handled by
+# the postinst's try-restart instead. Best effort; a no-op where no user
+# manager runs.
+user_systemctl() {
+    [ -d /run/systemd/system ] || return 0
+    [ -f /etc/hifiberry.user ] || return 0
+    HB_USER=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' /etc/hifiberry.user | head -1 | tr -d '[:space:]')
+    [ -n "$HB_USER" ] && getent passwd "$HB_USER" >/dev/null 2>&1 || return 0
+    HB_UID=$(id -u "$HB_USER" 2>/dev/null) || return 0
+    [ -d "/run/user/$HB_UID" ] || return 0
+    systemd-run --uid "$HB_UID" --setenv XDG_RUNTIME_DIR="/run/user/$HB_UID" \
+        --pipe --wait --quiet --collect \
+        systemctl --user "$@" >/dev/null 2>&1 || true
+}
+
+if [ "$1" = "remove" ]; then
+    user_systemctl stop analoginput.service
+fi
+
+#DEBHELPER#
+
+exit 0

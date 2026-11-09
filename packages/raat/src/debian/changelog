@@ -1,3 +1,14 @@
+hifiberry-raat (1.1.43.26) stable; urgency=medium
+
+  * Restart raat on upgrade, and stop it on removal. It runs as systemd user
+    service of the HiFiBerry user, which debhelper neither restarts nor
+    stops, so an upgrade left the old code running -- and a removal left it
+    running at all -- until the next reboot or login. The restart is a
+    try-restart: a service that is not running, such as a player switched
+    off in the WebUI, stays off.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 09 Nov 2026 14:50:18 +0000
+
 hifiberry-raat (1.1.43.25) stable; urgency=medium
 
   * Add Breaks: hifiberry-audiocontrol (<< 0.8.8). Older audiocontrol still
