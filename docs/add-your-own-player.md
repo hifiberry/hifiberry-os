@@ -231,21 +231,34 @@ Values are written by the web interface through
 ### Sign-in providers
 
 A player that needs an account (a media server, for instance) can offer an
-optional sign-in flow in its setup panel, using Quick Connect. The provider
-that serves the setup API reports it by adding a `sign_in` object to its
-status response (`method`, `account`, `server_name`, `ready`, `reason`); a
-provider without sign-in simply omits it. It also serves:
+optional Quick Connect sign-in in its setup panel. The provider that serves the
+setup API opts in by adding a `sign_in` object to `GET <base>/status`:
 
-- `POST <base>/login` starts sign-in and returns a code to show the user
-- `GET <base>/login` polls the state (`waiting`, `approved`, `expired`,
-  `failed`, `idle`); it never returns tokens
-- `DELETE <base>/login` cancels a pending code
-- `POST <base>/logout` removes the stored credentials
+```json
+"sign_in": {
+    "method": "quick_connect",
+    "account": null,
+    "server_name": null,
+    "ready": true,
+    "reason": null
+}
+```
 
-The panel keeps the player's enable toggle off until the user has signed in.
-`GET /status` stays in the ok tier; every other call above is risky. The full
-contract is in the Jellyfin extension design
-(`docs/superpowers/specs/2026-11-12-jellyfin-extension-design.md`, Component 1).
+`account` and `server_name` are set once signed in. `ready: false` means a
+prerequisite is missing, and `reason` says which. A provider without sign-in
+omits the object.
+
+| Method | Path | Does |
+|---|---|---|
+| `POST` | `<base>/login` | Starts sign-in. Returns `{"code", "expires_in"}`, or a 4xx/5xx with `{"error"}`. |
+| `GET` | `<base>/login` | Polls: `{"state", "code", "error"}`, with `state` one of `idle`, `waiting`, `approved`, `expired`, `failed`. |
+| `DELETE` | `<base>/login` | Cancels a pending code. |
+| `POST` | `<base>/logout` | Removes the stored credentials and restarts the player. |
+
+The provider never returns tokens. While `sign_in` is present the panel hides
+the version line and "Update now", and the enable toggle stays off until
+`logged_in` is true. `GET <base>/status` is in the ok tier; every other call
+above is risky.
 
 ### Verify
 
