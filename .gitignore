@@ -61,6 +61,7 @@ packages/*/*.tar.xz.new.*
 packages/librespot/hifiberry-librespot
 packages/sendspin/sendspin
 packages/soloist-wrapper/soloist-wrapper
+packages/jellyfin/jellyfin
 packages/shairport-sync/hifiberry-shairport
 
 # Superpowers brainstorm specs / plans (local only)
