@@ -192,10 +192,17 @@ optional and renders as help text under the control.
 | `toggle` | On/off switch | — |
 | `select` | Drop-down | `options`, **or** `options_url` (see below) |
 | `number` | Number field, or a slider with `"widget": "slider"` | `min`, `max` (`step` defaults to 1) |
+| `text` | Single-line text field | — (optional `max_length`, default 256; optional `pattern`) |
+| `secret` | Password field; the value is write-only | — |
 
 `number` bounds are mandatory and enforced on write: a value outside
 `min`..`max` is rejected with a 400 rather than stored. Entries that declare no
 usable bounds are dropped from the listing entirely.
+
+A `text` value is a string and is trimmed before it is stored. It must not be
+longer than `max_length` (default 256), and when `pattern` is given the whole
+value must match it (full match, not a substring search). A violation is
+rejected with a 400 on write.
 
 **Dynamic options.** When the choices are only known at runtime, point
 `options_url` at your own API instead of listing `options` statically.
@@ -220,6 +227,25 @@ only check for `None`, and acting on that overwrites the user's choice).
 Values are written by the web interface through
 `PUT /api/config/v1/players/<systemd_service>/settings` with a
 `{"<key>": <value>}` body.
+
+### Sign-in providers
+
+A player that needs an account (a media server, for instance) can offer an
+optional sign-in flow in its setup panel, using Quick Connect. The provider
+that serves the setup API reports it by adding a `sign_in` object to its
+status response (`method`, `account`, `server_name`, `ready`, `reason`); a
+provider without sign-in simply omits it. It also serves:
+
+- `POST <base>/login` starts sign-in and returns a code to show the user
+- `GET <base>/login` polls the state (`waiting`, `approved`, `expired`,
+  `failed`, `idle`); it never returns tokens
+- `DELETE <base>/login` cancels a pending code
+- `POST <base>/logout` removes the stored credentials
+
+The panel keeps the player's enable toggle off until the user has signed in.
+`GET /status` stays in the ok tier; every other call above is risky. The full
+contract is in the Jellyfin extension design
+(`docs/superpowers/specs/2026-11-12-jellyfin-extension-design.md`, Component 1).
 
 ### Verify
 
