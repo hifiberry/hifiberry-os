@@ -193,11 +193,15 @@ optional and renders as help text under the control.
 | `select` | Drop-down | `options`, **or** `options_url` (see below) |
 | `number` | Number field, or a slider with `"widget": "slider"` | `min`, `max` (`step` defaults to 1) |
 | `text` | Single-line text field | — (optional `max_length`, default 256; optional `pattern`) |
-| `secret` | Password field; the value is write-only | — |
+| `secret` | Password field | — |
 
 `number` bounds are mandatory and enforced on write: a value outside
 `min`..`max` is rejected with a 400 rather than stored. Entries that declare no
 usable bounds are dropped from the listing entirely.
+
+A `secret` value is trimmed and stored encrypted in ConfigDB. It is never
+returned: the listing reports only `is_set`. Submitting an empty string clears
+it.
 
 A `text` value is a string and is trimmed before it is stored. It must not be
 longer than `max_length` (default 256), and when `pattern` is given the whole
@@ -232,15 +236,20 @@ Values are written by the web interface through
 
 A player that needs an account (a media server, for instance) can offer an
 optional Quick Connect sign-in in its setup panel. The provider that serves the
-setup API opts in by adding a `sign_in` object to `GET <base>/status`:
+setup API opts in by adding a `sign_in` object to `GET <base>/status`, next to
+the top-level `binary_installed` and `logged_in` booleans:
 
 ```json
-"sign_in": {
-    "method": "quick_connect",
-    "account": null,
-    "server_name": null,
-    "ready": true,
-    "reason": null
+{
+    "binary_installed": true,
+    "logged_in": false,
+    "sign_in": {
+        "method": "quick_connect",
+        "account": null,
+        "server_name": null,
+        "ready": true,
+        "reason": null
+    }
 }
 ```
 
@@ -257,7 +266,7 @@ omits the object.
 
 The provider never returns tokens. While `sign_in` is present the panel hides
 the version line and "Update now", and the enable toggle stays off until
-`logged_in` is true. `GET <base>/status` is in the ok tier; every other call
+the top-level `logged_in` is true. `GET <base>/status` is in the ok tier; every other call
 above is risky.
 
 ### Verify
