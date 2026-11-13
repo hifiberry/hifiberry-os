@@ -192,10 +192,21 @@ optional and renders as help text under the control.
 | `toggle` | On/off switch | — |
 | `select` | Drop-down | `options`, **or** `options_url` (see below) |
 | `number` | Number field, or a slider with `"widget": "slider"` | `min`, `max` (`step` defaults to 1) |
+| `text` | Single-line text field | — (optional `max_length`, default 256; optional `pattern`) |
+| `secret` | Password field | — |
 
 `number` bounds are mandatory and enforced on write: a value outside
 `min`..`max` is rejected with a 400 rather than stored. Entries that declare no
 usable bounds are dropped from the listing entirely.
+
+A `secret` value is trimmed and stored encrypted in ConfigDB. It is never
+returned: the listing reports only `is_set`. Submitting an empty string clears
+it.
+
+A `text` value is a string and is trimmed before it is stored. It must not be
+longer than `max_length` (default 256), and when `pattern` is given the whole
+value must match it (full match, not a substring search). A violation is
+rejected with a 400 on write.
 
 **Dynamic options.** When the choices are only known at runtime, point
 `options_url` at your own API instead of listing `options` statically.
@@ -220,6 +231,43 @@ only check for `None`, and acting on that overwrites the user's choice).
 Values are written by the web interface through
 `PUT /api/config/v1/players/<systemd_service>/settings` with a
 `{"<key>": <value>}` body.
+
+### Sign-in providers
+
+A player that needs an account (a media server, for instance) can offer an
+optional Quick Connect sign-in in its setup panel. The provider that serves the
+setup API opts in by adding a `sign_in` object to `GET <base>/status`, next to
+the top-level `binary_installed` and `logged_in` booleans:
+
+```json
+{
+    "binary_installed": true,
+    "logged_in": false,
+    "sign_in": {
+        "method": "quick_connect",
+        "account": null,
+        "server_name": null,
+        "ready": true,
+        "reason": null
+    }
+}
+```
+
+`account` and `server_name` are set once signed in. `ready: false` means a
+prerequisite is missing, and `reason` says which. A provider without sign-in
+omits the object.
+
+| Method | Path | Does |
+|---|---|---|
+| `POST` | `<base>/login` | Starts sign-in. Returns `{"code", "expires_in"}`, or a 4xx/5xx with `{"error"}`. |
+| `GET` | `<base>/login` | Polls: `{"state", "code", "error"}`, with `state` one of `idle`, `waiting`, `approved`, `expired`, `failed`. |
+| `DELETE` | `<base>/login` | Cancels a pending code. |
+| `POST` | `<base>/logout` | Removes the stored credentials and restarts the player. |
+
+The provider never returns tokens. While `sign_in` is present the panel hides
+the version line and "Update now", and the enable toggle stays off until
+the top-level `logged_in` is true. `GET <base>/status` is in the ok tier; every other call
+above is risky.
 
 ### Verify
 
