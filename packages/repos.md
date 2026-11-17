@@ -27,6 +27,7 @@ python3 scripts/git-repo-sync.py --root /home/matuschd/hifiberry-os --include-di
 | `packages/raat/src/raat` | https://github.com/hifiberry/raat | `master` | RAAT (Roon) player — **private repository**, building it needs credentials that can read it |
 | `packages/input-processor/input-processor` | https://github.com/hifiberry/input-processor | `main` | Analog input processor, optional RIAA phono EQ |
 | `packages/roomeq/roomeq` | https://github.com/hifiberry/roomeq | `main` | Room equalization |
+| `packages/aas/aas` | https://github.com/hifiberry/aas | `main` | aas, the alternative audio server, and its ALSA plugin (Rust) |
 | `packages/sendspin/sendspin` | https://github.com/hifiberry/sendspin | `main` | Sendspin / Music Assistant player (`sendspind`, C++) |
 | `packages/songcompare/songcompare` | https://github.com/hifiberry/songcompare | `master` | A/B listening-comparison tool (`songcompare`, Rust) |
 | `packages/songrec/songrec` | https://github.com/marin-m/SongRec | — | Third-party: song recognition (pinned release, DETACHED HEAD) |

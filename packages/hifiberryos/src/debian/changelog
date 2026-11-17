@@ -1,3 +1,12 @@
+hifiberryos-meta (0.15) unstable; urgency=medium
+
+  * hbos-minimal and hbos-full: add aas and libasound2-plugin-aas. The
+    alternative audio server is installed beside PipeWire and stays off;
+    the web interface switches a device to it, and back, with a reboot.
+    Installing it changes nothing on a device that stays on PipeWire.
+
+ -- HiFiBerry <support@hifiberry.com>  Mon, 16 Nov 2026 15:00:00 +0000
+
 hifiberryos-meta (0.14) unstable; urgency=medium
 
   * hbos-minimal: add bluez and libspa-0.2-bluetooth. Until now
