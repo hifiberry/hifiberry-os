@@ -39,10 +39,11 @@ Depends: hifiberry-configurator,
          pipewire-bin,
          pipewire-pulse,
          wireplumber,
-         aas,
+         aas (>= 0.1.1),
          libasound2-plugin-aas,
          bluez,
          libspa-0.2-bluetooth,
+         bluez-alsa-utils,
          i2c-tools,
          sox
 Description: HiFiBerry OS minimal meta-package
@@ -57,6 +58,7 @@ Description: HiFiBerry OS minimal meta-package
   - PipeWire audio server with optimized configurations (hifiberry-pipewire-configs)
   - Modern web interface (hifiberry-webui)
   - Bluetooth audio backend for PipeWire (bluez, libspa-0.2-bluetooth)
+  - Bluetooth audio backend for aas (bluez-alsa-utils)
   - The audio server aas, chosen in the web interface instead of PipeWire
    (aas, libasound2-plugin-aas)
  .
@@ -78,10 +80,11 @@ Depends: hifiberry-configurator,
          pipewire-bin,
          pipewire-pulse,
          wireplumber,
-         aas,
+         aas (>= 0.1.1),
          libasound2-plugin-aas,
          hifiberry-raat,
          hifiberry-bluetooth,
+         bluez-alsa-utils,
          hifiberry-vu-meter,
          roomeq,
          i2c-tools,
