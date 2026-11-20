@@ -2,7 +2,7 @@ hifiberryos-meta (0.16) unstable; urgency=medium
 
   * hbos-minimal and hbos-full: add bluez-alsa-utils, the Bluetooth sink
     under aas. It runs only when aas is chosen; under PipeWire its units
-    are skipped and PipeWire stays the sink. Both need aas 0.1.1, which
+    are skipped and PipeWire stays the sink. Both need aas 0.2.0, which
     ships the drop-ins that skip them.
 
  -- HiFiBerry <support@hifiberry.com>  Tue, 17 Nov 2026 13:53:56 +0000
