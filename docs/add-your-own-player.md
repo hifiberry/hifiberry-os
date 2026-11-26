@@ -151,18 +151,18 @@ UI without touching the web interface at all.
 
 ```json
 {
-    "name": "AES67",
-    "provided_by": "hifiberry-aes67",
-    "systemd_service": "aes67",
-    "icon": "aes67",
+    "name": "My Player",
+    "provided_by": "my-player-package",
+    "systemd_service": "my-player",
+    "icon": "my-player",
     "settings": [
         {
             "key": "stream",
             "type": "select",
             "label": "Stream",
-            "description": "AES67 stream announced on the network.",
+            "description": "Stream announced on the network.",
             "default": "",
-            "options_url": "http://localhost:1083/api/v1/streams",
+            "options_url": "http://localhost:8090/api/v1/streams",
             "options_path": "streams",
             "options_value": "name",
             "options_label": "name"
@@ -222,10 +222,9 @@ unreachable the stored value is kept as the sole option, so a plugin that is
 briefly down does not make the UI look as though nothing was ever selected.
 
 **Where values live.** config-server stores them in ConfigDB under
-`player.<systemd_service>.<key>` — so `player.aes67.latency` above. Your plugin
-reads them back from there; nothing is pushed to it. `hifiberry-aes67`'s
-`sync.py` shows the pattern: poll the keys, apply on change, and distinguish
-"unset" from "config-server unreachable" (both look like an absent value if you
+`player.<systemd_service>.<key>` — so `player.my-player.latency` above. Your
+plugin reads them back from there; nothing is pushed to it. Poll the keys,
+apply on change, and distinguish "unset" from "config-server unreachable" (both look like an absent value if you
 only check for `None`, and acting on that overwrites the user's choice).
 
 Values are written by the web interface through
@@ -322,14 +321,7 @@ conffile on purge.
 
 This pattern works for any Debian-packaged player — no Docker required.
 
-## 8) Worked example: hifiberry-aes67
-
-`packages/aes67` is the reference for the settings mechanism above. It declares
-one dynamic `select` (AES67 streams discovered on the network, served from its
-own API on port 1083) and one `number` rendered as a slider, and its `sync.py`
-polls ConfigDB for both. It needs no code in the web interface at all.
-
-## 9) When to implement a native Rust controller
+## 8) When to implement a native Rust controller
 
 Use `generic` + update API when your external process can publish its state via HTTP.
 
