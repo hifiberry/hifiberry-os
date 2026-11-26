@@ -100,8 +100,8 @@ Description: HiFiBerry OS full meta-package
  .
  Players are no longer bundled here. Spotify Connect
  (hifiberry-librespot), AirPlay (hifiberry-shairport), Music Assistant
- (hifiberry-sendspin), Squeezebox/LMS (hifiberry-squeezelite), analog-input
- track recognition (hifiberry-analog-recognition) and AES67
- (hifiberry-aes67) are published as extensions instead, installable on
- demand from the web interface, so a full install no longer carries players
- the user may never enable.
+ (hifiberry-sendspin), Squeezebox/LMS (hifiberry-squeezelite) and
+ analog-input track recognition (hifiberry-analog-recognition) are
+ published as extensions instead, installable on demand from the web
+ interface, so a full install no longer carries players the user may never
+ enable. AES67 input is now part of aas, the alternative audio server.
